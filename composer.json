@@ -82,9 +82,15 @@
     ]
   },
   "license": "AGPL-3.0-or-later",
+  "extra": {
+    "aws/aws-sdk-php": [
+      "S3"
+    ]
+  },
   "scripts": {
     "pre-autoload-dump": [
-      "@php src/tools/mkbuildinfo.php"
+      "@php src/tools/mkbuildinfo.php",
+      "Aws\\Script\\Composer\\Composer::removeUnusedServices"
     ],
     "psalm": "./vendor/bin/psalm --no-progress -c=src/tools/psalm.xml",
     "psalm-clear-cache": "./vendor/bin/psalm --clear-cache -c=src/tools/psalm.xml",

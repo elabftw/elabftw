@@ -19,8 +19,7 @@ use PHPUnit\Framework\TestCase;
 
 use function base64_decode;
 use function dirname;
-use function fclose;
-use function fopen;
+use function file_get_contents;
 use function getimagesizefromstring;
 
 /**
@@ -101,24 +100,23 @@ class ImageMagickPolicyTest extends TestCase
         $this->assertSame('image/png', $info['mime']);
     }
 
-    public function testPdfStreamsCanBeRasterizedToJpeg(): void
+    #[DataProvider('unreadableDocuments')]
+    public function testPdfAndPostScriptCannotBeRead(string $blob): void
     {
-        $source = fopen(dirname(__DIR__, 2) . '/_data/dfn.pdf', 'rb');
-        $this->assertIsResource($source);
-        try {
-            $image = new Imagick();
-            $image->readImageFile($source);
-            $image->setIteratorIndex(0);
-            $image->thumbnailImage(100, 0);
-            $image->setImageFormat('jpeg');
+        // PDF thumbnails are rendered by Poppler: ImageMagick has neither a PDF/PostScript coder nor Ghostscript
+        $image = new Imagick();
+        $this->expectException(ImagickException::class);
+        $image->readImageBlob($blob);
+    }
 
-            $info = getimagesizefromstring($image->getImageBlob());
-            $this->assertIsArray($info);
-            $this->assertSame(100, $info[0]);
-            $this->assertSame('image/jpeg', $info['mime']);
-        } finally {
-            fclose($source);
-        }
+    /** @return array<string, array{string}> */
+    public static function unreadableDocuments(): array
+    {
+        return array(
+            'pdf' => array((string) file_get_contents(dirname(__DIR__, 2) . '/_data/dfn.pdf')),
+            'postscript' => array("%!PS-Adobe-3.0\n%%BoundingBox: 0 0 4 2\n0 0 4 2 rectfill\nshowpage\n"),
+            'eps' => array("%!PS-Adobe-3.0 EPSF-3.0\n%%BoundingBox: 0 0 4 2\n0 0 4 2 rectfill\n"),
+        );
     }
 
     public function testTiffCanBeRasterizedToJpeg(): void

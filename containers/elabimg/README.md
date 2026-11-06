@@ -42,19 +42,31 @@ After downloading the configuration file, open it in your preferred text editor 
 
 For usage of eLabFTW, see [documentation](https://doc.elabftw.net).
 
-## ImageMagick security policy
+## ImageMagick build and security policy
 
-The image installs an explicit policy at `/etc/ImageMagick-7/policy.xml`, shared by Imagick and ImageMagick command-line tools. It denies modules, coders, external delegates, and filters by default, then permits the formats needed for image previews. JPEG and PNG are the only output formats, used for thumbnails, QR labels, and rasterized MathJax.
+ImageMagick and PHP's Imagick extension are built from checksum-pinned source archives in a separate stage. Only the BMP, GIF, HEIC, JPEG, PNG, SVG, TIFF and WebP modules are compiled and installed: ImageMagick cannot read PDF or PostScript files. Unused parsers, loadable filters, Magick++, Perl bindings, X11, OpenCL, OpenMP, distributed pixel caches, filename pipes and pixel encryption are excluded. The runtime contains stripped shared objects and the `magick` utility, without development headers, static libraries or build tools.
 
-PDF, EPS/PostScript, and TIFF input remain enabled because `MakeThumbnailFactory` supports them. Ghostscript is retained for document thumbnails, with ImageMagick 7.1.2-33 or newer required for its scene-selection limit fix. SVG rendering uses Alpine's linked librsvg; external SVG converters, HTTP(S) coders, MSL, MVG, TEXT, EPHEMERAL, and XPS remain disabled. PNM formats are permitted as intermediate Ghostscript output.
+The build retains Alpine's Q16 HDRI representation, Little CMS color support, FreeType/Fontconfig/Raqm text rendering, and linked librsvg. These also serve QR labels and MathJax rasterization in PDF exports. Codec and font libraries remain Alpine packages and receive updates through `apk upgrade`; ImageMagick and Imagick source versions and their checksums must be updated explicitly in the Dockerfile. Compiler/linker options enable stack protection, stack clash protection, fortified functions (`_FORTIFY_SOURCE=3`), zero-initialized stack variables, format-security checks, full RELRO and non-executable stacks, disable the optimizations relying on undefined behavior (`-fno-strict-overflow`, `-fno-delete-null-pointer-checks`, `-fno-strict-aliasing`), and sign return addresses on arm64.
 
-Each ImageMagick process is limited to 256 MiB of pixel-cache memory, 512 MiB of mapped cache, 1 GiB of disk cache, 64 open cache files, two threads, and 60 seconds. Width and height are capped at 16,384 pixels, and image sequences at 128 frames/pages. The 32 MP area limit moves larger images to disk-backed cache; it is not a maximum pixel count. Uploads that exceed these limits are still stored, but their thumbnail generation is skipped by the existing error handler.
+The image installs an explicit policy at `/etc/ImageMagick-7/policy.xml`, shared by Imagick and ImageMagick command-line tools. ImageMagick is patched so it does not also load configuration files from `$XDG_CONFIG_HOME/ImageMagick` or `$HOME/.config/ImageMagick`, where a `policy.xml` could relax this one. It denies modules, coders, filters, and all external delegates, then permits the formats needed for image previews. JPEG and PNG are the only output formats, used for thumbnails, QR labels, and rasterized MathJax.
+
+SVG rendering only uses linked librsvg: ImageMagick is built without libxml2, so its internal MSVG renderer is absent, like external SVG converters, HTTP(S) coders, MSL, MVG, TEXT, EPHEMERAL, and XPS.
+
+Every image build runs `containers/elabimg/imagemagick/smoke-test.php` against the runtime libraries and PHP extension. It exercises stream-based thumbnails for every supported format, PDF rendering through `pdf-thumbnail`, JPEG/PNG output, nested SVGs, font annotation, rejected pseudo-images/outputs, PDF/PostScript input and oversized dimensions, and checks that Ghostscript is not installed. Fixtures, including a font from the builder stage, are mounted only for that build step. Application tests in `MakeThumbnailTest`, `MakeQrPngTest`, `Tex2SvgTest` and `ImageMagickPolicyTest` provide further coverage.
+
+Each ImageMagick process is limited to 256 MiB of pixel-cache memory, 512 MiB of mapped cache, 1 GiB of disk cache, 64 open cache files, two threads, and 60 seconds. Width and height are capped at 16,384 pixels, and image sequences at 128 frames. The 32 MP area limit moves larger images to disk-backed cache; it is not a maximum pixel count. Uploads that exceed these limits are still stored, but their thumbnail generation is skipped by the existing error handler.
 
 Inspect the policy loaded in a running container with:
 
 ~~~bash
 docker exec elabftw magick identify -list policy
 ~~~
+
+## PDF thumbnails
+
+PDF thumbnails are rendered by Poppler's `pdftoppm`, and ImageMagick only reads the resulting PNG. Ghostscript, a PostScript interpreter, is not installed, so PostScript and EPS files get no thumbnail. Poppler has no PostScript or JavaScript interpreter; it is an Alpine package, updated through `apk upgrade`.
+
+`MakeThumbnail` runs `/usr/local/bin/pdf-thumbnail` without arguments: it reads the PDF on stdin and writes the first page on stdout, scaled to fit in 500×500 pixels. As PHP limits do not apply to this separate process, the wrapper limits `pdftoppm` to 60 seconds of CPU time and 1 GiB of address space, and `MakeThumbnail` stops it after 90 seconds. Failures are reported like ImageMagick errors: the file is still uploaded, without a thumbnail.
 
 ## Reloading services
 

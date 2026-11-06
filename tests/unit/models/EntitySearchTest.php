@@ -17,14 +17,19 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Scope;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use Elabftw\Traits\TestsUtilsTrait;
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
 use function bin2hex;
 use function json_encode;
 use function random_bytes;
+use function random_int;
 use function strtolower;
 use function substr;
 
@@ -127,6 +132,64 @@ class EntitySearchTest extends \PHPUnit\Framework\TestCase
             $this->assertNotContains($id, array_column($results, 'id'));
         } finally {
             $Entity->destroy();
+        }
+    }
+
+    // a CAS number like 81-30-1 must not match an entry with custom_id 81 (#5655)
+    #[DataProvider('concreteEntityTypes')]
+    public function testCasNumberDoesNotMatchCustomId(EntityType $entityType): void
+    {
+        $user = $this->getRandomUserInTeam(1, admin: 1);
+        $Entity = $entityType->toInstance($user);
+        $id = $Entity->create();
+        $Entity->setId($id);
+        $customId = random_int(100000, 9999999);
+        $Entity->patch(Action::Update, array('custom_id' => $customId));
+
+        try {
+            $search = static function (string $query) use ($entityType, $user): array {
+                return array_column($entityType->toInstance($user)->readAll(new DisplayParams(
+                    $user,
+                    $entityType,
+                    new InputBag(array('q' => $query, 'scope' => Scope::Everything->value)),
+                )), 'id');
+            };
+            $cas = $customId . '-30-1';
+            // simple search
+            $this->assertNotContains($id, $search($cas));
+            // advanced search
+            $this->assertNotContains($id, $search('"' . $cas . '"'));
+            // an integer still finds the entry by its custom_id
+            $this->assertContains($id, $search((string) $customId));
+            $this->assertContains($id, $search('"' . $customId . '"'));
+        } finally {
+            $Entity->destroy();
+        }
+    }
+
+    #[DataProvider('entityTypes')]
+    public function testCompoundFilter(EntityType $entityType): void
+    {
+        $user = $this->getRandomUserInTeam(1, admin: 1);
+        $Compounds = new Compounds(new HttpGetter(new Client()), $user, new NullFingerprinter(), false);
+        $compoundId = $Compounds->create(name: 'Compound' . bin2hex(random_bytes(8)));
+        $Linked = $entityType->toInstance($user);
+        $linkedId = $Linked->create();
+        $Linked->setId($linkedId);
+        LinksFactory::getCompoundsLinks($Linked, $compoundId)->postAction(Action::Create, array());
+        $Unlinked = $entityType->toInstance($user);
+        $Unlinked->setId($Unlinked->create());
+
+        try {
+            $results = $entityType->toInstance($user)->readAll(new DisplayParams(
+                $user,
+                $entityType,
+                new InputBag(array('compound' => $compoundId, 'scope' => Scope::Everything->value)),
+            ));
+            $this->assertSame(array($linkedId), array_column($results, 'id'));
+        } finally {
+            $Linked->destroy();
+            $Unlinked->destroy();
         }
     }
 }

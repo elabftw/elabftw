@@ -42,6 +42,10 @@ enum UsersColumn: string
     case MfaSecret = 'mfa_secret';
     case NotifCommentCreated = 'notif_comment_created';
     case NotifCommentCreatedEmail = 'notif_comment_created_email';
+    case NotifBookingApprovalRequested = 'notif_booking_approval_requested';
+    case NotifBookingApprovalRequestedEmail = 'notif_booking_approval_requested_email';
+    case NotifBookingApprovalUpdated = 'notif_booking_approval_updated';
+    case NotifBookingApprovalUpdatedEmail = 'notif_booking_approval_updated_email';
     case NotifEventDeleted = 'notif_event_deleted';
     case NotifEventDeletedEmail = 'notif_event_deleted_email';
     case NotifStepDeadline = 'notif_step_deadline';

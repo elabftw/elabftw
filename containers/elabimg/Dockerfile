@@ -13,10 +13,21 @@ ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
 WORKDIR /app
 COPY containers/elabimg/helpers .
-# allow building for ARM, disable CGO to have full static build, target linux, add -s and -w ldflags to remove debug symbols
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPLATFORM" = "linux/arm/v7" ]; then ARCH=arm; elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then ARCH=arm64; else ARCH=amd64; fi \
-    && CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH go build -ldflags="-s -w" -o invoker invoker.go \
-    && go build -ldflags="-s -w" -o chronos chronos.go
+# allow building for ARM, disable CGO, target linux, add -s and -w ldflags to remove debug symbols
+# export the settings so they apply to both builds
+# -trimpath removes local paths from the binaries
+# -buildmode=pie makes position-independent executables, which need the musl dynamic loader of the Alpine runtime:
+# set it explicitly (-I), or a cross-compiled binary would get the glibc one.
+# Without cgo, Go cannot build PIE for 32-bit arm, which keeps a static executable.
+RUN case "$TARGETPLATFORM" in \
+        linux/arm/v7) ARCH=arm; LOADER= ;; \
+        linux/arm64) ARCH=arm64; LOADER=/lib/ld-musl-aarch64.so.1 ;; \
+        *) ARCH=amd64; LOADER=/lib/ld-musl-x86_64.so.1 ;; \
+    esac \
+    && if [ -n "$LOADER" ]; then set -- -buildmode=pie -ldflags="-s -w -I $LOADER"; else set -- -ldflags="-s -w"; fi \
+    && export CGO_ENABLED=0 GOOS=linux GOARCH=$ARCH \
+    && go build -trimpath "$@" -o invoker invoker.go \
+    && go build -trimpath "$@" -o chronos chronos.go
 
 #################
 # NGINX BUILDER #
@@ -26,20 +37,35 @@ RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then ARCH=amd64; elif [ "$TARGETPL
 FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS nginx-builder
 
 ENV NGINX_VERSION=1.30.6
+# The build verifies the release signature, then this pinned checksum: update it together with NGINX_VERSION.
+# 1.30.6 is signed by Sergey Kandaurov: D6786CE303D9A9022998DC6CC8464D549AF75C0A
+ARG NGINX_SHA256=3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 ENV NGX_BROTLI_COMMIT=53e0fb55f250f48fe80c0ddbf6c0f7103cdbaae1
+# Tags can be moved: pin the commit of the v0.39 tag
 # https://github.com/openresty/headers-more-nginx-module/tags
-ENV HEADERS_MORE_VERSION=v0.39
+ENV HEADERS_MORE_COMMIT=2b1debde426783b8f42246149d3638644a6347cb
+
+# Same hardening as the ImageMagick builder: position-independent code, stack protector, stack clash protection,
+# fortified functions that also check dynamically sized buffers (_FORTIFY_SOURCE=3), zero-initialized stack variables,
+# format-security checks, and keep the checks the optimizer could remove by assuming there is no undefined behavior
+# (null pointers, overflows, aliasing). The linker flags give a PIE with full RELRO and a non-executable stack.
+ENV HARDENING_CFLAGS="-fPIE -fstack-protector-strong -fstack-clash-protection -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -Wformat -Werror=format-security" \
+    HARDENING_LDFLAGS="-pie -Wl,-z,relro,-z,now,-z,noexecstack"
 
 # install dependencies: here we use brotli-dev, newer brotli versions we can remove that and build it
-RUN apk add --no-cache git libc-dev pcre2-dev make gcc zlib-dev openssl-dev binutils gnupg cmake brotli-dev
+# fortify-headers implements _FORTIFY_SOURCE for musl: without it, the define has no effect
+RUN apk add --no-cache git libc-dev fortify-headers pcre2-dev make gcc zlib-dev openssl-dev binutils gnupg cmake brotli-dev
 
 # create a builder user and group
 RUN addgroup -S -g 3148 builder && adduser -D -S -G builder -u 3148 builder
 RUN mkdir /build && chown builder:builder /build
 WORKDIR /build
 USER builder
+
+# On aarch64, also sign return addresses, on CPUs with pointer authentication.
+RUN if [ "$(uname -m)" = aarch64 ]; then echo '-mbranch-protection=standard'; fi > cflags-arch
 
 # build brotli
 RUN git clone https://github.com/google/ngx_brotli \
@@ -52,13 +78,17 @@ RUN git clone https://github.com/google/ngx_brotli \
     && cmake \
         -DCMAKE_BUILD_TYPE=Release \
         -DBUILD_SHARED_LIBS=OFF \
-        -DCMAKE_C_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
-        -DCMAKE_CXX_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections" \
+        -DCMAKE_C_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections $HARDENING_CFLAGS $(cat /build/cflags-arch)" \
+        -DCMAKE_CXX_FLAGS="-O2 -flto -funroll-loops -ffunction-sections -fdata-sections $HARDENING_CFLAGS $(cat /build/cflags-arch)" \
         -DCMAKE_EXE_LINKER_FLAGS="-Wl,--gc-sections" \
         .. \
     && cmake --build . --config Release --target brotlienc
 
-RUN git clone --depth 1 -b $HEADERS_MORE_VERSION https://github.com/openresty/headers-more-nginx-module
+RUN git init headers-more-nginx-module \
+    && cd headers-more-nginx-module \
+    && git remote add origin https://github.com/openresty/headers-more-nginx-module.git \
+    && git fetch --depth 1 origin "$HEADERS_MORE_COMMIT" \
+    && git checkout --detach FETCH_HEAD
 
 # now start the build
 # get nginx source
@@ -71,30 +101,26 @@ ADD --chown=builder:builder https://nginx.org/keys/arut.key nginx-arut.key
 ADD --chown=builder:builder https://nginx.org/keys/pluknet.key nginx-pluknet.key
 ADD --chown=builder:builder https://nginx.org/keys/sb.key nginx-sb.key
 ADD --chown=builder:builder https://nginx.org/keys/thresh.key nginx-thresh.key
-# import them and verify the tarball
+# import them and verify the tarball, then check it against the pinned checksum
 RUN gpg --batch --import nginx-arut.key nginx-pluknet.key nginx-sb.key nginx-thresh.key \
-    && gpg --batch --verify nginx.tgz.asc nginx.tgz
+    && gpg --batch --verify nginx.tgz.asc nginx.tgz \
+    && printf '%s  %s\n' "$NGINX_SHA256" nginx.tgz | sha256sum -c -
 # all good now untar and build!
 RUN tar xzf nginx.tgz
 WORKDIR /build/nginx-$NGINX_VERSION
-# Compilation flags
+# Compilation flags, in addition to HARDENING_CFLAGS and HARDENING_LDFLAGS:
 # -g0: Disable debugging symbols generation (decreases binary size)
 # -O3: Enable aggressive optimization level 3 (improves code execution speed)
-# -fstack-protector-strong: Enable stack protection mechanisms (prevents stack-based buffer overflows)
-# -flto: Enable Link Time Optimization (LTO) (allows cross-source-file optimization)
-# -pie: Generate position-independent executables (PIE) (enhances security)
-# --param=ssp-buffer-size=4: Set the size of the stack buffer for stack smashing protection to 4 bytes
-# -Wformat -Werror=format-security: Enable warnings for potentially insecure usage of format strings (treats them as errors)
-# -D_FORTIFY_SOURCE=2: Enable additional security features provided by fortified library functions
-# -Wl,-z,relro,-z,now: Enforce memory protections at runtime:
-#    - Mark the Global Offset Table (GOT) as read-only after relocation
-#    - Resolve all symbols at load time, making them harder to manipulate
-# -Wl,-z,noexecstack: Mark the stack as non-executable (prevents execution of code placed on the stack)
-# -fPIC: Generate position-independent code (PIC) (suitable for building shared libraries)
+# -flto: Enable Link Time Optimization (LTO) (allows cross-source-file optimization), at compile and link time
+# nginx only passes --with-ld-opt to the linker: linker flags in --with-cc-opt would be ignored.
+# nginx compiles with -Werror, so a new compiler warning stops the build.
+# Modules that no configuration file uses are left out, including the gzip filter (brotli is used instead),
+# thread pools (aio threads is not used), and the upstream balancing and keepalive modules (no upstream block).
 RUN ./configure \
         --prefix=/var/lib/nginx \
         --sbin-path=/usr/sbin/nginx \
-        --with-cc-opt='-g0 -O3 -fstack-protector-strong -flto -pie --param=ssp-buffer-size=4 -Wformat -Werror=format-security -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now -Wl,-z,noexecstack -fPIC'\
+        --with-cc-opt="-g0 -O3 -flto $HARDENING_CFLAGS $(cat /build/cflags-arch)" \
+        --with-ld-opt="-flto $HARDENING_LDFLAGS" \
         --modules-path=/usr/lib/nginx/modules \
         --conf-path=/etc/nginx/nginx.conf \
         --pid-path=/run/nginx/nginx.pid \
@@ -104,7 +130,6 @@ RUN ./configure \
         --http-client-body-temp-path=/var/cache/elabftw/nginx/client_body \
         --http-fastcgi-temp-path=/var/cache/elabftw/nginx/fastcgi \
         --http-proxy-temp-path=/var/cache/elabftw/nginx/proxy \
-        --with-threads \
         --with-http_ssl_module \
         --with-http_v2_module \
         --with-http_realip_module \
@@ -113,16 +138,25 @@ RUN ./configure \
         --add-module=/build/headers-more-nginx-module \
         --without-http_autoindex_module \
         --without-http_browser_module \
+        --without-http_charset_module \
         --without-http_empty_gif_module \
         --without-http_geo_module \
+        --without-http_grpc_module \
+        --without-http_gzip_module \
         --without-http_limit_conn_module \
         --without-http_map_module \
         --without-http_memcached_module \
+        --without-http_mirror_module \
         --without-http_referer_module \
         --without-http_scgi_module \
         --without-http_split_clients_module \
         --without-http_ssi_module \
+        --without-http_upstream_hash_module \
         --without-http_upstream_ip_hash_module \
+        --without-http_upstream_keepalive_module \
+        --without-http_upstream_least_conn_module \
+        --without-http_upstream_random_module \
+        --without-http_upstream_zone_module \
         --without-http_userid_module \
         --without-http_uwsgi_module \
     && make -j$(getconf _NPROCESSORS_ONLN) \
@@ -179,6 +213,142 @@ RUN cmake -S . -B build \
         --parallel "$(getconf _NPROCESSORS_ONLN)" \
     && strip -s build/bin/obabel
 
+#######################
+# IMAGEMAGICK BUILDER #
+#######################
+# Keep the builder and runtime on the same Alpine release and architecture.
+FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS imagemagick-builder
+
+# Update each version together with its archive checksum.
+# https://github.com/ImageMagick/ImageMagick/releases/tag/7.1.2-34
+ARG IMAGEMAGICK_VERSION=7.1.2-34
+ARG IMAGEMAGICK_SHA256=55fe0ec246245b46c429f9e6bc65294ad4a78a66b88abd9817971ca157856323
+# https://pecl.php.net/package/imagick/3.8.1
+ARG IMAGICK_VERSION=3.8.1
+ARG IMAGICK_SHA256=3a3587c0a524c17d0dad9673a160b90cd776e836838474e173b549ed864352ee
+
+# PIC for shared objects, stack/format/fortify checks, full RELRO and a non-executable stack.
+# Also probe large stack allocations, zero-initialize stack variables, check dynamically sized buffers (_FORTIFY_SOURCE=3),
+# and keep the checks the optimizer could remove by assuming there is no undefined behavior (null pointers, overflows, aliasing).
+ENV CFLAGS="-O2 -g0 -fPIC -fstack-protector-strong -fstack-clash-protection -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 -ftrivial-auto-var-init=zero -fno-delete-null-pointer-checks -fno-strict-overflow -fno-strict-aliasing -Wformat -Werror=format-security" \
+    LDFLAGS="-Wl,-z,relro,-z,now,-z,noexecstack,--as-needed"
+# With modules enabled, these are the only image parsers compiled and installed.
+# Keep this list in sync with policy.xml and MakeThumbnailFactory.
+# There is no PDF or PostScript coder: PDF thumbnails are rendered by Poppler, see pdf-thumbnail.
+ENV IMAGEMAGICK_CODERS="coders/bmp.la coders/gif.la coders/heic.la coders/jpeg.la coders/png.la coders/svg.la coders/tiff.la coders/webp.la"
+
+# font-dejavu is only a fixture for the runtime smoke test, it is not installed in the image.
+RUN apk add --no-cache \
+    autoconf build-base curl font-dejavu fontconfig-dev freetype-dev lcms2-dev \
+    libheif-dev libjpeg-turbo-dev libpng-dev libraqm-dev librsvg-dev libtool \
+    libwebp-dev php84-dev tiff-dev xz-dev zlib-dev
+
+RUN addgroup -S -g 3148 builder && adduser -D -S -G builder -u 3148 builder \
+    && mkdir /build && chown builder:builder /build
+WORKDIR /build
+USER builder
+
+# On aarch64, also sign return addresses, on CPUs with pointer authentication.
+# -fcf-protection is not used on x86_64: musl does not enable shadow stacks, and Linux has no user space branch tracking.
+RUN if [ "$(uname -m)" = aarch64 ]; then echo '-mbranch-protection=standard'; fi > cflags-arch
+
+RUN curl -fsSL -o imagemagick.tar.xz "https://github.com/ImageMagick/ImageMagick/releases/download/${IMAGEMAGICK_VERSION}/ImageMagick-${IMAGEMAGICK_VERSION}.tar.xz" \
+    && curl -fsSL -o imagick.tgz "https://pecl.php.net/get/imagick-${IMAGICK_VERSION}.tgz" \
+    && printf '%s  %s\n' "$IMAGEMAGICK_SHA256" imagemagick.tar.xz "$IMAGICK_SHA256" imagick.tgz | sha256sum -c - \
+    && tar xf imagemagick.tar.xz \
+    && tar xf imagick.tgz
+
+WORKDIR /build/ImageMagick-${IMAGEMAGICK_VERSION}
+# ImageMagick loads the policy.xml of every directory of its search path, and the last matching rule wins.
+# Remove $XDG_CONFIG_HOME/ImageMagick and $HOME/.config/ImageMagick from that path: a writable home could relax the policy.
+RUN test "$(grep -c -E 'GetEnvironmentValue\("(XDG_CONFIG_)?HOME"\)' MagickCore/configure.c)" -eq 2 \
+    && sed -i -E 's/GetEnvironmentValue\("(XDG_CONFIG_)?HOME"\)/(char *) NULL/' MagickCore/configure.c
+# Retain Alpine's Q16 HDRI pixel representation and text/color rendering support.
+# Ghostscript is neither linked nor installed.
+# Module enumeration uses magick.la as a directory marker; use the retained PNG module.
+# Without libxml2, the internal SVG renderer (MSVG) is not built: SVG files are only rendered by librsvg.
+RUN sed -i 's/TagToCoderModuleName("magick",filename)/TagToCoderModuleName("png",filename)/' MagickCore/module.c \
+    && ./configure \
+        CFLAGS="$CFLAGS $(cat /build/cflags-arch)" \
+        --prefix=/usr \
+        --sysconfdir=/etc \
+        --enable-shared \
+        --disable-static \
+        --disable-docs \
+        --disable-openmp \
+        --disable-opencl \
+        --disable-dpc \
+        --disable-pipes \
+        --disable-cipher \
+        --enable-hdri \
+        --with-quantum-depth=16 \
+        --with-modules \
+        --with-fontconfig \
+        --with-freetype \
+        --with-raqm \
+        --with-heic \
+        --with-jpeg \
+        --with-lcms \
+        --with-lzma \
+        --with-png \
+        --with-rsvg \
+        --with-tiff \
+        --with-webp \
+        --with-zlib \
+        --without-autotrace \
+        --without-bzlib \
+        --without-djvu \
+        --without-dmr \
+        --without-fftw \
+        --without-flif \
+        --without-fpx \
+        --without-gslib \
+        --without-gvc \
+        --without-jbig \
+        --without-jxl \
+        --without-lqr \
+        --without-magick-plus-plus \
+        --without-openexr \
+        --without-openjp2 \
+        --without-pango \
+        --without-perl \
+        --without-raw \
+        --without-uhdr \
+        --without-wmf \
+        --without-x \
+        --without-xml \
+        --without-zip \
+        --without-zstd \
+    && make -j"$(getconf _NPROCESSORS_ONLN)" coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES=
+
+USER root
+# Install headers in the builder for Imagick, then stage only runtime artifacts.
+RUN make coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES= install-strip \
+    && make coders_LTLIBRARIES="$IMAGEMAGICK_CODERS" filters_LTLIBRARIES= DESTDIR=/imagemagick-root install-strip \
+    && rm -rf /imagemagick-root/usr/include /imagemagick-root/usr/lib/pkgconfig /imagemagick-root/usr/share/doc /imagemagick-root/usr/share/man \
+    && rm -f /imagemagick-root/usr/lib/*.la /imagemagick-root/usr/lib/libMagick*.so \
+    && find /imagemagick-root/usr/bin -mindepth 1 ! -name magick -delete \
+    && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagemagick/LICENSE \
+    && printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' '<!-- No external delegate is used: policy.xml denies all of them, including the built-in ones. -->' '<delegatemap/>' \
+        > /imagemagick-root/etc/ImageMagick-7/delegates.xml
+
+WORKDIR /build/imagick-${IMAGICK_VERSION}
+USER builder
+# Alpine's php84-pecl-imagick depends on the stock imagemagick package.
+# Imagick 3.8.1 probes OpenMP independently of ImageMagick; omit that unused dependency.
+RUN sed -i '/AC_MSG_CHECKING(omp_pause_resource_all usability)/,/^  PHP_SUBST(IMAGICK_SHARED_LIBADD)/c\  PHP_SUBST(IMAGICK_SHARED_LIBADD)' config.m4 \
+    && phpize84 \
+    && ./configure CFLAGS="$CFLAGS $(cat /build/cflags-arch)" --with-php-config=/usr/bin/php-config84 --with-imagick=/usr \
+    && make -j"$(getconf _NPROCESSORS_ONLN)" \
+    && strip --strip-unneeded modules/imagick.so
+
+USER root
+RUN install -Dm755 modules/imagick.so "/imagemagick-root$(php-config84 --extension-dir)/imagick.so" \
+    && mkdir -p /imagemagick-root/etc/php84/conf.d \
+    && printf 'extension=imagick.so\n' > /imagemagick-root/etc/php84/conf.d/imagick.ini \
+    && install -Dm644 LICENSE /imagemagick-root/usr/share/licenses/imagick/LICENSE
+COPY ./containers/elabimg/imagemagick/policy.xml /imagemagick-root/etc/ImageMagick-7/policy.xml
+
 ##############
 # S6 BUILDER #
 ##############
@@ -230,7 +400,9 @@ ENV ELABFTW_VERSION=$ELABFTW_VERSION
 COPY --from=nginx-builder /usr/sbin/nginx /usr/sbin/nginx
 COPY --from=nginx-builder /etc/nginx/mime.types /etc/nginx/mime.types
 COPY --from=nginx-builder /etc/nginx/fastcgi.conf /etc/nginx/fastcgi.conf
-RUN echo 'fastcgi_param ELABFTW_REQUEST_ID $request_id;' >> /etc/nginx/fastcgi.conf
+RUN echo 'fastcgi_param ELABFTW_REQUEST_ID $request_id;' >> /etc/nginx/fastcgi.conf \
+    && echo '# httpoxy: do not pass the client Proxy header to PHP as HTTP_PROXY' >> /etc/nginx/fastcgi.conf \
+    && echo 'fastcgi_param HTTP_PROXY "";' >> /etc/nginx/fastcgi.conf
 # END NGINX
 
 # OPENBABEL
@@ -241,19 +413,23 @@ COPY --from=openbabel-builder /build/openbabel/build/bin/obabel /usr/local/bin/o
 # php8-gd is required by mpdf for transparent png
 # php8-iconv is required by LdapRecord php library
 # php84-xmlwriter is required for multipart uploads with S3
-# imagemagick-svg is for mathjax support in pdfs
-# imagemagick-heic is for support for heic/heif
+# ImageMagick codec/font libraries remain Alpine packages so apk upgrade updates them.
+# poppler-utils provides pdftoppm, which renders PDF thumbnails; Ghostscript is not installed
 # don't put line comments inside this instruction
 RUN apk upgrade -U -a && apk add --no-cache \
     bash \
-    ghostscript \
-    imagemagick \
-    imagemagick-heic \
-    imagemagick-jpeg \
-    imagemagick-pdf \
-    imagemagick-svg \
-    imagemagick-tiff \
-    imagemagick-webp \
+    fontconfig \
+    freetype \
+    lcms2 \
+    libheif \
+    libjpeg-turbo \
+    libltdl \
+    libpng \
+    libraqm \
+    librsvg \
+    libwebp \
+    libwebpdemux \
+    libwebpmux \
     nodejs \
     openssl \
     php84 \
@@ -274,7 +450,6 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-opcache \
     php84-openssl \
     php84-pdo_mysql \
-    php84-pecl-imagick \
     php84-redis \
     php84-simplexml \
     php84-session \
@@ -282,17 +457,30 @@ RUN apk upgrade -U -a && apk add --no-cache \
     php84-xml \
     php84-xmlwriter \
     php84-zip \
-    tzdata
+    poppler-utils \
+    tiff \
+    tzdata \
+    xz-libs \
+    zlib
 
 # add a symlink to php8
 RUN ln -f /usr/bin/php84 /usr/bin/php
 
 ENV TMPDIR=/var/cache/elabftw/php/tmp
 
-# Apply the same ImageMagick policy to PHP/Imagick and command-line conversions.
-COPY ./containers/elabimg/imagemagick/policy.xml /etc/ImageMagick-7/policy.xml
-# Use linked librsvg directly, without trying a prohibited external SVG delegate.
-RUN sed -i '/decode="svg[:"]/d' /etc/ImageMagick-7/delegates.xml
+# Install the matching libraries, restricted modules, policy and PHP extension together.
+COPY --from=imagemagick-builder /imagemagick-root/ /
+# MakeThumbnail renders the first page of PDF files with Poppler through this wrapper, which limits its resources.
+COPY --chmod=555 ./containers/elabimg/poppler/pdf-thumbnail /usr/local/bin/pdf-thumbnail
+# Exercise the installed stack without leaving test fixtures in the image.
+# Also make sure that no package brought Ghostscript back.
+RUN --mount=type=bind,source=containers/elabimg/imagemagick,target=/tmp/imagemagick-test \
+    --mount=type=bind,source=tests/_data/dfn.pdf,target=/tmp/imagemagick-test.pdf \
+    --mount=type=bind,from=imagemagick-builder,source=/usr/share/fonts/dejavu/DejaVuSans.ttf,target=/tmp/imagemagick-test-font.ttf \
+    ! apk info --exists imagemagick \
+    && ! apk info --exists ghostscript \
+    && magick -version \
+    && TMPDIR=/tmp php84 /tmp/imagemagick-test/smoke-test.php /tmp/imagemagick-test.pdf /tmp/imagemagick-test-font.ttf
 
 ###################
 # ELABFTW BUILDER #
@@ -377,7 +565,7 @@ WORKDIR /elabftw
 
 LABEL org.opencontainers.image.description="eLabFTW web service" \
     org.opencontainers.image.documentation="https://github.com/elabftw/elabftw/blob/master/containers/elabimg/README.md" \
-    org.opencontainers.image.license="AGPL-3.0-only" \
+    org.opencontainers.image.licenses="AGPL-3.0-only" \
     org.opencontainers.image.source="https://github.com/elabftw/elabftw" \
     org.opencontainers.image.title="eLabFTW" \
     org.opencontainers.image.url="https://www.elabftw.net" \
@@ -474,6 +662,8 @@ RUN sed -i -e "s/%REPLACED_AT_BUILD_TIME%/$(openssl rand -hex 4)/" /elabftw/web/
 
 # necessary for s6 if running with read-only flag
 ENV S6_READ_ONLY_ROOT=1
+# stops the container if it doesn't start fine
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
 
 # start s6
 ENTRYPOINT ["/init"]

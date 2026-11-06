@@ -230,6 +230,9 @@
           <input type='hidden' name='related' value='{{ App.Request.query.get('related')|number_format }}' />
           <input type='hidden' name='related_origin' value='{{ App.Request.query.getAlpha('related_origin') }}' />
         {% endif %}
+        {% if App.Request.query.get('compound') %}
+          <input type='hidden' name='compound' value='{{ App.Request.query.getInt('compound') }}' />
+        {% endif %}
         {# WCAG/h32 - form needs a submit button #}
         <button type='submit' hidden></button>
       </form>
@@ -584,7 +587,7 @@
             <div class='input-group mb-2 mr-2'>
               <input type='text' aria-label='{{ 'Link to a resource'|trans }}' id='addLinkItemsInput' name='items_links' class='form-control' placeholder='{{ 'Link to a resource'|trans }}' />
               <div class='input-group-append'>
-                <select id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
+                <select data-ignore='1' id='addLinkCatFilter' class='brl-none form-control' aria-label='{{ 'Limit category'|trans }}'>
                   <option selected value=''>{{ 'Any category'|trans }}</option>
                   {% for cat in App.itemsCategoryArr %}
                     <option value='{{ cat.id }}'>{{ cat.title }}</option>
@@ -596,7 +599,7 @@
             <div class='input-group mb-2 mr-2'>
               <input type='text' aria-label='{{ 'Link to an experiment'|trans }}' id='addLinkExpInput' name='experiments_links' class='form-control' placeholder='{{ 'Link to an experiment'|trans }}' />
               <div class='input-group-append'>
-                <select id='addLinkOwnerFilter' class='brl-none form-control' aria-label='{{ 'Limit author'|trans }}'>
+                <select data-ignore='1' id='addLinkOwnerFilter' class='brl-none form-control' aria-label='{{ 'Limit author'|trans }}'>
                   <option selected value=''>{{ 'Any author'|trans }}</option>
                   {% for user in usersArr %}
                     <option value='{{ user.userid }}'>{{ user.fullname }}</option>

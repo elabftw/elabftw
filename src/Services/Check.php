@@ -21,6 +21,7 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use JsonException;
 
+use function array_is_list;
 use function filter_var;
 use function intval;
 use function mb_strlen;
@@ -32,6 +33,7 @@ use function strlen;
 use function _;
 use function implode;
 use function is_array;
+use function is_int;
 use function json_decode;
 use function preg_match;
 use function str_starts_with;
@@ -143,6 +145,7 @@ final class Check
 
     /**
      * Check if we have a correct value for canread, canwrite or canbook JSON
+     * Each of teams, teamgroups and users must be a list of ids (positive integers)
      */
     public static function visibility(string $visibility): string
     {
@@ -154,8 +157,13 @@ final class Check
 
         $arrayParams = array('teams', 'teamgroups', 'users');
         foreach ($arrayParams as $param) {
-            if (!isset($decoded[$param]) || !is_array($decoded[$param])) {
+            if (!isset($decoded[$param]) || !is_array($decoded[$param]) || !array_is_list($decoded[$param])) {
                 throw new ImproperActionException(sprintf('The visibility parameter %s is wrong.', $param));
+            }
+            foreach ($decoded[$param] as $id) {
+                if (!is_int($id) || $id < 1) {
+                    throw new ImproperActionException(sprintf('The visibility parameter %s must only contain ids (positive integers).', $param));
+                }
             }
         }
         return $visibility;

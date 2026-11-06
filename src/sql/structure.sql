@@ -323,6 +323,7 @@ CREATE TABLE `experiments_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_experiments_steps_group_id` (`group_id`),
   CONSTRAINT `fk_experiments_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `experiments_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -709,6 +710,7 @@ CREATE TABLE `items` (
   `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `requires_booking_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,
@@ -997,6 +999,7 @@ CREATE TABLE `items_types_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_items_types_steps_group_id` (`group_id`),
   CONSTRAINT `fk_items_types_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `items_types_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -1307,6 +1310,11 @@ CREATE TABLE `team_events` (
   `item_link` int(10) UNSIGNED DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  -- 0: no approval, 1: pending, 2: approved, 3: rejected (Overdue is UI-only)
+  `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `approved_by` INT UNSIGNED NULL DEFAULT NULL,
+  `approved_at` DATETIME NULL DEFAULT NULL,
+  `approval_comment` TEXT NULL DEFAULT NULL,
   `recurrence_id` CHAR(36) DEFAULT NULL,
   `recurrence_index` SMALLINT UNSIGNED DEFAULT NULL,
   `recurrence_frequency` VARCHAR(7) DEFAULT NULL,
@@ -1330,6 +1338,7 @@ CREATE TABLE `team_events` (
 CREATE INDEX `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
 CREATE INDEX `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
 CREATE INDEX `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);
+CREATE INDEX `idx_team_events_approval` ON `team_events` (`item`, `approval_status`, `start`);
 CREATE UNIQUE INDEX `uniq_team_events_recurrence_index` ON `team_events` (`recurrence_id`, `recurrence_index`);
 
 --
@@ -1447,6 +1456,7 @@ CREATE TABLE `users` (
   `orcid` varchar(19) NULL DEFAULT NULL,
   `orgid` varchar(255) NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `token_hash` BINARY(32) NULL DEFAULT NULL,
   `token_created_at` TIMESTAMP NULL DEFAULT NULL,
   `limit_nb` tinyint UNSIGNED NOT NULL DEFAULT 15,
@@ -1490,6 +1500,10 @@ CREATE TABLE `users` (
   `notif_user_need_validation_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_step_deadline` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_step_deadline_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_requested` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_requested_email` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_updated` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_updated_email` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `notif_event_deleted` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_event_deleted_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `auth_lock_time` datetime DEFAULT NULL,
@@ -1543,6 +1557,16 @@ CREATE TABLE `users2team_groups` (
 --   `userid`
 --       `users` -> `userid`
 --
+
+-- Many-to-many approvers: a user may approve bookings on several resources.
+CREATE TABLE `items_booking_approvers` (
+  `entity_id` INT UNSIGNED NOT NULL,
+  `userid` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`entity_id`, `userid`),
+  INDEX `idx_items_booking_approvers_userid` (`userid`),
+  CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_items_booking_approvers_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -2143,6 +2167,7 @@ CREATE TABLE `items_steps` (
     `deadline` datetime DEFAULT NULL,
     `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     KEY `idx_items_steps_group_id` (`group_id`),
@@ -2171,6 +2196,7 @@ CREATE TABLE `experiments_templates_steps` (
     `deadline` datetime DEFAULT NULL,
     `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     KEY `idx_experiments_templates_steps_group_id` (`group_id`),

@@ -33,5 +33,11 @@ class DisplayParamsTest extends \PHPUnit\Framework\TestCase
         // another one to get to the owner filter
         $params = new DisplayParams($user, EntityType::Experiments, new InputBag(array('scope' => 1, 'cat' => 'null')), skipOrderPinned: true);
         $this->assertStringContainsString('entity.userid', $params->filterSql);
+        // compound filter uses the link table of the entity type
+        $params = new DisplayParams($user, EntityType::Items, new InputBag(array('compound' => 3)));
+        $this->assertStringContainsString('compounds2items AS c2e_filter WHERE c2e_filter.compound_id = 3', $params->filterSql);
+        // invalid compound id is ignored
+        $params = new DisplayParams($user, EntityType::Items, new InputBag(array('compound' => 'nope')));
+        $this->assertStringNotContainsString('compounds2items', $params->filterSql);
     }
 }

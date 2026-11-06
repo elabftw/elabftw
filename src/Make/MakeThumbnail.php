@@ -17,12 +17,17 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Interfaces\MakeThumbnailInterface;
 use Elabftw\Storage\Cache\NginxCache;
 use Imagick;
+use ImagickException;
 use League\Flysystem\Filesystem;
 use Override;
+use Symfony\Component\Process\Exception\ExceptionInterface as ProcessExceptionInterface;
+use Symfony\Component\Process\Process;
 
 use function exif_read_data;
 use function in_array;
 use function rewind;
+use function sprintf;
+use function stream_get_contents;
 use function strtolower;
 
 /**
@@ -33,6 +38,12 @@ use function strtolower;
 class MakeThumbnail implements MakeThumbnailInterface
 {
     private const int THUMB_WIDTH = 100;
+
+    // renders the first page of PDF files with Poppler, see containers/elabimg/poppler/pdf-thumbnail
+    private const string PDF_RENDERER = '/usr/local/bin/pdf-thumbnail';
+
+    // the renderer limits its own CPU time, this also stops it if it waits
+    private const int PDF_RENDERER_TIMEOUT = 90;
 
     /** @param resource $sourceFile */
     public function __construct(private string $mime, protected $sourceFile, private string $longName, private Filesystem $storageFs) {}
@@ -49,19 +60,24 @@ class MakeThumbnail implements MakeThumbnailInterface
     }
 
     /**
-     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, eps and pdf.
+     * Create a jpg thumbnail from images of type jpeg, png, gif, tiff, webp, heic, bmp, svg and pdf.
      */
     private function getThumb(): string
     {
         $image = new Imagick();
         // set temporary files path to this folder which should be bind-mounted on the host
         $image->setRegistry('temporary-path', NginxCache::getFolder());
-        $image->setFilename('[0]');
-        $image->readImageFile($this->sourceFile);
+        if ($this->mime === 'application/pdf') {
+            // ImageMagick cannot read PDF files: it only reads the first page rendered as PNG
+            $image->readImageBlob($this->renderPdfFirstPage());
+        } else {
+            $image->setFilename('[0]');
+            $image->readImageFile($this->sourceFile);
+        }
         $image->setIteratorIndex(0);
         $image->setBackgroundColor('white');
         // fix pdf with black background and png
-        if ($this->mime === 'application/pdf' || $this->mime === 'application/postscript' || $this->mime === 'image/png' || $this->mime === 'image/webp') {
+        if ($this->mime === 'application/pdf' || $this->mime === 'image/png' || $this->mime === 'image/webp') {
             $image->setResolution(300, 300);
             $image->setImageFormat('jpg');
             $image->scaleImage(500, 500, true);
@@ -80,6 +96,26 @@ class MakeThumbnail implements MakeThumbnailInterface
         // make sure to set it as jpg (a pdf will stay a pdf otherwise)
         $image->setImageFormat('jpg');
         return $image->getImageBlob();
+    }
+
+    /**
+     * Render the first page of the PDF file as PNG with Poppler, in a separate process.
+     * Failures are reported like ImageMagick ones, so the file is still uploaded, without a thumbnail.
+     */
+    private function renderPdfFirstPage(): string
+    {
+        // pass the content rather than the stream: Process would make the stream non-blocking
+        $pdf = stream_get_contents($this->sourceFile);
+        $process = new Process(array(self::PDF_RENDERER));
+        $process->setInput($pdf === false ? '' : $pdf);
+        $process->setTimeout(self::PDF_RENDERER_TIMEOUT);
+        try {
+            $process->mustRun();
+        } catch (ProcessExceptionInterface $e) {
+            // the exception message would contain the process output
+            throw new ImagickException(sprintf('PDF rendering failed (exit code: %s).', $process->getExitCode() ?? 'none'), 0, $e);
+        }
+        return $process->getOutput();
     }
 
     private function getRotationAngle(): int

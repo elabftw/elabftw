@@ -257,6 +257,10 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    // TomSelect search inputs have no name attribute and must not be collected.
+    if (!el.name) {
+      return;
+    }
     el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);

@@ -705,7 +705,8 @@ export function replaceWithTitle(): void {
       changedAttribute = 'value';
     }
     const notFound = (): void => {
-      el[changedAttribute] = i18next.t('resource-not-found');
+      const message = i18next.t('resource-not-found');
+      el[changedAttribute] = el instanceof HTMLInputElement ? `${el.dataset.id} - ${message}` : message;
       el.classList.add('color-warning');
     };
     // 0 is an entry that could not be found during an import, and the api would read it as "no id"

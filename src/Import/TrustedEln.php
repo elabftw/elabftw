@@ -75,7 +75,12 @@ final class TrustedEln extends Eln
         if ($personId === '') {
             return parent::getMetadataUserReference($personId);
         }
-        return $this->getOrCreateUser($personId)->getUserid();
+        try {
+            return $this->getOrCreateUser($personId)->getUserid();
+        } catch (ImproperActionException $e) {
+            $this->logger->warning(sprintf('Could not create user %s: %s', $personId, $e->getMessage()));
+            return self::UNKNOWN_USERID;
+        }
     }
 
     private function getOrCreateUser(string $personId): Users

@@ -84,7 +84,7 @@ class Eln extends AbstractZip
     protected const string TAGS_SEPARATOR = ',';
 
     // userid 0 never exists
-    private const int UNKNOWN_USERID = 0;
+    protected const int UNKNOWN_USERID = 0;
 
     // archive directory containing ro-crate-metadata.json
     private string $root;

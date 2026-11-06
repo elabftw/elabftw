@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Exceptions\DemoModeException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\MfaHelper;
 use Exception;
@@ -31,6 +32,10 @@ $Response = new RedirectResponse('/ucp.php?tab=2');
 try {
     if ($App->demoMode) {
         throw new DemoModeException();
+    }
+    // credentials and MFA stay in the hands of the real user
+    if ($App->Users->impersonatorId !== null) {
+        throw new ForbiddenException(_('This action is not possible while impersonating a user.'));
     }
     $postData = $App->Request->request->all();
     // TAB 2 : ACCOUNT

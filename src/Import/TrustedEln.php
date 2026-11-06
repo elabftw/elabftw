@@ -69,8 +69,12 @@ final class TrustedEln extends Eln
     }
 
     #[Override]
-    protected function getMetadataUserReference(string $personId): int
+    protected function getMetadataUserReference(string $personId): ?int
     {
+        // no Person node was exported for this user: nothing to create
+        if ($personId === '') {
+            return parent::getMetadataUserReference($personId);
+        }
         return $this->getOrCreateUser($personId)->getUserid();
     }
 

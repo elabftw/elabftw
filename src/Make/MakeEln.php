@@ -23,8 +23,8 @@ use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Hash\FileHash;
-use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
@@ -80,7 +80,7 @@ class MakeEln extends AbstractMakeEln
         protected Instance2Rors $instance2Rors,
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
-        protected CompoundInterface $Compounds,
+        protected Compounds $Compounds,
         protected bool $includeLinkedEntities = true,
         protected bool $includeChangelog = true,
     ) {

@@ -420,12 +420,14 @@ teams:
           - eln
           - imaging
           - generated from yml
+        # ids 1-23 (experiments) and 1-20 (resources) of this team are the random entries, created with a random visibility:
+        # only reference the entries defined in this file (experiments from 24, resources from 21)
         metadata: |
           {
             "extra_fields": {
               "Single experiment" : {"type": "experiments", "value": 24},
               "Multiple experiments": {"type": "experiments", "value": [24, 25], "allow_multi_values": true},
-              "Single resource": {"type": "items", "value": 1},
+              "Single resource": {"type": "items", "value": 23},
               "Multiple resources": {"type": "items", "value": [21, 22], "allow_multi_values": true},
               "Single user": {"type": "users", "value": 1},
               "Multiple users": {"type": "users", "value": [1, 2], "allow_multi_values": true},

@@ -23,17 +23,19 @@ use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\FileHash;
-use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Comments;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\UploadGroups;
 use Elabftw\Models\Uploads;
+use Elabftw\Models\Users\ExistingUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\ContentParams;
 use Elabftw\Params\EntityParams;
@@ -81,6 +83,9 @@ class Eln extends AbstractZip
 {
     protected const string TAGS_SEPARATOR = ',';
 
+    // userid 0 never exists
+    private const int UNKNOWN_USERID = 0;
+
     // archive directory containing ro-crate-metadata.json
     private string $root;
 
@@ -89,7 +94,7 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
-    /** @var list<array{entity_type: EntityType, id: int, field: string, type: ExtraFieldReference, targets: list<string>, is_multiple: bool}> */
+    /** @var list<array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: list<string>, is_multiple: bool}> */
     private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
@@ -120,7 +125,7 @@ class Eln extends AbstractZip
         protected UploadedFile $UploadedFile,
         protected FilesystemOperator $fs,
         protected LoggerInterface $logger,
-        protected CompoundInterface $Compounds,
+        protected Compounds $Compounds,
         protected ?EntityType $entityType = null,
         protected ?int $category = null,
         protected BasePermissions $canreadBase = BasePermissions::Team,
@@ -265,12 +270,19 @@ class Eln extends AbstractZip
     }
 
     /**
-     * A Person node cannot be safely mapped to a local user here, so the field is emptied.
-     * TrustedEln overrides this to look up or create the user from its email.
+     * Use the existing user with the email of the Person node. Users are not created here (TrustedEln does it).
+     * An unknown user gets an id that cannot exist: the field shows "Nothing to show with this id"
+     * instead of pointing to an unrelated user of this instance.
      */
     protected function getMetadataUserReference(string $personId): ?int
     {
-        return null;
+        $email = $personId === '' ? '' : ($this->getNodeFromId($personId)['email'] ?? '');
+        try {
+            return ExistingUser::fromEmail((string) $email)->getUserid();
+        } catch (ResourceNotFoundException) {
+            $this->logger->warning(sprintf('User %s not found on this instance.', $personId === '' ? '(not exported)' : $personId));
+            return self::UNKNOWN_USERID;
+        }
     }
 
     private function importDatasets(): int
@@ -365,11 +377,15 @@ class Eln extends AbstractZip
         foreach ($isMultiple ? $value : array($value) as $reference) {
             if (is_array($reference) && is_string($reference['@id'] ?? null)) {
                 $targetAtIds[] = $reference['@id'];
+            } elseif ($type === ExtraFieldReference::Users) {
+                // the user was not exported as a Person node: keep the value, as an unknown user
+                $targetAtIds[] = '';
             }
         }
         $this->metadataReferencesToResolve[] = array(
             'entity_type' => $this->Entity->entityType,
             'id' => (int) $this->Entity->id,
+            'users' => $this->Entity->Users,
             'field' => (string) $node['propertyID'],
             'type' => $type,
             'targets' => $targetAtIds,
@@ -394,7 +410,7 @@ class Eln extends AbstractZip
                 }
                 $targetIds[] = $targetId;
             }
-            $entity = $ref['entity_type']->toInstance($this->Entity->Users, $ref['id'], true, true);
+            $entity = $ref['entity_type']->toInstance($ref['users'], $ref['id'], true, true);
             if ($targetIds === array()) {
                 // nothing could be resolved: do not keep ids pointing to unrelated entries of this instance
                 $entity->patch(Action::UpdateMetadataField, array(
@@ -567,7 +583,7 @@ class Eln extends AbstractZip
         $this->Entity->update(new EntityParams('date', $date));
 
         // keep a reference between the `@id` and the fresh id to resolve links later
-        $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType);
+        $this->insertedEntities[] = array('item_@id' => $dataset['@id'], 'id' => $this->Entity->id, 'entity_type' => $this->Entity->entityType, 'users' => $this->Entity->Users);
         // fix issue with immutable permissions
         $this->Entity->entityData['canread_is_immutable'] = 0;
         $this->Entity->entityData['canwrite_is_immutable'] = 0;
@@ -770,7 +786,7 @@ class Eln extends AbstractZip
     private function restoreEntityStates(): void
     {
         foreach ($this->insertedEntities as $inserted) {
-            $entity = $inserted['entity_type']->toInstance($this->Entity->Users, $inserted['id'], true, true);
+            $entity = $inserted['entity_type']->toInstance($inserted['users'], $inserted['id'], true, true);
             $dataset = $this->getNodeFromId($inserted['item_@id']);
             $state = State::fromName($dataset['status'] ?? State::Normal->name);
             // we use match(true) to be able to match a State and the Locked pseudo-state in the same match

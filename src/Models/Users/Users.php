@@ -545,13 +545,10 @@ class Users extends AbstractRest
     public function readOne(): array
     {
         $userData = $this->readOneFull();
-        // other users only get what is needed to display them, like readNamesFromIds()
         if (!$this->canReadFullProfile()) {
             return array(
-                'userid' => $userData['userid'],
                 'firstname' => $userData['firstname'],
                 'lastname' => $userData['lastname'],
-                'fullname' => $userData['fullname'],
                 'email' => self::maskEmail($userData['email']),
             );
         }
@@ -962,6 +959,16 @@ class Users extends AbstractRest
     public function isSelf(): bool
     {
         return $this->userData['userid'] === $this->requester->userData['userid'];
+    }
+
+    /**
+     * readOne() returns a limited profile instead of throwing, so use this to protect what belongs to the user
+     */
+    public function canReadFullProfileOrExplode(): void
+    {
+        if (!$this->canReadFullProfile()) {
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+        }
     }
 
     public function isSelfOrExplode(): void

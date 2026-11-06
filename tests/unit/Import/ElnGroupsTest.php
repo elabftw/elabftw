@@ -257,8 +257,8 @@ final class ElnGroupsTest extends TestCase
             $this->assertSame('', $fields['Missing experiment']['value']);
             $this->assertSame(array(), $fields['Missing experiments']['value']);
             $this->assertSame(array($imported['secondExp']->id), $fields['Partly missing experiments']['value']);
-            // a non trusted import cannot map a person to a local user
-            $this->assertSame('', $fields['User']['value']);
+            // a non trusted import maps a person to the existing user with the same email
+            $this->assertSame(1, $fields['User']['value']);
         } finally {
             unlink($path);
         }

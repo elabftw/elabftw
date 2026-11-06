@@ -704,12 +704,22 @@ export function replaceWithTitle(): void {
     if (el instanceof HTMLInputElement) {
       changedAttribute = 'value';
     }
+    const notFound = (): void => {
+      el[changedAttribute] = i18next.t('resource-not-found');
+      el.classList.add('color-warning');
+    };
+    // 0 is an entry that could not be found during an import, and the api would read it as "no id"
+    if (el.dataset.id === '0') {
+      notFound();
+      return;
+    }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`, { notifOnError: 0 }).then(json => {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
       const userDisplayName =
         String(json.fullname ?? '').trim() ||
+        `${json.firstname ?? ''} ${json.lastname ?? ''}`.trim() ||
         String(json.email ?? '').trim() ||
         String(json.userid ?? '');
       if (!(el instanceof HTMLInputElement)) {
@@ -727,7 +737,7 @@ export function replaceWithTitle(): void {
         // EDIT MODE (input): default = 'id - entity title'
         switch (el.dataset.endpoint) {
         case Model.User:
-          value = `${json.userid} - ${userDisplayName}`;
+          value = `${el.dataset.id} - ${userDisplayName}`;
           break;
         case Model.Compounds:
           value = `${json.id} - ${json.name}` + casNumber;
@@ -737,10 +747,7 @@ export function replaceWithTitle(): void {
         }
       }
       el[changedAttribute] = value;
-    }).catch(() => {
-      el[changedAttribute] = i18next.t('resource-not-found');
-      el.classList.add('color-warning');
-    });
+    }).catch(notFound);
   });
 }
 

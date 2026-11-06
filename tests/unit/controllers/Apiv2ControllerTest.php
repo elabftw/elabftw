@@ -21,11 +21,13 @@ use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Revisions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_keys;
 use function basename;
 use function json_decode;
 use function sprintf;
@@ -206,7 +208,61 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             Request::create('/api/v2/users/1/uploads', 'GET'),
         );
         $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testCannotReadAnotherUsersRors(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/users/1/rors', 'GET'),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testUserReadsLimitedProfileOfAnotherUser(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/users/1', 'GET'),
+        );
+        $res = $Controller->getResponse();
         self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $json = json_decode((string) $res->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(array('firstname', 'lastname', 'email'), array_keys($json));
+        self::assertStringContainsString('***', $json['email']);
+    }
+
+    public function testTeamAdminReadsProfileOfTeamMember(): void
+    {
+        // team 1 Admin is also Sysadmin, so use team 2
+        $admin = $this->getRandomUserInTeam(2, admin: 1);
+        $user = $this->getRandomUserInTeam(2);
+        $json = $this->getUserAs($admin, $user->getUserid());
+        self::assertSame($user->getUserid(), $json['userid']);
+        self::assertSame($user->userData['email'], $json['email']);
+        self::assertArrayNotHasKey('password_hash', $json);
+        self::assertArrayNotHasKey('last_login', $json);
+    }
+
+    public function testTeamAdminReadsLimitedProfileOutsideOfTeam(): void
+    {
+        $admin = $this->getRandomUserInTeam(2, admin: 1);
+        // userid 1 is only in team 1
+        $json = $this->getUserAs($admin, 1);
+        self::assertSame(array('firstname', 'lastname', 'email'), array_keys($json));
+    }
+
+    public function testSysadminReadsProfileOfAnyUser(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $json = $this->getUserAs(new Users(1, 1), $user->getUserid());
+        self::assertSame($user->userData['email'], $json['email']);
+        self::assertArrayHasKey('last_login', $json);
+        self::assertArrayNotHasKey('password_hash', $json);
     }
 
     public function testAnonymousUserCannotReadAnotherTeamsSubmodel(): void
@@ -366,5 +422,13 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             'Unknown "action" value. Expected one of: getcollections, gettypes.',
             $data['message']
         );
+    }
+
+    private function getUserAs(Users $requester, int $userid): array
+    {
+        $Controller = new Apiv2Controller($requester, Request::create('/api/v2/users/' . $userid, 'GET'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        return json_decode((string) $res->getContent(), true, 512, JSON_THROW_ON_ERROR);
     }
 }

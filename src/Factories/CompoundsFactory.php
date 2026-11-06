@@ -13,7 +13,6 @@ declare(strict_types=1);
 namespace Elabftw\Factories;
 
 use Elabftw\Elabftw\Env;
-use Elabftw\Interfaces\CompoundInterface;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
@@ -23,7 +22,7 @@ use GuzzleHttp\Client;
 
 final class CompoundsFactory
 {
-    public static function getCompounds(Users $requester): CompoundInterface
+    public static function getCompounds(Users $requester): Compounds
     {
         $Config = Config::getConfig();
         $httpGetter = new HttpGetter(

@@ -26,6 +26,8 @@ use Elabftw\Services\UsersHelper;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use OneLogin\Saml2\Auth as SamlAuthLib;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 use function _;
 use function array_column;
@@ -193,6 +195,7 @@ final class SamlTest extends TestCase
             $SamlAuthLib,
             $this->configArr,
             $this->settings,
+            new NullLogger(),
         );
 
         $this->expectException(
@@ -249,6 +252,57 @@ final class SamlTest extends TestCase
         $this->createSaml(
             config: $config,
             errors: array('secret debug detail'),
+        )->assertIdpResponse(self::REQUEST_ID);
+    }
+
+    public function testSamlErrorsAreLoggedWhenDebugIsDisabled(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'SAML response validation failed',
+                $this->callback(
+                    fn(array $context): bool => $context['errors'] === 'invalid_response (reason: Signature validation failed. SAML Response rejected)'
+                        && $context['requestId'] === self::REQUEST_ID,
+                ),
+            );
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage(Messages::GenericError->toHuman());
+
+        $this->createSaml(
+            errors: array('invalid_response'),
+            logger: $logger,
+            lastErrorReason: 'Signature validation failed. SAML Response rejected',
+        )->assertIdpResponse(self::REQUEST_ID);
+    }
+
+    public function testSamlErrorReasonIsExposedWhenDebugIsEnabled(): void
+    {
+        $config = $this->configArr;
+        $config['saml_debug'] = '1';
+
+        $this->expectException(UnauthorizedException::class);
+        $this->expectExceptionMessage('invalid_response (reason: Invalid audience)');
+
+        $this->createSaml(
+            config: $config,
+            errors: array('invalid_response'),
+            lastErrorReason: 'Invalid audience',
+        )->assertIdpResponse(self::REQUEST_ID);
+    }
+
+    public function testFailedAuthenticationIsLogged(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('error');
+
+        $this->expectException(UnauthorizedException::class);
+
+        $this->createSaml(
+            authenticated: false,
+            logger: $logger,
         )->assertIdpResponse(self::REQUEST_ID);
     }
 
@@ -1195,6 +1249,8 @@ final class SamlTest extends TestCase
         ?string $sessionIndex = self::SESSION_INDEX,
         ?string $nameId = self::NAME_ID,
         ?string $nameIdFormat = self::NAME_ID_FORMAT,
+        ?LoggerInterface $logger = null,
+        ?string $lastErrorReason = null,
     ): Saml {
         $samlUserdata ??= $this->samlUserdata;
         $config ??= $this->configArr;
@@ -1202,6 +1258,7 @@ final class SamlTest extends TestCase
 
         $SamlAuthLib = $this->createMock(SamlAuthLib::class);
         $SamlAuthLib->method('getErrors')->willReturn($errors);
+        $SamlAuthLib->method('getLastErrorReason')->willReturn($lastErrorReason);
         $SamlAuthLib->method('isAuthenticated')->willReturn($authenticated);
         $SamlAuthLib->method('getAttributes')->willReturn($samlUserdata);
         $SamlAuthLib->method('getSessionIndex')->willReturn($sessionIndex);
@@ -1212,6 +1269,7 @@ final class SamlTest extends TestCase
             $SamlAuthLib,
             $config,
             $settings,
+            $logger ?? new NullLogger(),
         );
     }
 

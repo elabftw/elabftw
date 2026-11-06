@@ -814,10 +814,46 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
+// The approvers select is a regular users TomSelect (see initPermissionsTomSelects).
+// Keep its enabled state in sync with the booking switches: selections are preserved when disabled.
+function getBookingApproversSelect(): (HTMLSelectElement & { tomselect?: TomSelect }) | null {
+  return document.getElementById('bookingApprovers_select_users') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+}
+
+function syncBookingApproversState(): void {
+  const select = getBookingApproversSelect();
+  if (!select?.tomselect) return;
+  const required = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
+  const bookable = document.getElementById('isBookableSwitch') as HTMLInputElement | null;
+  if (required?.checked && bookable?.checked) {
+    select.tomselect.enable();
+  } else {
+    select.tomselect.disable();
+  }
+}
+
+$(document).on('shown.bs.modal', '#bookingParamsModal', syncBookingApproversState);
+$(document).on('change', '#requiresApprovalSwitch, #isBookableSwitch', syncBookingApproversState);
+
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
+  const requiredInput = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
+  const usersInput = getBookingApproversSelect();
+  // values are in the 'user:<userid>' format used by the permissions selects
+  const approvers = (usersInput?.tomselect
+    ? usersInput.tomselect.items
+    : Array.from(usersInput?.selectedOptions ?? [], option => option.value))
+    .map(value => Number(String(value).replace('user:', '')))
+    .filter(userid => userid > 0);
+  if (requiredInput?.checked && approvers.length === 0) {
+    notify.error('error-approver-required');
+    return;
+  }
   const params = collectForm(form);
+  if (requiredInput) {
+    Object.assign(params, { requires_booking_approval: requiredInput.checked ? 1 : 0, approvers });
+  }
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');

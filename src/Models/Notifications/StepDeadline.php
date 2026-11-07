@@ -55,6 +55,27 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
         return parent::create();
     }
 
+    public function updateDeadline(): bool
+    {
+        // Keep the original recipient and rearm notifications only when the deadline changes.
+        $sql = 'UPDATE notifications AS n
+            INNER JOIN users ON users.userid = n.userid
+            SET n.body = JSON_SET(n.body, "$.deadline", :deadline),
+                n.is_ack = IF(users.notif_step_deadline = 1, 0, 1),
+                n.email_sent = 0,
+                n.email_sent_at = NULL
+            WHERE n.category = :category
+                AND n.body->"$.step_id" = :step_id
+                AND n.body->"$.entity_page" = :entity_page
+                AND n.body->>"$.deadline" <> :deadline';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':deadline', $this->deadline);
+        $req->bindValue(':category', $this->category->value, PDO::PARAM_INT);
+        $req->bindValue(':step_id', $this->stepId, PDO::PARAM_INT);
+        $req->bindValue(':entity_page', $this->entityPage);
+        return $this->Db->execute($req);
+    }
+
     #[Override]
     public function getEmail(): array
     {

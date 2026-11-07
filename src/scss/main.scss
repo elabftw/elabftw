@@ -28,8 +28,6 @@
 @include meta.load-css('@deltablot/dropzone/src/dropzone');
 @include meta.load-css('@fancyapps/fancybox/dist/jquery.fancybox');
 @include meta.load-css('jquery-ui/themes/base/core');
-@include meta.load-css('jquery-ui/themes/base/autocomplete');
-@include meta.load-css('jquery-ui/themes/base/menu');
 @include meta.load-css('jquery-ui/themes/base/sortable');
 @include meta.load-css('jquery-ui/themes/base/theme');
 
@@ -223,14 +221,6 @@ select:not([multiple]) {
   .form-control-plaintext,
   pre {
     color: var(--mediumstrong);
-  }
-
-  .ui-autocomplete {
-    background: var(--mainbackground);
-  }
-
-  .ui-menu-item-wrapper {
-    color: var(--strongest);
   }
 
   .dropdown-divider {
@@ -942,6 +932,11 @@ tr:first-child td {
   padding-left: 20px;
 }
 
+/* Keep linked steps below the sticky navigation and entity toolbar. */
+[id^='step_view_'] {
+  scroll-margin-top: calc(var(--step-scroll-offset, 0px) + 1rem);
+}
+
 /* for steps highlight, because .active only works on list-group-item */
 .highlighted {
   border: 1px solid var(--primary);
@@ -973,6 +968,75 @@ the form-control fails to do that so we do the border ourselves */
 .step-static {
   border: 1px solid var(--secondary);
   border-radius: 0 4px 4px 0;
+}
+
+
+.step-group-card {
+  border: 1px solid var(--secondlevel);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.step-group-header {
+  background-color: var(--firstlevel);
+  border-bottom: 1px solid var(--secondlevel);
+}
+
+.step-group-body {
+  background-color: var(--white);
+}
+
+.step-group-steps {
+  min-height: 2.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.step-group-steps:empty {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+}
+
+.add-step-toggle:hover {
+  text-decoration: none;
+}
+
+.add-step-group-toggle {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--firstlevel);
+    text-decoration: none;
+  }
+}
+
+.step-sortable-placeholder {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  min-height: 2.5rem;
+}
+
+.step-group-sortable-placeholder {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  min-height: 3rem;
+}
+
+.upload-group.step-group-card {
+  // Attachment action dropdowns need to escape the group card boundaries.
+  overflow: visible;
+}
+
+.upload-group-drop-target {
+  border: 1px dashed var(--secondary);
+  border-radius: 4px;
+  min-height: 3rem;
+}
+
+tr.upload-group-drop-target td {
+  height: 3rem;
 }
 
 .finished {
@@ -1124,12 +1188,11 @@ the form-control fails to do that so we do the border ourselves */
 
   /* Only Status */
   &.status-btn {
-    background-color: var(--firstlevel);
+    background-color: var(--superlight);
     color: var(--mediumstrong);
 
     &:hover {
-      background-color: var(--secondlevel);
-      color: var(--chrome-bg);
+      background-color: var(--firstlevel);
     }
 
     i {
@@ -1891,11 +1954,18 @@ input:user-invalid {
 
 #metadataDiv {
   textarea,
-  input {
+  input,
+  select {
     &:required:invalid {
       background-color: var(--mediumyellow);
       color: var(--chrome-bg);
     }
+  }
+
+  [data-purpose='radio-holder']:has(input:required:invalid) {
+    background-color: var(--mediumyellow);
+    border-radius: 4px;
+    padding: 4px 8px;
   }
 }
 
@@ -1926,6 +1996,28 @@ input:user-invalid {
   border: 1px solid transparent;
   border-radius: 5px;
   padding: 1px;
+}
+
+// h1 holding the custom id badge and the malleable title
+.entity-title {
+  align-items: center;
+  display: flex;
+
+  // malle replaces the title span with a block form, which would otherwise wrap below the custom id
+  > form {
+    flex-grow: 1;
+  }
+}
+
+.custom-id-badge {
+  background-color: var(--superlight);
+  border: 1px solid var(--firstlevel);
+  border-radius: 0.25rem;
+  color: var(--medium);
+  flex-shrink: 0;
+  font-size: 0.75em;
+  line-height: 1;
+  padding: 0.15em 0.4em;
 }
 
 .active-filter-badge {

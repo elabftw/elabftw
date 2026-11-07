@@ -20,6 +20,46 @@ use function sprintf;
 
 class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
 {
+    public function testAdditiveMergePreservesExistingFieldsAndValues(): void
+    {
+        $existing = '{"custom":{"keep":true},"extra_fields":{"Text":{"type":"text","value":"  keep spaces  "},"Empty":{"value":""},"Zero":{"value":0},"Multi":{"value":[]},"Local":{"value":"local"}}}';
+        $template = '{"custom":{"keep":false},"extra_fields":{"Text":{"type":"number","value":"42"},"Empty":{"value":"default"},"Zero":{"value":"42"},"Multi":{"value":"default"},"New":{"type":"text","value":"default"}}}';
+        $merged = json_decode(MetadataHelpers::mergeMetadataAdditive($existing, $template), true, 512, JSON_THROW_ON_ERROR);
+        $original = json_decode($existing, true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertSame($original['custom'], $merged['custom']);
+        foreach ($original['extra_fields'] as $name => $field) {
+            $this->assertSame($field, $merged['extra_fields'][$name]);
+        }
+        $this->assertSame(array('type' => 'text', 'value' => 'default'), $merged['extra_fields']['New']);
+        $this->assertSame($merged, json_decode(MetadataHelpers::mergeMetadataAdditive(json_encode($merged, JSON_THROW_ON_ERROR), $template), true));
+    }
+
+    public function testAdditiveMergeWithNullMetadata(): void
+    {
+        $template = '{"extra_fields":{"New":{"type":"text","value":"default"}}}';
+        $this->assertJsonStringEqualsJsonString($template, MetadataHelpers::mergeMetadataAdditive(null, $template));
+    }
+
+    public function testAdditiveMergeRemapsGroupsWithoutChangingExistingGroups(): void
+    {
+        $existing = '{"elabftw":{"display_main_text":false,"extra_fields_groups":[{"id":1,"name":"Local"},{"id":5,"name":"Shared"}]},"extra_fields":{"Local":{"value":"kept","group_id":1}}}';
+        $template = '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Template"},{"id":2,"name":"Shared"},{"id":3,"name":"Unused"}]},"extra_fields":{"New":{"value":"new","group_id":1},"Second":{"value":"second","group_id":1},"Shared":{"value":"shared","group_id":2},"Undefined":{"value":"undefined","group_id":5}}}';
+        $merged = json_decode(MetadataHelpers::mergeMetadataAdditive($existing, $template), true, 512, JSON_THROW_ON_ERROR);
+
+        $this->assertFalse($merged['elabftw']['display_main_text']);
+        $this->assertSame(array(
+            array('id' => 1, 'name' => 'Local'),
+            array('id' => 5, 'name' => 'Shared'),
+            array('id' => 6, 'name' => 'Template'),
+        ), $merged['elabftw']['extra_fields_groups']);
+        $this->assertSame(1, $merged['extra_fields']['Local']['group_id']);
+        $this->assertSame(6, $merged['extra_fields']['New']['group_id']);
+        $this->assertSame(6, $merged['extra_fields']['Second']['group_id']);
+        $this->assertSame(5, $merged['extra_fields']['Shared']['group_id']);
+        $this->assertArrayNotHasKey('group_id', $merged['extra_fields']['Undefined']);
+    }
+
     public function testMergeMetadataWithEmptySource(): void
     {
         $incoming = '{"extra_fields":{"Website":{"type":"url","value":"https://example.org"}}}';
@@ -33,6 +73,15 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $source = '{"extra_fields":{"Weight":{"type":"number","unit":"g","units":["g","kg"],"description":"Mass","value":"1"}}}';
         $incoming = '{"extra_fields":{"Weight":{"type":"text","unit":"kg","description":"Ignored","value":"12,5"}}}';
         $expected = '{"extra_fields":{"Weight":{"type":"number","unit":"g","units":["g","kg"],"description":"Mass","value":"12.5"}}}';
+
+        $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataPreservesValueLabels(): void
+    {
+        $source = '{"extra_fields":{"Checks":{"type":"checkbox","allow_multi_values":true,"value_labels":["Calibrated","Reviewed"],"value":["on","off"]}}}';
+        $incoming = '{"extra_fields":{"Checks":{"type":"text","value_labels":["Incoming A","Incoming B"],"value":["on","on"]}}}';
+        $expected = '{"extra_fields":{"Checks":{"type":"checkbox","allow_multi_values":true,"value_labels":["Calibrated","Reviewed"],"value":["on","on"]}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
     }
@@ -61,6 +110,73 @@ class MetadataHelpersTest extends \PHPUnit\Framework\TestCase
         $expected = '{"extra_fields":{"Weight":{"type":"number","value":"12.5"}}}';
 
         $this->assertJsonStringEqualsJsonString($expected, MetadataHelpers::mergeMetadata($source, $incoming));
+    }
+
+    public function testMergeMetadataNormalizesDateFormats(): void
+    {
+        $source = '{"extra_fields":{"Date Received":{"type":"date","value":""}}}';
+        $values = array(
+            '18.12.2025' => '2025-12-18',
+            '18-12-2025' => '2025-12-18',
+            '18/12/2025' => '2025-12-18',
+            '09/01/2026' => '2026-01-09',
+            '2025-12-18' => '2025-12-18',
+            'December 18, 2025' => '2025-12-18',
+        );
+
+        foreach ($values as $value => $expectedValue) {
+            $incoming = json_encode(array(
+                'extra_fields' => array(
+                    'Date Received' => array('value' => $value),
+                ),
+            ), JSON_THROW_ON_ERROR);
+            $result = json_decode(MetadataHelpers::mergeMetadata($source, $incoming), true, 512, JSON_THROW_ON_ERROR);
+
+            $this->assertSame($expectedValue, $result['extra_fields']['Date Received']['value']);
+        }
+    }
+
+    public function testMergeMetadataNormalizesDateTimeFormats(): void
+    {
+        $source = '{"extra_fields":{"Modified on":{"type":"datetime-local","value":""}}}';
+        $values = array(
+            '09.01.2026 19:35' => '2026-01-09T19:35',
+            '09-01-2026 19:35' => '2026-01-09T19:35',
+            '18/12/2025 19:35' => '2025-12-18T19:35',
+            '2026-01-09 19:35' => '2026-01-09T19:35',
+            '2026-01-09T19:35' => '2026-01-09T19:35',
+            '09.01.2026 19:35:42' => '2026-01-09T19:35:42',
+        );
+
+        foreach ($values as $value => $expectedValue) {
+            $incoming = json_encode(array(
+                'extra_fields' => array(
+                    'Modified on' => array('value' => $value),
+                ),
+            ), JSON_THROW_ON_ERROR);
+            $result = json_decode(MetadataHelpers::mergeMetadata($source, $incoming), true, 512, JSON_THROW_ON_ERROR);
+
+            $this->assertSame($expectedValue, $result['extra_fields']['Modified on']['value']);
+        }
+    }
+
+    public function testMergeMetadataRejectsRelativeDate(): void
+    {
+        $source = '{"extra_fields":{"Date Received":{"type":"date","value":""}}}';
+        $incoming = '{"extra_fields":{"Date Received":{"value":"tomorrow"}}}';
+
+        $this->expectException(ImproperActionException::class);
+        MetadataHelpers::mergeMetadata($source, $incoming);
+    }
+
+    public function testMergeMetadataRejectsInvalidDate(): void
+    {
+        $source = '{"extra_fields":{"Date Received":{"type":"date","value":""}}}';
+        $incoming = '{"extra_fields":{"Date Received":{"value":"31.02.2025"}}}';
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field Date Received contains an invalid date.');
+        MetadataHelpers::mergeMetadata($source, $incoming);
     }
 
     public function testMergeMetadataRejectsInvalidNumber(): void

@@ -32,6 +32,7 @@ use Override;
 
 use function array_merge;
 use function bin2hex;
+use function ctype_digit;
 use function random_bytes;
 use function ucfirst;
 use function array_column;
@@ -57,11 +58,15 @@ final class QueryBuilderVisitor implements Visitor
         $param = $this->getUniqueID();
         $paramCustomId = $this->getUniqueID();
         $paramBody = $this->getUniqueID();
+        $value = $simpleValueWrapper->getValue();
+        // only look at custom_id for integer terms: MySQL casts a string like "81-30-1" (a CAS number) to 81
+        $isCustomId = ctype_digit($value);
         $query = sprintf(
             '(entity.title LIKE %1$s
                 OR entity.date LIKE %1$s
                 OR entity.elabid LIKE %1$s
-                OR entity.custom_id = %3$s
+                %3$s
+                OR entity.metadata_search LIKE %1$s
                 OR compounds.cas_number LIKE %1$s
                 OR compounds.ec_number LIKE %1$s
                 OR compounds.name LIKE %1$s
@@ -71,25 +76,27 @@ final class QueryBuilderVisitor implements Visitor
                 OR entity.body LIKE %2$s)',
             $param,
             $paramBody,
-            $paramCustomId,
+            $isCustomId ? 'OR entity.custom_id = ' . $paramCustomId : '',
         );
 
         $bindValues = array();
         $bindValues[] = array(
             'param' => $param,
-            'value' => '%' . $simpleValueWrapper->getValue() . '%',
+            'value' => '%' . $value . '%',
         );
         // body is stored as html after htmlPurifier worked on it
         // so '<', '>', '&' need to be converted to their htmlentities &lt;, &gt;, &amp;
         $bindValues[] = array(
             'param' => $paramBody,
-            'value' => '%' . htmlspecialchars($simpleValueWrapper->getValue(), ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
+            'value' => '%' . htmlspecialchars($value, ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_HTML401) . '%',
         );
-        $bindValues[] = array(
-            'param' => $paramCustomId,
-            'value' => $simpleValueWrapper->getValue(),
-            'type' => PDO::PARAM_INT,
-        );
+        if ($isCustomId) {
+            $bindValues[] = array(
+                'param' => $paramCustomId,
+                'value' => $value,
+                'type' => PDO::PARAM_INT,
+            );
+        }
 
         return new WhereCollector($query, $bindValues);
     }
@@ -198,7 +205,8 @@ final class QueryBuilderVisitor implements Visitor
                     $query = $column . ' BETWEEN ' . $paramMin . ' AND ' . $paramMax;
                 }
                 if ($timestampField->getOperator() === '!=') {
-                    $query = $column . ' < ' . $paramMin . ' OR ' . $column . ' > ' . $paramMax;
+                    // parentheses are needed because this fragment can be joined with AND
+                    $query = '(' . $column . ' < ' . $paramMin . ' OR ' . $column . ' > ' . $paramMax . ')';
                 }
                 $bindValues[] = array(
                     'param' => $paramMin,
@@ -253,6 +261,7 @@ final class QueryBuilderVisitor implements Visitor
     #[Override]
     public function visitField(Field $field, VisitorParameters $parameters): WhereCollector
     {
+        // Attachment:   uploads.real_name OR uploads.comment (uploads table is only joined when this field is used)
         // Author:       CONCAT(users.firstname, ' ', users.lastname)
         // Body:         entity.body
         // Category:     categoryt.title
@@ -264,12 +273,12 @@ final class QueryBuilderVisitor implements Visitor
         // Rating:       entity.rating
         // State:        entity.state
         // Status:       statust.title
+        // Tag:          tags.tag through an EXISTS subquery on tags2entity
         // Timestamped:  entity.timestamped, if entity == experiment
         // Title:        entity.title
         // Visibility:   entity.canread
 
         // SearchIn:     sets entity, not implemented!
-        // Tag and Metadata not implemented!
 
         // Call class methods dynamically to avoid many if statements.
         // This works because the parser and the Fields enum define the list of fields.
@@ -374,6 +383,19 @@ final class QueryBuilderVisitor implements Visitor
                 'param' => $param,
                 'value' => $searchTerm,
                 'type' => $PdoParamConst,
+            )),
+        );
+    }
+
+    private function visitFieldAttachment(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        $param = $this->getUniqueID();
+        return new WhereCollector(
+            sprintf('(uploads.real_name LIKE %1$s OR uploads.comment LIKE %1$s)', $param),
+            array(array(
+                'param' => $param,
+                'value' => $affix . $searchTerm . $affix,
+                'type' => PDO::PARAM_STR,
             )),
         );
     }
@@ -501,6 +523,37 @@ final class QueryBuilderVisitor implements Visitor
             'entity.timestamped = ',
             $searchTerm,
             PDO::PARAM_INT,
+        );
+    }
+
+    // An EXISTS subquery (instead of a join) lets several tag: terms be combined with AND,
+    // as each one is checked against all the tags of the entity, and avoids duplicated rows.
+    private function visitFieldTag(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        $paramTag = $this->getUniqueID();
+        $paramType = $this->getUniqueID();
+        return new WhereCollector(
+            sprintf(
+                'EXISTS (SELECT 1 FROM tags2entity
+                    INNER JOIN tags ON (tags.id = tags2entity.tag_id)
+                    WHERE tags2entity.item_id = entity.id
+                        AND tags2entity.item_type = %s
+                        AND tags.tag LIKE %s)',
+                $paramType,
+                $paramTag,
+            ),
+            array(
+                array(
+                    'param' => $paramType,
+                    'value' => $parameters->getEntityType(),
+                    'type' => PDO::PARAM_STR,
+                ),
+                array(
+                    'param' => $paramTag,
+                    'value' => $affix . $searchTerm . $affix,
+                    'type' => PDO::PARAM_STR,
+                ),
+            ),
         );
     }
 

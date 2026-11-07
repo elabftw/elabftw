@@ -47,7 +47,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-           // Use current while creating the versions, then make 6.0 the default.
+          // Use current while creating the versions, then make 6.0 the default.
           lastVersion: versioningReady ? '6.0' : 'current',
 
           versions: {
@@ -59,11 +59,12 @@ const config: Config = {
             ...(versioningReady && {
               '6.0': {
                 label: '6.0',
+                path: '',
                 banner: 'none',
               },
               '5.6': {
                 label: '5.6',
-                banner: 'none',
+                banner: 'unmaintained',
               },
             }),
           },
@@ -87,6 +88,9 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/elabftw-logo.png',
+    docs: {
+      versionPersistence: 'none',
+    },
     colorMode: {
       respectPrefersColorScheme: true,
     },

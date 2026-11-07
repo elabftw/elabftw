@@ -17,10 +17,9 @@ use Elabftw\Elabftw\FsTools;
 use Elabftw\Exceptions\ImproperActionException;
 use HTMLPurifier;
 use HTMLPurifier_HTML5Config;
+use ValueError;
 
 use function filter_var;
-use function grapheme_substr;
-use function grapheme_strlen;
 use function strlen;
 use function strtolower;
 use function trim;
@@ -30,12 +29,24 @@ use function explode;
 use function pathinfo;
 use function preg_replace;
 use function str_replace;
+use function grapheme_extract;
+use function sprintf;
+
+use const GRAPHEME_EXTR_MAXBYTES;
+use const GRAPHEME_EXTR_MAXCHARS;
 
 /**
  * When values need to be filtered
  */
 final class Filter
 {
+    // Conservative byte limit for ZIP extraction compatibility with Windows MAX_PATH.
+    // https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation
+    private const int MAX_FILESYSTEM_TITLE_BYTES = 100;
+
+    // Step bodies are stored in TEXT columns, whose capacity is measured in bytes.
+    private const int MAX_STEP_BODY_BYTES = 65535;
+
     /**
      * ~= max size of MEDIUMTEXT in MySQL for UTF-8
      * But here it's less than that because while trying different sizes
@@ -118,27 +129,26 @@ final class Filter
     }
 
     /**
-     * Sanitize title with a filter_var and remove the line breaks.
+     * Trim a title, remove line breaks and limit it to 255 Unicode code points.
      *
      * @param string $input The title to sanitize
      * @return string Will return Untitled if there is no input.
      */
     public static function title(string $input): string
     {
-        $title = trim($input);
-        if ($title === '') {
-            return _('Untitled');
+        return self::truncateStringToChars(self::singleLine($input), 255);
+    }
+
+    /**
+     * Normalize a step and reject content that exceeds its TEXT column's byte limit.
+     */
+    public static function step(string $input): string
+    {
+        $step = self::singleLine($input);
+        if (strlen($step) > self::MAX_STEP_BODY_BYTES) {
+            throw new ImproperActionException(sprintf(_('Step is too long! (maximum: %d bytes)'), self::MAX_STEP_BODY_BYTES));
         }
-        // remove linebreak to avoid problem in javascript link list generation on editXP
-        $title = str_replace(array("\r\n", "\n", "\r"), ' ', $title);
-        $maxCharacters = 255;
-        if (grapheme_strlen($title) > $maxCharacters) {
-            $title = grapheme_substr($title, 0, $maxCharacters);
-            if ($title === false) {
-                throw new ImproperActionException('Error reducing title size!');
-            }
-        }
-        return $title;
+        return $step;
     }
 
     public static function toAsciiSlug(string $input): string
@@ -147,9 +157,25 @@ final class Filter
     }
 
     /**
-     * Remove all non ascii characters. Used for files saved on the filesystem (pdf, zip, ...)
-     * FIXME: this should be improved so valid utf-8 strings are still accepted
-     * see: https://github.com/elabftw/elabftw/issues/5783#issuecomment-3043949949
+     * Use grapheme_extract to truncate strings correctly: meaning not in the middle of a grapheme like が
+     */
+    public static function truncateString(string $input, int $size = self::MAX_FILESYSTEM_TITLE_BYTES): string
+    {
+        return self::truncateWithGrapheme($input, $size, GRAPHEME_EXTR_MAXBYTES);
+    }
+
+    /**
+     * This one uses characters instead of bytes
+     */
+    public static function truncateStringToChars(string $input, int $size): string
+    {
+        return self::truncateWithGrapheme($input, $size, GRAPHEME_EXTR_MAXCHARS);
+    }
+
+    /**
+     * Convert a filename to an ASCII slug while preserving its extension.
+     * This method expects a filename, not a title or a path.
+     * Use forFilesystemTitle() for user's titles containing Unicode.
      */
     public static function forFilesystem(string $input): string
     {
@@ -162,6 +188,18 @@ final class Filter
             return $safe . '.' . $ext;
         }
         return $safe;
+    }
+
+    public static function forFilesystemTitle(string $input): string
+    {
+        try {
+            $Slugger = new FileSlugger();
+            $safe = $Slugger->nonEmptyUnicodeSlug($input)->toString();
+            // Normalize before limiting bytes, then validate the truncated prefix again.
+            return $Slugger->nonEmptyUnicodeSlug(self::truncateString($safe))->toString();
+        } catch (ValueError) {
+            return _('Untitled');
+        }
     }
 
     public static function intOrNull(string|int $input): ?int
@@ -296,6 +334,30 @@ final class Filter
             return null;
         }
         return Check::color($input);
+    }
+
+    private static function singleLine(string $input): string
+    {
+        $input = trim($input);
+        if ($input === '') {
+            return _('Untitled');
+        }
+        // Remove line breaks to avoid problems in JavaScript link list generation on editXP.
+        return str_replace(array("\r\n", "\n", "\r"), ' ', $input);
+    }
+
+    private static function truncateWithGrapheme(string $input, int $size, int $type): string
+    {
+        if ($input === '') {
+            return '';
+        }
+        $truncated = grapheme_extract($input, $size, $type);
+
+        if ($truncated === false) {
+            throw new ImproperActionException(sprintf('Error reducing string to size %d!', $size));
+        }
+
+        return $truncated;
     }
 
     private static function validateBodySize(?string $input): string

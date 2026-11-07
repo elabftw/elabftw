@@ -32,20 +32,27 @@ final class TeamsHelper
      */
     public function teamIsVisibleOrExplode(): void
     {
-        $sql = 'SELECT id, visible FROM teams WHERE id = :team_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team_id', $this->team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $team = $req->fetch();
-        if ($team == false || $team['visible'] !== 1) {
+        if (!$this->isVisible()) {
             throw new ForbiddenException("There is no visible team with ID $this->team .");
         }
     }
 
     /**
+     * Does the team exist and is it visible (not hidden by a Sysadmin)
+     */
+    public function isVisible(): bool
+    {
+        $sql = 'SELECT visible FROM teams WHERE id = :team_id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team_id', $this->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchColumn() === 1;
+    }
+
+    /**
      * Return the usergroup that will be assigned to a new user in a team
      * Sysadmin if it's the first user ever
-     * Admin for first user in a team
+     * Admin for the first user ever in a team (archived members count, see isFirstUserInTeam)
      * Normal user
      */
     public function getGroup(): Usergroup
@@ -155,11 +162,17 @@ final class TeamsHelper
     }
 
     /**
-     * Are we the first user to register in a team?
+     * Are we the very first user to join this team?
+     * Archived memberships count too: a team whose members are all archived is not
+     * an empty team, and joining it must not grant Admin rights over those members.
      */
     public function isFirstUserInTeam(): bool
     {
-        return $this->getUsersCount() === 0;
+        $sql = 'SELECT 1 FROM users2teams WHERE teams_id = :team LIMIT 1';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':team', $this->team, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchColumn() === false;
     }
 
     /**

@@ -19,6 +19,7 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
+use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -101,8 +102,10 @@ final class Exports extends AbstractRest
         $DownloadController = new DownloadController(
             $this->fs,
             $export['long_name'],
+            $this->requester,
+            Storage::EXPORTS,
             $export['real_name'],
-            true,
+            forceDownload: true,
         );
         return $DownloadController->getResponse();
     }

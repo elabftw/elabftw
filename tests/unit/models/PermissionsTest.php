@@ -14,7 +14,10 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AuthenticatedUser;
+use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function json_decode;
@@ -93,5 +96,77 @@ class PermissionsTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(ForbiddenException::class);
         $viewerExperiment->setId($experimentId);
+    }
+
+    public function testAdminOfAnotherTeamCannotWriteLockedEntity(): void
+    {
+        $Experiments = $this->getExperimentWritableByAdminOfAnotherTeam(locked: true);
+        $this->expectException(ForbiddenException::class);
+        $Experiments->patch(Action::Update, array('title' => 'Modified by an admin of another team'));
+    }
+
+    public function testAdminOfAnotherTeamCannotUnlockEntity(): void
+    {
+        $Experiments = $this->getExperimentWritableByAdminOfAnotherTeam(locked: true);
+        $this->expectException(ForbiddenException::class);
+        $Experiments->patch(Action::ForceUnlock, array());
+    }
+
+    public function testAdminOfAnotherTeamCannotToggleLock(): void
+    {
+        $Experiments = $this->getExperimentWritableByAdminOfAnotherTeam(locked: true);
+        // call it directly so the lock check is not done by the write permission check of patch()
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage("You don't have the rights to lock/unlock this.");
+        $Experiments->toggleLock();
+    }
+
+    public function testAdminOfAnotherTeamCannotOverrideImmutablePermissions(): void
+    {
+        $Experiments = $this->getExperimentWritableByAdminOfAnotherTeam(locked: false);
+        $this->expectException(UnprocessableContentException::class);
+        $this->expectExceptionMessage('Cannot modify permissions on entry with immutable permissions.');
+        $Experiments->patch(Action::Update, array('canwrite_base' => BasePermissions::Organization->value));
+    }
+
+    public function testAdminOfEntityTeamCanUnlockAndOverrideImmutablePermissions(): void
+    {
+        $Experiments = $this->getExperimentWritableByAdminOfAnotherTeam(locked: true);
+        $admin = $this->getUserInTeam(team: 1, admin: 1);
+        // make sure this goes through the Admin check, not the locker one
+        $this->assertNotSame($Experiments->entityData['lockedby'], $admin->userid);
+        $AdminExperiments = new Experiments($admin, $Experiments->id);
+
+        $exp = $AdminExperiments->patch(Action::Update, array('title' => 'Modified by an admin of the team'));
+        $this->assertSame('Modified by an admin of the team', $exp['title']);
+        $exp = $AdminExperiments->patch(Action::ForceUnlock, array());
+        $this->assertSame(0, $exp['locked']);
+        $exp = $AdminExperiments->patch(Action::Update, array('canwrite_base' => BasePermissions::Organization->value));
+        $this->assertSame(BasePermissions::Organization->value, $exp['canwrite_base']);
+    }
+
+    /**
+     * Get an experiment from team 1, with immutable write permissions, shared for reading and writing
+     * with a user that is Admin in team 2 but not in team 1. It is loaded with that user, logged in team 2.
+     */
+    private function getExperimentWritableByAdminOfAnotherTeam(bool $locked): Experiments
+    {
+        $adminOfOtherTeam = $this->getUserInTeam(team: 2, admin: 1);
+        $this->assertTrue($adminOfOtherTeam->isAdmin);
+        $this->assertFalse(new TeamsHelper(1)->isAdminInTeam($adminOfOtherTeam->getUserid()));
+
+        $can = json_decode(AbstractEntity::EMPTY_CAN_JSON, true);
+        $can['users'] = array($adminOfOtherTeam->getUserid());
+        $OwnerExperiments = new Experiments(new AuthenticatedUser(2, 1));
+        $id = $OwnerExperiments->create(
+            canread: json_encode($can, JSON_THROW_ON_ERROR),
+            canwrite: json_encode($can, JSON_THROW_ON_ERROR),
+            canwriteIsImmutable: true,
+        );
+        $OwnerExperiments->setId($id);
+        if ($locked) {
+            $OwnerExperiments->lock();
+        }
+        return new Experiments($adminOfOtherTeam, $id);
     }
 }

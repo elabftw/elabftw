@@ -16,8 +16,10 @@ use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\AccessType;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Params\ContentParams;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -105,7 +107,7 @@ final class Revisions extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $this->Entity->canOrExplode(AccessType::Read);
+        $this->canReadOrExplode();
         $sql = sprintf('SELECT %1$s_revisions.id, %1$s_revisions.content_type, %1$s_revisions.created_at,
             CONCAT(users.firstname, " ", users.lastname) AS fullname
             FROM %1$s_revisions
@@ -121,7 +123,7 @@ final class Revisions extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->Entity->canOrExplode(AccessType::Read);
+        $this->canReadOrExplode();
         $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_revisions WHERE id = :rev_id AND item_id = :item_id';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':rev_id', $this->id, PDO::PARAM_INT);
@@ -136,6 +138,14 @@ final class Revisions extends AbstractRest
             $entityData['body_html'] = Tools::md2html($entityData['body'] ?? '');
         }
         return $entityData;
+    }
+
+    private function canReadOrExplode(): void
+    {
+        if ($this->Entity->Users instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
+        $this->Entity->canOrExplode(AccessType::Read);
     }
 
     /**

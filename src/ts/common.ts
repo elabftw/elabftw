@@ -6,6 +6,7 @@
  * @package elabftw
  */
 import $ from 'jquery';
+import { initAutocompletes } from './autocomplete';
 import { ApiC } from './api';
 import { Malle, InputType } from '@deltablot/malle';
 import type { SelectOptions } from '@deltablot/malle';
@@ -18,7 +19,6 @@ import {
   adjustHiddenState,
   clearForm,
   collectForm,
-  escapeExtendedQuery,
   generateMetadataLink,
   handleReloads,
   getInput,
@@ -289,6 +289,13 @@ if (navbar) {
   }, { passive: true });
 }
 
+const entityToolbar = document.getElementById('entityToolbar');
+if (entityToolbar) {
+  // Scrolling up reveals the navbar, so reserve its height even while it is hidden.
+  const offset = (navbar?.offsetHeight ?? 0) + entityToolbar.offsetHeight;
+  root.style.setProperty('--step-scroll-offset', `${offset}px`);
+}
+
 const container = document.getElementById('container')!;
 
 // tomSelect with searchable categories in the dropdown for the main Navbar
@@ -360,17 +367,6 @@ const FavTagC = new FavTag();
 const TodolistC = new Todolist();
 
 const TableSortingC = new TableSorting();
-// for searching inputs, allow specific triggers for East & South East Asian characters
-const hasEastSEAsian = (s: string): boolean => (
-  /\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}|\p{Script=Thai}|\p{Script=Lao}|\p{Script=Khmer}|\p{Script=Myanmar}|\p{Script=Bopomofo}/u.test(s)
-);
-
-const countGraphemes = (text: string): number => {
-  // use Intl.Segmenter to handle locale-sensitive text segmentation (graphemes, sentences, etc.,)
-  const graphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-  return Array.from(graphemeSegmenter.segment(text)).length;
-};
-
 TableSortingC.init();
 (new Tab()).init(document.querySelector('.tabbed-menu'));
 
@@ -391,11 +387,12 @@ if (userPrefs.scDisabled === '0') {
 }
 
 // SIDE PANEL STATE
+// Login and register pages do not render side panels.
 const openedSidePanel = localStorage.getItem('opened-sidepanel');
-if (openedSidePanel === Model.FavTag) {
+if (openedSidePanel === Model.FavTag && document.getElementById(FavTagC.panelId)) {
   FavTagC.toggle();
 }
-if (openedSidePanel === Model.Todolist) {
+if (openedSidePanel === Model.Todolist && document.getElementById(TodolistC.panelId)) {
   TodolistC.toggle();
 }
 
@@ -838,10 +835,46 @@ on('toggle-dependent', (el: HTMLInputElement) => {
     });
 });
 
+// The approvers select is a regular users TomSelect (see initPermissionsTomSelects).
+// Keep its enabled state in sync with the booking switches: selections are preserved when disabled.
+function getBookingApproversSelect(): (HTMLSelectElement & { tomselect?: TomSelect }) | null {
+  return document.getElementById('bookingApprovers_select_users') as (HTMLSelectElement & { tomselect?: TomSelect }) | null;
+}
+
+function syncBookingApproversState(): void {
+  const select = getBookingApproversSelect();
+  if (!select?.tomselect) return;
+  const required = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
+  const bookable = document.getElementById('isBookableSwitch') as HTMLInputElement | null;
+  if (required?.checked && bookable?.checked) {
+    select.tomselect.enable();
+  } else {
+    select.tomselect.disable();
+  }
+}
+
+$(document).on('shown.bs.modal', '#bookingParamsModal', syncBookingApproversState);
+$(document).on('change', '#requiresApprovalSwitch, #isBookableSwitch', syncBookingApproversState);
+
 on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   e.preventDefault();
   const form = document.getElementById('editBookingParamsForm') as HTMLFormElement;
+  const requiredInput = document.getElementById('requiresApprovalSwitch') as HTMLInputElement | null;
+  const usersInput = getBookingApproversSelect();
+  // values are in the 'user:<userid>' format used by the permissions selects
+  const approvers = (usersInput?.tomselect
+    ? usersInput.tomselect.items
+    : Array.from(usersInput?.selectedOptions ?? [], option => option.value))
+    .map(value => Number(String(value).replace('user:', '')))
+    .filter(userid => userid > 0);
+  if (requiredInput?.checked && approvers.length === 0) {
+    notify.error('error-approver-required');
+    return;
+  }
   const params = collectForm(form);
+  if (requiredInput) {
+    Object.assign(params, { requires_booking_approval: requiredInput.checked ? 1 : 0, approvers });
+  }
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);
   $('#bookingParamsModal').modal('hide');
@@ -957,6 +990,9 @@ on('toggle-next', (el: HTMLElement) => {
   }
   const isHidden = targetEl.toggleAttribute('hidden');
   el.setAttribute('aria-expanded', String(!isHidden));
+  if (!isHidden && el.dataset.focusFirstInput === 'true' && targetEl instanceof HTMLFormElement) {
+    targetEl.querySelector<HTMLInputElement>('input:not([type="hidden"])')?.focus();
+  }
 
   // might want to toggle another element with toggle-extra
   if (el.dataset.toggleTargetExtra) {
@@ -1646,13 +1682,10 @@ on('search-pubchem', (el: HTMLElement) => {
 });
 
 on('search-entity-from-compound', (el: HTMLElement) => {
-  // try and grab the CAS for the search
-  let query = (document.getElementById('compoundInput-cas_number') as HTMLInputElement).value;
-  // if no cas, use the name
-  if (!query) {
-    query = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
-  }
-  window.location.href = `${el.dataset.page}.php?q="${encodeURIComponent(query)}"`;
+  // filter on the actual links to the compound: a text search on CAS or name gives false positives
+  const compoundId = (document.getElementById('compoundInput-id') as HTMLInputElement).value;
+  const params = new URLSearchParams({ mode: 'show', compound: compoundId });
+  window.location.href = `${el.dataset.page}.php?${params.toString()}`;
 });
 
 on('import-compound', (el: HTMLElement) => {
@@ -1948,60 +1981,7 @@ on('toggle-body', (el: HTMLElement) => {
   });
 });
 
-on('autocomplete', (el: HTMLElement) => {
-  // depending on the type of results, we will want different attributes and formatting
-  let transformer = entity => {
-    const cat = entity.category_title ? `${entity.category_title} - ` : '';
-    const stat = entity.status_title ? `${entity.status_title} - ` : '';
-    return `${entity.id} - ${cat}${stat}${entity.title}`;
-  };
-  // useid data attribute is used in admin panel to grab the userid from input
-  if (el.dataset.target === 'users') {
-    transformer = user => `${user.userid} - ${user.fullname} (${user.email})`;
-  }
-  if (el.dataset.target === 'compounds') {
-    transformer = compound => `${compound.id} - ${compound.name} ${compound.cas_number ? ` (CAS: ${compound.cas_number})` : ''}`;
-  }
-
-  // use autocomplete jquery-ui plugin
-  $(el).autocomplete({
-    // this option is necessary or the autocomplete box will get lost under the permissions modal
-    appendTo: el.dataset.identifier ? `#autocompleteAnchorDiv_${el.dataset.identifier}` : '',
-    source: function(request: Record<string, string>, response: (data: Array<string>) => void): void {
-      const term = (request.term || '').trim();
-      // for East/Southeast Asian terms, we allow search with 1 grapheme
-      const isShortScript = hasEastSEAsian(term);
-      const minChars = isShortScript ? 1 : 3;
-      if (countGraphemes(term) < minChars) {
-        const msg = isShortScript ? [] : [i18next.t('type-3-chars')];
-        response(msg);
-        return;
-        // TODO make it unselectable/grayed out or something, maybe once we use homegrown autocomplete
-      }
-      const queryTerm = ['experiments', 'items'].includes(el.dataset.target)
-        ? escapeExtendedQuery(term)
-        : term;
-
-      const params = new URLSearchParams();
-      params.set('q', queryTerm);
-
-      // allow filtering users within a specific team
-      if (el.dataset.team) {
-        const teamId = document.getElementById(el.dataset.team) as HTMLInputElement | HTMLSelectElement;
-        if (teamId?.value) {
-          params.set('team', teamId.value);
-        }
-      }
-      ApiC.getJson(`${el.dataset.target}/?${params.toString()}`).then(json => {
-        if (!Array.isArray(json) || json.length === 0) {
-          response([i18next.t('not-found')]);
-          return;
-        }
-        response(json.map(entry => transformer(entry)));
-      });
-    },
-  });
-});
+initAutocompletes(container);
 
 on('query', (el: HTMLElement) => {
   const url = new URL(window.location.href);

@@ -5,9 +5,11 @@ describe('Users tab in Admin page', () => {
   });
 
   it('cannot create user with empty fields', () => {
-    // create user without filling
     cy.get('#initialCreateUserBtn').should('exist').click();
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Invalid');
+    cy.get('#createUserForm').then(($form) => {
+      expect(($form[0] as HTMLFormElement).checkValidity()).to.equal(false);
+    });
+    cy.get('#initialCreateUserBtn').should('not.be.disabled');
   });
 
   it('does not offer sysadmin in the create-user permission group dropdown', () => {

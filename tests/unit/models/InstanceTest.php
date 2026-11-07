@@ -13,13 +13,16 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Email;
 use Elabftw\Services\TeamsHelper;
+use Elabftw\Storage\Memory;
 use Elabftw\Traits\TestsUtilsTrait;
 use Monolog\Handler\NullHandler;
 use Monolog\Logger;
@@ -42,7 +45,7 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         $logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
         // we don't need to mock it, just give it the required schema as arg
-        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, new Migrations((new Memory())->getFs(), useBuildInfo: false));
         $this->email = new Email($schemaVersionChecker, $MockMailer, $logger, 'toto@yopmail.com', demoMode: false);
         $this->requester = new Users(1, 1);
         $this->Instance = new Instance($this->requester, $this->email, true);
@@ -114,5 +117,41 @@ class InstanceTest extends \PHPUnit\Framework\TestCase
         $TeamsHelper = new TeamsHelper(1);
         $usersCount = $TeamsHelper->getUsersCount();
         $this->assertSame($usersCount, $this->Instance->postAction(Action::EmailTeam, array('target' => 'team', 'subject' => 's', 'body' => 'b')));
+    }
+
+    public function testEmailTeamGroup(): void
+    {
+        $groupId = $this->createTeamGroupWithMember($this->requester, $this->requester->getUserid());
+        // a regular user can email a team group of their current team
+        $Instance = new Instance($this->getUserInTeam(1), $this->email, true);
+        $this->assertSame(1, $Instance->postAction(Action::EmailTeam, array('target' => 'teamgroup_' . $groupId, 'subject' => 's', 'body' => 'b')));
+    }
+
+    public function testEmailTeamGroupOfAnotherTeam(): void
+    {
+        $teamTwoAdmin = $this->getUserInTeam(2, admin: 1);
+        $groupId = $this->createTeamGroupWithMember($teamTwoAdmin, $teamTwoAdmin->getUserid());
+        $Instance = new Instance($this->getUserInTeam(1), $this->email, true);
+        $this->expectException(ForbiddenException::class);
+        $Instance->postAction(Action::EmailTeam, array('target' => 'teamgroup_' . $groupId, 'subject' => 's', 'body' => 'b'));
+    }
+
+    public function testEmailTeamGroupNotFound(): void
+    {
+        $this->expectException(ResourceNotFoundException::class);
+        $this->Instance->postAction(Action::EmailTeam, array('target' => 'teamgroup_999999999', 'subject' => 's', 'body' => 'b'));
+    }
+
+    public function testEmailTeamGroupWithoutId(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->Instance->postAction(Action::EmailTeam, array('target' => 'teamgroup', 'subject' => 's', 'body' => 'b'));
+    }
+
+    private function createTeamGroupWithMember(Users $admin, int $userid): int
+    {
+        $groupId = (new TeamGroups($admin))->postAction(Action::Create, array('name' => 'Mass email target'));
+        (new TeamGroups($admin, $groupId))->patch(Action::Update, array('how' => Action::Add->value, 'userid' => $userid));
+        return $groupId;
     }
 }

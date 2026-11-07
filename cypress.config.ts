@@ -43,6 +43,7 @@ export default defineConfig({
         {
           exclude: [
             '#scheduler', // scheduler on the team page has several violations
+            '.elab-autocomplete', // editable combobox popups need a listbox instead of a native select
             'h3[data-action="toggle-next"]', // these get the attribute role='button' ...
             'h4[data-action="toggle-next"]', // ... hence, trigger prefer-native-element
           ],

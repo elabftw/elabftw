@@ -67,9 +67,42 @@ You'll also want to configure your favorite text editor to display TypeScript er
 
 Use vanilla JS and ban the use of jQuery selectors or functions.
 
+## Database migrations
+
+Database changes are managed through SQL migrations in `src/sql/`. The old numbered `schemaNNN.sql` files are kept for upgrading existing installations, but new changes use migration files with UUIDv7 identifiers. Do not increment `SchemaVersionChecker::REQUIRED_SCHEMA` when adding a new migration.
+
+Generate a pair of migration files from the repository root:
+
+~~~bash
+bin/console dev:genschema add_step_groups
+~~~
+
+The optional name is converted to a filename-friendly suffix. This command creates two files, for example:
+
+* `src/sql/migration-<uuid>_add-step-groups.sql`: SQL to apply the change.
+* `src/sql/migration-<uuid>_add-step-groups.down.sql`: SQL to revert the change.
+
+Edit both files so the change can be applied and reverted. Also update `src/sql/structure.sql` to reflect the final structure for fresh installations (and `src/Models/Config.php` if changing configuration defaults). The generated files are templates; `dev:genschema` does not update the database or `structure.sql` itself.
+
+Production builds generate `BuildInfo::MIGRATIONS` through Composer's `pre-autoload-dump` hook, so requests do not scan the SQL directory. Set `DEV_MODE=true` to discover migration files directly during development. Run `composer dump-autoload` to regenerate the production migration list after adding or removing files.
+
+To test the migration on your development database:
+
+~~~bash
+bin/console db:update          # apply pending migrations
+bin/console db:status          # list applied and pending migrations
+bin/console db:check           # check whether an update is needed
+bin/console db:revert <uuid>   # revert a specific migration
+bin/console db:update          # apply it again
+~~~
+
+`db:revert` without an identifier reverts the most recently applied batch. `dev:forceschema <uuid>` marks a migration as applied without running SQL; `dev:forceschema <uuid> --remove` marks it as pending. These development commands modify migration state, not the database structure, so use them with care.
+
+On update, eLabFTW runs any remaining legacy numbered schemas first, followed by pending migrations in identifier order. New migrations must succeed even with `db:update --force`, so partially applied migrations cannot be recorded as completed. Applied migrations are recorded in the `schema_migrations` table, including their batch and application timestamp. On fresh installations, `structure.sql` already includes the current structure, so available migrations are recorded as applied instead of being executed again.
+
 ## Miscellaneous
 
-* if you make a change to the SQL structure, you need to add a schema file in `src/sql`. See the existing files for an example. Then increment the required version in `src/classes/Update`. Modify `src/sql/structure.sql` so new installs will get the correct structure. See also `dev:genschema` command.
+* for database changes, follow the [database migrations](#database-migrations) instructions above
 * comment your code wisely, what is important is the why, not the what
 * your code must follow [the PSR standards](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-1-basic-coding-standard.md)
 * add a plugin to your editor to show trailing whitespaces in red
@@ -99,9 +132,9 @@ yarn install
 yarn buildall
 ~~~
 
-Other commands exist, see `builder.js` (webpack), the `scripts` part of `package.json` (yarn). If you just want to rebuild the CSS, use `yarn buildcss`.
+Other commands exist, see `builder.js` (webpack), the `scripts` part of `package.json` (yarn). The main stylesheet (`src/scss/main.scss`) is bundled by webpack together with the JavaScript. `yarn buildcss` only builds the stylesheet used for the PDF export (`src/scss/pdf.scss`).
 
-When working on the code, it is best to have `yarn watchjs` and `yarn watchcss` running so changes are immediately picked up.
+When working on the code, it is best to have `yarn watchjs` running so changes to the TypeScript and SCSS files are immediately picked up. If you work on `src/scss/pdf.scss`, use `yarn watchpdfcss`.
 
 ## Tests
 
@@ -153,6 +186,10 @@ git checkout -b my-feature
 # go to github.com and create a pull request
 ~~~
 
+:::note
+All code you submit in a PR **MUST** be reviewed by a human, and changes **MUST** be tested by you. Autonomous AI submissions must be disclosed and are discouraged.
+:::
+
 
 ## Adding a lang
 
@@ -174,18 +211,18 @@ git checkout -b my-feature
 
 ## Adding a new term for js i18n
 
-* Add the new term to src/Elabftw/i8n4Js.php in the `getTerms()` function returned array
+* Add the new term to src/Elabftw/i18n4Js.php in the `getTerms()` function returned array
 * Run `bin/console dev:i18n4js`
 
 ## Accessing Docker MySQL database with phpmyadmin
 
-You might be used to access your local MySQL dev database with PHPMyadmin. Just uncomment the part related to phpmyadmin in the config file and `elabctl restart`.
+You might be used to access your local MySQL dev database with PHPMyadmin. The dev environment already starts a phpmyadmin container (see `containers/elabdev/docker-compose.yml`), so there is nothing to uncomment.
 
-This will launch a docker container with phpmyadmin that you can reach on port 8080. Go to [localhost:8080](http://localhost:8080). Login with your mysql user (elabftw by default) and your mysql password found in the .yml configuration file. You should see the `elabftw` database now.
+You can reach it on port 8082. Go to [localhost:8082](http://localhost:8082). Login with your mysql user (elabftw by default) and your mysql password found in the `mysql` service of the .yml configuration file. You should see the `elabftw` database now.
 
 ## How to test external auth
 
-To easily test external authentication, edit in the container `/etc/php8/php-fpm.d/elabpool.conf` and at the end add:
+To easily test external authentication, edit in the container `/run/php/elabpool.conf` (it is generated from a template each time the container starts) and at the end add:
 
 ~~~proto
 env[auth_user] = ntesla
@@ -195,7 +232,7 @@ env[auth_email] = "nico@example.com"
 env[auth_team] = "Alpha"
 ~~~
 
-Restart the php process with: `s6-svc -r /var/run/s6/services/php`.
+Restart the php process with: `reload php`.
 
 Next, configure the correct keys in the Sysconfig panel and external authentication should be working as expected.
 

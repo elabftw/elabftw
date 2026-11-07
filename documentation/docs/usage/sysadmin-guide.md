@@ -43,7 +43,7 @@ Register an account using this link: [SMTP2GO](https://get.smtp2go.com/xj1zy4rvl
 
 ## Set up backup
 
-See the dedicated [backup page](../install/backups).
+See the dedicated [backup page](../install/backups.md).
 
 
 ## Configure teams `(optional)`
@@ -63,8 +63,8 @@ The "Visible" attribute allows you to hide a team from the "Register" page. Use 
 eLabFTW currently supports four authentication mechanisms:
 
 * Local authentication: email + password stored locally (in the eLabFTW database), this is the default
-* SAML authentication: use one or several Identity Provider (IDP) to authenticate users. See dedicated [SAML documentation page](../install/post-install/authentication/saml).
-* LDAP authentication: verify the login with an LDAP service. See dedicated [LDAP documentation page](../install/post-install/authentication/ldap).
+* SAML authentication: use one or several Identity Provider (IDP) to authenticate users. See dedicated [SAML documentation page](../install/post-install/authentication/3-saml.md).
+* LDAP authentication: verify the login with an LDAP service. See dedicated [LDAP documentation page](../install/post-install/authentication/4-ldap.md).
 * External authentication: use request headers added by your own middleware to authenticate the user (_e.g._ Apache's auth_mellon)
 
 It is possible to have several mechanisms at the same time but recommended to only leave one visible to users. So if you configure LDAP or SAML, disable the Local login so Users are not confused.
@@ -109,6 +109,8 @@ So if you need a stronger certification, you should go with a commercial solutio
 
 You can select from the list of pre-configured TSA or use a custom one by providing the URL and login/password.
 
+SciMatic Proof can also be selected in this list. It is not an RFC 3161 service and only needs an API key, entered in the password field. See [SciMatic Proof receipts](traceability-and-auditability.md#scimatic-proof-receipts).
+
 Remember: no data is sent to the `TSA (TimeStampingAuthority)`, only the hash of the data is sent, so no information can leak!
 
 #### Configure automatic timestamping
@@ -152,7 +154,7 @@ It is important to keep your install up to date with the latest bug fixes and ne
 
 Subscribe to [the newsletter](http://eepurl.com/bTjcMj) to be warned when a new release is out or select "Releases only" from GitHub's Watch button on the [repo page](https://github.com/elabftw/elabftw).
 
-See instructions on updating eLabFTW on [upgrade page](../install/upgrade/update).
+See instructions on updating eLabFTW on [upgrade page](../install/upgrade/update.md).
 
 ## Sysadmin Panel
 
@@ -177,11 +179,11 @@ json_extract(canwrite, '$.base') = 10;
 
 Ignore this if you are not a CNRS lab.
 
-This allows to query an external endpoint to get a list of users that can be added to the eLabFTW local users database.
+This allows you to query an external endpoint to get a list of users that can be added to the eLabFTW local users database.
 
 ### Users tab
 
-The Sysadmin can manage Users the same way Admins can manage Users from their Team, but with more options, such as changing the password or attributes, and manage the teams for users.
+The Sysadmin can manage Users in the same way that Admins manage Users on their Team, but Sysadmins have additional options, such as changing passwords or attributes and managing users' teams.
 
 To make a User part of multiple teams, search for a User, and double click its row to open a modal window. From the section "Manage teams for user" you can add or remove teams, or archive a User in a given team. A User can be Admin in a team and not Admin in another.
 
@@ -284,7 +286,7 @@ Of course, adjust these instructions relative to your setup. Try and have the mo
 
 Start your staging instance with: `docker compose up -d`. Make sure to adjust DNS, certificates, load balancers, reverse proxies accordingly.
 
-Use the [Restore backup](../install/backups#how-to-restore-a-backup) instructions to copy your production data into the staging instance. It is recommended to do that regularly, especially before updates, so the staging data is the same as production data and you will not have surprises. It's also a good opportunity to test your backups, if this has not been automated.
+Use the [Restore backup](../install/backups.md#how-to-restore-a-backup) instructions to copy your production data into the staging instance. It is recommended to do that regularly, especially before updates, so the staging data is the same as production data and you will not have surprises. It's also a good opportunity to test your backups, if this has not been automated.
 
 Before a major release, update the staging instance, optionally asking users if everything looks good on this instance, and once everything is validated, you can upgrade the production instance.
 
@@ -390,6 +392,7 @@ If you are running eLabFTW behind a proxy blocking all outgoing connections, you
 
 - your timestamping service (for example, Universign will be https://ws.universign.eu)
 - for blockchain timestamps: https://certify.bloxberg.org
+- for SciMatic Proof receipts: https://api.scimatic.net
 
 You'll also want to make sure the eLabFTW container can connect to `chem-plugin` and `opencloning` services if they are not hosted on the same network or are firewalled out.
 

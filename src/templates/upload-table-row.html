@@ -1,0 +1,45 @@
+{% set ext = upload.real_name|getExt %}
+<tr class='countable' id='uploadDiv_{{ upload.id }}'>
+  <td>
+    {% if mode == 'edit' and uploadGroups is not empty %}
+      <button type='button' class='btn btn-transparent draggable upload-sortable-handle mr-1' title='{{ 'Drag to reorder'|trans }}' aria-label='{{ 'Drag to reorder'|trans }}'>
+        <i class='fas fa-sort'></i>
+      </button>
+    {% endif %}
+    {# keep btn-ghost border-0 here because in table with zebra #}
+    <button type='button' class='btn btn-ghost border-0 mr-1' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='moreinfoDiv_{{ upload.id }}' aria-expanded='false' title='{{ 'More information'|trans }}' aria-label='{{ 'More information'|trans }}'>
+      <i class='fas fa-caret-right fa-fw'></i>
+    </button>
+    {% if upload.state == enum('Elabftw\\Enums\\State').Archived.value %}
+      {# use a span as title doesn't work directly on i element #}
+      <span title='{{ 'Archived'|trans }}'><i class='fas fa-box-archive mr-1'></i></span>
+    {% endif %}
+    <span id='upload-filename_{{ upload.id }}' class='text-break'>{{ upload.real_name }}</span>
+    <div class='mt-2' id='moreinfoDiv_{{ upload.id }}' hidden>
+      {% include 'upload-more-info.html' %}
+    </div>
+  </td>
+  {# COMMENT #}
+  <td>{% include('upload-comment.html') %}</td>
+  {# CREATED AT #}
+  <td><span class='relative-moment' title='{{ upload.created_at }}'></span></td>
+  {# FILESIZE #}
+  <td>{{ upload.filesize|default('0')|formatBytes }}</td>
+  {# ACTIONS #}
+  <td>
+    {% if upload.id == upload.latest_upload_id %}
+      <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
+    {% endif %}
+    <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost'>
+      <i class='fas fa-download fa-fw'></i>
+    </a>
+    {% if not upload.immutable %}
+      {% if mode == 'edit' %}
+        {# UPLOAD NEW VERSION #}
+        {% include('upload-dropdown-menu.html') with {layout: 'grid'} %}
+        {# UPLOAD NEW VERSION OF A FILE #}
+        {% include('upload-replace-form.html') %}
+      {% endif %}
+    {% endif %}
+  </td>
+</tr>

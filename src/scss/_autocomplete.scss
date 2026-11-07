@@ -8,6 +8,39 @@
 
 @use './variables' as *;
 
+.elab-autocomplete {
+  background-color: var(--white);
+  border: 1px solid var(--medium);
+  border-radius: 3px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  color: var(--strongest);
+  list-style: none;
+  margin: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0;
+  position: absolute;
+  // Above Bootstrap's modal (1050), including popups appended inside it.
+  z-index: 1060;
+}
+
+.elab-autocomplete-option {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  padding: 3px 8px;
+
+  &[aria-selected='true'] {
+    background-color: var(--superlight);
+    color: var(--mediumstrong);
+  }
+
+  &[aria-disabled='true'] {
+    color: var(--medium);
+    cursor: default;
+  }
+}
+
 .rte-autocomplete {
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);

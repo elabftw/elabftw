@@ -14,6 +14,8 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Interfaces\FileMakerInterface;
+use Elabftw\Services\Filter;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
 use Override;
 
@@ -59,13 +61,19 @@ abstract class AbstractMake implements FileMakerInterface
     #[Override]
     public function getResponse(): Response
     {
+        $content = $this->getFileContent();
+        $fileName = $this->getFileName();
         return new Response(
-            $this->getFileContent(),
+            $content,
             200,
             array(
                 'Content-Type' => $this->getContentType(),
                 'Content-Size' => $this->getContentSize(),
-                'Content-disposition' => 'inline; filename="' . $this->getFileName() . '"',
+                'Content-Disposition' => HeaderUtils::makeDisposition(
+                    HeaderUtils::DISPOSITION_INLINE,
+                    $fileName,
+                    Filter::toAsciiSlug($fileName),
+                ),
                 'Cache-Control' => 'no-store',
                 'Last-Modified' => gmdate('D, d M Y H:i:s') . ' GMT',
             )

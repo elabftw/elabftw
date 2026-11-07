@@ -27,12 +27,15 @@ use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use PDOStatement;
 
 use function array_diff;
 use function trim;
 use function array_column;
+use function array_filter;
 use function array_intersect;
 use function array_map;
+use function array_values;
 use function implode;
 use function is_array;
 
@@ -59,11 +62,16 @@ final class Teams extends AbstractRest
      * and the response is an array of teams, with id and name for each
      * Input can come from external auth and reference an uncreated team
      * so with this the team will be created on the fly (if it's allowed)
+     * Hidden teams stay excluded by default so external authentication cannot target them.
      */
-    public function getTeamsFromIdOrNameOrOrgidArray(array $teams, bool $allowTeamCreation = false): array
-    {
+    public function getTeamsFromIdOrNameOrOrgidArray(
+        array $teams,
+        bool $allowTeamCreation = false,
+        bool $includeHiddenTeams = false,
+    ): array {
         $res = array();
-        $sql = 'SELECT id, name FROM teams WHERE visible = 1 AND (id = :query OR name = :query OR orgid = :query)';
+        $visibilitySql = $includeHiddenTeams ? '' : 'visible = 1 AND ';
+        $sql = 'SELECT id, name FROM teams WHERE ' . $visibilitySql . '(id = :query OR name = :query OR orgid = :query)';
         $existsSql = 'SELECT 1 FROM teams WHERE id = :query OR name = :query OR orgid = :query LIMIT 1';
         $req = $this->Db->prepare($sql);
         $existsReq = $this->Db->prepare($existsSql);
@@ -185,14 +193,33 @@ final class Teams extends AbstractRest
         return $req->fetchAll();
     }
 
+    /**
+     * Resolve team ids (from a permissions json) into names for display
+     * A hidden team is only resolved for its members and for Sysadmins
+     */
     public function readNamesFromIds(array $idArr): array
     {
-        if (empty($idArr)) {
+        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        if (empty($onlyIds)) {
             return array();
         }
-        $onlyIds = array_map('intval', $idArr);
-        $sql = 'SELECT teams.name FROM teams WHERE id IN (' . implode(',', $onlyIds) . ') ORDER BY name ASC';
+        $sql = 'SELECT teams.name FROM teams WHERE teams.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . ' ORDER BY teams.name ASC';
         $req = $this->Db->prepare($sql);
+        $this->bindVisibility($req);
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * Id and name of the teams the requester can know about: visible teams and the teams they are part of
+     * A Sysadmin gets all the teams
+     */
+    public function readAllForRequester(): array
+    {
+        $sql = 'SELECT teams.id, teams.name FROM teams WHERE 1 = 1' . $this->getVisibilitySql() . ' ORDER BY teams.name ASC';
+        $req = $this->Db->prepare($sql);
+        $this->bindVisibility($req);
         $this->Db->execute($req);
 
         return $req->fetchAll();
@@ -377,6 +404,26 @@ final class Teams extends AbstractRest
         $req->bindValue(':content', $params->getContent());
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Restrict teams to the ones the requester can know about: visible teams and teams they are part of
+     * Without this, the name of hidden teams is disclosed to anyone. Sysadmins see all the teams.
+     */
+    private function getVisibilitySql(): string
+    {
+        if ($this->Users->requester->isSysadmin()) {
+            return '';
+        }
+        return ' AND (teams.visible = 1 OR teams.id IN (SELECT users2teams.teams_id FROM users2teams WHERE users2teams.users_id = :visibility_userid))';
+    }
+
+    private function bindVisibility(PDOStatement $req): void
+    {
+        if ($this->Users->requester->isSysadmin()) {
+            return;
+        }
+        $req->bindValue(':visibility_userid', $this->Users->requester->userid ?? 0, PDO::PARAM_INT);
     }
 
     private function sendOnboardingEmails(array $userids): void

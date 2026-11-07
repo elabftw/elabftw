@@ -27,16 +27,22 @@ final class InvalidSchemaException extends Exception
     /**
      * The message will always be the same here
      */
-    public function __construct(int $currentSchema, int $requiredSchema)
+    public function __construct(int $currentSchema, int $requiredSchema, int $pendingMigrations = 0)
     {
         $htmlPage = file_get_contents(dirname(__DIR__) . '/templates/invalid-schema.html');
 
         if ($htmlPage === false) {
-            $htmlPage = sprintf('Run the bin/console db:update command to finish the update! (%d => %d)', $currentSchema, $requiredSchema);
+            $htmlPage = sprintf(
+                'Run the bin/console db:update command to finish the update! (legacy schema %d => %d, %d pending migrations)',
+                $currentSchema,
+                $requiredSchema,
+                $pendingMigrations,
+            );
         }
         $html = strtr($htmlPage, array(
-            '%CURRENT_SCHEMA%'  => (string) $currentSchema,
+            '%CURRENT_SCHEMA%' => (string) $currentSchema,
             '%REQUIRED_SCHEMA%' => (string) $requiredSchema,
+            '%PENDING_MIGRATIONS%' => (string) $pendingMigrations,
         ));
         parent::__construct($html);
     }

@@ -11,21 +11,30 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Notifications\StepDeadline;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Params\OrderingParams;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 
 use function array_filter;
 use function array_values;
 use function count;
+use function str_repeat;
+use function json_decode;
 
 class StepsTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
+
+    private Db $Db;
 
     private Experiments $Experiments;
 
@@ -35,6 +44,7 @@ class StepsTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        $this->Db = Db::getConnection();
         $this->Experiments = $this->getFreshExperiment();
         $this->Templates = $this->getFreshTemplate();
         $this->Steps = new Steps($this->Experiments);
@@ -64,6 +74,51 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($result['body'], $body);
     }
 
+    public function testCreateAndUpdatePreserveUnicodeStepBody(): void
+    {
+        $body = str_repeat("か\u{3099}", 1000) . ' ' . str_repeat('👩🏽‍🔬', 300);
+        $id = $this->Steps->postAction(Action::Create, array('body' => $body));
+        $this->Steps->setId($id);
+        $this->assertSame($body, $this->Steps->readOne()['body']);
+        $step = $this->Steps->patch(Action::Update, array('body' => $body));
+        $this->assertSame($body, $step['body']);
+    }
+
+    public function testCreateAndUpdateAtTextByteLimit(): void
+    {
+        $body = str_repeat('🧪', 16383) . 'end';
+        $id = $this->Steps->postAction(Action::Create, array('body' => $body));
+        $this->Steps->setId($id);
+        $this->assertSame($body, $this->Steps->readOne()['body']);
+
+        $body = str_repeat('A', 65535);
+        $step = $this->Steps->patch(Action::Update, array('body' => $body));
+        $this->assertSame($body, $step['body']);
+    }
+
+    public function testCannotCreateStepOverTextByteLimit(): void
+    {
+        $steps = $this->Steps->readAll();
+        try {
+            $this->Steps->postAction(Action::Create, array('body' => str_repeat('🧪', 16384)));
+            $this->fail('An oversized step was created.');
+        } catch (ImproperActionException) {
+            $this->assertSame($steps, $this->Steps->readAll());
+        }
+    }
+
+    public function testCannotUpdateStepOverTextByteLimit(): void
+    {
+        $id = $this->Steps->postAction(Action::Create, array('body' => 'Original body'));
+        $this->Steps->setId($id);
+        try {
+            $this->Steps->patch(Action::Update, array('body' => str_repeat('🧪', 16384)));
+            $this->fail('An oversized step body was saved.');
+        } catch (ImproperActionException) {
+            $this->assertSame('Original body', $this->Steps->readOne()['body']);
+        }
+    }
+
     public function testCannotReadOneFromAnotherExperiment(): void
     {
         $id = $this->Steps->postAction(Action::Create, array('body' => 'do this'));
@@ -85,6 +140,121 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         $Steps->patch(Action::Notif, array());
         // update finish time_time
         $Steps->patch(Action::Update, array('finished_time' => '2022-03-23 13:37:00'));
+    }
+
+    public function testDeadlineNotificationIsRescheduled(): void
+    {
+        foreach (array($this->Experiments, $this->getFreshItem()) as $Entity) {
+            $Steps = new Steps($Entity);
+            $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+            $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+            $Steps->patch(Action::Notif, array());
+            $before = $this->readDeadlineNotifications($Steps)[0];
+
+            // Moving the deadline both earlier and later must rearm a sent reminder.
+            foreach (array('2030-06-10 12:00:00', '2030-06-10 16:00:00') as $deadline) {
+                $this->markNotificationSent((int) $before['id']);
+                $step = $Steps->patch(Action::Update, array('deadline' => $deadline));
+                $notifications = $this->readDeadlineNotifications($Steps);
+                $this->assertCount(1, $notifications);
+                $notification = $notifications[0];
+                $this->assertSame($before['id'], $notification['id']);
+                $this->assertSame($before['userid'], $notification['userid']);
+                $this->assertSame($before['send_email'], $notification['send_email']);
+                $body = json_decode($before['body'], true, 512, JSON_THROW_ON_ERROR);
+                $body['deadline'] = $step['deadline'];
+                $this->assertSame($body, json_decode($notification['body'], true, 512, JSON_THROW_ON_ERROR));
+                $this->assertSame(0, (int) $notification['email_sent']);
+                $this->assertNull($notification['email_sent_at']);
+                $this->assertSame(1 - (int) $Entity->Users->userData['notif_step_deadline'], (int) $notification['is_ack']);
+                $this->assertSame(1, (int) $step['deadline_notif']);
+            }
+        }
+    }
+
+    public function testUnchangedDeadlineDoesNotRearmNotification(): void
+    {
+        $Steps = $this->Steps;
+        $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+        $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+        $Steps->patch(Action::Notif, array());
+        $this->markNotificationSent((int) $this->readDeadlineNotifications($Steps)[0]['id']);
+        $before = $this->readDeadlineNotifications($Steps);
+
+        $Steps->patch(Action::Update, array('body' => 'updated body'));
+        $this->assertSame($before, $this->readDeadlineNotifications($Steps));
+        // datetime-local values are normalized by MySQL before comparing deadlines.
+        $Steps->patch(Action::Update, array('deadline' => '2030-06-10T14:00'));
+        $this->assertSame($before, $this->readDeadlineNotifications($Steps));
+    }
+
+    public function testUpdatingDeadlineDoesNotEnableNotification(): void
+    {
+        foreach (array($this->Experiments, $this->getFreshItem()) as $Entity) {
+            $Steps = new Steps($Entity);
+            $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+            $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+            $step = $Steps->patch(Action::Update, array('deadline' => '2030-06-10 16:00:00'));
+            $this->assertSame(0, (int) $step['deadline_notif']);
+            $this->assertSame(array(), $this->readDeadlineNotifications($Steps));
+
+            $Steps->patch(Action::Notif, array());
+            $Steps->patch(Action::NotifDestroy, array());
+            $step = $Steps->patch(Action::Update, array('deadline' => '2030-06-10 18:00:00'));
+            $this->assertSame(0, (int) $step['deadline_notif']);
+            $this->assertSame(array(), $this->readDeadlineNotifications($Steps));
+        }
+    }
+
+    public function testClearingDeadlineRemovesNotification(): void
+    {
+        foreach (array($this->Experiments, $this->getFreshItem()) as $Entity) {
+            $Steps = new Steps($Entity);
+            $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+            foreach (array(null, '') as $deadline) {
+                $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+                $Steps->patch(Action::Notif, array());
+                $this->assertCount(1, $this->readDeadlineNotifications($Steps));
+                $step = $Steps->patch(Action::Update, array('deadline' => $deadline));
+                $this->assertNull($step['deadline']);
+                $this->assertSame(0, (int) $step['deadline_notif']);
+                $this->assertSame(array(), $this->readDeadlineNotifications($Steps));
+            }
+        }
+    }
+
+    public function testDeadlineUpdateKeepsRecipientAndIgnoresOtherEntityTypes(): void
+    {
+        $Steps = $this->Steps;
+        $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+        $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+        $Steps->patch(Action::Notif, array());
+        $before = $this->readDeadlineNotifications($Steps)[0];
+        $otherNotification = new StepDeadline(
+            $this->Experiments->Users,
+            $Steps->id,
+            $this->Experiments->id,
+            EntityType::Items->toPage(),
+            '2030-06-10 14:00:00',
+        );
+        $otherId = $otherNotification->create();
+        try {
+            // Another user with write access can edit the deadline without taking over the reminder.
+            $editor = $this->getUserInTeam(1);
+            $this->assertNotSame($this->Experiments->Users->userid, $editor->userid);
+            $editedEntity = new Experiments($editor, $this->Experiments->id, bypassReadPermission: true, bypassWritePermission: true);
+            new Steps($editedEntity, $Steps->id)->patch(Action::Update, array('deadline' => '2030-06-10 16:00:00'));
+            $after = $this->readDeadlineNotifications($Steps)[0];
+            $this->assertSame($before['id'], $after['id']);
+            $this->assertSame($before['userid'], $after['userid']);
+            $this->assertSame('2030-06-10 16:00:00', json_decode($after['body'], true, 512, JSON_THROW_ON_ERROR)['deadline']);
+            $req = $this->Db->prepare('SELECT body FROM notifications WHERE id = :id');
+            $req->bindValue(':id', $otherId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $this->assertSame('2030-06-10 14:00:00', json_decode($this->Db->fetch($req)['body'], true, 512, JSON_THROW_ON_ERROR)['deadline']);
+        } finally {
+            $otherNotification->destroy();
+        }
     }
 
     public function testUpdateOrdering(): void
@@ -221,5 +391,23 @@ class StepsTest extends \PHPUnit\Framework\TestCase
     {
         $Steps = new Steps($this->Experiments, 1);
         $this->assertTrue($Steps->destroy());
+    }
+
+    private function readDeadlineNotifications(Steps $Steps): array
+    {
+        $req = $this->Db->prepare('SELECT * FROM notifications WHERE category = :category
+            AND body->"$.step_id" = :step_id AND body->"$.entity_page" = :entity_page');
+        $req->bindValue(':category', Notifications::StepDeadline->value, PDO::PARAM_INT);
+        $req->bindValue(':step_id', $Steps->id, PDO::PARAM_INT);
+        $req->bindValue(':entity_page', $Steps->Entity->entityType->toPage());
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    private function markNotificationSent(int $id): void
+    {
+        $req = $this->Db->prepare('UPDATE notifications SET email_sent = 1, email_sent_at = "2030-06-10 13:30:00", is_ack = 1 WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 }

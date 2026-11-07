@@ -48,7 +48,13 @@ try {
         throw new ImproperActionException('This instance has disabled local authentication method, so passwords cannot be reset.');
     }
     $Email = new Email(
-        new SchemaVersionChecker((int) $App->Config->configArr['schema']),
+        new SchemaVersionChecker(
+            (int) $App->Config->configArr['schema'],
+            new Migrations(
+                FsTools::getFs(dirname(__DIR__, 3) . '/src/sql'),
+                useBuildInfo: !Env::asBool('DEV_MODE'),
+            ),
+        ),
         new Mailer(Transport::fromDsn($App->Config->getDsn())),
         $App->Log,
         $App->Config->configArr['mail_from'],

@@ -377,6 +377,56 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         )));
     }
 
+    public function testCreateFromTemplateRewritesStepLinks(): void
+    {
+        $Templates = new Templates($this->Users);
+        $tplId = $Templates->create(title: 'step links');
+        $tpl = new Templates($this->Users, $tplId);
+        $stepId = new Steps($tpl)->postAction(Action::Create, array('body' => 'first step'));
+        // an embedded upload makes Uploads->duplicate() patch the body of the new entry too
+        $uploadId = $tpl->Uploads->createFromString(FileFromString::Json, 'embedded.json', '{}');
+        $longName = new Uploads($tpl, $uploadId)->uploadData['long_name'];
+        $tpl->patch(Action::Update, array('body' => sprintf(
+            "<p><a href='app/download.php?f=%s&storage=1'>embedded.json</a></p><p><a href='?mode=view&id=%d&highlightstep=%d#step_view_%d'>first step</a></p>",
+            $longName,
+            $tplId,
+            $stepId,
+            $stepId,
+        )));
+        $newId = $this->Experiments->postAction(Action::Create, array('template' => $tplId));
+        $exp = new Experiments($this->Users, $newId);
+        $newStepId = (int) new Steps($exp)->readAll()[0]['id'];
+        $body = (string) $exp->entityData['body'];
+        $newLink = sprintf('?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d', $newId, $newStepId, $newStepId);
+        $oldLink = sprintf('?mode=view&amp;id=%d&amp;highlightstep=%d#step_view_%d', $tplId, $stepId, $stepId);
+        $this->assertStringContainsString($newLink, $body);
+        // template and experiment ids can be equal, then the old link is the new one
+        if ($oldLink !== $newLink) {
+            $this->assertStringNotContainsString($oldLink, $body);
+        }
+        // the upload link was rewritten too
+        $this->assertStringNotContainsString($longName, $body);
+    }
+
+    public function testDuplicateRewritesStepLinks(): void
+    {
+        $id = $this->Experiments->create(title: 'step links', contentType: BodyContentType::Markdown);
+        $Experiment = new Experiments($this->Users, $id);
+        $stepId = new Steps($Experiment)->postAction(Action::Create, array('body' => 'first step'));
+        $otherLink = sprintf('[other entry](?mode=view&id=%d&highlightstep=%d#step_view_%d)', $id + 1000, $stepId, $stepId);
+        // a link with a page names that page, it is not a link to this entry's own steps
+        $pageLink = sprintf('[database entry](database.php?mode=view&id=%d&highlightstep=%d#step_view_%d)', $id, $stepId, $stepId);
+        $Experiment->patch(Action::Update, array('body' => sprintf("[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)\n\n%s\n\n%s", $id, $stepId, $stepId, $otherLink, $pageLink)));
+        $newId = $Experiment->postAction(Action::Duplicate, array());
+        $new = new Experiments($this->Users, $newId);
+        $newStepId = (int) new Steps($new)->readAll()[0]['id'];
+        $body = (string) $new->entityData['body'];
+        $this->assertStringContainsString(sprintf('[first step](?mode=view&id=%d&highlightstep=%d#step_view_%d)', $newId, $newStepId, $newStepId), $body);
+        // a link to another entry and a link with a page are left alone
+        $this->assertStringContainsString($otherLink, $body);
+        $this->assertStringContainsString($pageLink, $body);
+    }
+
     public function testDuplicate(): void
     {
         $linkTargetExperimentId = $this->Experiments->create();
@@ -462,6 +512,99 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         ));
         $decoded = json_decode($res['metadata'], true);
         $this->assertSame('new', $decoded['extra_fields']["l'appartement"]['value']);
+    }
+
+    public function testUpdateJsonFieldWithValueLabels(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["old", "other"], "value_labels": ["Old label", "Other label"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('other'),
+                'value_labels' => array('Other label'),
+            ),
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame(array('other'), $decoded['extra_fields']['multitext']['value']);
+        $this->assertSame(array('Other label'), $decoded['extra_fields']['multitext']['value_labels']);
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('other'),
+                'value_labels' => null,
+            ),
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertArrayNotHasKey('value_labels', $decoded['extra_fields']['multitext']);
+    }
+
+    public function testUpdateJsonFieldAcceptsShortValueLabels(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["old", "other"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $res = $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('old', 'other'),
+                'value_labels' => array('Old label'),
+            ),
+        ));
+        $decoded = json_decode($res['metadata'], true);
+        $this->assertSame(array('old', 'other'), $decoded['extra_fields']['multitext']['value']);
+        $this->assertSame(array('Old label'), $decoded['extra_fields']['multitext']['value_labels']);
+    }
+
+    public function testUpdateJsonFieldRejectsTooManyValueLabelsAfterNormalization(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["old", "other"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field multitext has invalid value labels.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                // A scalar is normalized to one value for a multi-value field.
+                'value' => 'other',
+                'value_labels' => array('Other label', 'Extra label'),
+            ),
+        ));
+    }
+
+    public function testUpdateJsonFieldRejectsNonSequentialValueLabels(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["other"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field multitext has invalid value labels.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('other'),
+                'value_labels' => array(1 => 'Other label'),
+            ),
+        ));
+    }
+
+    public function testUpdateJsonFieldRejectsNonStringValueLabels(): void
+    {
+        $metadata = '{"extra_fields": {"multitext": {"type": "text", "value": ["other"], "allow_multi_values": true}}}';
+        $this->Experiments->patch(Action::Update, array('metadata' => $metadata));
+
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Metadata field multitext has invalid value labels.');
+        $this->Experiments->patch(Action::UpdateMetadataField, array(
+            'action' => Action::UpdateMetadataField->value,
+            'multitext' => array(
+                'value' => array('other'),
+                'value_labels' => array('Other label', 123),
+            ),
+        ));
     }
 
     public function testUpdateJsonFieldWithMultipleCompoundValues(): void

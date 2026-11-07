@@ -35,15 +35,18 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
+use function array_filter;
 use function array_flip;
 use function array_intersect_key;
 use function array_keys;
 use function array_map;
 use function array_sum;
 use function implode;
+use function is_string;
 use function rtrim;
 use function sprintf;
 use function str_contains;
+use function trim;
 
 /**
  * Compounds are chemical entities stored in the `compounds` SQL table
@@ -76,7 +79,7 @@ final class Compounds extends AbstractRest
         'wikipedia',
     );
 
-    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights, ?int $id = null)
+    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights = false, ?int $id = null)
     {
         parent::__construct();
         $this->setId($id);
@@ -446,28 +449,6 @@ final class Compounds extends AbstractRest
         return $compoundId;
     }
 
-    /**
-     * Find existing compound to perform an upsert.
-     * Compare in db using unique keys (find at structure.sql - 159)
-     */
-    public function findCompoundByUniqueKey(array $uniqueKeys): ?int
-    {
-        $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
-        $sql = sprintf(
-            'SELECT id FROM compounds WHERE %s LIMIT 1',
-            implode(' OR ', $params)
-        );
-        $req = $this->Db->prepare($sql);
-
-        foreach ($uniqueKeys as $key => $value) {
-            $req->bindValue(":$key", $value);
-        }
-        $this->Db->execute($req);
-        $result = $req->fetch(PDO::FETCH_ASSOC);
-
-        return $result ? (int) $result['id'] : null;
-    }
-
     /*
      * Update the existing compound with incoming data.
      * For deleted compounds, restore by setting the state to 1.
@@ -477,9 +458,12 @@ final class Compounds extends AbstractRest
         $this->setId($id);
         $this->update(new CompoundParams('state', State::Normal->value));
         foreach ($compoundData as $key => $value) {
+            if ($value === null || $value === '') {
+                continue;
+            }
             // Do not update empty pubchem_cid during upsert.
             // This avoids errors on this unique nullable field.
-            if ($key === 'pubchem_cid' && ($value === null || $value === '')) {
+            if ($key === 'pubchem_cid') {
                 continue;
             }
 
@@ -535,6 +519,37 @@ final class Compounds extends AbstractRest
         if (!$this->canWrite()) {
             throw new ForbiddenException();
         }
+    }
+
+    /**
+     * Find existing compound to perform an upsert.
+     * Compare in db using unique keys (find at structure.sql - 159)
+     */
+    private function findCompoundByUniqueKey(array $uniqueKeys): ?int
+    {
+        // Missing identifiers cannot identify an existing compound.
+        $uniqueKeys = array_filter(
+            $uniqueKeys,
+            static fn($value): bool => $value !== null && (!is_string($value) || trim($value) !== ''),
+        );
+        if ($uniqueKeys === array()) {
+            return null;
+        }
+
+        $params = array_map(fn($key) => "$key = :$key", array_keys($uniqueKeys));
+        $sql = sprintf(
+            'SELECT id FROM compounds WHERE %s LIMIT 1',
+            implode(' OR ', $params)
+        );
+        $req = $this->Db->prepare($sql);
+
+        foreach ($uniqueKeys as $key => $value) {
+            $req->bindValue(":$key", $value);
+        }
+        $this->Db->execute($req);
+        $result = $req->fetch(PDO::FETCH_ASSOC);
+
+        return $result ? (int) $result['id'] : null;
     }
 
     private function canReadOrExplode(): void

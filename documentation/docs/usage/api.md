@@ -70,3 +70,9 @@ You'll probably want to use python or a shell language to build a more meaningfu
 ## Read the doc
 
 The complete documentation of all endpoints with code examples is available here: [elabftw's API documentation](https://doc.elabftw.net/api/).
+
+## Model Context Protocol (MCP)
+
+[eLabFTW MCP adapter](https://bitbucket.org/grahampheath/elabftw-mcp) is an unofficial Model Context Protocol (MCP) server for the eLabFTW API v2. It runs locally and provides tools for experiment operations and image attachments.
+
+[elabmcp](https://github.com/tum-research-data-hub/elabmcp) is another unofficial MCP server for the eLabFTW API v2, with additional tools for items, templates, steps, links and tags, usable locally or as a multi-user hosted service.

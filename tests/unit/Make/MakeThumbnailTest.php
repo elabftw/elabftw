@@ -13,9 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use GdImage;
+use ImagickException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 
+use function dirname;
 use function fclose;
 use function fopen;
 use function getimagesizefromstring;
@@ -79,6 +81,38 @@ class MakeThumbnailTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(50, $imageInfo[0]);
         $this->assertEquals(100, $imageInfo[1]);
         $this->assertEquals('image/jpeg', $imageInfo['mime']);
+    }
+
+    public function testSaveThumbFromPdf(): void
+    {
+        $sourceFile = fopen(dirname(__DIR__, 2) . '/_data/dfn.pdf', 'rb');
+        $this->assertIsResource($sourceFile);
+        $Maker = new MakeThumbnail('application/pdf', $sourceFile, 'aa/aabb.pdf', $this->Fs);
+        try {
+            $Maker->saveThumb();
+        } finally {
+            fclose($sourceFile);
+        }
+
+        $imageInfo = getimagesizefromstring($this->Fs->read('aa/aabb.pdf_th.jpg'));
+        $this->assertIsArray($imageInfo);
+        $this->assertEquals(100, $imageInfo[0]);
+        $this->assertEquals('image/jpeg', $imageInfo['mime']);
+    }
+
+    public function testInvalidPdfIsReportedAsImagickException(): void
+    {
+        $sourceFile = fopen('php://temp', 'w+b');
+        $this->assertIsResource($sourceFile);
+        fwrite($sourceFile, '%PDF-1.7 not really');
+        rewind($sourceFile);
+        $Maker = new MakeThumbnail('application/pdf', $sourceFile, 'aa/aabb.pdf', $this->Fs);
+        $this->expectException(ImagickException::class);
+        try {
+            $Maker->saveThumb();
+        } finally {
+            fclose($sourceFile);
+        }
     }
 
     /** @return resource */

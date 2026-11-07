@@ -23,6 +23,8 @@ use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Models\Users\UltraAdmin;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\UserParams;
 use Elabftw\Services\TeamsHelper;
@@ -203,6 +205,110 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $Users = new Users(null, null, $user);
         $res = $Users->readAll();
         $this->assertArrayNotHasKey('auth_service', $res[0]);
+        $this->assertArrayNotHasKey('teams', $res[0]);
+    }
+
+    public function testReadAllTeamFilterRequiresMembership(): void
+    {
+        // a team that the users below are not part of
+        $Teams = new Teams($this->Users);
+        $teamId = $Teams->postAction(Action::Create, array('name' => 'Team for users list filter'));
+        $user = $this->getUserInTeam(2);
+        $Users = new Users(null, null, $user);
+        try {
+            // own team
+            $_GET['team'] = '2';
+            $this->assertNotEmpty($Users->readAll());
+            // Admins and Sysadmins can list any team
+            $_GET['team'] = (string) $teamId;
+            $admin = $this->getUserInTeam(team: 2, admin: 1);
+            $this->assertIsArray(new Users(null, null, $admin)->readAll());
+            $this->assertIsArray($this->Users->readAll());
+            // a user cannot list the members of a team they are not part of
+            $this->expectException(ForbiddenException::class);
+            $Users->readAll();
+        } finally {
+            unset($_GET['team']);
+            new Teams($this->Users, $teamId)->destroy();
+        }
+    }
+
+    public function testReadAllTeamFilterHidesHiddenTeamsFromAdmins(): void
+    {
+        $teamId = new Teams($this->Users)->postAction(Action::Create, array('name' => 'Hidden team for users list filter'));
+        $HiddenTeam = new Teams($this->Users, $teamId);
+        $HiddenTeam->patch(Action::Update, array('visible' => 0));
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $member = $this->getUserInTeam(team: 2);
+        $Users2Teams = new Users2Teams($this->Users);
+        $Users2Teams->create($member->getUserid(), $teamId);
+        try {
+            $_GET['team'] = (string) $teamId;
+            // Sysadmins and members of the hidden team can list it
+            $this->assertCount(1, $this->Users->readAll());
+            $this->assertCount(1, new Users(null, null, $member)->readAll());
+            // but not an Admin of another team
+            $this->expectException(ForbiddenException::class);
+            new Users(null, null, $admin)->readAll();
+        } finally {
+            unset($_GET['team']);
+            $Users2Teams->rmUserFromTeams($member->getUserid(), array($teamId));
+            $HiddenTeam->destroy();
+        }
+    }
+
+    public function testReadNamesFromIdsMasksEmails(): void
+    {
+        $user = $this->getUserInTeam(2);
+        $this->assertFalse($user->isAdminOf(1));
+        $ids = array(1, $user->getUserid());
+
+        // a user sees their own email but not the one of a user they are not Admin of
+        $res = array_column($user->readNamesFromIds($ids), 'email', 'userid');
+        $this->assertSame($user->userData['email'], $res[$user->getUserid()]);
+        $this->assertNotSame($this->Users->userData['email'], $res[1]);
+        $this->assertStringContainsString('***', $res[1]);
+
+        // Sysadmin sees all emails
+        $res = array_column($this->Users->readNamesFromIds($ids), 'email', 'userid');
+        $this->assertSame($user->userData['email'], $res[$user->getUserid()]);
+        $this->assertSame($this->Users->userData['email'], $res[1]);
+
+        // no requester: everything is masked
+        $res = array_column(new Users()->readNamesFromIds($ids), 'email', 'userid');
+        $this->assertNotSame($user->userData['email'], $res[$user->getUserid()]);
+
+        // invalid ids are ignored
+        $this->assertEmpty($this->Users->readNamesFromIds(array(0, -42)));
+    }
+
+    public function testReadAllTeamAssociationsFollowAdminImportSetting(): void
+    {
+        $admin = $this->getUserInTeam(team: 2, admin: 1);
+        $user = $this->getUserInTeam(2);
+        $expectedTeams = array_column($this->Users->readAll(), 'teams', 'userid')[2];
+        $originalSetting = $this->Config->configArr['admins_import_users'];
+        $this->assertFalse($admin->isAdminOf(2));
+
+        try {
+            foreach (array('0', '1') as $enabled) {
+                $this->Config->patch(Action::Update, array('admins_import_users' => $enabled));
+                $res = array_column((new Users(null, null, $admin))->readAll(), null, 'userid');
+                if ($enabled === '1') {
+                    $this->assertArrayHasKey('teams', $res[2]);
+                    $this->assertSame($expectedTeams, $res[2]['teams']);
+                } else {
+                    $this->assertArrayNotHasKey('teams', $res[2]);
+                }
+                $this->assertArrayNotHasKey('auth_service', $res[2]);
+                $this->assertArrayNotHasKey('last_login', $res[2]);
+
+                $res = array_column((new Users(null, null, $user))->readAll(), null, 'userid');
+                $this->assertArrayNotHasKey('teams', $res[2]);
+            }
+        } finally {
+            $this->Config->patch(Action::Update, array('admins_import_users' => $originalSetting));
+        }
     }
 
     public function testReadOneLastLoginIsRestrictedToSysadmins(): void
@@ -226,6 +332,18 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $admin2 = $this->getUserInTeam(team: 2, admin: 1);
         $this->assertTrue($this->Users->isAdminOf($admin2->userid));
         $this->assertFalse($admin2->isAdminOf(2));
+    }
+
+    public function testIsAdminOfTeam(): void
+    {
+        // logged in team 2, where this user is Admin, but they are not Admin of team 1
+        $admin2 = $this->getUserInTeam(team: 2, admin: 1);
+        $this->assertTrue($admin2->isAdmin);
+        $this->assertTrue($admin2->isAdminOfTeam(2));
+        $this->assertFalse($admin2->isAdminOfTeam(1));
+        $this->assertFalse(new AnonymousUser(1)->isAdminOfTeam(2));
+        // cli user has full rights on everything
+        $this->assertTrue(new UltraAdmin(team: 2)->isAdminOfTeam(1));
     }
 
     public function testArchivedRequesterIsNotAnAdmin(): void
@@ -526,6 +644,35 @@ class UsersTest extends \PHPUnit\Framework\TestCase
     {
         $this->expectException(ImproperActionException::class);
         $this->Users->destroy();
+    }
+
+    public function testRegisterInFullyArchivedTeamDoesNotGrantAdmin(): void
+    {
+        $teamId = $this->getFreshFullyArchivedTeam();
+        $originalAdminValidate = $this->Config->configArr['admin_validate'];
+        try {
+            $this->Config->patch(Action::Update, array('admin_validate' => 1));
+            // same call as the register page: no usergroup and no automatic validation
+            $Users = new Users();
+            $userid = $Users->createOne(
+                'newcomer-' . bin2hex(random_bytes(8)) . '@example.com',
+                array($teamId),
+                new NullLocalPassword(),
+                'New',
+                'Comer',
+            );
+
+            $TeamsHelper = new TeamsHelper($teamId);
+            self::assertTrue($TeamsHelper->isUserInTeam($userid));
+            self::assertFalse($TeamsHelper->isAdmin($userid));
+            self::assertTrue($Users->needValidation);
+            self::assertSame(0, (new Users($userid))->userData['validated']);
+        } finally {
+            $this->Config->patch(
+                Action::Update,
+                array('admin_validate' => $originalAdminValidate),
+            );
+        }
     }
 
     private function createTeamlessValidatedUser(): int

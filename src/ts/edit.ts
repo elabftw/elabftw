@@ -17,7 +17,7 @@ import { getEditor } from './Editor.class';
 import DOMPurify from 'dompurify';
 import { ApiC } from './api';
 import { Uploader } from './uploader';
-import { clearLocalStorage } from './localStorage';
+import { getRecoveryData, removeRecoveryData } from './recovery';
 import { entity } from './getEntity';
 import { on } from './handlers';
 
@@ -45,20 +45,18 @@ if (editor.type === 'md') {
 ////////////////
 // DATA RECOVERY
 
-// check if there is some local data with this id to recover
-if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('type') == entity.type)) {
-  const savedDate = localStorage.getItem('date') ?? '';
-  const savedBody = localStorage.getItem('body') ?? '';
-
+// check if there is some local data for this entity to recover
+const recovery = getRecoveryData(entity.type, entity.id);
+if (recovery) {
   const savedSpan = document.createElement('span');
-  savedSpan.innerText = savedDate;
+  savedSpan.innerText = new Date(recovery.date).toLocaleString();
 
   const bodyRecovery = document.createElement('div');
   bodyRecovery.id = 'recoveryDiv';
   bodyRecovery.classList.add('alert', 'alert-warning');
 
   const bodyHtml = document.createElement('div');
-  bodyHtml.innerHTML = DOMPurify.sanitize(savedBody, {
+  bodyHtml.innerHTML = DOMPurify.sanitize(recovery.body, {
     USE_PROFILES: { html: true },
     FORBID_TAGS: ['style', 'script', 'iframe', 'form'],
   });
@@ -94,19 +92,23 @@ if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('
 
 // RECOVER YES
 on('recover-yes', () => {
+  const data = getRecoveryData(entity.type, entity.id);
+  if (!data) {
+    return;
+  }
   const params = {};
-  params[Target.Body] = localStorage.getItem('body');
+  params[Target.Body] = data.body;
 
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-    editor.replaceContent(localStorage.getItem('body'));
-    clearLocalStorage();
+    editor.replaceContent(data.body);
+    removeRecoveryData(entity.type, entity.id);
     document.getElementById('recoveryDiv')?.remove();
   });
 });
 
 // RECOVER NO
 on('recover-no', () => {
-  clearLocalStorage();
+  removeRecoveryData(entity.type, entity.id);
   document.getElementById('recoveryDiv')?.remove();
 });
 // END DATA RECOVERY

@@ -140,6 +140,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 These projects were created by users of eLabFTW, check them out if interested!
 
+* [eLabLink](https://github.com/ThibautJacqmin/elablink): a simple Python interface to eLabFTW experiments and resources, with optional asynchronous synchronization of Labmate acquisition data, code and figures, for experimental scientists.
 * [elAPI](https://github.com/uhd-urz/elAPI/): a powerful, extensible API client for eLabFTW developed at the University Computing Centre of University of Heidelberg
 * [elAPI Plugins](https://github.com/sfb1638/elAPI_Plugins): a desktop application for bulk importing and exporting resources and experiments, part of the INF Project of CRC 1638 at the Heidelberg University Biochemistry Center (BZH)
 * [pyelabdata](https://github.com/FAU-PHYSIK-EP/pyelabdata): provides functions for simple one-line access to data stored in eLabFTW via Python
@@ -151,6 +152,8 @@ These projects were created by users of eLabFTW, check them out if interested!
 * [eLabFTW Extensions WebApp](https://elabftw-extensions.tools.coscine.dev/): A Streamlit web app for tools and extensions that employ the eLabFTW API, currently featuring an `.ics` file upload to eLabFTW's scheduler. Feel free to [contribute more extensions](https://gitlab.git.nrw/eln-rwth/elabftw-extensions).
 * [elabftw-gdpr](https://github.com/harrytyp/elabftw-gdpr): Compiles a report of the personal data stored about a user for EU GDPR Art. 15 Data Subject Access Requests
 * [Galaxy integration](https://galaxyproject.org/news/2025-04-02-elabftw-integration/): Bring data to Galaxy straight from the lab.
+* [eLabFTW MCP adapter](https://bitbucket.org/grahampheath/elabftw-mcp): an unofficial MCP server for experiment operations and image attachments through eLabFTW API v2.
+* [elabmcp](https://github.com/tum-research-data-hub/elabmcp): another unofficial MCP server for eLabFTW API v2, also covering items, templates, steps, links and tags.
 
 ### Deprecated projects using retired api v1
 * [din14970/elabftwqrprint](https://github.com/din14970/elabftwqrprint): python library to print QR codes from database objects

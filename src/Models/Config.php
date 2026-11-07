@@ -21,6 +21,7 @@ use Elabftw\Elabftw\S3Config;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\Language;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -29,6 +30,11 @@ use PDO;
 use Override;
 
 use function array_map;
+use function array_flip;
+use function array_intersect_key;
+use function asort;
+use function explode;
+use function is_string;
 use function urlencode;
 use function in_array;
 use function array_key_exists;
@@ -74,6 +80,7 @@ final class Config extends AbstractRest
             ('remember_me_checked', '1'),
             ('remember_me_allowed', '1'),
             ('lang', 'en_GB'),
+            ('allowed_unauthenticated_languages', ''),
             ('login_tries', '3'),
             ('mail_from', 'notconfigured@example.com'),
             ('proxy', ''),
@@ -265,6 +272,20 @@ final class Config extends AbstractRest
     #[Override]
     public function patch(Action $action, array $params): array
     {
+        if (array_key_exists('allowed_unauthenticated_languages', $params)) {
+            $languages = $params['allowed_unauthenticated_languages'];
+            if (!is_string($languages)) {
+                throw new UnprocessableContentException('Invalid language selection.');
+            }
+            if ($languages !== '') {
+                foreach (explode(',', $languages) as $language) {
+                    if (Language::tryFrom($language) === null) {
+                        throw new UnprocessableContentException('Invalid language selection.');
+                    }
+                }
+            }
+        }
+
         foreach (self::ENCRYPTED_KEYS as $password) {
             if (isset($params[$password]) && !empty($params[$password])) {
                 $params[$password] = Crypto::encrypt($params[$password], Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
@@ -306,6 +327,19 @@ final class Config extends AbstractRest
     public function getApiPath(): string
     {
         return 'api/v2/config/';
+    }
+
+    /** @return array<string, string> */
+    public function getAllowedUnauthenticatedLanguages(): array
+    {
+        $languages = Language::getAllHuman();
+        $allowed = $this->configArr['allowed_unauthenticated_languages'] ?? '';
+        if ($allowed === '') {
+            return $languages;
+        }
+        $languages = array_intersect_key($languages, array_flip(explode(',', $allowed)));
+        asort($languages);
+        return $languages;
     }
 
     public function getDsn(): string

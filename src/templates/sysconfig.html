@@ -646,6 +646,21 @@
 {# TAB 7 POLICIES #}
 <div data-tabcontent='7' hidden>
 
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Languages before authentication'|trans }}</h2>
+  <div class='pl-3 mb-4'>
+    {% if App.devMode -%}
+      <!-- [html-validate-disable-block valid-for, prefer-native-element, no-unused-disable: suppress errors from tom-select] -->
+    {%- endif %}
+    <label for='allowed_unauthenticated_languages' class='col-form-label'>{{ 'Allowed languages'|trans }}</label>
+    <p class='smallgray' id='allowed_unauthenticated_languages_help'>{{ 'Restrict the languages available on the login and registration pages. Leave empty to allow all languages. Authenticated users can still use any language.'|trans }}</p>
+    <select id='allowed_unauthenticated_languages' class='form-control' multiple autocomplete='off' aria-describedby='allowed_unauthenticated_languages_help'>
+      {% for lang, text in langsArr|sort %}
+        <option value='{{ lang }}'{{ lang in App.Config.configArr.allowed_unauthenticated_languages|split(',') ? ' selected' }}>{{ text }}</option>
+      {% endfor %}
+    </select>
+    <p class='smallgray'>{{ 'The instance default language is used when allowed. Otherwise, the first allowed language is used.'|trans }}</p>
+    <button type='button' class='btn btn-primary' data-action='save-unauthenticated-languages'>{{ 'Save'|trans }}</button>
+  </div>
 
   {{ _self.policy('Privacy policy', 'privacy_policy', App.Config.configArr, App.devMode) }}
   {{ _self.policy('Terms of service', 'terms_of_service', App.Config.configArr, App.devMode) }}

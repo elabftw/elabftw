@@ -20,6 +20,7 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
+import { storeRecoveryData } from './recovery';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
@@ -257,6 +258,10 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    // TomSelect search inputs have no name attribute and must not be collected.
+    if (!el.name) {
+      return;
+    }
     el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);
@@ -433,10 +438,6 @@ export function getCheckedBoxes(): Array<CheckableItem> {
 // reload the entities in show mode
 export async function reloadEntitiesShow(): Promise<void | Response> {
   window.dispatchEvent(new CustomEvent('entity-filters-changed'));
-  // rebind autocomplete for links input
-  addAutocompleteToLinkInputs();
-  // tags too
-  addAutocompleteToTagInputs();
   // listen to data-trigger elements
   listenTrigger();
   // and set relative moments
@@ -583,107 +584,6 @@ export function adjustHiddenState(): void {
     // now make the button icon match the new state
     const isHidden = el.hasAttribute('hidden');
     toggleIcon((button as HTMLElement), isHidden);
-  });
-}
-
-// AUTOCOMPLETE
-export function addAutocompleteToLinkInputs(): void {
-  const cache = {};
-  [{
-    selectElid: 'addLinkCatFilter',
-    itemType: EntityType.Item,
-    filterFamily: 'category',
-    inputElId: 'addLinkItemsInput',
-  }, {
-    selectElid: 'addLinkOwnerFilter',
-    itemType: EntityType.Experiment,
-    filterFamily: 'owner',
-    inputElId: 'addLinkExpInput',
-  }].forEach(object => {
-    const filterEl = (document.getElementById(object.selectElid) as HTMLInputElement);
-    if (filterEl) {
-      cache[object.selectElid] = {};
-      // when we change the category filter, reset the cache
-      filterEl.addEventListener('change', () => {
-        cache[object.selectElid] = {};
-      });
-      $(`#${object.inputElId}`).autocomplete({
-        source: function(request: Record<string, string>, response: (data) => void): void {
-          const term = request.term;
-          const format = entity => {
-            const category = entity.category_title ? `${entity.category_title} - `: '';
-            const status = entity.status_title ? `${entity.status_title} - `: '';
-            const customid = entity.custom_id ? `${entity.custom_id} - `: '';
-            return `${entity.id} - ${category}${status}${customid}${entity.title.substring(0, 60)}`;
-          };
-          if (term in cache[object.selectElid]) {
-            const res = [];
-            cache[object.selectElid][term].forEach(entity => {
-              res.push(format(entity));
-            });
-            response(res);
-            return;
-          }
-          ApiC.getJson(`${object.itemType}/?${object.filterFamily}=${filterEl.value}&fastq=${escapeExtendedQuery(request.term)}&scope=3`).then(json => {
-            cache[object.selectElid][term] = json;
-            const res = [];
-            json.forEach(entity => {
-              res.push(format(entity));
-            });
-            response(res);
-          });
-        },
-        select: function(event: Event, ui): boolean {
-          const inputEl = event.target as HTMLInputElement;
-          inputEl.value = ui.item.label;
-          // don't let autocomplete change value of input element
-          return false;
-        },
-      });
-    }
-  });
-}
-
-export function addAutocompleteToTagInputs(): void {
-  $('[data-autocomplete="tags"]').autocomplete({
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.Team}/current/${Model.Tag}?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(tag => {
-          res.push(tag.tag);
-        });
-        response(res);
-      });
-    },
-  });
-}
-
-export function addAutocompleteToCompoundsInputs(): void {
-  $('[data-autocomplete="compounds"]').autocomplete({
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.Compounds}?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(cpd => {
-          res.push(`${cpd.id} - ${cpd.name}`);
-        });
-        response(res);
-      });
-    },
-  });
-}
-
-export function addAutocompleteToExtraFieldsKeyInputs(): void {
-  $('[data-autocomplete="extraFieldsKeys"]').autocomplete({
-    appendTo: '#autocompleteAnchorDiv_extra_fields_keys',
-    source: function(request: Record<string, string>, response: (data) => void): void {
-      ApiC.getJson(`${Model.ExtraFieldsKeys}/?q=${request.term}`).then(json => {
-        const res = [];
-        json.forEach(entry => {
-          res.push(entry.extra_fields_key);
-        });
-        response(res);
-      });
-    },
   });
 }
 
@@ -882,10 +782,7 @@ export async function updateEntityBody(redirect = true): Promise<void> {
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)
     // store the modifications in local storage to prevent any data loss
-    localStorage.setItem('body', editor.getContent());
-    localStorage.setItem('id', String(entity.id));
-    localStorage.setItem('type', entity.type);
-    localStorage.setItem('date', new Date().toLocaleString());
+    storeRecoveryData(entity.type, entity.id, editor.getContent());
     // reload the page so user gets redirected to the login page
     location.reload();
   });

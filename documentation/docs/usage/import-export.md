@@ -9,7 +9,7 @@ title: Import / Export
 
 When users add information into systems like eLabFTW, that information can get trapped in this system. We do not want that. We want information to flow freely.
 
-As such, eLabFTW allows users to freely export and import data, in different file formats, as well as accessing it through a [public API](../usage/api), for automation tools.
+As such, eLabFTW allows users to freely export and import data, in different file formats, as well as accessing it through a [public API](../usage/api.md), for automation tools.
 
 This page describes the Import and Export features available in eLabFTW.
 
@@ -41,6 +41,22 @@ eLabFTW will pick up the type of each entry through its [genre](https://schema.o
 Head to the "Import" tab of your Profile page by selecting "Import" from the top right menu.
 
 Select a `.eln` file to display import options. Then click Import.
+
+#### Import limits
+
+To protect server resources, `.eln` imports through the web interface enforce the following default limits:
+
+| Limit | Default | Environment variable |
+| --- | --- | --- |
+| Archive members (files and directories) | 10,000 | `IMPORT_MAX_MEMBERS` |
+| Uncompressed size of a single file | 1 GiB | `IMPORT_MAX_MEMBER_BYTES` |
+| Total uncompressed size | 1 GiB | `IMPORT_MAX_TOTAL_BYTES` |
+| Compression ratio (files larger than 1 MiB) | 1,000:1 | `IMPORT_MAX_COMPRESSION_RATIO` |
+| Size of `ro-crate-metadata.json` | 32 MiB | `IMPORT_MAX_METADATA_BYTES` |
+
+Sysadmins can adjust these limits through the corresponding environment variables. The compressed upload must also fit the server's upload size limit.
+
+For large archives, use [CLI import](#importing-through-cli) whenever possible. `bin/console import:eln` bypasses all of these archive limits, including during `--dry-run`.
 
 ### Importing through CLI
 
@@ -180,7 +196,7 @@ Click **Import**. Every CSV row creates one entry. The import reports an error i
 
 ### Using the API to control how things are imported
 
-If you want to have complete control over the import process, you can use a few lines of python to do the import. Follow our [tutorial to import data from spreadsheet files](../tutorials/import-csv).
+If you want to have complete control over the import process, you can use a few lines of python to do the import. Follow our [tutorial to import data from spreadsheet files](../tutorials/import-csv.md).
 
 
 ### Importing compounds through CLI (csv file)

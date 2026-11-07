@@ -33,11 +33,11 @@ Resources default permissions allow anyone from the Team to edit them, but you a
 
 ## Imports
 
-Look at the [Importing data](../import-export#importing-data) section to learn how to import your Resources from a spreadsheet file or through the API.
+Look at the [Importing data](../import-export.md#importing-data) section to learn how to import your Resources from a spreadsheet file or through the API.
 
 ## Links
 Once you have your Resources present, you can mention them in your Experiments by typing `#` and their title, and selecting the proposed autocompletion, or use directly the Link system to link them to an Experiment.
-See [Links](./experiments#linked-resourcesexperiments) section.
+See [Links](./experiments.md#linked-resourcesexperiments) section.
 
 Furthermore, Resources can be made bookable, see section below.
 
@@ -91,7 +91,22 @@ The scheduler page loads with the selected item:
   <figcaption>Create an event along with recurring bookings.</figcaption>
 </figure>
 
-You can now move on to the [Scheduler](./scheduler) section to see how to work with your events.
+You can now move on to the [Scheduler](./scheduler.md) section to see how to work with your events.
+
+### Requiring approval for bookings
+
+In the `Modify booking parameters` modal, you can enable `Require approval for bookings` and select one or more approvers. Approvers can be any user of the instance, even from another team: start typing a name or an email to search for them.
+
+When approval is required:
+
+- a new booking is created as a pending request, and the approvers receive a notification. Approvers themselves can book without approval;
+- a pending request already occupies its time slot, so other users cannot book it, even if overlapping slots are allowed;
+- approvers review requests in the `Pending approvals` tab of the Scheduler page, where they can approve or reject them, optionally with a reason. A decision on a recurring booking applies to all its pending occurrences;
+- users follow their requests in the `My booking requests` tab, where they can cancel a request that is still pending;
+- the dates and the resource of an approval-controlled booking cannot be changed, cancel it and book again instead;
+- only approved bookings (and bookings that did not require approval) appear in the booking reports.
+
+Team admins do not get the right to approve bookings unless they are selected as approvers. Disabling approval later does not change requests that are still pending.
 
 ## Making a Resource procurable
 

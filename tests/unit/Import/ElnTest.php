@@ -29,11 +29,16 @@ use ZipArchive;
 
 use function array_column;
 use function dirname;
+use function getenv;
+use function json_decode;
+use function json_encode;
+use function putenv;
 use function sprintf;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
 
+use const JSON_THROW_ON_ERROR;
 use const UPLOAD_ERR_INI_SIZE;
 use const UPLOAD_ERR_OK;
 
@@ -106,7 +111,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertIsString($archivePath);
         $archive = new ZipArchive();
         $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
-        $this->assertTrue($archive->addFromString('ro-crate-metadata.json', '{}'));
+        $this->assertTrue($archive->addFromString('crate/ro-crate-metadata.json', '{"@graph":[]}'));
         $this->assertTrue($archive->addFromString(sprintf($unsafePath, $target), 'poisoned export'));
         $this->assertTrue($archive->close());
 
@@ -119,16 +124,18 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         try {
-            new Eln(
+            $Import = new Eln(
                 new Users(1, 1),
                 new Users(1, 1),
                 $uploadedFile,
-                $this->fs,
+                $exportsFs,
                 $this->logger,
                 EntityType::Experiments,
             );
+            $Import->prepare();
             $this->fail('An ELN archive containing an unsafe path was accepted.');
-        } catch (ImproperActionException) {
+        } catch (ImproperActionException $e) {
+            $this->assertSame('The archive contains an unsafe path.', $e->getMessage());
             $this->assertSame('original export', $exportsFs->read($target));
         } finally {
             $exportsFs->delete($target);
@@ -311,17 +318,24 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             true,
         );
 
-        $Import = new TrustedEln(
-            new Users(1, 1),
-            new Users(1, 1),
-            $uploadedFile,
-            $this->fs,
-            $this->logger,
-            EntityType::Experiments,
-            category: 1,
-        );
-        $Import->import();
-        $this->assertEquals(1, $Import->getInserted());
+        // Invalid web limit configuration must not affect CLI imports.
+        $previous = getenv('IMPORT_MAX_TOTAL_BYTES');
+        putenv('IMPORT_MAX_TOTAL_BYTES=0');
+        try {
+            $Import = new TrustedEln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                EntityType::Experiments,
+                category: 1,
+            );
+            $Import->import();
+            $this->assertEquals(1, $Import->getInserted());
+        } finally {
+            putenv($previous === false ? 'IMPORT_MAX_TOTAL_BYTES' : 'IMPORT_MAX_TOTAL_BYTES=' . $previous);
+        }
     }
 
     public function testImportExperimentsMulti(): void
@@ -381,7 +395,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->expectException(ImproperActionException::class);
-        new Eln(
+        $Import = new Eln(
             new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
@@ -390,6 +404,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             EntityType::Experiments,
             category: 1,
         );
+        $Import->prepare();
     }
 
     public function testInvalidShasum(): void
@@ -529,6 +544,88 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         ), array_column($Experiment->entityData['uploads'], 'real_name'));
     }
 
+    // a crate from another tool: flattened as RO-Crate requires, so variableMeasured only holds references,
+    // and no eLabFTW "version" on the root node
+    public function testImportFlattenedMetadataWithoutVersion(): void
+    {
+        $title = 'Flattened metadata without version';
+        $crate = array(
+            '@context' => 'https://w3id.org/ro/crate/1.2/context',
+            '@graph' => array(
+                array(
+                    '@id' => 'ro-crate-metadata.json',
+                    '@type' => 'CreativeWork',
+                    'about' => array('@id' => './'),
+                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.2'),
+                ),
+                array(
+                    '@id' => './',
+                    '@type' => 'Dataset',
+                    'name' => 'Export from another tool',
+                    'hasPart' => array(array('@id' => './experiment/')),
+                ),
+                array(
+                    '@id' => './experiment/',
+                    '@type' => 'Dataset',
+                    'name' => $title,
+                    'variableMeasured' => array(
+                        array('@id' => '#viscosity'),
+                        array('@id' => '#elabftw-metadata'),
+                    ),
+                ),
+                array(
+                    '@id' => '#viscosity',
+                    '@type' => 'PropertyValue',
+                    'propertyID' => 'viscosity',
+                    'value' => 2300,
+                    'unitText' => 'mPa.s',
+                ),
+                array(
+                    '@id' => '#elabftw-metadata',
+                    '@type' => 'PropertyValue',
+                    'propertyID' => 'elabftw_metadata',
+                    'value' => '{"extra_fields": {"Viscosity": {"type": "text", "value": "2300"}}}',
+                ),
+            ),
+        );
+
+        $archivePath = tempnam(sys_get_temp_dir(), 'elabftw-flattened-eln-');
+        $this->assertIsString($archivePath);
+        $archive = new ZipArchive();
+        $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
+        $json = json_encode($crate, JSON_THROW_ON_ERROR);
+        $this->assertTrue($archive->addFromString('flattened-crate/ro-crate-metadata.json', $json));
+        $this->assertTrue($archive->close());
+
+        $uploadedFile = new UploadedFile(
+            $archivePath,
+            'flattened.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        try {
+            $Import = new Eln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                EntityType::Experiments,
+            );
+            $Import->import();
+            $this->assertSame(1, $Import->getInserted());
+
+            $Experiment = $this->getExperimentFromTitle($title);
+            $this->assertIsString($Experiment->entityData['metadata']);
+            $metadata = json_decode($Experiment->entityData['metadata'], true);
+            $this->assertSame('2300', $metadata['extra_fields']['Viscosity']['value']);
+        } finally {
+            unlink($archivePath);
+        }
+    }
+
     // test import keeps the state for archived/locked/deleted entries
     public function testImportRestoresLifecycle(): void
     {
@@ -563,6 +660,29 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         $Deleted = $this->getExperimentFromTitle('Deleted');
         $this->assertSame(State::Deleted->value, $Deleted->entityData['state']);
+    }
+
+    public function testImportCompounds(): void
+    {
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/with-compounds.eln',
+            'compounds.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        $Import = new Eln(
+            new Users(1, 1),
+            new Users(1, 1),
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            EntityType::Items,
+            category: 1,
+        );
+        $Import->import();
+        $this->assertEquals(1, $Import->getInserted());
     }
 
     private function getExperimentFromTitle(string $title): Experiments

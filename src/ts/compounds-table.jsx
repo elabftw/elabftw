@@ -72,7 +72,7 @@ const storeColumnState = api => {
   }
 };
 
-const GridExample = () => {
+const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
     const onGridReady = (event) => {
@@ -138,23 +138,10 @@ const GridExample = () => {
 
   // filter by deleted compounds
   const [showDeleted, setShowDeleted] = useState(false);
-
-  // switch delete-compounds <=> restore-compounds buttons when showing deleted compounds
-  const showDeletedCompounds = (showDeleted) => {
-    const deleteBtn = document.getElementById('deleteCompoundsBtn');
-    const restoreBtn = document.getElementById('restoreCompoundsBtn');
-    if (showDeleted) {
-      deleteBtn?.setAttribute('hidden', 'hidden');
-      restoreBtn?.removeAttribute('hidden');
-    } else {
-      deleteBtn?.removeAttribute('hidden');
-      restoreBtn?.setAttribute('hidden', 'hidden');
-    }
-  };
+  const [selectedIds, setSelectedIds] = useState([]);
 
   // Load data on component mount and refresh on showDeleted change
   useEffect(() => {
-      showDeletedCompounds(showDeleted);
       fetchData();
   }, [showDeleted]);
 
@@ -193,21 +180,13 @@ const GridExample = () => {
 
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {
-    // we store the selected rows as data-target string on the delete and restore buttons
-    const selectedRows = event.api.getSelectedRows();
-    const selectedIds = selectedRows.map(c => c.id).join(',');
-    const deleteBtn = document.getElementById('deleteCompoundsBtn');
-    const restoreBtn = document.getElementById('restoreCompoundsBtn');
+    setSelectedIds(event.api.getSelectedRows().map(c => c.id));
+  };
 
-    // buttons are disabled if no rows are selected.
-    if (deleteBtn) {
-      deleteBtn.disabled = selectedRows.length === 0;
-      deleteBtn.dataset.target = selectedIds;
-    }
-    if (restoreBtn) {
-      restoreBtn.disabled = selectedRows.length === 0;
-      restoreBtn.dataset.target = selectedIds;
-    }
+  const toggleShowDeleted = () => {
+    gridApi?.deselectAll();
+    setSelectedIds([]);
+    setShowDeleted(prev => !prev);
   };
 
   const cellDoubleClicked = (event) => {
@@ -251,23 +230,49 @@ const GridExample = () => {
         gridApi={gridApi}
         storageKey={COLUMN_STATE_STORAGE_KEY}
       />
-      <div className='d-flex justify-content-end my-2'>
+      </div>
+      <div className='d-flex align-items-center my-2'>
+        {canManageCompounds && (
+          <>
+            <button
+              type='button'
+              id='deleteCompoundsBtn'
+              hidden={showDeleted}
+              disabled={selectedIds.length === 0}
+              data-action='delete-compounds'
+              data-target={selectedIds.join(',')}
+              className='btn btn-danger btn-sm'
+            >
+              {deleteLabel}
+            </button>
+            <button
+              type='button'
+              id='restoreCompoundsBtn'
+              hidden={!showDeleted}
+              disabled={selectedIds.length === 0}
+              data-action='restore-compounds'
+              data-target={selectedIds.join(',')}
+              className='btn btn-primary btn-sm'
+            >
+              {restoreLabel}
+            </button>
+          </>
+        )}
         <button
           type='button'
-          className={'btn btn-sm btn-ghost'}
-          onClick={() => setShowDeleted(!showDeleted)}
+          className={'btn btn-sm btn-ghost ml-auto'}
+          onClick={toggleShowDeleted}
         >
           {showDeleted ? i18next.t('hide-deleted') : i18next.t('show-deleted')}
         </button>
       </div>
-    </div>
   </>
   );
 };
 
 // In order to reload the table, we wrap it in another element with a key that is incremented when a dataReload event happens
 // This change will trigger a full remount of the element, and the table will be updated
-const App = () => {
+const App = (props) => {
   const [reloadKey, setReloadKey] = useState(0);
   // trigger this with document.dispatchEvent(new CustomEvent('dataReload'))
   useEffect(() => {
@@ -275,10 +280,15 @@ const App = () => {
     document.addEventListener('dataReload', reloadTable);
     return () => document.removeEventListener('dataReload', reloadTable);
   }, []);
-  return <GridExample key={reloadKey} />;
+  return <GridExample key={reloadKey} {...props} />;
 };
 
-const root = createRoot(document.getElementById('compounds-table'));
+const tableElement = document.getElementById('compounds-table');
+const root = createRoot(tableElement);
 root.render(
-  <App />
+  <App
+    canManageCompounds={tableElement.dataset.canManageCompounds === '1'}
+    deleteLabel={tableElement.dataset.deleteLabel}
+    restoreLabel={tableElement.dataset.restoreLabel}
+  />
 );

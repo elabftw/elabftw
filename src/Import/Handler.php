@@ -103,7 +103,7 @@ final class Handler extends AbstractRest
                     $this->requester,
                     $targetUser,
                     $reqBody['file'],
-                    Storage::CACHE->getStorage()->getFs(),
+                    Storage::EXPORTS->getStorage()->getFs(),
                     $this->logger,
                     EntityType::tryFrom((string) ($reqBody['entity_type'] ?? '')),
                     category: (int) ($reqBody['category'] ?? 0),

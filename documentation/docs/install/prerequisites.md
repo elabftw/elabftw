@@ -9,6 +9,32 @@ Before installing eLabFTW, make sure your environment meets the requirements bel
 
 - **64-bit GNU/Linux OS**
 
+## Hardware specifications
+
+eLabFTW can run fine on modest hardware. It really depends if you're aiming to support 6 users or 6.000.
+
+### Minimal
+
+- 2 GB of RAM
+- 1 CPU with at least 2 cores
+- Some disk space for uploaded files
+- a MySQL container running alongside eLabFTW on the same VM
+
+### Recommended for small instances
+
+- 4 GB of RAM
+- 1 CPU with at least 4 cores
+- Some disk space for uploaded files
+- a MySQL container running alongside eLabFTW on the same VM
+
+### Recommended for big instances
+
+- Load balancer
+- 2 workers nodes with each 8 GB of RAM and 4+ CPU cores
+- S3 or NFS backend for uploaded files
+- Redis for user sessions
+- MySQL cluster
+
 ## Required dependencies
 
 ### Container runtime

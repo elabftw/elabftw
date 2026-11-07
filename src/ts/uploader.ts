@@ -6,7 +6,7 @@
  * @package elabftw
  */
 import Dropzone from '@deltablot/dropzone';
-import { reloadElements, sizeToMb } from './misc';
+import { adjustHiddenState, reloadElements, sizeToMb } from './misc';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { notify } from './notify';
@@ -24,13 +24,15 @@ export class Uploader
       init: function(): void {
         // Fires when *any* file errors (validation or server-side)
         this.on('error', (file, errorMessage) => {
-          const msg = `Error with file: ${file.name}: [${errorMessage.code}] ${errorMessage.description}`;
+          // client-side validation (file too big...) and non-JSON server responses give a plain string
+          const reason = typeof errorMessage === 'string' ? errorMessage : `[${errorMessage.code}] ${errorMessage.description}`;
+          const msg = `Error with file: ${file.name}: ${reason}`;
           notify.error(msg);
         });
         // once all files are uploaded
         this.on('queuecomplete', function() {
           if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            reloadElements(['uploadsDiv']);
+            reloadElements(['uploadsDiv']).then(() => adjustHiddenState());
           }
         });
       },

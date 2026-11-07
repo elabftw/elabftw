@@ -21,6 +21,7 @@ final class UltraAdmin extends Users
 {
     public function __construct(public ?int $userid = 1, public ?int $team = null)
     {
+        $this->requester = $this;
         $this->userData['is_sysadmin'] = 1;
         $this->userData['userid'] = $userid;
         $this->userData['team'] = $team;
@@ -37,5 +38,11 @@ final class UltraAdmin extends Users
     public function getUserid(): int
     {
         return $this->userid ?? 1;
+    }
+
+    #[Override]
+    public function isAdminOfTeam(int $team): bool
+    {
+        return true;
     }
 }

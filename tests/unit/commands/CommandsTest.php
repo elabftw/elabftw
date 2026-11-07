@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Commands;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
@@ -29,6 +30,8 @@ use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Mailer\MailerInterface;
 use InvalidArgumentException;
 
+use function sprintf;
+
 /**
  * This file bundles a bunch of commands test together, because most of them are quite short
  */
@@ -38,13 +41,16 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     private Email $Email;
 
+    private Migrations $Migrations;
+
     protected function setUp(): void
     {
         $Logger = new Logger('elabftw');
         // use NullHandler because we don't care about logs here
         $Logger->pushHandler(new NullHandler());
         $MockMailer = $this->createMock(MailerInterface::class);
-        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA);
+        $this->Migrations = new Migrations((new Memory())->getFs(), useBuildInfo: false);
+        $schemaVersionChecker = new SchemaVersionChecker(SchemaVersionChecker::REQUIRED_SCHEMA, $this->Migrations);
         $this->Email = new Email($schemaVersionChecker, $MockMailer, $Logger, 'toto@yopmail.com', demoMode: false);
     }
 
@@ -89,11 +95,11 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     public function testForceSchema(): void
     {
-        $commandTester = new CommandTester(new ForceSchema());
+        $commandTester = new CommandTester(new ForceSchema($this->Migrations));
         $Config = Config::getConfig();
-        $commandTester->execute(array('schema' => $Config->configArr['schema']));
+        $commandTester->execute(array('identifier' => $Config->configArr['schema']));
         $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Changing schema to', $commandTester->getDisplay());
+        $this->assertStringContainsString('Changing legacy schema to', $commandTester->getDisplay());
     }
 
     public function testCache(): void
@@ -266,9 +272,27 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     public function testRevertSchema(): void
     {
-        $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs()));
-        $commandTester->execute(array('number' => '42'));
+        $commandTester = new CommandTester(new RevertSchema((new Fixtures())->getFs(), useBuildInfo: false));
+        $commandTester->execute(array('migration' => '42'));
         $commandTester->assertCommandIsSuccessful();
+    }
+
+    public function testForcedRevertPreservesAppliedRecordOnSqlError(): void
+    {
+        $fs = (new Memory())->getFs();
+        $uuid = Migrations::generateUuidV7();
+        $fs->write(sprintf('migration-%s.sql', $uuid), 'SELECT 1;');
+        $fs->write(sprintf('migration-%s.down.sql', $uuid), 'SELECT not_existing FROM not_existing_either;');
+        $Migrations = new Migrations($fs, useBuildInfo: false);
+        $Migrations->recordApplied($uuid, $Migrations->nextBatch());
+
+        try {
+            $commandTester = new CommandTester(new RevertSchema($fs, useBuildInfo: false));
+            $this->assertSame(Command::FAILURE, $commandTester->execute(array('migration' => $uuid, '--force' => true)));
+            $this->assertTrue($Migrations->isApplied($uuid));
+        } finally {
+            $Migrations->removeApplied($uuid);
+        }
     }
 
     public function testExecuteCache(): void
@@ -281,7 +305,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
     public function testExecuteCheckDatabase(): void
     {
         $Config = Config::getConfig();
-        $commandTester = new CommandTester(new CheckDatabase((int) $Config->configArr['schema']));
+        $commandTester = new CommandTester(new CheckDatabase((int) $Config->configArr['schema'], $this->Migrations));
         $commandTester->execute(array());
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
@@ -290,7 +314,7 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
 
     public function testExecuteCheckDatabaseNeedsUpdate(): void
     {
-        $commandTester = new CommandTester(new CheckDatabase(42));
+        $commandTester = new CommandTester(new CheckDatabase(42, $this->Migrations));
         $statusCode = $commandTester->execute(array());
         $this->assertSame(1, $statusCode);
         $this->assertStringContainsString('An upgrade is required.', $commandTester->getDisplay());

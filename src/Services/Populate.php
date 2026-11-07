@@ -16,6 +16,7 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\LocalPassword;
+use Elabftw\Elabftw\Migrations;
 use Elabftw\Elabftw\Sql;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -44,6 +45,7 @@ use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Tags;
@@ -264,6 +266,16 @@ final class Populate
                     rating: $experiment['rating'] ?? 0,
                 );
                 $Experiments->setId($id);
+                if (isset($experiment['step_groups'])) {
+                    $StepGroups = new StepGroups($Experiments);
+                    $Steps = new Steps($Experiments);
+                    foreach ($experiment['step_groups'] as $group) {
+                        $groupId = $StepGroups->postAction(Action::Create, array('title' => $group['title']));
+                        foreach ($group['steps'] ?? array() as $step) {
+                            $Steps->postAction(Action::Create, array('body' => $step, 'group_id' => $groupId));
+                        }
+                    }
+                }
                 if (isset($experiment['locked'])) {
                     $Experiments->toggleLock();
                 }
@@ -598,8 +610,10 @@ final class Populate
         $Db->q('USE ' . Env::asString('DB_NAME'));
 
         // load structure
-        $Sql = new Sql(new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql')), $this->output);
+        $sqlFs = new Fs(new LocalFilesystemAdapter(dirname(__DIR__) . '/sql'));
+        $Sql = new Sql($sqlFs, $this->output);
         $Sql->execFile('structure.sql');
+        (new Migrations($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')))->markAllAvailableAsApplied();
         new Branding(true)->populate();
     }
 }

@@ -40,6 +40,14 @@ class SqlTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(3, $this->Sql->execFile('dummy-broken.sql'));
     }
 
+    public function testIgnoredErrorsAreReportedPerFile(): void
+    {
+        $this->Sql->execFile('dummy-broken.sql', true);
+        $this->assertTrue($this->Sql->hadIgnoredErrors());
+        $this->Sql->execFile('dummy.sql');
+        $this->assertFalse($this->Sql->hadIgnoredErrors());
+    }
+
     public function testExecFileWithRollback(): void
     {
         $fsMock = $this->createMock(Fs::class);

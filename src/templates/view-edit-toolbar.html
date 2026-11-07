@@ -46,8 +46,17 @@
         </button>
       </div>
       <div class='modal-body' data-wait='{{ 'Please wait…'|trans }}'>
-        <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
-        <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
+        {# a sandbox key gives TEST receipts: the key is only read here, never printed #}
+        {% if App.Config.configArr.ts_authority == 'scimatic' and App.Config.configArr.ts_password starts with 'prf_test_' %}
+          <p>{{ 'SciMatic Proof is set up with a test key: this creates a TEST receipt, which is never anchored and must not be used as evidence. An immutable timestamp archive is still created and stored as attachment.'|trans }}</p>
+        {% else %}
+          <p>{{ 'Timestamping an entry will create an irrefutable proof that the data was present at this point in time. You can timestamp an entry as many times as necessary: an immutable timestamp archive will be created each time, and stored as attachment.'|trans }}</p>
+        {% endif %}
+        {% if App.Config.configArr.ts_authority == 'scimatic' %}
+          <p>{{ 'With SciMatic Proof, a cryptographic hash of your data is sent to SciMatic. They reply with a receipt containing the time it was recorded, signed with their private key. Live receipts are later recorded in a Merkle tree whose root is written to the SciChain blockchain. This is not an eIDAS-qualified timestamp.'|trans }}</p>
+        {% else %}
+          <p>{{ 'With Trusted Timestamping (RFC3161), a cryptographic hash of your data is sent to a trusted third party. They reply with a token containing the current time, and they sign the token with their private key.'|trans }}</p>
+        {% endif %}
       </div>
       <div class='timestamp-error'></div>
       <div class='modal-footer'>
@@ -167,6 +176,13 @@
       <a data-action='create-entity' data-type='{{ Entity.entityType.value == 'experiments_templates' ? 'experiments' : 'items' }}' data-tplid='{{ Entity.id }}' href='#' class='btn btn-primary ml-2' title='{{ 'Create entry from template'|trans }}' aria-label='{{ 'Create entry from template'|trans }}'>
         <i class='fas fa-file-circle-plus fa-fw'></i>
       </a>
+      {% if not App.isAnonymous() and not Entity.isReadOnly and Entity.entityData.state == enum('Elabftw\\Enums\\State').Normal.value %}
+        <button type='button' class='btn btn-transparent ml-2' data-action='updateentries'
+          data-confirm='{{ 'Add missing tags, links and custom fields to all entries created from this template? Existing values will be preserved. Entries you cannot edit will be skipped.'|trans }}'
+          title='{{ 'Update entries'|trans }}' aria-label='{{ 'Update entries'|trans }}'>
+          <i class='fas fa-arrows-rotate fa-fw'></i>
+        </button>
+      {% endif %}
     {% endif %}
 
     <div class='vertical-separator'></div>

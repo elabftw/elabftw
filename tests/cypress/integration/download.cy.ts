@@ -4,19 +4,19 @@ describe('download.php', () => {
     cy.login().then(value => csrf = value);
   });
 
-  it('send empty file if no query is provided', () => {
-    cy.request('/app/download.php').then(resp => {
-      expect(resp.status).to.eq(200);
-      expect(resp.headers['content-type']).to.eq('application/force-download');
-      expect(resp.headers['content-disposition']).to.eq('attachment; filename=unnamed_file');
+  it('send 404 if no query is provided', () => {
+    cy.request({ url: '/app/download.php', failOnStatusCode: false }).then(resp => {
+      expect(resp.status).to.eq(404);
+      expect(resp.headers['cache-control']).to.contain('no-store');
+      expect(resp.headers).not.to.have.property('content-disposition');
     });
   });
 
-  it('send empty file if f parameter is invalid', () => {
-    cy.request('/app/download.php?f=notvalid').then(resp => {
-      expect(resp.status).to.eq(200);
-      expect(resp.headers['content-type']).to.eq('application/force-download');
-      expect(resp.headers['content-disposition']).to.eq('attachment; filename=unnamed_file');
+  it('send 404 if f parameter is not a known upload', () => {
+    cy.request({ url: '/app/download.php?f=notvalid', failOnStatusCode: false }).then(resp => {
+      expect(resp.status).to.eq(404);
+      expect(resp.headers['cache-control']).to.contain('no-store');
+      expect(resp.headers).not.to.have.property('content-disposition');
     });
   });
 

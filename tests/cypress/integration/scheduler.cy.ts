@@ -3,6 +3,8 @@ import { DateTime } from 'luxon';
 describe('Scheduler', () => {
   beforeEach(() => {
     cy.login();
+    // make sure this test suite works during week-ends...
+    cy.request('PATCH', '/api/v2/users/me', { show_weekends: 1 });
   });
 
   it('Displays Scheduler page', () => {

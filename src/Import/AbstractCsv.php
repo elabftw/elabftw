@@ -80,6 +80,7 @@ abstract class AbstractCsv extends AbstractImport
     {
         // we directly read from temporary uploaded file location and do not need to use the cache folder as no extraction is necessary for a .csv
         $csv = Reader::from($this->UploadedFile->getPathname());
+        $csv->setEscape('');
         // get stats about the most likely delimiter
         $delimitersCount = CsvInfo::getDelimiterStats($csv, array(',', '|', "\t", ';'), -1);
         // reverse sort the array by value to get the delimiter with highest probability

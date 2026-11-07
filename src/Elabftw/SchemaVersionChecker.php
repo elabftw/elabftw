@@ -15,22 +15,25 @@ namespace Elabftw\Elabftw;
 use Elabftw\Exceptions\InvalidSchemaException;
 
 /**
- * Use this to check for latest version or update the database schema
+ * Check the legacy schema baseline and migration state.
  */
 final class SchemaVersionChecker
 {
-    /** @var int REQUIRED_SCHEMA the current version of the database structure */
-    public const int REQUIRED_SCHEMA = 227;
+    /**
+     * Legacy numeric schema baseline. New migrations are tracked in schema_migrations.
+     */
+    public const int REQUIRED_SCHEMA = 228;
 
-    public function __construct(public int $currentSchema) {}
+    public function __construct(public int $currentSchema, private readonly Migrations $Migrations) {}
 
     /**
-     * Check if the Db structure needs updating
+     * Check if the Db structure needs updating.
      */
     public function checkSchema(): void
     {
-        if ($this->currentSchema !== self::REQUIRED_SCHEMA) {
-            throw new InvalidSchemaException($this->currentSchema, self::REQUIRED_SCHEMA);
+        $pending = $this->Migrations->getPendingCount();
+        if ($this->currentSchema !== self::REQUIRED_SCHEMA || $pending > 0) {
+            throw new InvalidSchemaException($this->currentSchema, self::REQUIRED_SCHEMA, $pending);
         }
     }
 }

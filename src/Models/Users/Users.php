@@ -561,8 +561,8 @@ class Users extends AbstractRest
         if (!$this->requester->isSysadmin()) {
             unset($userData['last_login'], $userData['modified_at']);
         }
-        // keep sig_privkey in response if requester is target
-        if ($this->requester->getUserid() !== $this->getUserid()) {
+        // keep sig_privkey in response if requester is target, but never for an impersonator: it could be kept and cracked offline
+        if ($this->requester->getUserid() !== $this->getUserid() || $this->requester->impersonatorId !== null) {
             unset($userData['sig_privkey']);
         }
         return $userData;

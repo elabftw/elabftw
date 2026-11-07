@@ -174,7 +174,6 @@ const t = {
     "select-resource": "選擇資源",
     "session-expiring": "由於閒置過久，您的工作階段即將到期。",
     "session-expiring-title": "eLabFTW 工作階段即將到期",
-    "show-all": "顯示全部",
     "show-archived": "顯示已封存內容",
     "show-deleted": "顯示已刪除",
     "signed-by": "簽署者",

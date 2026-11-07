@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Memilih sumber daya",
     "session-expiring": "Sesi Anda akan segera berakhir karena tidak ada aktivitas.",
     "session-expiring-title": "Sesi eLabFTW akan berakhir",
-    "show-all": "Tunjukkan semua",
     "show-archived": "Tunjukkan yang telah diarsipkan",
     "show-deleted": "Tampilkan terhapus",
     "signed-by": "Ditandatangani oleh",

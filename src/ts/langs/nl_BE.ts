@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Selecteer een bron",
     "session-expiring": "Uw sessie verloopt binnenkort wegens inactiviteit.",
     "session-expiring-title": "eLabFTW-sessie verloopt",
-    "show-all": "Toon alles",
     "show-archived": "Gearchiveerde items weergeven",
     "show-deleted": "Verwijderde tonen",
     "signed-by": "Ondertekend door",

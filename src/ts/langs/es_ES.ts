@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Seleccione un recurso",
     "session-expiring": "Tu sesión caducará pronto por inactividad.",
     "session-expiring-title": "La sesión de eLabFTW está a punto de caducar",
-    "show-all": "Mostrar todo",
     "show-archived": "Mostrar archivado",
     "show-deleted": "Muestra los elementos borrados",
     "signed-by": "Firmado por",

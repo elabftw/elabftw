@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Seleccioneu un recurs",
     "session-expiring": "La vostra sessió caducarà aviat per inactivitat.",
     "session-expiring-title": "La sessió d'eLabFTW està a punt de caducar",
-    "show-all": "Mostra-ho tot",
     "show-archived": "Mostra arxivat",
     "show-deleted": "Mostra eliminats",
     "signed-by": "Signat per",

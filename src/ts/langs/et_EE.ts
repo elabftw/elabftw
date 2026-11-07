@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Valige ressurss",
     "session-expiring": "Teie seanss aegub peagi tegevusetuse tõttu.",
     "session-expiring-title": "eLabFTW seanss aegub",
-    "show-all": "Näita kõiki",
     "show-archived": "Näita arhiveeritud",
     "show-deleted": "Kuva kustutatud",
     "signed-by": "Allkirjastanud",

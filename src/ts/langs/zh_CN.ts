@@ -174,7 +174,6 @@ const t = {
     "select-resource": "选择一个资源",
     "session-expiring": "由于长时间未操作，您的会话即将过期。",
     "session-expiring-title": "eLabFTW 会话即将过期",
-    "show-all": "显示全部",
     "show-archived": "显示已归档",
     "show-deleted": "显示已删除",
     "signed-by": "签署者",

@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Выберите ресурс",
     "session-expiring": "Ваш сеанс скоро завершится из-за отсутствия активности.",
     "session-expiring-title": "Сеанс eLabFTW скоро завершится",
-    "show-all": "Показать все",
     "show-archived": "Показать в архиве",
     "show-deleted": "Показать удаленное",
     "signed-by": "Подписано",

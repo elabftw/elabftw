@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Vybrat zdroj",
     "session-expiring": "Vaše relace brzy vyprší kvůli neaktivitě.",
     "session-expiring-title": "Relace eLabFTW vyprší",
-    "show-all": "Zobrazit vše",
     "show-archived": "Zobrazit archivované",
     "show-deleted": "Ukázat smazané",
     "signed-by": "Podepsal/a",

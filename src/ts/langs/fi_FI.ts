@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Valitse resurssi",
     "session-expiring": "Istuntosi vanhenee pian käyttämättömyyden vuoksi.",
     "session-expiring-title": "eLabFTW-istunto vanhenee",
-    "show-all": "Näytä kaikki",
     "show-archived": "Näytä arkistoitu",
     "show-deleted": "Näytä poistetut",
     "signed-by": "Allekirjoittanut",

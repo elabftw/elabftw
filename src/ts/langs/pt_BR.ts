@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Selecionar um recurso",
     "session-expiring": "Sua sessão expirará em breve por inatividade.",
     "session-expiring-title": "Sessão do eLabFTW expirando",
-    "show-all": "Mostrar tudo",
     "show-archived": "Mostrar arquivados",
     "show-deleted": "Mostrar excluídos",
     "signed-by": "Assinado por",

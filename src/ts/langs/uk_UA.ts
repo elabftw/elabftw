@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Виберіть ресурс",
     "session-expiring": "Ваш сеанс незабаром завершиться через бездіяльність.",
     "session-expiring-title": "Сеанс eLabFTW завершується",
-    "show-all": "Показати всі",
     "show-archived": "Показати архівовані",
     "show-deleted": "Показати видалені",
     "signed-by": "Підписано",

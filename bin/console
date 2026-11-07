@@ -56,7 +56,7 @@ try {
     exit(1);
 } catch (AppException $e) {
     $logger->error($e->getMessage());
-    exit;
+    exit(1);
 }
 
 $sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');

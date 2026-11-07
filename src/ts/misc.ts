@@ -20,6 +20,7 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
+import { storeRecoveryData } from './recovery';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
@@ -84,6 +85,46 @@ export function toRelative(title: string, locale: string, timezone = document.ge
       .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale, 'zone': timezone})
       .toRelative() ?? ''
   );
+}
+
+export const SQL_DATETIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+/* eslint-disable-next-line quotes */
+export const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
+// datetimes are stored without timezone, as wall-clock times of the server timezone
+// 'system' (the browser timezone) is only a fallback for when the server timezone is not exposed
+export function serverTimezone(): string {
+  return document.getElementById('user-prefs')?.dataset.timezone || 'system';
+}
+
+// interpret a stored datetime in the server timezone and move it to the browser one
+export function serverToLocal(value: string): DateTime {
+  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale, zone: serverTimezone() }).toLocal();
+}
+
+// interpret a datetime-local input value in the browser timezone and convert it to a storable server datetime
+export function localInputToServer(value: string): DateTime {
+  // fromISO accepts the value with or without seconds, as browsers may send either
+  return DateTime.fromISO(value).setZone(serverTimezone());
+}
+
+// DISPLAY DATETIMES IN THE BROWSER TIMEZONE
+// the server renders them in its own timezone: elements carry the raw stored value so it can be converted here
+export function localizeDatetimes(): void {
+  document.querySelectorAll<HTMLElement>('.local-datetime[data-datetime]').forEach(el => {
+    const dt = serverToLocal(el.dataset.datetime);
+    if (dt.isValid) {
+      el.textContent = dt.toLocaleString(DateTime.DATETIME_MED);
+    }
+  });
+  // datetime-local inputs created by malle are prefilled with this attribute, so it must be in the browser timezone too
+  document.querySelectorAll<HTMLElement>('[data-local-input-datetime]').forEach(el => {
+    const dt = serverToLocal(el.dataset.localInputDatetime);
+    if (dt.isValid) {
+      el.dataset.maInputValue = dt.toFormat(DATETIME_LOCAL_FORMAT);
+    }
+  });
 }
 
 // Add a listener for all elements triggered by an event
@@ -257,6 +298,10 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    // TomSelect search inputs have no name attribute and must not be collected.
+    if (!el.name) {
+      return;
+    }
     el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);
@@ -554,6 +599,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   makeSortableGreatAgain();
   makeMalleableColumnsGreatAgain();
   relativeMoment();
+  localizeDatetimes();
 }
 
 /**
@@ -777,10 +823,7 @@ export async function updateEntityBody(redirect = true): Promise<void> {
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)
     // store the modifications in local storage to prevent any data loss
-    localStorage.setItem('body', editor.getContent());
-    localStorage.setItem('id', String(entity.id));
-    localStorage.setItem('type', entity.type);
-    localStorage.setItem('date', new Date().toLocaleString());
+    storeRecoveryData(entity.type, entity.id, editor.getContent());
     // reload the page so user gets redirected to the login page
     location.reload();
   });

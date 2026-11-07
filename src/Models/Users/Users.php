@@ -574,7 +574,7 @@ class Users extends AbstractRest
      */
     public function readNamesFromIds(array $idArr): array
     {
-        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        $onlyIds = self::keepValidIds($idArr);
         if (empty($onlyIds)) {
             return array();
         }
@@ -588,6 +588,22 @@ class Users extends AbstractRest
             }
             return $user;
         }, $req->fetchAll());
+    }
+
+    /**
+     * Resolve user ids into names only, in a single query: use it when the email is not needed,
+     * as readNamesFromIds() runs a query per user to know if the email must be masked
+     */
+    public function readFullnamesFromIds(array $idArr): array
+    {
+        $onlyIds = self::keepValidIds($idArr);
+        if (empty($onlyIds)) {
+            return array();
+        }
+        $sql = "SELECT userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname FROM users WHERE userid IN (" . implode(',', $onlyIds) . ') ORDER BY fullname ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     public function isAdminSomewhere(): bool
@@ -1148,6 +1164,12 @@ class Users extends AbstractRest
         }
         // isAdminOf() also covers the requester themselves and can_manage_users2teams
         return $this->requester->isSysadmin() || $this->requester->isAdminOf($userid);
+    }
+
+    // only positive integers can be user ids, and casting them makes them safe to put in an IN () clause
+    private static function keepValidIds(array $idArr): array
+    {
+        return array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
     }
 
     private static function maskEmail(string $email): string

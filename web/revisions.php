@@ -15,7 +15,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\AccessType;
 use Elabftw\Exceptions\ImproperActionException;
-use Elabftw\Models\Revisions;
+use Elabftw\Models\BodyRevisions;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,12 +35,7 @@ try {
     $Entity->setId($App->Request->query->getInt('item_id'));
     $Entity->canOrExplode(AccessType::Read);
 
-    $revisionsArr = new Revisions(
-        $Entity,
-        (int) $App->Config->configArr['max_revisions'],
-        (int) $App->Config->configArr['min_delta_revisions'],
-        (int) $App->Config->configArr['min_days_revisions'],
-    )->readAll();
+    $revisionsArr = new BodyRevisions($Entity)->readAll();
 
     $template = 'revisions.html';
     $renderArr = array(

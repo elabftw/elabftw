@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -99,6 +100,9 @@ final class EventsRecurrence extends AbstractRest
             $recurrenceId = $event['recurrence_id'];
             if ($recurrenceId === null) {
                 throw new ImproperActionException(_('This reservation no longer belongs to a recurrence.'));
+            }
+            if ($changeDateTime && (int) $event['approval_status'] !== BookingApprovalStatus::NoApproval->value) {
+                throw new ImproperActionException('Approval-controlled reservations cannot change time.');
             }
             $allEvents = $this->readRecurrenceEvents($recurrenceId);
             $this->assertRecurrenceOwnership($allEvents, $event);
@@ -203,6 +207,7 @@ final class EventsRecurrence extends AbstractRest
                 $req->bindValue(':recurrence_index', $event['recurrence_index'], PDO::PARAM_INT);
             }
             $result = $this->Db->execute($req);
+            $this->Scheduler->notifyApproversOfCancellation($event);
             // A recurring cancellation produces one administrator notification, not one per occurrence.
             $this->Scheduler->notifyAdminsOfDeletion($event);
             $this->Db->commit();

@@ -23,6 +23,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\DatabaseNotInstalledException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
@@ -161,9 +163,6 @@ final class Config extends AbstractRest
             ('admins_import_users', '0'),
             ('admins_archive_users', '1'),
             ('admins_impersonate_users', '0'),
-            ('max_revisions', '10'),
-            ('min_delta_revisions', '100'),
-            ('min_days_revisions', '23'),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),
@@ -406,7 +405,15 @@ final class Config extends AbstractRest
     {
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
+        try {
+            $this->Db->execute($req);
+        } catch (DatabaseErrorException $e) {
+            // 42S02: base table not found, so the structure was never imported
+            if ($e->getSqlstate() === '42S02') {
+                throw new DatabaseNotInstalledException($e);
+            }
+            throw $e;
+        }
         $res = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         // we want key => value array
         return array_map(fn($v): mixed => $v[0], $res);

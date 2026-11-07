@@ -1073,6 +1073,13 @@ tr.upload-group-drop-target td {
   background-color: rgba(41, 174, 185, 0.5);
 }
 
+/* make it obvious that a step date (deadline, completion time) can be clicked to be modified */
+.step-datetime {
+  border: 1px dashed rgba(127, 127, 127, 0.6);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
 
@@ -1954,11 +1961,18 @@ input:user-invalid {
 
 #metadataDiv {
   textarea,
-  input {
+  input,
+  select {
     &:required:invalid {
       background-color: var(--mediumyellow);
       color: var(--chrome-bg);
     }
+  }
+
+  [data-purpose='radio-holder']:has(input:required:invalid) {
+    background-color: var(--mediumyellow);
+    border-radius: 4px;
+    padding: 4px 8px;
   }
 }
 

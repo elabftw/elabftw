@@ -16,6 +16,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
@@ -72,6 +73,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -93,6 +95,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -130,6 +133,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $exportsFs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
             );
             $Import->prepare();
@@ -172,6 +176,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
             category: 1,
         );
@@ -194,6 +199,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $actions = array(
@@ -237,6 +243,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -257,6 +264,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -279,6 +287,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -301,6 +310,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -328,6 +338,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $this->fs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
                 category: 1,
             );
@@ -354,6 +365,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -377,6 +389,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -401,6 +414,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
             category: 1,
         );
@@ -423,6 +437,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -445,6 +460,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -468,6 +484,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -491,6 +508,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -514,6 +532,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
         );
         $Import->import();
         $this->assertSame(1, $Import->getInserted());
@@ -612,6 +631,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $this->fs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
             );
             $Import->import();
@@ -643,6 +663,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
 
@@ -678,6 +699,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );

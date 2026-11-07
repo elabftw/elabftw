@@ -544,8 +544,15 @@ class Users extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->canReadOrExplode();
         $userData = $this->readOneFull();
+        if (!$this->canReadFullProfile()) {
+            return array(
+                'firstname' => $userData['firstname'],
+                'lastname' => $userData['lastname'],
+                'email' => self::maskEmail($userData['email']),
+            );
+        }
+
         unset($userData['password']);
         unset($userData['password_hash']);
         unset($userData['salt']);
@@ -954,6 +961,16 @@ class Users extends AbstractRest
         return $this->userData['userid'] === $this->requester->userData['userid'];
     }
 
+    /**
+     * readOne() returns a limited profile instead of throwing, so use this to protect what belongs to the user
+     */
+    public function canReadFullProfileOrExplode(): void
+    {
+        if (!$this->canReadFullProfile()) {
+            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+        }
+    }
+
     public function isSelfOrExplode(): void
     {
         if ($this->isSelf() === false) {
@@ -1012,19 +1029,13 @@ class Users extends AbstractRest
         throw new ForbiddenException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
-    private function canReadOrExplode(): void
+    private function canReadFullProfile(): bool
     {
         // it's ourself or we are sysadmin
         if ($this->requester->getUserid() === $this->getUserid() || $this->requester->isSysadmin()) {
-            return;
+            return true;
         }
-        if (!$this->requester->isAdmin && !$this->isSelf()) {
-            throw new ForbiddenException('This endpoint requires admin privileges to access other users.');
-        }
-        // check we view user of our team, unless we are sysadmin and we can access it
-        if (!$this->requester->isAdminOf($this->getUserid())) {
-            throw new ForbiddenException('User tried to access user from other team.');
-        }
+        return $this->requester->isAdmin() && $this->requester->isAdminOf($this->getUserid());
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool

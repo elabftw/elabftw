@@ -19,6 +19,7 @@ use Elabftw\Enums\DSpaceAction;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
@@ -306,6 +307,7 @@ final class Dspace extends AbstractRest
             new Instance2Rors(),
             new Teams2Rors($this->requester->getTeam(), false),
             new Users2Rors($this->requester->getUserid(), false),
+            CompoundsFactory::getCompounds($this->requester),
         );
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();

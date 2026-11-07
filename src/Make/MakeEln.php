@@ -16,12 +16,15 @@ use DateTimeImmutable;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\Metadata;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Hash\FileHash;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Compounds;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
@@ -59,6 +62,8 @@ use function sprintf;
 use function strtr;
 use function array_map;
 use function array_values;
+use function is_array;
+use function is_scalar;
 
 /**
  * Make an ELN archive
@@ -75,6 +80,7 @@ class MakeEln extends AbstractMakeEln
         protected Instance2Rors $instance2Rors,
         protected Teams2Rors $teams2Rors,
         protected Users2Rors $users2Rors,
+        protected Compounds $Compounds,
         protected bool $includeLinkedEntities = true,
         protected bool $includeChangelog = true,
     ) {
@@ -212,45 +218,18 @@ class MakeEln extends AbstractMakeEln
                 'author' => array('@id' => $this->getAuthorId(new Users((int) $comment['userid']))),
             );
         }
+
+        // extra fields pointing to other entries, by type and database id
+        $metadataReferences = array();
+
         // COMPOUNDS
         $compounds = array();
         foreach ($e['compounds_links'] ?? array() as $compound) {
-            $id = sprintf('#compound-%d', $compound['id']);
-            $compounds[] = array('@id' => $id);
-            // A compound may be referenced by several exported datasets,
-            // but each '@id' must occur only once in the graph.
-            if (in_array($id, array_column($this->dataEntities, '@id'), true)) {
-                continue;
-            }
-            $identifiers = array();
-            if (!empty($compound['cas_number'])) {
-                $identifiers[] = array(
-                    '@type' => 'PropertyValue',
-                    'propertyID' => 'CAS Registry Number',
-                    'value' => $compound['cas_number'],
-                );
-            }
-            if (!empty($compound['pubchem_cid'])) {
-                $identifiers[] = array(
-                    '@type' => 'PropertyValue',
-                    'propertyID' => 'PubChem CID',
-                    'value' => $compound['pubchem_cid'],
-                    'sameAs' => sprintf('https://pubchem.ncbi.nlm.nih.gov/#query=%d', $compound['pubchem_cid']),
-                );
-            }
-            $this->dataEntities[] = array(
-                '@id' => $id,
-                '@type' => 'MolecularEntity',
-                'name' => $compound['name'],
-                'molecularFormula' => $compound['molecular_formula'],
-                'inChI' => $compound['inchi'],
-                'inChIKey' => $compound['inchi_key'],
-                'iupacName' => $compound['iupac_name'],
-                'molecularWeight' => $compound['molecular_weight'],
-                'smiles' => $compound['smiles'],
-                'identifier' => $identifiers,
-            );
+            $reference = $this->compoundToJsonLd($compound);
+            $compounds[] = $reference;
+            $metadataReferences[ExtraFieldReference::Compounds->value][$compound['id']] = $reference;
         }
+
         // TAGS
         $keywords = array();
         if (!empty($e['tags'] ?? array())) {
@@ -367,9 +346,11 @@ class MakeEln extends AbstractMakeEln
             }
             $datasetNode['about'] = array('@id' => $categoryAtId);
         }
+
         // METADATA (extra fields)
         if ($e['metadata']) {
-            $processedMetadata = $this->metadataToJsonLd($e['metadata']);
+            $metadataReferences = $this->processMetadataReferences($e['metadata'], $metadataReferences);
+            $processedMetadata = $this->metadataToJsonLd($e['metadata'], $metadataReferences);
             $datasetNode['variableMeasured'] = $processedMetadata['ids'];
             array_push($this->dataEntities, ...$processedMetadata['nodes']);
         }
@@ -489,7 +470,7 @@ class MakeEln extends AbstractMakeEln
         return $res;
     }
 
-    protected function metadataToJsonLd(string $strMetadata): array
+    protected function metadataToJsonLd(string $strMetadata, array $metadataReferences = array()): array
     {
         $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
         // we will return two arrays, the array of @id, and an array of nodes of @type PropertyValue
@@ -527,6 +508,19 @@ class MakeEln extends AbstractMakeEln
             $pv['propertyID'] = $name;
             $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';
+            // replace the database ids by references to nodes of the crate, when they could be exported
+            $referenceType = ExtraFieldReference::tryFrom((string) ($props['type'] ?? ''));
+            if ($referenceType !== null && !empty($props['value'])) {
+                $resolvedRefs = array();
+                foreach (is_array($props['value']) ? $props['value'] : array($props['value']) as $sourceId) {
+                    if (is_scalar($sourceId) && isset($metadataReferences[$referenceType->value][(int) $sourceId])) {
+                        $resolvedRefs[] = $metadataReferences[$referenceType->value][(int) $sourceId];
+                    }
+                }
+                if ($resolvedRefs !== array()) {
+                    $pv['value'] = is_array($props['value']) ? $resolvedRefs : $resolvedRefs[0];
+                }
+            }
             if (!empty($props['description'])) {
                 $pv['description'] = $props['description'];
             }
@@ -583,6 +577,129 @@ class MakeEln extends AbstractMakeEln
             $this->authors[] = $node;
         }
         return $id;
+    }
+
+    private function processMetadataReferences(string $strMetadata, array $references): array
+    {
+        $metadata = json_decode($strMetadata, true, 42, JSON_THROW_ON_ERROR);
+        foreach ($metadata[Metadata::ExtraFields->value] ?? array() as $props) {
+            $type = ExtraFieldReference::tryFrom((string) ($props['type'] ?? ''));
+            if ($type === null) {
+                continue;
+            }
+            $values = $props['value'] ?? array();
+            foreach (is_array($values) ? $values : array($values) as $value) {
+                if (!is_scalar($value)) {
+                    continue;
+                }
+                $sourceId = (int) $value;
+                if ($sourceId < 1 || isset($references[$type->value][$sourceId])) {
+                    continue;
+                }
+                $reference = $this->processMetadataReference($type, $sourceId);
+                if ($reference !== null) {
+                    $references[$type->value][$sourceId] = $reference;
+                }
+            }
+        }
+        return $references;
+    }
+
+    private function processMetadataReference(ExtraFieldReference $type, int $sourceId): ?array
+    {
+        try {
+            return match ($type) {
+                ExtraFieldReference::Compounds => $this->processMetadataCompounds($sourceId),
+                ExtraFieldReference::Experiments => $this->processMetadataEntity($sourceId, EntityType::Experiments),
+                ExtraFieldReference::Items => $this->processMetadataEntity($sourceId, EntityType::Items),
+                ExtraFieldReference::Users => $this->processMetadataUser($sourceId),
+            };
+        } catch (ResourceNotFoundException) {
+            $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: not found', $type->value, $sourceId));
+            return null;
+        }
+    }
+
+    private function processMetadataUser(int $userId): ?array
+    {
+        if (!$this->requester->isAdminOf($userId)) {
+            $this->logger->warning(sprintf(
+                'Skipping metadata reference users: %d during ELN export: insufficient permissions',
+                $userId
+            ));
+            return null;
+        }
+        return array('@id' => $this->getAuthorId(new Users($userId)));
+    }
+
+    private function processMetadataEntity(int $entityId, EntityType $entityType): ?array
+    {
+        try {
+            $Entity = $entityType->toInstance(
+                $this->requester,
+                $entityId,
+                $this->bypassReadPermission,
+            );
+            $datasetFolder = $this->processEntity($Entity);
+            if ($datasetFolder === false) {
+                return null;
+            }
+            return array('@id' => './' . $datasetFolder);
+        } catch (ForbiddenException $e) {
+            $this->logger->warning(sprintf(
+                'Skipping metadata reference %s: %d during ELN export: %s',
+                $entityType->value,
+                $entityId,
+                $e->getMessage()
+            ));
+            return null;
+        }
+    }
+
+    private function processMetadataCompounds(int $compoundId): array
+    {
+        $this->Compounds->setId($compoundId);
+        return $this->compoundToJsonLd($this->Compounds->readOne());
+    }
+
+    private function compoundToJsonLd(array $compound): array
+    {
+        $id = sprintf('#compound-%d', $compound['id']);
+        $reference = array('@id' => $id);
+        // A compound may be referenced by several exported datasets,
+        // but each '@id' must occur only once in the graph.
+        if (in_array($id, array_column($this->dataEntities, '@id'), true)) {
+            return $reference;
+        }
+        $identifiers = array();
+        if (!empty($compound['cas_number'])) {
+            $identifiers[] = array(
+                '@type' => 'PropertyValue',
+                'propertyID' => 'CAS Registry Number',
+                'value' => $compound['cas_number'],
+            );
+        }
+        if (!empty($compound['pubchem_cid'])) {
+            $identifiers[] = array(
+                '@type' => 'PropertyValue',
+                'propertyID' => 'PubChem CID',
+                'value' => $compound['pubchem_cid'],
+                'sameAs' => sprintf('https://pubchem.ncbi.nlm.nih.gov/#query=%d', $compound['pubchem_cid']),
+            );
+        }
+        $this->dataEntities[] = array(
+            '@id' => $id,
+            '@type' => 'MolecularEntity',
+            'name' => $compound['name'],
+            'molecularFormula' => $compound['molecular_formula'],
+            'inChI' => $compound['inchi'],
+            'inChIKey' => $compound['inchi_key'],
+            'iupacName' => $compound['iupac_name'],
+            'molecularWeight' => $compound['molecular_weight'],
+            'smiles' => $compound['smiles'],
+            'identifier' => $identifiers,
+        );
+        return $reference;
     }
 
     // convert changelog actions to schema.org valid fields UpdateAction

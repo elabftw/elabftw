@@ -204,30 +204,6 @@
   </div>
 
 
-  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Revisions system configuration'|trans }}</h2>
-  <div class='pl-3'>
-    <div class='d-flex justify-content-between'>
-      <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
-      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='max_revisions' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' id='max_revisions' />
-    </div>
-    <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='min_delta_revisions' class='col-form-label'>{{ 'Minimum number of characters that need to be changed in order to create a new revision per entry'|trans }}</label>
-      <input class='form-control col-md-3' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' data-trigger='blur' data-model='config' data-target='min_delta_revisions' id='min_delta_revisions' />
-    </div>
-    <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='min_days_revisions' class='col-form-label'>{{ 'Number of days between changes to automatically create a revision'|trans }}</label>
-      <input class='form-control col-md-3' type='number' min='1' max='999' value='{{ App.Config.configArr.min_days_revisions }}' data-trigger='blur' data-model='config' data-target='min_days_revisions' id='min_days_revisions' />
-    </div>
-    <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
-    <hr>
-  </div>
-
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h2>
   <div id='permissionsSettingsDiv' class='pl-3'>
     {% for perm in permissions %}

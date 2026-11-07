@@ -40,10 +40,6 @@ final class DatabaseCleaner implements CleanerInterface
         $this->findOrphans('experiments', 'users', 'userid', 'userid');
         $this->findOrphans('experiments_comments', 'experiments', 'item_id');
         $this->findOrphans('experiments_comments', 'users', 'userid', 'userid');
-        $this->findOrphans('experiments_revisions', 'experiments', 'item_id');
-        $this->findOrphans('experiments_revisions', 'users', 'userid', 'userid');
-        $this->findOrphans('items_revisions', 'items', 'item_id');
-        $this->findOrphans('items_revisions', 'users', 'userid', 'userid');
         $this->findOrphans('experiments_steps', 'experiments', 'item_id');
         $this->findOrphans('items', 'teams', 'team');
         $this->findOrphans('items_comments', 'items', 'item_id');

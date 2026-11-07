@@ -99,7 +99,6 @@ $Application->add(new StatusDatabase($sqlFs, useBuildInfo: !Env::asBool('DEV_MOD
 $Application->add(new RevertSchema($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
-$Application->add(new SnapFingers());
 $Application->add(new ForceSchema($Migrations));
 $Application->add(new GenSchema($sqlFs));
 $Application->add(new MfaCode());

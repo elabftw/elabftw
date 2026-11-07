@@ -49,7 +49,7 @@
 {# IMPERSONATION BANNER #}
 {% if App.Users.impersonatorId is not null %}
   <div id='impersonationBanner' class='impersonation-banner d-flex flex-wrap justify-content-between align-items-center' role='status'>
-    <span><i class='fas fa-user-secret fa-fw mr-1' aria-hidden='true'></i>{{ 'You are currently impersonating %s.'|trans|format(App.Users.userData.fullname ~ ' (' ~ App.Users.userData.email ~ ')') }}</span>
+    <span><i class='fas fa-user-secret fa-fw mr-1' aria-hidden='true'></i>{{ 'You are currently impersonating %s in read-only mode.'|trans|format(App.Users.userData.fullname ~ ' (' ~ App.Users.userData.email ~ ')') }}</span>
     <form method='post' action='/app/controllers/ImpersonationController.php'>
       <input type='hidden' name='csrf' value='{{ App.Session.get('csrf') }}' />
       <input type='hidden' name='action' value='stop' />

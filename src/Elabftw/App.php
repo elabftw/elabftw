@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Auth\Impersonation;
+use Elabftw\Auth\ImpersonationGuard;
 use Elabftw\Enums\Language;
 use Elabftw\Enums\Messages;
 use Elabftw\Enums\ThemeVariant;
@@ -125,6 +126,10 @@ final class App
             } catch (ForbiddenException) {
                 $this->Session->invalidate();
                 throw new UnauthorizedException();
+            }
+            // outside of the try block above: a refused request must not kill the session
+            if ($this->Users->impersonatorId !== null) {
+                new ImpersonationGuard()->assertAllowed($this->Request);
             }
 
             if ($this->Session->get('is_anon') === 1) {

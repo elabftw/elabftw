@@ -243,7 +243,7 @@
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
-    {% include 'binary-setting.html' with {'label': 'Allow Admins to impersonate users of their team'|trans, 'slug': 'admins_impersonate_users', 'help': 'Admins will be able to login as a user of the team where they are Admin, without knowing their password. Users with elevated privileges (Admins, Sysadmins) cannot be impersonated by Admins. Sysadmins can always impersonate any user. Every impersonation is recorded in the audit logs.'|trans} %}
+    {% include 'binary-setting.html' with {'label': 'Allow Admins to impersonate users of their team'|trans, 'slug': 'admins_impersonate_users', 'help': 'Admins will be able to see the app as a user of the team where they are Admin sees it, in read-only mode. Users with elevated privileges (Admins, Sysadmins) cannot be impersonated by Admins. Sysadmins can always impersonate any user. Every impersonation is recorded in the audit logs.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>

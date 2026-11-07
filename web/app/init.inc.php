@@ -22,6 +22,7 @@ use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
@@ -30,6 +31,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamFinder;
 use Exception;
 use PDOException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -39,6 +41,7 @@ use function dirname;
 use function header;
 use function in_array;
 use function setcookie;
+use function str_starts_with;
 use function stripos;
 use function time;
 use function array_map;
@@ -243,6 +246,17 @@ try {
     if ($Request->headers->get('X-Requested-With') !== 'XMLHttpRequest') {
         header('Location: /app/logout.php?keep_redirect=1');
     }
+    exit;
+} catch (ForbiddenException $e) {
+    // a request refused for an authenticated user, e.g. while impersonating: the session stays valid
+    $Response = str_starts_with($Request->getPathInfo(), '/api/')
+        ? new JsonResponse(array(
+            'code' => $e->getHttpCode(),
+            'message' => $e->getMessage(),
+            'description' => $e->getDescription(),
+        ), $e->getHttpCode())
+        : $App->getResponseFromException($e);
+    $Response->send();
     exit;
 } catch (Exception $e) {
     // if something went wrong here it should stop whatever is after

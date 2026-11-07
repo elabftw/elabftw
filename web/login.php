@@ -83,10 +83,6 @@ try {
         ) {
             throw new UnauthorizedException();
         }
-        // an impersonation is bound to a team, and the team selection would login as the impersonated user
-        if ($App->Users->impersonatorId !== null) {
-            throw new ImproperActionException(_('Stop impersonating before switching team.'));
-        }
 
         $cookieOptions = array(
             'expires' => time() - 3600,

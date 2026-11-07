@@ -96,7 +96,7 @@ class Users extends AbstractRest
 
     /**
      * Userid of the Sysadmin or Admin currently impersonating this user, if any.
-     * Only set for session based requests, it lets us refuse actions that must stay in the hands of the real user.
+     * Only set for session based requests, it makes the session read-only (see ImpersonationGuard).
      */
     public ?int $impersonatorId = null;
 

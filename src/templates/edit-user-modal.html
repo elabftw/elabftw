@@ -113,7 +113,7 @@
         </button>
         {# IMPERSONATE: always possible for Sysadmin, opt-in at instance level for Admins. Permissions are checked server side. #}
         {% if App.Users.impersonatorId is null and (App.Users.userData.is_sysadmin or (App.Users.isAdmin and App.Config.configArr.admins_impersonate_users == '1')) %}
-          <button type='button' class='btn btn-ghost' id='impersonateUserBtn' data-action='impersonate-user' data-confirm='{{ 'You will be logged in as this user. Every action you take will be done in their name. This action is recorded in the audit logs. Continue?'|trans }}'>
+          <button type='button' class='btn btn-ghost' id='impersonateUserBtn' data-action='impersonate-user' data-confirm='{{ 'You will see the app as this user sees it, in read-only mode: nothing can be modified while impersonating. This action is recorded in the audit logs. Continue?'|trans }}'>
             <i class='fas fa-fw fa-user-secret mr-1'></i>{{ 'Impersonate'|trans }}
           </button>
         {% endif %}

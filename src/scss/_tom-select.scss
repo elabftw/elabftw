@@ -147,7 +147,8 @@
 
   &:hover,
   &:focus {
-    background-color: var(--secondlevel);
+    background-color: var(--firstevel);
+    color: var(--strongest);
   }
 }
 

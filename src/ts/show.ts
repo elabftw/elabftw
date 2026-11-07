@@ -439,6 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
             callback([], []);
           });
       },
+      clearAfterSelect: true,
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam('owner', value);

@@ -27,7 +27,7 @@ import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
 import $ from 'jquery';
 import { core } from './core';
-import { selectedEntities } from './common';
+import { clearEntitiesSelection, selectedEntities } from './common';
 import { on } from './handlers';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
@@ -196,7 +196,6 @@ const mountEntityListSv = (target: HTMLElement, order: string, sort: string): vo
       selectedEntities,
       currentUserId: core.currentUserid,
       currentTeam: core.currentTeam,
-      isAdmin: core.isAdmin,
       isAnon: core.isAnon,
       onInitialLoadDone: handleInitialLoadDone,
     },
@@ -781,6 +780,20 @@ document.addEventListener('DOMContentLoaded', () => {
       // collectForm reports the invalid field to the user already
       return;
     }
+    // link inputs expect an "id - title" value from the autocomplete, not free text
+    for (const key of Object.values(LinkSubModel)) {
+      if (key in params) {
+        const linkId = parseInt(params[key], 10);
+        if (Number.isNaN(linkId) || linkId <= 0) {
+          const input = form.querySelector<HTMLInputElement>(`[name="${key}"]`);
+          input?.classList.add('border-danger');
+          input?.focus();
+          notify.error('invalid-info');
+          return;
+        }
+        params[key] = linkId;
+      }
+    }
     clearForm(form);
     (el as HTMLButtonElement).disabled = true;
     checked.forEach(chk => {
@@ -791,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ajaxs.push(ApiC.post(`${entity.type}/${chk}/${Model.Tag}`, {notifOnSaved: 0, tag: paramsCopy[key]}));
           delete paramsCopy[key];
         } else if (Object.values(LinkSubModel).includes(key as LinkSubModel)) {
-          ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${parseInt(paramsCopy[key], 10)}`));
+          ajaxs.push(ApiC.post(`${entity.type}/${chk}/${key}/${paramsCopy[key]}`));
           delete paramsCopy[key];
         }
       }
@@ -811,19 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearForm(document.getElementById(el.dataset.target));
 
     if (el.dataset.target === 'multiChangesForm') {
-      selectedEntities.set([]);
-
-      document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked').forEach(checkbox => {
-        checkbox.checked = false;
-        (checkbox.closest('.entity') as HTMLElement).style.backgroundColor = '';
-      });
-
-      document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
-      const selectAll = document.querySelector<HTMLElement>('[data-action="toggle-select-all-entities"]');
-      if (selectAll && selectAll.dataset.target === 'unselect') {
-        selectAll.dataset.target = 'select';
-        selectAll.querySelector('i')?.classList.replace('fa-square-check', 'fa-square');
-      }
+      clearEntitiesSelection();
     }
   });
 

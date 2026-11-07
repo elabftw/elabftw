@@ -76,7 +76,7 @@ final class Dspace extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        return match (DSpaceAction::tryFrom($queryParams?->getQuery()->getString('action'))) {
+        return match (DSpaceAction::tryFrom($queryParams?->getQuery()->getString('action') ?? '')) {
             DSpaceAction::GetCollections => $this->getCollections(),
             DSpaceAction::GetTypes => $this->getTypes(),
             default => throw new ImproperActionException(

@@ -156,6 +156,16 @@
                 </label>
               </div>
             </div>
+            {# start with no choice selected (dropdown and radio only) #}
+            <div id='emptyValueDiv' hidden>
+              <div class='d-flex justify-content-between align-items-center'>
+                <label for='newFieldEmptyValueCheckbox'>{{ 'Start with empty value'|trans }}</label>
+                <label title='{{ 'Start with empty value'|trans }}' class='switch'><span class='sr-only'>{{ 'Start with empty value'|trans }}</span>
+                  <input type='checkbox' autocomplete='off' id='newFieldEmptyValueCheckbox'>
+                  <span class='slider'></span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
         <div class='modal-footer'>

@@ -34,6 +34,7 @@ use Elabftw\Auth\SamlRequestState;
 use Elabftw\Auth\TeamRequestRequired;
 use Elabftw\Auth\TeamSelectionRequired;
 use Elabftw\Auth\UserLoginContext;
+use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\Authentication;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\IdpsHelper;
@@ -492,7 +493,7 @@ final class LoginController implements ControllerInterface
             return new RedirectResponse('/login.php');
         }
         return $this->handleLoginStep(
-            $this->loginFlow->afterPasswordRenewal($authentication),
+            $this->loginFlow->afterMfa($authentication),
         );
     }
 
@@ -610,6 +611,7 @@ final class LoginController implements ControllerInterface
             new SamlAuthLib($settings),
             $this->config,
             $settings,
+            App::getDefaultLogger(),
         );
 
         $result = $authenticator->assertIdpResponse($expectedRequestId);

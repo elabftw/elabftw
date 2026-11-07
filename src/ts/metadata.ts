@@ -53,6 +53,8 @@ function toggleContentDiv(key: string) {
       clearMultiFieldForm();
     }
   });
+  // the empty value switch only applies to dropdown and radio
+  document.getElementById('emptyValueDiv').toggleAttribute('hidden', key !== 'selectradio');
 }
 
 // build the sub_fields object of a multifield from the modal rows
@@ -319,6 +321,8 @@ if (document.getElementById('metadataDiv') && entity.id) {
         (document.getElementById('blankValueOnDuplicateSwitch') as HTMLInputElement).checked = !!fieldData.blank_value_on_duplicate;
         (document.getElementById('requiredSwitch') as HTMLInputElement).checked = !!fieldData.required;
         (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked = !!fieldData.allow_multi_values;
+        const currentValue = Array.isArray(fieldData.value) ? fieldData.value[0] : fieldData.value;
+        (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked = !currentValue;
 
         let containerId, sourceArray, toggleDiv;
         // same behaviour is applied for select, radio and number. Only div name is different
@@ -431,6 +435,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
           (div as HTMLDivElement).hidden = true;
         });
       document.getElementById('newFieldContentDiv_text').hidden = false;
+      document.getElementById('emptyValueDiv').hidden = true;
       clearForm();
     });
 
@@ -559,8 +564,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
           } else if (['select', 'radio'].includes(field['type'])) {
             field['options'] = [];
             document.getElementById('choicesInputDiv').querySelectorAll('input').forEach(opt => field['options'].push(opt.value));
-            // just take the first one as selected value
-            fieldValue = field['options'][0];
+            // take the first one as selected value, unless user wants to start empty
+            const startEmpty = (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked;
+            fieldValue = startEmpty ? '' : field['options'][0];
           } else if (field['type'] === ExtraFieldInputType.Number) {
             fieldValue = (document.getElementById('newFieldValueInput') as HTMLInputElement).value;
             field['units'] = [];
@@ -657,6 +663,9 @@ if (document.getElementById('metadataDiv') && entity.id) {
           if (fieldDescriptionInput.value) {
             field['description'] = fieldDescriptionInput.value.trim();
           }
+          // start empty means no value at all, so the previous selection is not kept
+          const startEmpty = [ExtraFieldInputType.Select, ExtraFieldInputType.Radio].includes(field['type'])
+            && (document.getElementById('newFieldEmptyValueCheckbox') as HTMLInputElement).checked;
           // handle values depending on type
           if (field['type'] === ExtraFieldInputType.Text) {
             field['value'] = textAreaField.value.trim();
@@ -676,7 +685,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
               if (val) field['options'].push(val);
             });
             // keep old value if no new option is provided
-            field['value'] = field['options'].includes(prevVal) ? prevVal : (field['options'][0] || '');
+            field['value'] = startEmpty ? '' : (field['options'].includes(prevVal) ? prevVal : (field['options'][0] || ''));
           } else if (field['type'] === ExtraFieldInputType.Number) {
             const prevVal = Array.isArray(prevField?.value) ? prevField.value[0] ?? '' : (prevField?.value || '');
             const val = (document.getElementById('newFieldValueInput') as HTMLInputElement).value.trim();
@@ -754,7 +763,7 @@ if (document.getElementById('metadataDiv') && entity.id) {
             const allowMultiValues = (document.getElementById('newFieldAllowMultiSelect') as HTMLInputElement).checked;
             const firstValue = Array.isArray(field['value']) ? field['value'][0] ?? '' : (field['value'] ?? '');
             if (allowMultiValues) {
-              if (Array.isArray(prevField?.value) && (prevField.type ?? ExtraFieldInputType.Text) === field['type']) {
+              if (!startEmpty && Array.isArray(prevField?.value) && (prevField.type ?? ExtraFieldInputType.Text) === field['type']) {
                 let values = [...prevField.value];
                 if (values.length === 0) {
                   values.push(firstValue);

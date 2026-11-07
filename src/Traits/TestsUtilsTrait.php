@@ -12,8 +12,10 @@ declare(strict_types=1);
 namespace Elabftw\Traits;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\Usergroup;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
@@ -26,6 +28,8 @@ use PDO;
 
 use function array_rand;
 use function array_map;
+use function bin2hex;
+use function random_bytes;
 
 trait TestsUtilsTrait
 {
@@ -139,6 +143,31 @@ trait TestsUtilsTrait
         $id = $Entity->create();
         $Entity->setId($id);
         return $Entity;
+    }
+
+    /**
+     * Create a team whose only member, its former Admin, is archived
+     */
+    protected function getFreshFullyArchivedTeam(): int
+    {
+        $Sysadmin = new Users(1, 1);
+        $teamId = new Teams($Sysadmin)->postAction(Action::Create, array('name' => 'Fully archived team'));
+        $userid = new Users(null, null, $Sysadmin)->createOne(
+            'archived-member-' . bin2hex(random_bytes(8)) . '@example.com',
+            array($teamId),
+            new NullLocalPassword(),
+            'Archived',
+            'Member',
+            usergroup: Usergroup::Admin,
+            automaticValidationEnabled: true,
+            alertAdmin: false,
+        );
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE users2teams SET is_archived = 1 WHERE users_id = :userid AND teams_id = :team');
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':team', $teamId, PDO::PARAM_INT);
+        $Db->execute($req);
+        return $teamId;
     }
 
     protected function updateArchiveStatus(int $userid, int $is_archived): void

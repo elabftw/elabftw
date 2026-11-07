@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Users\Users;
 
 use function date_default_timezone_get;
 
@@ -66,6 +67,18 @@ class TwigFunctionsTest extends \PHPUnit\Framework\TestCase
     public function testCanToHuman(): void
     {
         $this->assertIsArray(TwigFunctions::canToHuman(AbstractEntity::EMPTY_CAN_JSON));
+    }
+
+    public function testCanToHumanDependsOnRequester(): void
+    {
+        $json = '{"teams": [], "teamgroups": [], "users": [1]}';
+        $sysadmin = new Users(1, 1);
+        $res = TwigFunctions::canToHuman($json, $sysadmin);
+        $this->assertSame($sysadmin->userData['email'], $res['users'][0]['email']);
+        // without requester (also how templates compiled before that argument existed call it): masked
+        $res = TwigFunctions::canToHuman($json);
+        $this->assertCount(1, $res['users']);
+        $this->assertStringContainsString('***', $res['users'][0]['email']);
     }
 
     public function testEnvAsBool(): void

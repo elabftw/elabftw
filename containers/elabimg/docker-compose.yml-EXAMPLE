@@ -48,10 +48,12 @@ services:
       mysql:
         condition: service_healthy
 
-    # limit number of processes
-    # this option is commented out because it is not in v3 of compose files, only v2
-    # even though it works as expected in a v3 file with recent docker compose
-    #pids_limit: 42
+    # limit the number of processes and threads, to contain a fork bomb
+    # an idle container uses about 40 of them; at most, count one per nginx worker (one per CPU core by default),
+    # one per PHP worker (PHP_MAX_CHILDREN) and about 100 for the rest, including PDF exports and scheduled tasks
+    # increase it if you raise NGINX_WORK_PROC or PHP_MAX_CHILDREN well above their defaults
+    # default value: 512
+    pids_limit: 512
 
     # add a security flag to prevent a process gaining new privileges
     security_opt:

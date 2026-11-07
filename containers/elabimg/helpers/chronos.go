@@ -5,24 +5,40 @@ package main
 
 import (
 	"context"
+	"errors"
 	"log"
-	"math/rand"
+	"math/rand/v2"
 	"os"
 	"os/exec"
 	"os/signal"
+	"strings"
+	"sync"
 	"syscall"
 	"time"
 )
 
-// jitter to avoid all tasks executing at the exact same second
-var jitter time.Duration
+// Each run gets a deadline, so a stuck command cannot block its schedule forever.
+// Runs of the same task never overlap: a task waits for its previous run to finish.
+const (
+	minuteTaskTimeout = 15 * time.Minute
+	dailyTaskTimeout  = 2 * time.Hour
+)
+
+var (
+	// jitter to avoid all tasks executing at the exact same second
+	jitter time.Duration
+	// a command that does not stop after SIGTERM is killed after this delay
+	killDelay = 30 * time.Second
+	// variables so tests can replace them
+	phpBinary   = "/usr/bin/php"
+	consolePath = "/elabftw/bin/console"
+)
 
 func main() {
 	log.SetPrefix("chronos: ")
 	log.Println("starting chronos...")
 	// generate jitter
-	rand.Seed(time.Now().UnixNano())
-	jitter = time.Duration(rand.Intn(60)) * time.Second
+	jitter = time.Duration(rand.IntN(60)) * time.Second
 	log.Printf("jitter: %v\n", jitter)
 	// set up a context that is canceled on SIGINT/SIGTERM
 	ctx, cancel := context.WithCancel(context.Background())
@@ -36,51 +52,58 @@ func main() {
 	}()
 
 	// jobs
-	go scheduleWeekly(ctx, time.Sunday, 1, 45, []string{"notifications:send-expiration"})
-	go scheduleDaily(ctx, 13, 37, []string{"notifications:tsbalance"})
-	go scheduleDaily(ctx, 3, 37, []string{"idps:refresh"})
-	go scheduleEveryMinute(ctx, []string{"notifications:send"})
-	go scheduleEveryMinute(ctx, []string{"webhooks:send"})
+	var wg sync.WaitGroup
+	wg.Go(func() { scheduleWeekly(ctx, time.Sunday, 1, 45, []string{"notifications:send-expiration"}) })
+	wg.Go(func() { scheduleDaily(ctx, 13, 37, []string{"notifications:tsbalance"}) })
+	wg.Go(func() { scheduleDaily(ctx, 3, 37, []string{"idps:refresh"}) })
+	wg.Go(func() { scheduleEveryMinute(ctx, []string{"notifications:send"}) })
+	wg.Go(func() { scheduleEveryMinute(ctx, []string{"webhooks:send"}) })
 	log.Println("scheduled tasks started")
 
-	// wait until context is canceled
+	// wait until context is canceled, then for running tasks to stop
 	<-ctx.Done()
+	wg.Wait()
 	log.Println("exiting")
 }
 
 // scheduleWeekly runs cmdArgs each week at the given weekday/hour/minute.
 func scheduleWeekly(ctx context.Context, weekday time.Weekday, hour, min int, cmdArgs []string) {
 	for {
+		// computed after the previous run, so it is always the next week
 		next := nextWeekdayTime(time.Now(), weekday, hour, min)
-		waitOrExit(ctx, time.Until(next)+jitter)
-		runPHP(next, cmdArgs)
-		// after first run, interval is always 7 days
-		waitOrExit(ctx, 7*24*time.Hour)
+		if !waitOrExit(ctx, time.Until(next)+jitter) {
+			return
+		}
+		runPHP(ctx, dailyTaskTimeout, cmdArgs)
 	}
 }
 
 // scheduleDaily runs cmdArgs each day at the given hour/minute.
 func scheduleDaily(ctx context.Context, hour, min int, cmdArgs []string) {
 	for {
+		// computed after the previous run, so it is always the next day
 		next := nextDailyTime(time.Now(), hour, min)
-		waitOrExit(ctx, time.Until(next)+jitter)
-		runPHP(next, cmdArgs)
-		// after first run, interval is always 24h
-		waitOrExit(ctx, 24*time.Hour)
+		if !waitOrExit(ctx, time.Until(next)+jitter) {
+			return
+		}
+		runPHP(ctx, dailyTaskTimeout, cmdArgs)
 	}
 }
 
 // scheduleEveryMinute runs cmdArgs every 1 minute on the minute.
+// A run that lasts longer delays the next one: the ticker drops the ticks in between.
 func scheduleEveryMinute(ctx context.Context, cmdArgs []string) {
-	waitOrExit(ctx, jitter)
+	if !waitOrExit(ctx, jitter) {
+		return
+	}
 
 	ticker := time.NewTicker(time.Minute)
 	defer ticker.Stop()
 
 	for {
 		select {
-		case t := <-ticker.C:
-			runPHP(t, cmdArgs)
+		case <-ticker.C:
+			runPHP(ctx, minuteTaskTimeout, cmdArgs)
 		case <-ctx.Done():
 			return
 		}
@@ -103,27 +126,44 @@ func nextWeekdayTime(from time.Time, weekday time.Weekday, hour, min int) time.T
 func nextDailyTime(from time.Time, hour, min int) time.Time {
 	candidate := time.Date(from.Year(), from.Month(), from.Day(), hour, min, 0, 0, from.Location())
 	if !candidate.After(from) {
-		candidate = candidate.Add(24 * time.Hour)
+		// next calendar day, at the same local time even across a DST change
+		candidate = candidate.AddDate(0, 0, 1)
 	}
 	return candidate
 }
 
-// waitOrExit sleeps for d or returns early if ctx is canceled
-func waitOrExit(ctx context.Context, d time.Duration) {
+// waitOrExit sleeps for d, and returns false if ctx is canceled first
+func waitOrExit(ctx context.Context, d time.Duration) bool {
+	if ctx.Err() != nil {
+		return false
+	}
 	timer := time.NewTimer(d)
+	defer timer.Stop()
 	select {
 	case <-ctx.Done():
-		timer.Stop()
+		return false
 	case <-timer.C:
+		return true
 	}
 }
 
 // runPHP executes: php /elabftw/bin/console <cmdArgs...>
-func runPHP(t time.Time, cmdArgs []string) {
-	args := append([]string{"/elabftw/bin/console"}, cmdArgs...)
-	cmd := exec.Command("/usr/bin/php", args...)
+// The command gets SIGTERM when its timeout expires or chronos stops, then SIGKILL after killDelay.
+func runPHP(ctx context.Context, timeout time.Duration, cmdArgs []string) {
+	runCtx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+	args := append([]string{consolePath}, cmdArgs...)
+	cmd := exec.CommandContext(runCtx, phpBinary, args...)
+	cmd.Cancel = func() error {
+		return cmd.Process.Signal(syscall.SIGTERM)
+	}
+	cmd.WaitDelay = killDelay
 	out, err := cmd.CombinedOutput()
+	task := strings.Join(cmdArgs, " ")
+	if errors.Is(runCtx.Err(), context.DeadlineExceeded) {
+		log.Printf("error: %s did not finish within %v", task, timeout)
+	}
 	if err != nil {
-		log.Printf("error: %v — output:\n%s", err, string(out))
+		log.Printf("error: %s: %v — output:\n%s", task, err, string(out))
 	}
 }

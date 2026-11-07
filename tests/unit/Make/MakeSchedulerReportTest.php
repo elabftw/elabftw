@@ -43,8 +43,7 @@ class MakeSchedulerReportTest extends \PHPUnit\Framework\TestCase
         $Scheduler = new Scheduler($Item);
         $d = new DateTimeImmutable('+3 hour');
         $start = $d->format('c');
-        $d->add(new DateInterval('PT2H'));
-        $end = $d->format('c');
+        $end = $d->add(new DateInterval('PT2H'))->format('c');
         $Scheduler->postAction(Action::Create, array(
             'title' => 'for test',
             'start' => $start,

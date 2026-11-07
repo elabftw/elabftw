@@ -19,6 +19,8 @@ enum Notifications: int
     case UserNeedValidation = 12;
     case StepDeadline = 13;
     case EventDeleted = 14;
+    case BookingApprovalRequested = 15;
+    case BookingApprovalUpdated = 16;
     case SelfNeedValidation = 20;
     case SelfIsValidated = 30;
     case MathjaxFailed = 40;

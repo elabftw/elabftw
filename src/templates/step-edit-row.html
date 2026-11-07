@@ -41,6 +41,8 @@
       <i class='fas fa-caret-right fa-fw'></i>
     </button>
     <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
+    {{ 'Created:'|trans }} <span title='{{ step.created_at }}' class='relative-moment'></span>
+    <br>
     {{ 'Completion time:'|trans }}
     {% if step.finished %}
       <span data-stepid='{{ step.id }}' data-target='finished_time' data-ma-type='datetime-local' data-ma-input-value='{{ step.finished_time|date('Y-m-d\\TH:i') }}' class='step editable p-1 rounded hl-hover'>{{ step.finished_time|format_datetime() }}</span>

@@ -8,7 +8,6 @@ use Elabftw\Elabftw\App;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\DomCrawler\Crawler;
@@ -62,15 +61,11 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testShowRendersTheBatchContainerModalWithFreeSlotCounts(): void
+    public function testShowRendersTheBatchContainerModalWithoutReadingStorage(): void
     {
         $user = $this->getRandomUserInTeam(1);
-        $StorageUnits = new StorageUnits($user, false);
-        $storageId = $StorageUnits->create('Box the batch modal must count correctly', capacity: 9);
-        // occupy some of it, so a count equal to the capacity would not pass by accident
-        $Item = $this->getFreshItem();
-        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
-        new Containers2ItemsLinks($Item, $storageId)->createWithQuantity(1.0, 'mL');
+        // a location exists, so a tree rendered server side would show up below
+        $storageId = new StorageUnits($user, false)->create('Box the show page must not render', capacity: 9);
 
         $App = new App(
             Request::create('/database.php'),
@@ -84,17 +79,11 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
         $response = new DatabaseController($App, new Items($user))->show();
         $Crawler = new Crawler((string) $response->getContent());
 
-        // the show page has no storage section of its own, so the tree only reaches it
-        // through the batch modal; without it the new button would open an empty dialog
-        self::assertCount(1, $Crawler->filter('#storageModal[data-with-selected] [data-storage-tree]'));
-
-        // the js divides this number by the size of the selection to get each ceiling, so a
-        // count that disagrees with the guard would block or overbook whole batches
-        $stepper = $Crawler->filter(sprintf('input[data-action="container-qty-input"][data-storage-id="%d"]', $storageId));
-        self::assertCount(1, $stepper);
-        // two of the nine slots are taken, so a stepper that echoed the capacity fails here
-        self::assertSame(2, $StorageUnits->countContainers($storageId));
-        self::assertSame('7', $stepper->attr('data-slots-left'));
-        self::assertSame('7', $stepper->attr('max'));
+        // the modal and its empty tree are there for the js to fill when the modal opens
+        self::assertCount(1, $Crawler->filter('#storageModal[data-with-selected] [data-storage-tree-lazy] [data-storage-tree-content]'));
+        self::assertCount(1, $Crawler->filter('[data-action="toggle-modal"][data-target="storageModal"]'));
+        // but the hierarchy query is not made on page load: no location reaches the html
+        self::assertCount(0, $Crawler->filter(sprintf('[data-storage-id="%d"]', $storageId)));
+        self::assertCount(0, $Crawler->filter('input[data-action="container-qty-input"]'));
     }
 }

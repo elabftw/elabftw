@@ -25,29 +25,6 @@
       <span class='storage-occupancy ml-1' title='{{ 'Containers already stored here'|trans }}'><i class='fas fa-box mr-1'></i>{{ unit.occupancy }}</span>
     {% endif %}
   {% endmacro %}
-  {# stepper used in the entity-create flow to pick how many containers go in this location #}
-  {% macro render_stepper(unit, is_full) %}
-    {% if is_full %}
-      {# no input at all: anything typed here would be refused on submit #}
-      <span class='smallgray'><i class='fas fa-ban mr-1'></i>{{ unit.capacity == 0 ? 'Holds no containers'|trans : 'Full'|trans }}</span>
-    {% else %}
-      <div class='input-group input-group-sm mt-1' style='max-width:160px' data-storage-id='{{ unit.id }}'>
-        <div class='input-group-prepend'>
-          <button type='button' class='btn btn-secondary' data-action='container-qty-minus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Decrease containers for %s'|trans|format(unit.name) }}'><i class='fas fa-minus'></i></button>
-        </div>
-        {# max is the room left here, so the browser's own spinner and the js clamp alike. When the
-           same distribution is applied to several entries at once, the js narrows max to what one
-           entry may claim; data-slots-left keeps the unnarrowed count a re-render can restore from #}
-        <input type='number' class='form-control text-center' min='0' step='1' value='0' {% if unit.capacity is not null %}max='{{ unit.capacity - unit.occupancy }}' data-slots-left='{{ unit.capacity - unit.occupancy }}'{% endif %} inputmode='numeric' autocomplete='off' data-action='container-qty-input' data-storage-id='{{ unit.id }}' aria-label='{{ 'Number of containers for %s'|trans|format(unit.name) }}' />
-        <div class='input-group-append'>
-          <button type='button' class='btn btn-secondary' data-action='container-qty-plus' data-storage-id='{{ unit.id }}' aria-label='{{ 'Increase containers for %s'|trans|format(unit.name) }}'><i class='fas fa-plus'></i></button>
-        </div>
-      </div>
-      {# revealed by the js when the room left cannot be split across every selected entry:
-         the occupancy badge still shows free slots, so the dead stepper needs a reason #}
-      <span class='smallgray' hidden data-batch-full-notice='1' data-storage-id='{{ unit.id }}'><i class='fas fa-ban mr-1'></i>{{ 'Not enough room here for every selected entry'|trans }}</span>
-    {% endif %}
-  {% endmacro %}
   {# the declared limit, editable on the inventory page only; elsewhere the badge carries it #}
   {% macro render_capacity(unit, storage_editable) %}
     {% if storage_editable %}
@@ -69,8 +46,6 @@
               {% elseif is_entity and is_move %}
                 {# the js disables full destinations on open, bar the container's own location #}
                 <button type='button' class='btn btn-primary btn-sm' data-id='{{ item.id }}' {% if is_full %}data-storage-full='1'{% endif %} data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(item.name) }}</button>
-              {% elseif is_entity %}
-                {{ _self.render_stepper(item, is_full) }}
               {% else %}
                 <a class='btn btn-secondary btn-sm' href='?storage_unit={{ item.id }}'><i class='fas fa-magnifying-glass mr-1'></i>{{ 'Display content'|trans }}</a>
               {% endif %}
@@ -117,10 +92,6 @@
         {% elseif is_entity and is_move %}
           <div class='ml-auto'>
             <button type='button' class='btn btn-primary btn-sm' data-id='{{ root.id }}' {% if is_full %}data-storage-full='1'{% endif %} data-dismiss='modal' data-action='move-container-target'><i class='fas fa-location-dot mr-1'></i>{{ 'Move here: %s'|trans|format(root.name) }}</button>
-          </div>
-        {% elseif is_entity %}
-          <div class='ml-auto'>
-            {{ _self.render_stepper(root, is_full) }}
           </div>
         {% endif %}
       </div>

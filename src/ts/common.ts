@@ -69,6 +69,7 @@ import { notify } from './notify';
 import TableSorting from './TableSorting.class';
 import { KeyboardShortcuts } from './KeyboardShortcuts.class';
 import JsonEditorHelper from './JsonEditorHelper.class';
+import { fetchStorageHierarchy, renderStepperTree } from './storage-tree';
 import { Counter } from './Counter.class';
 import { getEditor } from './Editor.class';
 import Todolist from './Todolist.class';
@@ -1011,21 +1012,67 @@ on('toggle-next', (el: HTMLElement) => {
 // START STORAGE
 
 /**
- * Ids of the storage trees currently on the page. Several coexist (inventory page + modals)
- * and they render different action controls, so each has its own id and all of them must be
- * reloaded together to stay in sync.
+ * Ids of the server rendered storage trees currently on the page. Several coexist (inventory
+ * page + modals) and they render different action controls, so each has its own id and all of
+ * them must be reloaded together to stay in sync. The lazy tree of the add container modal is
+ * left out: the server does not render it, so reloading it from the page would empty it.
  */
 const storageTreeIds = (): string[] =>
-  Array.from(document.querySelectorAll('[data-storage-tree]')).map(el => el.id);
+  Array.from(document.querySelectorAll('[data-storage-tree]:not([data-storage-tree-lazy])')).map(el => el.id);
+
+// guards against an older response landing after a newer one, when the modal is reopened quickly
+let storageTreeRequest = 0;
+
+/**
+ * Read the storage locations from the api and draw the steppers of the add container modal.
+ * Only done when that modal is about to be shown, so pages that never open it never pay for
+ * the hierarchy query.
+ */
+async function loadLazyStorageTree(): Promise<void> {
+  const wrapper = document.querySelector<HTMLElement>('[data-storage-tree-lazy]');
+  const content = wrapper?.querySelector<HTMLElement>('[data-storage-tree-content]');
+  if (!wrapper || !content) {
+    return;
+  }
+  const loading = wrapper.querySelector<HTMLElement>('[data-storage-tree-loading]');
+  const empty = wrapper.querySelector<HTMLElement>('[data-storage-tree-empty]');
+  const request = ++storageTreeRequest;
+  // keep the units that were open across a redraw, as the twig trees do after a reload
+  const openIds = Array.from(content.querySelectorAll<HTMLDetailsElement>('details[open]')).map(details => details.dataset.id);
+  if (loading) loading.hidden = false;
+  try {
+    const rows = await fetchStorageHierarchy();
+    if (request !== storageTreeRequest) {
+      return;
+    }
+    renderStepperTree(content, rows);
+    // in the same tick as the render, so a stepper never shows the unnarrowed max
+    applyPerEntryCeilings();
+    openIds.forEach(id => {
+      const details = content.querySelector<HTMLDetailsElement>(`details[data-id="${id}"]`);
+      if (details) details.open = true;
+    });
+    if (empty) empty.hidden = rows.length > 0;
+  } finally {
+    if (loading && request === storageTreeRequest) loading.hidden = true;
+  }
+}
+
+/** The lazy tree only needs a refresh while it is on screen: it is read again on every opening. */
+const reloadLazyStorageTreeIfShown = (): Promise<void> =>
+  document.getElementById('storageModal')?.classList.contains('show') ? loadLazyStorageTree() : Promise.resolve();
 
 // a re-render restores each stepper's max to the raw free-slot count, so the per-entry
 // ceilings are re-applied here rather than at every call site
 const reloadStorageTrees = (): Promise<void> =>
-  reloadElements(storageTreeIds()).then(() => applyPerEntryCeilings());
+  Promise.all([reloadElements(storageTreeIds()), reloadLazyStorageTreeIfShown()]).then(() => applyPerEntryCeilings());
 
 /** Refresh the trees along with the entity's own container list: both show occupancy. */
 const reloadStorageAndContainers = (): Promise<void> =>
-  reloadElements(['storageDivContent', ...storageTreeIds()]).then(() => applyPerEntryCeilings());
+  Promise.all([
+    reloadElements(['storageDivContent', ...storageTreeIds()]),
+    reloadLazyStorageTreeIfShown(),
+  ]).then(() => applyPerEntryCeilings());
 
 /** Re-open a unit and its ancestors, in every tree that renders it. */
 function revealStorageUnit(storageId: string): void {
@@ -1330,9 +1377,8 @@ async function storeContainersForSelection(
     }
   });
   containerStepperInputs().forEach(input => { input.value = '0'; });
-  // the containers exist whether or not the trees can be redrawn, and a red toast next to the
-  // success one would read as a failed batch. A stale tree is recomputed on the next open
-  await reloadStorageTrees().catch(error => console.error(error));
+  // no tree reload here: the modal either closes or swaps its tree for the report, and the
+  // tree is read again with fresh occupancy on the next opening
   const failed = results.filter(result => result.stored < result.planned);
   if (failed.length === 0) {
     // as on the partial path: a selection left standing invites a second, duplicating batch
@@ -1390,12 +1436,13 @@ on('store-containers-distributed', () => {
   // did land elsewhere. Each request reports its own error, so nothing is notified here.
   Promise.allSettled(postCalls)
     .then(results => {
-      // the tree lives inside this modal, so reloading it resets the steppers to fresh counts
-      reloadStorageAndContainers().then(() => refreshContainerDistribution());
-      // stay open on a partial failure, so what was refused can be redistributed
+      // stay open on a partial failure, so what was refused can be redistributed. Hidden
+      // first: the tree of a closed modal is not read again until it reopens
       if (!results.some(result => result.status === 'rejected')) {
         $('#storageModal').modal('hide');
       }
+      // when still open, this redraws the tree, which resets the steppers to fresh counts
+      reloadStorageAndContainers().then(() => refreshContainerDistribution());
     })
     .finally(() => {
       if (submitBtn) submitBtn.disabled = false;
@@ -1417,16 +1464,21 @@ if (storageModalEl) {
       reclampAllSteppers();
     }
   });
-  // reset all steppers each time the modal opens so a reopened modal starts clean
   $('#storageModal').on('show.bs.modal', () => {
-    containerStepperInputs().forEach(input => { input.value = '0'; });
     // the report of a previous batch would otherwise still stand in for the controls
     document.getElementById('containerBatchReport')?.setAttribute('hidden', 'hidden');
     document.getElementById('containerDistributeSection')?.removeAttribute('hidden');
-    // the ceilings depend on how many entities are selected, and the selection cannot change
-    // while the modal is open, so opening it is the moment to recompute them
-    applyPerEntryCeilings();
+    // drop the previous steppers right away: until the fresh ones arrive, nothing can be
+    // assigned, so the submit button stays disabled on stale occupancy
+    document.querySelector('[data-storage-tree-lazy] [data-storage-tree-content]')?.replaceChildren();
     refreshContainerDistribution();
+    // read on every opening, so occupancy is never stale and a reopened modal starts clean.
+    // The ceilings depend on how many entities are selected, which cannot change while the
+    // modal is open, so they are computed as the tree is drawn. A failed read is already
+    // notified by the api client
+    loadLazyStorageTree()
+      .then(() => refreshContainerDistribution())
+      .catch(error => console.error(error));
   });
 }
 

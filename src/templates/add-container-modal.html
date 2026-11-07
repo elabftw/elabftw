@@ -43,7 +43,17 @@
             <hr>
           </div>
           <h5 class='mt-2'>{{ 'Distribute containers across the storage locations below'|trans }}</h5>
-          {% include 'storage-list.html' with {'storage_editable': false, 'is_entity': true} %}
+          {# the locations and their occupancy are read from the api when the modal opens, as that
+             query is not worth making on every page load for a modal that may never be opened #}
+          <div id='storageDiv' data-storage-tree='1' data-storage-tree-lazy='1'>
+            <div class='mb-2'>
+              <button type='button' class='btn btn-transparent' data-action='toggle-all-storage' data-expand='1'>{{ 'Expand all'|trans }}</button>
+              <button type='button' class='btn btn-transparent' data-action='toggle-all-storage'>{{ 'Collapse all'|trans }}</button>
+            </div>
+            <p class='smallgray' data-storage-tree-loading='1'><i class='fas fa-spinner fa-spin mr-1'></i>{{ 'Loading'|trans }}</p>
+            <p class='smallgray' data-storage-tree-empty='1' hidden>{{ 'No storage locations exist yet. They can be created from the inventory page.'|trans }}</p>
+            <div data-storage-tree-content='1'></div>
+          </div>
         </div>
         {% if withSelected %}
           {# takes the place of the section above once a batch did not go through in full: the

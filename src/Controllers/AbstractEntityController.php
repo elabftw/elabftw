@@ -178,7 +178,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'fullname' => $user['fullname'],
             'is_archived_in_current_team' => 0,
             'is_current_team' => 0,
-        ), $this->App->Users->readNamesFromIds($otherTeamsIds));
+        ), $this->App->Users->readFullnamesFromIds($otherTeamsIds));
         return array_merge($usersArr, $otherTeamsUsers);
     }
 

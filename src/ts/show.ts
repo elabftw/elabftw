@@ -30,8 +30,24 @@ import { core } from './core';
 import { clearEntitiesSelection, selectedEntities } from './common';
 import { on } from './handlers';
 
+type TomSelectOptionLike = Record<string, unknown> & {
+  $option?: Element | null;
+};
+
+type ToggleableTomSelect = TomSelect & {
+  [key: string]: unknown;
+};
+
+type TomSelectWithAllOptions = ToggleableTomSelect & {
+  _allOptions?: TomSelectOptionLike[];
+};
+
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
   _showOtherTeams?: boolean;
+};
+
+type OwnerTomSelect = TeamScopedTomSelect & {
+  _showArchived?: boolean;
 };
 
 type ActiveFilterControl = {
@@ -277,24 +293,6 @@ function syncSelectedEntitiesFromDom(): void {
   selectedEntities.set(selectedIds);
 }
 
-type TomSelectOptionLike = Record<string, unknown> & {
-  $option?: Element | null;
-};
-
-type ToggleableTomSelect = TomSelect & {
-  [key: string]: unknown;
-};
-
-type TomSelectWithAllOptions = ToggleableTomSelect & {
-  _allOptions?: TomSelectOptionLike[];
-};
-
-type AnyTS = TomSelectWithAllOptions & {
-  _showArchived?: boolean;
-};
-
-type OwnerTomSelect = AnyTS & TeamScopedTomSelect;
-
 type UserSearchResult = {
   userid: number;
   fullname: string;
@@ -388,8 +386,8 @@ document.addEventListener('DOMContentLoaded', () => {
       maxOptions: 512,
       plugins: {
         dropdown_header: {
-          title: 'Users',
-          html: buildDropdownToggleHeaderHtml(i18next.t('users'), [
+          title: i18next.t('users'),
+          html: buildDropdownHeaderHtml([
             { checkboxClass: 'ts-toggle-archived', label: i18next.t('show-archived') },
           ]),
         },
@@ -438,38 +436,23 @@ document.addEventListener('DOMContentLoaded', () => {
       clearAfterSelect: true,
 
       onChange(value: string | string[] | null | undefined) {
-        syncMultiSelectParam('owner', value);
-        syncOtherTeamsScope();
-        renderActiveFilters();
+        onTeamScopedFilterChange('owner', value);
       },
 
       render: {
-        option(data: AnyTS, escape: (s: string) => string) {
-          const optEl = data.$option as HTMLOptionElement | undefined;
-          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
-          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
-        },
-
-        item(data: AnyTS, escape: (s: string) => string) {
-          const optEl = data.$option as HTMLOptionElement | undefined;
-          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
-          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
-        },
+        option: renderOwner,
+        item: renderOwner,
       },
     }) as OwnerTomSelect;
 
-    filterControls.push({
+    registerFilterControl({
       control,
       param: 'owner',
       title: 'Owner',
       teamScoped: true,
+      dropdownId: 'filterOwnerDropdown',
+      menuId: 'filterOwnerMenu',
     });
-    hydrateTomSelectFromUrl(control, 'owner');
-    renderActiveFilters();
-
-    bindExternalFilterRequest(control, 'owner');
 
     // opening the Bootstrap dropdown opens the control too, so this also covers it
     control.on('dropdown_open', () => {
@@ -478,8 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
         control.open();
       });
     });
-
-    bindFilterDropdown(control, 'filterOwnerDropdown', 'filterOwnerMenu');
   }
 
   function getFilterValueFromElement(elem: HTMLElement): string {
@@ -727,8 +708,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END SEARCH RELATED CODE
 
-  // background color for selected entities
-  const bgColor = 'var(--lightblue)';
+  function highlightEntity(box: Element, isSelected: boolean): void {
+    (box.closest('.entity') as HTMLElement).style.backgroundColor = isSelected ? 'var(--lightblue)' : '';
+  }
+
+  // the invert selection link only makes sense when something is selected
+  function syncInvertSelectionLink(): void {
+    document.querySelector('a[data-action="invert-entities-selection"]')
+      ?.toggleAttribute('hidden', get(selectedEntities).length === 0);
+  }
 
   if (document.getElementById('favtagsPanel')) {
     document.getElementById('favtagsPanel').addEventListener('keyup', event => {
@@ -888,19 +876,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // CHECK AN ENTITY BOX
   on('checkbox-entity', (el: HTMLElement) => {
     syncSelectedEntitiesFromDom();
-    if ((el as HTMLInputElement).checked) {
-      (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
-    } else {
-      (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
-    }
-    // show invert select if any checkbox is selected
-    const anyChecked = get(selectedEntities).length > 0;
-    const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
-    if (anyChecked) {
-      invertSelections?.removeAttribute('hidden');
-    } else {
-      invertSelections?.setAttribute('hidden', 'hidden');
-    }
+    highlightEntity(el, (el as HTMLInputElement).checked);
+    syncInvertSelectionLink();
   });
 
   // RESTORE ENTITY IN SHOW MODE
@@ -934,42 +911,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // SELECT ALL CHECKBOXES
   on('toggle-select-all-entities', (el: HTMLElement, event: Event) => {
     event.preventDefault();
-    if (el.dataset.target === 'select') {
-      // check all boxes and set background color
-      document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
-        (box as HTMLInputElement).checked = true;
-        (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
-      });
-      el.dataset.target = 'unselect';
-    } else {
-      document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
-        (box as HTMLInputElement).checked = false;
-        (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
-      });
-      el.dataset.target = 'select';
-    }
+    const isSelecting = el.dataset.target === 'select';
+    document.querySelectorAll<HTMLInputElement>('.entity input[type=checkbox]').forEach(box => {
+      box.checked = isSelecting;
+      highlightEntity(box, isSelecting);
+    });
+    el.dataset.target = isSelecting ? 'unselect' : 'select';
     const icon = el.querySelector('i');
     icon.classList.toggle('fa-square');
     icon.classList.toggle('fa-square-check');
     syncSelectedEntitiesFromDom();
-    const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]');
-    if (get(selectedEntities).length > 0) {
-      invertSelections?.removeAttribute('hidden');
-    } else {
-      invertSelections?.setAttribute('hidden', 'hidden');
-    }
+    syncInvertSelectionLink();
   });
 
   // INVERT SELECTION
   on('invert-entities-selection', (el: HTMLElement, event: Event) => {
     event.preventDefault();
-    document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
-      (box as HTMLInputElement).checked = !(box as HTMLInputElement).checked;
-      let newBgColor = '';
-      if ((box as HTMLInputElement).checked) {
-        newBgColor = bgColor;
-      }
-      (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
+    document.querySelectorAll<HTMLInputElement>('.entity input[type=checkbox]').forEach(box => {
+      box.checked = !box.checked;
+      highlightEntity(box, box.checked);
     });
     syncSelectedEntitiesFromDom();
   });
@@ -1028,19 +988,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END ACTION LISTENERS
 
-  function buildDropdownToggleHeaderHtml(
-    title: string,
-    toggles: { checkboxClass: string; label: string }[] = [],
-  ) {
+  function buildDropdownHeaderHtml(toggles: { checkboxClass: string; label: string }[] = []) {
     const togglesHtml = toggles.map(({ checkboxClass, label }, index) => `
           <label style="${index === 0 ? 'margin-left:auto; ' : ''}display:flex; align-items:center; gap:6px; font-weight:normal;">
             <input type="checkbox" class="${checkboxClass}">
             ${label}
           </label>`).join('');
-    return (data: { headerClass: string; titleRowClass: string }) => `
+    return (data: { title: string; headerClass: string; titleRowClass: string }) => `
       <div class="${data.headerClass}">
         <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-          <div>${title}</div>${togglesHtml}
+          <div>${data.title}</div>${togglesHtml}
         </div>
       </div>
     `;
@@ -1069,6 +1026,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menu) {
       $(menu).on('click', event => event.stopPropagation());
     }
+  }
+
+  // every filter control shows its selection as chips, starts from the URL and lives in a Bootstrap dropdown
+  function registerFilterControl({ dropdownId, menuId, ...entry }: ActiveFilterControl & {
+    dropdownId: string;
+    menuId: string;
+  }): void {
+    filterControls.push(entry);
+    hydrateTomSelectFromUrl(entry.control, entry.param);
+    renderActiveFilters();
+    bindFilterDropdown(entry.control, dropdownId, menuId);
+  }
+
+  function onTeamScopedFilterChange(param: EntityFilterParam, value: string | string[] | null | undefined): void {
+    // Tom Select gives an array for multi-select; normalize just in case
+    const selected = Array.isArray(value) ? value : value ? [value] : [];
+    setEntityFilterParam(param, selected.join(','));
+    syncOtherTeamsScope();
+    renderActiveFilters();
+  }
+
+  function renderOwner(data: TomSelectOptionLike, escape: (s: string) => string): string {
+    const icon = isArchivedOption(data) ? '<i class="fas fa-box-archive mr-1"></i>' : '';
+    return `<div>${icon}${escape(String(data.text ?? data.name ?? ''))}</div>`;
   }
 
   // read data-current-team once, so options from the page and users found with the API carry the same isOtherTeam flag
@@ -1165,32 +1146,15 @@ document.addEventListener('DOMContentLoaded', () => {
     applyToggleFilter(control, '_showOtherTeams', isOtherTeamOption);
   }
 
-  function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
-    // Tom Select gives an array for multi-select; normalize just in case
-    const selected = Array.isArray(value) ? value : value ? [value] : [];
-
-    setEntityFilterParam(param, selected.join(','));
-  }
-
-  function bindExternalFilterRequest(
-    control: TomSelectWithAllOptions,
-    param: EntityFilterParam,
-  ): void {
-    window.addEventListener('entity-filter-requested', event => {
-      const customEvent = event as CustomEvent<EntityFilterRequestedDetail>;
-      const detail = customEvent.detail;
-
-      if (detail?.param !== param || !detail.value) {
-        return;
-      }
-
-      toggleTomSelectItem(
-        control,
-        detail.value,
-        detail.label ?? detail.value,
-      );
-    });
-  }
+  // clicking an owner, category or status in the entities list toggles it in the matching filter
+  window.addEventListener('entity-filter-requested', event => {
+    const detail = (event as CustomEvent<EntityFilterRequestedDetail>).detail;
+    if (!detail?.value) return;
+    const entry = filterControls.find(({ param }) => param === detail.param);
+    if (entry) {
+      toggleTomSelectItem(entry.control, detail.value, detail.label ?? detail.value);
+    }
+  });
 
   function ensureTomSelectOption(
     control: TomSelectWithAllOptions,
@@ -1310,7 +1274,7 @@ document.addEventListener('DOMContentLoaded', () => {
       plugins: {
         dropdown_header: {
           title: cfg.title,
-          html: buildDropdownToggleHeaderHtml(cfg.title),
+          html: buildDropdownHeaderHtml(),
         },
         remove_button: {},
       },
@@ -1327,22 +1291,18 @@ document.addEventListener('DOMContentLoaded', () => {
       },
 
       onChange(value: string | string[] | null | undefined) {
-        syncMultiSelectParam(cfg.param, value);
-        syncOtherTeamsScope();
-        renderActiveFilters();
+        onTeamScopedFilterChange(cfg.param, value);
       },
     }) as TeamScopedTomSelect;
 
-    filterControls.push({
+    registerFilterControl({
       control,
       param: cfg.param,
       title: cfg.title,
       teamScoped: true,
+      dropdownId: cfg.dropdownId,
+      menuId: cfg.menuId,
     });
-    hydrateTomSelectFromUrl(control, cfg.param);
-    renderActiveFilters();
-    bindExternalFilterRequest(control, cfg.param);
-    bindFilterDropdown(control, cfg.dropdownId, cfg.menuId);
   }
 
   // category tomSelect
@@ -1386,13 +1346,12 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     }) as TomSelectWithAllOptions;
 
-    filterControls.push({
+    registerFilterControl({
       control: tsTagFilter,
       param: 'tags[]',
       title: i18next.t('tags'),
+      dropdownId: 'tagFilterDropdown',
+      menuId: 'tagFilterMenu',
     });
-    hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
-    renderActiveFilters();
-    bindFilterDropdown(tsTagFilter, 'tagFilterDropdown', 'tagFilterMenu');
   }
 });

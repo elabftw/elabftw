@@ -21,6 +21,7 @@ use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\DatabaseNotInstalledException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
 use PDOException;
@@ -47,9 +48,12 @@ try {
 } catch (PDOException $e) {
     $logger->error('Cannot connect to the database: ' . $e->getMessage());
     exit(EXIT_DB_UNREACHABLE);
-} catch (DatabaseErrorException $e) {
-    $logger->error('Database is not yet installed. Run bin/init db:install.');
+} catch (DatabaseNotInstalledException $e) {
+    $logger->error($e->getMessage());
     exit(EXIT_DB_NOT_INSTALLED);
+} catch (DatabaseErrorException $e) {
+    $logger->error('Database error: ' . $e->getMessage());
+    exit(1);
 } catch (AppException $e) {
     $logger->error($e->getMessage());
     exit;

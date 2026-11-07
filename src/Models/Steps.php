@@ -25,6 +25,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use Throwable;
 
 use function array_column;
 use function array_intersect;
@@ -523,20 +524,48 @@ final class Steps extends AbstractRest
 
     private function toggleNotif(): bool
     {
-        $step = $this->readOne();
-        // base the toggle on the stored flag so the column and the notifications table cannot drift apart
-        if ($step['deadline_notif'] === 1) {
-            return $this->destroyNotif();
+        // serialize concurrent toggles on this step: without the row lock, two requests could both read deadline_notif = 0
+        // and the second StepDeadline::create() would delete the notification created by the first one
+        $this->Db->beginTransaction();
+        try {
+            $step = $this->readOneForUpdate();
+            // base the toggle on the stored flag so the column and the notifications table cannot drift apart
+            if ($step['deadline_notif'] === 1) {
+                $res = $this->destroyNotif();
+                $this->Db->commit();
+                return $res;
+            }
+            if ($step['deadline'] === null) {
+                throw new ImproperActionException(_('A deadline is required to enable a notification for this step.'));
+            }
+            $StepDeadline = $this->getStepDeadline($step['deadline']);
+            // remove any leftover notification first, as StepDeadline::create() would otherwise treat it as a toggle off
+            $StepDeadline->destroy();
+            $StepDeadline->create();
+            $res = $this->setDeadlineNotif('1');
+            $this->Db->commit();
+            return $res;
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
         }
-        if ($step['deadline'] === null) {
-            throw new ImproperActionException(_('A deadline is required to enable a notification for this step.'));
-        }
-        $StepDeadline = $this->getStepDeadline($step['deadline']);
-        // remove any leftover notification first, as StepDeadline::create() would otherwise treat it as a toggle off
-        $StepDeadline->destroy();
-        $StepDeadline->create();
+    }
 
-        return $this->setDeadlineNotif('1');
+    /**
+     * Read the deadline columns of this step and lock its row until the end of the current transaction
+     */
+    private function readOneForUpdate(): array
+    {
+        $sql = sprintf(
+            'SELECT deadline, deadline_notif FROM %s_steps WHERE id = :id AND item_id = :item_id FOR UPDATE',
+            $this->Entity->entityType->value,
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        return $this->Db->fetch($req);
     }
 
     private function destroyNotif(): bool

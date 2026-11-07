@@ -60,10 +60,13 @@ const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
 // deadlines are stored without timezone and compared against the server clock to trigger notifications
 // so they must be computed in the server timezone, not the browser one
+// 'system' (the browser timezone) is only a fallback for when the server timezone is not exposed
+function serverTimezone(): string {
+  return document.getElementById('user-prefs')?.dataset.timezone || 'system';
+}
+
 function serverNow(): DateTime {
-  const timezone = document.getElementById('user-prefs')?.dataset.timezone;
-  const now = DateTime.now();
-  return timezone ? now.setZone(timezone) : now;
+  return DateTime.now().setZone(serverTimezone());
 }
 
 function formatStepDatetime(value: string|null): string {
@@ -71,7 +74,7 @@ function formatStepDatetime(value: string|null): string {
     return '';
   }
   const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
-  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale }).toLocaleString(DateTime.DATETIME_MED);
+  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale, zone: serverTimezone() }).toLocaleString(DateTime.DATETIME_MED);
 }
 
 const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
@@ -136,7 +139,8 @@ on('step-update-deadline', (el: HTMLElement) => {
   let deadline: string;
   if (value === 'custom') {
     const input = document.getElementById(`stepCustomDeadline_${stepid}`) as HTMLInputElement;
-    const custom = DateTime.fromFormat(input.value, DATETIME_LOCAL_FORMAT);
+    // the input value is a wall-clock time in the server timezone: parsing it in the browser one could shift it across a DST change
+    const custom = DateTime.fromFormat(input.value, DATETIME_LOCAL_FORMAT, { zone: serverTimezone() });
     if (!input.value || !custom.isValid) {
       input.classList.add('is-invalid');
       input.focus();

@@ -1404,10 +1404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderActiveFilters();
       },
 
-      onItemAdd() {
-        this.setTextboxValue('');
-        this.refreshOptions();
-      },
+      clearAfterSelect: true,
 
       plugins: {
         clear_button: {},

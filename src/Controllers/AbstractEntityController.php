@@ -45,6 +45,12 @@ use Override;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function sprintf;
+use function array_column;
+use function array_diff;
+use function array_filter;
+use function array_map;
+use function array_merge;
+use function explode;
 
 /**
  * For displaying an entity in show, view or edit mode
@@ -142,7 +148,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'teamsArr' => $this->App->Teams->readAllVisible(),
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
-            'usersArr' => $this->App->Users->readAllFromTeam(),
+            'usersArr' => $this->getOwnerFilterUsers(),
             'visibilityArr' => $this->visibilityArr,
         );
         $Response = new Response();
@@ -153,6 +159,27 @@ abstract class AbstractEntityController implements ControllerInterface
     }
 
     abstract protected function getPageTitle(): string;
+
+    /**
+     * Team members, plus the users from other teams that are set in the owner filter,
+     * so the filter can display their name and not just their id
+     */
+    protected function getOwnerFilterUsers(): array
+    {
+        $usersArr = $this->App->Users->readAllFromTeam();
+        $teamUserids = array_map('intval', array_column($usersArr, 'userid'));
+        $ownerIds = array_map('intval', explode(',', $this->App->Request->query->getString('owner')));
+        $otherTeamsIds = array_diff(array_filter($ownerIds, fn(int $id): bool => $id > 0), $teamUserids);
+        if (empty($otherTeamsIds)) {
+            return $usersArr;
+        }
+        $otherTeamsUsers = array_map(fn(array $user): array => array(
+            'userid' => $user['userid'],
+            'fullname' => $user['fullname'],
+            'is_archived_in_current_team' => 0,
+        ), $this->App->Users->readNamesFromIds($otherTeamsIds));
+        return array_merge($usersArr, $otherTeamsUsers);
+    }
 
     // empty by default because only for items
     protected function getEntityProcurementRequestsArr(): array

@@ -392,7 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
           title: 'Users',
           html: buildDropdownToggleHeaderHtml(i18next.t('users'), [
             { checkboxClass: 'ts-toggle-archived', label: i18next.t('show-archived') },
-            { checkboxClass: 'ts-toggle-show-all', label: i18next.t('show-all') },
           ]),
         },
         remove_button: {},
@@ -403,10 +402,19 @@ document.addEventListener('DOMContentLoaded', () => {
         this._showArchived = false;
         this._showAll = get(entityFilters).get('scope') === '3';
         applyToggleFilter(this, '_showArchived', isArchivedOption);
+        addOtherTeamsOption(this, i18next.t('show-other-teams-owners'), () => {
+          this._showAll = true;
+          setEntityFilterParam('scope', '3');
+          // search right away with what is already typed
+          const query = this.inputValue();
+          if (this.settings.shouldLoad.call(this, query)) {
+            this.load(query);
+          }
+        });
       },
 
       // users outside of the team are not rendered in the page, so search them on the instance with the API
-      // only when "Show all" is ticked, and only with a few characters, to avoid listing every user at once
+      // only once other teams were requested, and only with a few characters, to avoid listing every user at once
       shouldLoad(this: OwnerTomSelect, query) {
         return !!this._showAll && query.trim().length >= 2;
       },
@@ -421,10 +429,13 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(user => ({
                 value: String(user.userid),
                 text: user.fullname,
-                isOtherTeam: true,
               })), []);
           })
-          .catch(() => callback([], []));
+          .catch(() => {
+            // TomSelect marks the query as loaded before calling us, forget it so typing it again retries
+            delete this.loadedSearches[query];
+            callback([], []);
+          });
       },
 
       onChange(value: string | string[] | null | undefined) {
@@ -462,19 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bindOwnerToggles = (): void => {
       bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
         applyToggleFilter(control, '_showArchived', isArchivedOption);
-        control.open();
-      });
-      bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', checked => {
-        setEntityFilterParam('scope', checked ? '3' : '');
-        if (checked) {
-          // search right away with what is already typed
-          const query = control.inputValue();
-          if (control.settings.shouldLoad.call(control, query)) {
-            control.load(query);
-          }
-        } else {
-          removeOtherTeamOptions(control);
-        }
         control.open();
       });
     };
@@ -1070,17 +1068,28 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  // drop the users fetched from outside the team, but keep the selected ones so the filter stays consistent
-  function removeOtherTeamOptions(control: TomSelectWithAllOptions): void {
-    const selected = new Set(control.items.map(String));
-    for (const [id, opt] of Object.entries(control.options)) {
-      if (opt.isOtherTeam && !selected.has(id)) {
-        control.removeOption(id);
-      }
-    }
-    // TomSelect remembers the queries it already loaded, forget them so ticking "Show all" again searches again
-    control.loadedSearches = {};
-    control.refreshOptions(false);
+  // highlighted entry after the options list, used once to bring in the options from other teams
+  function addOtherTeamsOption(
+    control: TeamScopedTomSelect,
+    label: string,
+    onActivate: () => void,
+    hasOtherTeamsOptions = true,
+  ): void {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ts-other-teams-option';
+    btn.textContent = label;
+    btn.hidden = !!control._showAll || !hasOtherTeamsOptions;
+    // keep the focus in the search input so the dropdown stays open
+    btn.addEventListener('mousedown', ev => ev.preventDefault());
+    btn.addEventListener('click', ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      btn.hidden = true;
+      onActivate();
+      control.open();
+    });
+    control.dropdown.append(btn);
   }
 
   function getOptionFlag(opt: TomSelectOptionLike | undefined | null, attr: string): boolean {
@@ -1250,21 +1259,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function bindShowAllToggle(control: TeamScopedTomSelect) {
-    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', checked => {
-      setEntityFilterParam('scope', checked ? '3' : '');
-
-      applyTeamFilter(control);
-      control.open(); // keep it open after filtering
-    });
-  }
-
   function initTeamScopedFilter(cfg: {
     selectId: string;
     dropdownId: string;
     menuId: string;
     title: string;
     param: string;
+    otherTeamsLabel: string;
   }) {
     const el = document.getElementById(cfg.selectId) as HTMLSelectElement | null;
     if (!el) return;
@@ -1278,9 +1279,7 @@ document.addEventListener('DOMContentLoaded', () => {
       plugins: {
         dropdown_header: {
           title: cfg.title,
-          html: buildDropdownToggleHeaderHtml(cfg.title, [
-            { checkboxClass: 'ts-toggle-show-all', label: i18next.t('show-all') },
-          ]),
+          html: buildDropdownToggleHeaderHtml(cfg.title, []),
         },
         remove_button: {},
       },
@@ -1290,6 +1289,13 @@ document.addEventListener('DOMContentLoaded', () => {
         this._showAll = get(entityFilters).get('scope') === '3';
 
         applyTeamFilter(this);
+        // all options are in the page already, so only offer the entry if some belong to another team
+        const hasOtherTeamsOptions = (this._allOptions ?? []).some(opt => !isCurrentTeamOption(opt));
+        addOtherTeamsOption(this, cfg.otherTeamsLabel, () => {
+          this._showAll = true;
+          setEntityFilterParam('scope', '3');
+          applyTeamFilter(this);
+        }, hasOtherTeamsOptions);
       },
 
       onChange(value: string | string[] | null | undefined) {
@@ -1298,7 +1304,6 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     }) as TeamScopedTomSelect;
 
-    control.on('dropdown_open', () => bindShowAllToggle(control));
     filterControls.push({
       control,
       param: cfg.param,
@@ -1319,8 +1324,6 @@ document.addEventListener('DOMContentLoaded', () => {
           const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
           input?.focus();
         });
-
-        bindShowAllToggle(control);
       });
     }
 
@@ -1340,6 +1343,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menuId: 'categoryFilterMenu',
     title: i18next.t('categories'),
     param: 'category',
+    otherTeamsLabel: i18next.t('show-other-teams-categories'),
   });
   // status tomSelect
   initTeamScopedFilter({
@@ -1348,6 +1352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     menuId: 'statusFilterMenu',
     title: i18next.t('status'),
     param: 'status',
+    otherTeamsLabel: i18next.t('show-other-teams-status'),
   });
 
 

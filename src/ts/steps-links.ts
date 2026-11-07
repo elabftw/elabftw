@@ -7,6 +7,7 @@
  */
 import $ from 'jquery';
 import { Malle } from '@deltablot/malle';
+import { DateTime, Duration } from 'luxon';
 import Step from './Step.class';
 import i18next from './i18n';
 import {
@@ -53,6 +54,26 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
 });
 
 const StepC = new Step(entity);
+const SQL_DATETIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+/* eslint-disable-next-line quotes */
+const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
+// deadlines are stored without timezone and compared against the server clock to trigger notifications
+// so they must be computed in the server timezone, not the browser one
+function serverNow(): DateTime {
+  const timezone = document.getElementById('user-prefs')?.dataset.timezone;
+  const now = DateTime.now();
+  return timezone ? now.setZone(timezone) : now;
+}
+
+function formatStepDatetime(value: string|null): string {
+  if (!value) {
+    return '';
+  }
+  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale }).toLocaleString(DateTime.DATETIME_MED);
+}
+
 const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
 
 
@@ -92,15 +113,55 @@ on('destroy-step-group', (el: HTMLElement) => {
   }
 });
 
+// show the datetime input only when the custom deadline option is selected
+document.addEventListener('change', event => {
+  const el = event.target as HTMLElement;
+  if (!(el instanceof HTMLSelectElement) || !el.classList.contains('step-deadline-select')) {
+    return;
+  }
+  const input = document.getElementById(`stepCustomDeadline_${el.dataset.stepid}`) as HTMLInputElement;
+  const isCustom = el.value === 'custom';
+  input.hidden = !isCustom;
+  if (isCustom) {
+    if (!input.value) {
+      input.value = serverNow().plus({ days: 1 }).toFormat(DATETIME_LOCAL_FORMAT);
+    }
+    input.focus();
+  }
+});
+
 on('step-update-deadline', (el: HTMLElement) => {
-  const value = (document.getElementById('stepSelectDeadline_' + el.dataset.stepid) as HTMLSelectElement).value;
   const stepid = parseInt(el.dataset.stepid, 10);
-  StepC.update(stepid, value, Target.Deadline).then(() => {
-    StepC.notif(stepid).then(() => reloadElements(['stepsDiv']));
-  });
+  const value = (document.getElementById(`stepSelectDeadline_${stepid}`) as HTMLSelectElement).value;
+  let deadline: string;
+  if (value === 'custom') {
+    const input = document.getElementById(`stepCustomDeadline_${stepid}`) as HTMLInputElement;
+    const custom = DateTime.fromFormat(input.value, DATETIME_LOCAL_FORMAT);
+    if (!input.value || !custom.isValid) {
+      input.classList.add('is-invalid');
+      input.focus();
+      return;
+    }
+    input.classList.remove('is-invalid');
+    deadline = custom.toFormat(SQL_DATETIME_FORMAT);
+  } else {
+    // computed at save time so a page left open does not produce a stale deadline
+    deadline = serverNow().plus(Duration.fromISO(value)).toFormat(SQL_DATETIME_FORMAT);
+  }
+  StepC.update(stepid, deadline, Target.Deadline)
+    .then(resp => resp.json())
+    .then(json => {
+      // Action.Notif is a toggle: only call it if there is no notification yet, otherwise we would remove it
+      if (Number(json.deadline_notif) === 1) {
+        return;
+      }
+      return StepC.notif(stepid);
+    })
+    .then(() => reloadElements(['stepsDiv']));
 });
 
 on('step-destroy-deadline', (el: HTMLElement) => {
+  // the backend also removes the associated notification
   StepC.update(parseInt(el.dataset.stepid, 10), null, Target.Deadline)
     .then(() => reloadElements(['stepsDiv']));
 });
@@ -152,10 +213,15 @@ const malleableStep = new Malle({
   fun: async (value, original) => {
     return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
       .then(resp => resp.json())
-      .then(json => original.dataset.target === Target.Body
-        ? json.body
-        : json.deadline,
-      );
+      .then(json => {
+        const target = original.dataset.target as Target;
+        if (target === Target.Body) {
+          return json.body;
+        }
+        // datetime targets: reload so the displayed value, relative time and input value are all refreshed
+        reloadElements(['stepsDiv']);
+        return formatStepDatetime(json[target]);
+      });
   },
   listenOn: '.step.editable',
   returnedValueIsTrustedHtml: false,

@@ -13,9 +13,15 @@ import i18next from './i18n';
 import {
   adjustHiddenState,
   collectForm,
+  DATETIME_LOCAL_FORMAT,
+  localInputToServer,
+  localizeDatetimes,
   makeSortableGreatAgain,
   relativeMoment,
   reloadElements,
+  serverTimezone,
+  serverToLocal,
+  SQL_DATETIME_FORMAT,
 } from './misc';
 import { Action, Target } from './interfaces';
 import { ApiC } from './api';
@@ -54,17 +60,9 @@ $(document).on('click', 'input[type=checkbox].stepbox', function(e) {
 });
 
 const StepC = new Step(entity);
-const SQL_DATETIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
-/* eslint-disable-next-line quotes */
-const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
 // deadlines are stored without timezone and compared against the server clock to trigger notifications
-// so they must be computed in the server timezone, not the browser one
-// 'system' (the browser timezone) is only a fallback for when the server timezone is not exposed
-function serverTimezone(): string {
-  return document.getElementById('user-prefs')?.dataset.timezone || 'system';
-}
-
+// so they must be stored in the server timezone, while users see and type them in their own timezone
 function serverNow(): DateTime {
   return DateTime.now().setZone(serverTimezone());
 }
@@ -73,8 +71,7 @@ function formatStepDatetime(value: string|null): string {
   if (!value) {
     return '';
   }
-  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
-  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale, zone: serverTimezone() }).toLocaleString(DateTime.DATETIME_MED);
+  return serverToLocal(value).toLocaleString(DateTime.DATETIME_MED);
 }
 
 const stepGroupsEndpoint = `${entity.type}/${entity.id}/step_groups`;
@@ -127,7 +124,7 @@ document.addEventListener('change', event => {
   input.hidden = !isCustom;
   if (isCustom) {
     if (!input.value) {
-      input.value = serverNow().plus({ days: 1 }).toFormat(DATETIME_LOCAL_FORMAT);
+      input.value = DateTime.now().plus({ days: 1 }).toFormat(DATETIME_LOCAL_FORMAT);
     }
     input.focus();
   }
@@ -139,8 +136,8 @@ on('step-update-deadline', (el: HTMLElement) => {
   let deadline: string;
   if (value === 'custom') {
     const input = document.getElementById(`stepCustomDeadline_${stepid}`) as HTMLInputElement;
-    // the input value is a wall-clock time in the server timezone: parsing it in the browser one could shift it across a DST change
-    const custom = DateTime.fromFormat(input.value, DATETIME_LOCAL_FORMAT, { zone: serverTimezone() });
+    // the user types a wall-clock time in their own timezone
+    const custom = localInputToServer(input.value);
     if (!input.value || !custom.isValid) {
       input.classList.add('is-invalid');
       input.focus();
@@ -215,17 +212,21 @@ const malleableStep = new Malle({
   inputClasses: ['form-control'],
   formClasses: ['w-100'],
   fun: async (value, original) => {
-    return StepC.update(parseInt(original.dataset.stepid, 10), value, original.dataset.target as Target)
-      .then(resp => resp.json())
-      .then(json => {
-        const target = original.dataset.target as Target;
-        if (target === Target.Body) {
-          return json.body;
-        }
-        // datetime targets: reload so the displayed value, relative time and input value are all refreshed
-        reloadElements(['stepsDiv']);
-        return formatStepDatetime(json[target]);
-      });
+    const target = original.dataset.target as Target;
+    if (target === Target.Body) {
+      return StepC.update(parseInt(original.dataset.stepid, 10), value, target)
+        .then(resp => resp.json())
+        .then(json => json.body);
+    }
+    // datetime targets: the input holds a browser local time, the server stores its own timezone
+    // an empty value clears the datetime, an unparsable one is sent as is for the backend to reject
+    const dt = localInputToServer(value);
+    const content = value && dt.isValid ? dt.toFormat(SQL_DATETIME_FORMAT) : value;
+    const json = await StepC.update(parseInt(original.dataset.stepid, 10), content, target).then(resp => resp.json());
+    // reload so the displayed value, relative time and input value are all refreshed
+    // await it so a failed reload surfaces here instead of as an unhandled rejection
+    await reloadElements(['stepsDiv']);
+    return formatStepDatetime(json[target]);
   },
   listenOn: '.step.editable',
   returnedValueIsTrustedHtml: false,
@@ -271,6 +272,7 @@ new MutationObserver(() => {
   makeSortableGreatAgain();
   initStepGroupSortables();
   relativeMoment();
+  localizeDatetimes();
 }).observe(document.getElementById('stepsDiv'), {childList: true});
 
 // END STEPS

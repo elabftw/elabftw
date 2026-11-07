@@ -25,6 +25,7 @@ import {
   getSafeElementById,
   getRandomColor,
   listenTrigger,
+  localizeDatetimes,
   makeSortableGreatAgain,
   mkSpin,
   mkSpinStop,
@@ -406,6 +407,7 @@ new ScrollButtons().init();
 listenTrigger();
 adjustHiddenState();
 relativeMoment();
+localizeDatetimes();
 replaceWithTitle();
 
 // set a random color to all the "create new" catstat modals

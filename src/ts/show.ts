@@ -59,6 +59,8 @@ const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
 const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
+// scope that was set before a value from another team got selected in a filter, null when none is selected
+let scopeBeforeOtherTeams: string | null = null;
 let searchQueryInitialized = false;
 
 function updateUrlFromStores(filters = get(entityFilters)): void {
@@ -404,7 +406,6 @@ document.addEventListener('DOMContentLoaded', () => {
         applyToggleFilter(this, '_showArchived', isArchivedOption);
         addOtherTeamsOption(this, i18next.t('show-other-teams-owners'), () => {
           this._showAll = true;
-          setEntityFilterParam('scope', '3');
           // search right away with what is already typed
           const query = this.inputValue();
           if (this.settings.shouldLoad.call(this, query)) {
@@ -429,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
               .map(user => ({
                 value: String(user.userid),
                 text: user.fullname,
+                isOtherTeam: true,
               })), []);
           })
           .catch(() => {
@@ -440,6 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam('owner', value);
+        syncOtherTeamsScope();
         renderActiveFilters();
       },
 
@@ -1102,6 +1105,35 @@ document.addEventListener('DOMContentLoaded', () => {
     return getOptionFlag(opt, 'data-current-team');
   }
 
+  // options in the page carry data-current-team, users found with the API are flagged when loaded
+  function isOtherTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
+    if (!opt) return false;
+    if (opt.isOtherTeam === true) return true;
+    return !!opt.$option && !isCurrentTeamOption(opt);
+  }
+
+  // filtering with a value from another team only makes sense with the entries of all teams,
+  // so switch to scope=3 while such a value is selected, and give back the previous scope after
+  function syncOtherTeamsScope(): void {
+    const hasOtherTeamsSelection = filterControls
+      .filter(({ param }) => ['category', 'status', 'owner'].includes(param))
+      .some(({ control }) => control.items.some(value => isOtherTeamOption(control.options[value])));
+    const scope = get(entityFilters).get('scope') ?? '';
+
+    if (hasOtherTeamsSelection && scopeBeforeOtherTeams === null && scope !== '3') {
+      scopeBeforeOtherTeams = scope;
+      setEntityFilterParam('scope', '3');
+      return;
+    }
+    if (!hasOtherTeamsSelection && scopeBeforeOtherTeams !== null) {
+      // don't override a scope the user picked in the meantime
+      if (scope === '3') {
+        setEntityFilterParam('scope', scopeBeforeOtherTeams);
+      }
+      scopeBeforeOtherTeams = null;
+    }
+  }
+
   function isArchivedOption(opt: TomSelectOptionLike | undefined | null): boolean {
     return getOptionFlag(opt, 'data-is-archived');
   }
@@ -1293,13 +1325,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasOtherTeamsOptions = (this._allOptions ?? []).some(opt => !isCurrentTeamOption(opt));
         addOtherTeamsOption(this, cfg.otherTeamsLabel, () => {
           this._showAll = true;
-          setEntityFilterParam('scope', '3');
           applyTeamFilter(this);
         }, hasOtherTeamsOptions);
       },
 
       onChange(value: string | string[] | null | undefined) {
         syncMultiSelectParam(cfg.param, value);
+        syncOtherTeamsScope();
         renderActiveFilters();
       },
     }) as TeamScopedTomSelect;

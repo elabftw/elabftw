@@ -847,19 +847,6 @@ components:
             type: string
             example: 'otconfigured@example.com'
             default: 'notconfigured@example.com'
-          max_revisions:
-            type: string
-            example: '10'
-            default: '10'
-          min_days_revisions:
-            type: string
-            example: '23'
-            default: '23'
-          min_delta_revisions:
-            description: Minimum number of characters changed required to trigger a revision save.
-            type: string
-            example: '100'
-            default: '100'
           onboarding_email_active:
             enum: [0, 1]
             type: string
@@ -2046,6 +2033,11 @@ components:
           type: integer
         item_id:
           type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        depth:
+          type: integer
         body:
           type: string
         body_html:
@@ -2056,6 +2048,10 @@ components:
           type: string
         userid:
           type: integer
+          nullable: true
+        fullname:
+          type: string
+          nullable: true
     # experiments_status and items_status are statuslike
     statuslike:
       type: object
@@ -9104,6 +9100,7 @@ paths:
     get:
       tags: ['Revisions']
       summary: Read all revisions of that entity.
+      description: Every main text saved is a revision, newest first. Their body is only in the response for a single revision.
       operationId: read-entity-revisions
       responses:
         '200':
@@ -9117,12 +9114,24 @@ paths:
                   properties:
                     id:
                       type: integer
+                    parent_id:
+                      type: integer
+                      nullable: true
+                      description: Revision this one is stored as a change of. Null for a revision stored in full.
+                    depth:
+                      type: integer
+                      description: Number of revisions to rebuild before this one.
                     content_type:
                       type: integer
                     created_at:
                       type: string
+                    userid:
+                      type: integer
+                      nullable: true
+                      description: Null if the user was deleted.
                     fullname:
                       type: string
+                      nullable: true
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

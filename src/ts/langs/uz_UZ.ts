@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Resurs tanlang",
     "session-expiring": "Faolsizlik sababli seansingiz tez orada tugaydi.",
     "session-expiring-title": "eLabFTW seansi tugamoqda",
-    "show-all": "Hammasini ko'rsatish",
     "show-archived": "Arxivlangan ko'rsatish",
     "show-deleted": "O‘chirilganlarni ko‘rsatish",
     "signed-by": "Imzolagan",

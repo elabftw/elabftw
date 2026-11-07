@@ -174,7 +174,6 @@ const t = {
     "select-resource": "リソースを選択",
     "session-expiring": "操作がないため、まもなくセッションの有効期限が切れます。",
     "session-expiring-title": "eLabFTWセッションの有効期限が近づいています",
-    "show-all": "全て表示",
     "show-archived": "アーカイブを表示",
     "show-deleted": "削除された表示",
     "signed-by": "次のように署名済み",

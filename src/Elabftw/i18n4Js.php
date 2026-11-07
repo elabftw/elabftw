@@ -223,7 +223,6 @@ final class i18n4Js
             'select-resource' => _('Select a resource'),
             'session-expiring' => _('Your session will expire soon due to inactivity.'),
             'session-expiring-title' => _('eLabFTW session expiring'),
-            'show-all' => _('Show all'),
             'show-archived' => _('Show archived'),
             'show-deleted' => _('Show deleted'),
             'show-other-teams-categories' => _('Show categories from other teams'),

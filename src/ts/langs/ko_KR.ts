@@ -174,7 +174,6 @@ const t = {
     "select-resource": "리소스 선택",
     "session-expiring": "활동이 없어 세션이 곧 만료됩니다.",
     "session-expiring-title": "eLabFTW 세션 만료 예정",
-    "show-all": "모두 표시",
     "show-archived": "보관된 항목 표시",
     "show-deleted": "삭제 항목 표시",
     "signed-by": "서명자",

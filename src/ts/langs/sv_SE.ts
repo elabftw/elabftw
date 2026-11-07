@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Välj en resurs",
     "session-expiring": "Din session upphör snart på grund av inaktivitet.",
     "session-expiring-title": "eLabFTW-sessionen håller på att upphöra",
-    "show-all": "Visa alla",
     "show-archived": "Visa arkiverade",
     "show-deleted": "Visa borttagna",
     "signed-by": "Signerad av",

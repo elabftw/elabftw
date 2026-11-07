@@ -31,13 +31,15 @@ import { clearEntitiesSelection, selectedEntities } from './common';
 import { on } from './handlers';
 
 type TeamScopedTomSelect = TomSelectWithAllOptions & {
-  _showAll?: boolean;
+  _showOtherTeams?: boolean;
 };
 
 type ActiveFilterControl = {
   control: TeamScopedTomSelect;
   param: string;
   title: string;
+  // its options can come from other teams, see syncOtherTeamsScope()
+  teamScoped?: boolean;
 };
 
 type EntityFilterParam = 'owner' | 'category' | 'status';
@@ -291,9 +293,7 @@ type AnyTS = TomSelectWithAllOptions & {
   _showArchived?: boolean;
 };
 
-type OwnerTomSelect = AnyTS & {
-  _showAll?: boolean;
-};
+type OwnerTomSelect = AnyTS & TeamScopedTomSelect;
 
 type UserSearchResult = {
   userid: number;
@@ -383,9 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (document.getElementById('filterOwner')) {
-    const dropdownRoot = document.getElementById('filterOwnerDropdown');
-    const menu = document.getElementById('filterOwnerMenu');
-
     const control = new TomSelect('#filterOwner', {
       dropdownParent: '#filterOwnerMenu',
       maxOptions: 512,
@@ -400,12 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
       },
 
       onInitialize(this: OwnerTomSelect) {
-        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
+        initTeamOptions(this);
         this._showArchived = false;
-        this._showAll = get(entityFilters).get('scope') === '3';
         applyToggleFilter(this, '_showArchived', isArchivedOption);
         addOtherTeamsOption(this, i18next.t('show-other-teams-owners'), () => {
-          this._showAll = true;
+          this._showOtherTeams = true;
           // search right away with what is already typed
           const query = this.inputValue();
           if (this.settings.shouldLoad.call(this, query)) {
@@ -417,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // users outside of the team are not rendered in the page, so search them on the instance with the API
       // only once other teams were requested, and only with a few characters, to avoid listing every user at once
       shouldLoad(this: OwnerTomSelect, query) {
-        return !!this._showAll && query.trim().length >= 2;
+        return !!this._showOtherTeams && query.trim().length >= 2;
       },
 
       load(this: OwnerTomSelect, query, callback) {
@@ -468,44 +464,22 @@ document.addEventListener('DOMContentLoaded', () => {
       control,
       param: 'owner',
       title: 'Owner',
+      teamScoped: true,
     });
     hydrateTomSelectFromUrl(control, 'owner');
     renderActiveFilters();
 
     bindExternalFilterRequest(control, 'owner');
 
-    const bindOwnerToggles = (): void => {
+    // opening the Bootstrap dropdown opens the control too, so this also covers it
+    control.on('dropdown_open', () => {
       bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
         applyToggleFilter(control, '_showArchived', isArchivedOption);
         control.open();
       });
-    };
+    });
 
-    control.on('dropdown_open', bindOwnerToggles);
-
-    if (dropdownRoot) {
-      $(dropdownRoot).on('shown.bs.dropdown', function() {
-        control.open();
-
-        window.requestAnimationFrame(() => {
-          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
-          input?.focus();
-        });
-
-        bindOwnerToggles();
-      });
-
-      $(dropdownRoot).on('hide.bs.dropdown', function() {
-        control.close();
-        control.blur();
-      });
-    }
-
-    if (menu) {
-      $(menu).on('click', function(event) {
-        event.stopPropagation();
-      });
-    }
+    bindFilterDropdown(control, 'filterOwnerDropdown', 'filterOwnerMenu');
   }
 
   function getFilterValueFromElement(elem: HTMLElement): string {
@@ -1056,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function buildDropdownToggleHeaderHtml(
     title: string,
-    toggles: { checkboxClass: string; label: string }[],
+    toggles: { checkboxClass: string; label: string }[] = [],
   ) {
     const togglesHtml = toggles.map(({ checkboxClass, label }, index) => `
           <label style="${index === 0 ? 'margin-left:auto; ' : ''}display:flex; align-items:center; gap:6px; font-weight:normal;">
@@ -1072,6 +1046,40 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // keep a filter control in sync with the Bootstrap dropdown that holds it
+  function bindFilterDropdown(control: TomSelect, dropdownId: string, menuId: string): void {
+    const dropdownRoot = document.getElementById(dropdownId);
+    const menu = document.getElementById(menuId);
+
+    if (dropdownRoot) {
+      $(dropdownRoot).on('shown.bs.dropdown', () => {
+        control.open();
+        window.requestAnimationFrame(() => {
+          (menu?.querySelector('.ts-control input') as HTMLInputElement | null)?.focus();
+        });
+      });
+
+      $(dropdownRoot).on('hide.bs.dropdown', () => {
+        control.close();
+        control.blur();
+      });
+    }
+
+    // clicking inside the control must not close the Bootstrap dropdown
+    if (menu) {
+      $(menu).on('click', event => event.stopPropagation());
+    }
+  }
+
+  // read data-current-team once, so options from the page and users found with the API carry the same isOtherTeam flag
+  function initTeamOptions(control: TeamScopedTomSelect): void {
+    control._allOptions = Object.values(control.options) as TomSelectOptionLike[];
+    for (const opt of control._allOptions) {
+      opt.isOtherTeam = !getOptionFlag(opt, 'data-current-team');
+    }
+    control._showOtherTeams = get(entityFilters).get('scope') === '3';
+  }
+
   // highlighted entry after the options list, used once to bring in the options from other teams
   function addOtherTeamsOption(
     control: TeamScopedTomSelect,
@@ -1083,7 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.type = 'button';
     btn.className = 'ts-other-teams-option';
     btn.textContent = label;
-    btn.hidden = !!control._showAll || !hasOtherTeamsOptions;
+    btn.hidden = !!control._showOtherTeams || !hasOtherTeamsOptions;
     // keep the focus in the search input so the dropdown stays open
     btn.addEventListener('mousedown', ev => ev.preventDefault());
     btn.addEventListener('click', ev => {
@@ -1102,22 +1110,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return raw === '1';
   }
 
-  function isCurrentTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
-    return getOptionFlag(opt, 'data-current-team');
-  }
-
-  // options in the page carry data-current-team, users found with the API are flagged when loaded
   function isOtherTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
-    if (!opt) return false;
-    if (opt.isOtherTeam === true) return true;
-    return !!opt.$option && !isCurrentTeamOption(opt);
+    return opt?.isOtherTeam === true;
   }
 
   // filtering with a value from another team only makes sense with the entries of all teams,
   // so switch to scope=3 while such a value is selected, and give back the previous scope after
   function syncOtherTeamsScope(): void {
     const hasOtherTeamsSelection = filterControls
-      .filter(({ param }) => ['category', 'status', 'owner'].includes(param))
+      .filter(({ teamScoped }) => teamScoped)
       .some(({ control }) => control.items.some(value => isOtherTeamOption(control.options[value])));
     const scope = get(entityFilters).get('scope') ?? '';
 
@@ -1161,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function applyTeamFilter(control: TeamScopedTomSelect) {
-    applyToggleFilter(control, '_showAll', (opt) => !isCurrentTeamOption(opt));
+    applyToggleFilter(control, '_showOtherTeams', isOtherTeamOption);
   }
 
   function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
@@ -1297,14 +1298,11 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownId: string;
     menuId: string;
     title: string;
-    param: string;
+    param: 'category' | 'status';
     otherTeamsLabel: string;
-  }) {
+  }): void {
     const el = document.getElementById(cfg.selectId) as HTMLSelectElement | null;
     if (!el) return;
-
-    const dropdownRoot = document.getElementById(cfg.dropdownId);
-    const menu = document.getElementById(cfg.menuId);
 
     const control = new TomSelect(el, {
       dropdownParent: `#${cfg.menuId}`,
@@ -1312,20 +1310,18 @@ document.addEventListener('DOMContentLoaded', () => {
       plugins: {
         dropdown_header: {
           title: cfg.title,
-          html: buildDropdownToggleHeaderHtml(cfg.title, []),
+          html: buildDropdownToggleHeaderHtml(cfg.title),
         },
         remove_button: {},
       },
 
       onInitialize(this: TeamScopedTomSelect) {
-        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
-        this._showAll = get(entityFilters).get('scope') === '3';
-
+        initTeamOptions(this);
         applyTeamFilter(this);
         // all options are in the page already, so only offer the entry if some belong to another team
-        const hasOtherTeamsOptions = (this._allOptions ?? []).some(opt => !isCurrentTeamOption(opt));
+        const hasOtherTeamsOptions = (this._allOptions ?? []).some(isOtherTeamOption);
         addOtherTeamsOption(this, cfg.otherTeamsLabel, () => {
-          this._showAll = true;
+          this._showOtherTeams = true;
           applyTeamFilter(this);
         }, hasOtherTeamsOptions);
       },
@@ -1341,32 +1337,12 @@ document.addEventListener('DOMContentLoaded', () => {
       control,
       param: cfg.param,
       title: cfg.title,
+      teamScoped: true,
     });
     hydrateTomSelectFromUrl(control, cfg.param);
     renderActiveFilters();
-
-    if (cfg.param === 'category' || cfg.param === 'status') {
-      bindExternalFilterRequest(control, cfg.param);
-    }
-
-    if (dropdownRoot) {
-      $(dropdownRoot).on('shown.bs.dropdown', function() {
-        control.open();
-
-        window.requestAnimationFrame(() => {
-          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
-          input?.focus();
-        });
-      });
-    }
-
-    if (menu) {
-      $(menu).on('click', function(event) {
-        event.stopPropagation();
-      });
-    }
-
-    return control;
+    bindExternalFilterRequest(control, cfg.param);
+    bindFilterDropdown(control, cfg.dropdownId, cfg.menuId);
   }
 
   // category tomSelect
@@ -1391,9 +1367,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // tags tomselect
   if (document.getElementById('tagFilter')) {
-    const dropdownRoot = document.getElementById('tagFilterDropdown');
-    const menu = document.getElementById('tagFilterMenu');
-
     const tsTagFilter = new TomSelect('#tagFilter', {
       dropdownParent: '#tagFilterMenu',
 
@@ -1420,27 +1393,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
     renderActiveFilters();
-
-    if (dropdownRoot) {
-      $(dropdownRoot).on('shown.bs.dropdown', function() {
-        tsTagFilter.open();
-
-        window.requestAnimationFrame(() => {
-          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
-          input?.focus();
-        });
-      });
-
-      $(dropdownRoot).on('hide.bs.dropdown', function() {
-        tsTagFilter.close();
-        tsTagFilter.blur();
-      });
-    }
-
-    if (menu) {
-      $(menu).on('click', function(event) {
-        event.stopPropagation();
-      });
-    }
+    bindFilterDropdown(tsTagFilter, 'tagFilterDropdown', 'tagFilterMenu');
   }
 });

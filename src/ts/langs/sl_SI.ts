@@ -174,7 +174,6 @@ const t = {
     "select-resource": "Izberite vir",
     "session-expiring": "Vaša seja bo zaradi nedejavnosti kmalu potekla.",
     "session-expiring-title": "Seja eLabFTW bo potekla",
-    "show-all": "Pokaži vse",
     "show-archived": "Prikaži arhivirano",
     "show-deleted": "Prikaži izbrisano",
     "signed-by": "Podpisal",

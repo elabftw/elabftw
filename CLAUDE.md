@@ -53,6 +53,9 @@ Migrations live in `src/sql/`. Do NOT add new numbered `schemaNNN.sql` files and
    (and `src/Models/Config.php` if config defaults change).
 4. Test it: `bin/console db:update`, `db:status`, `db:revert <uuid>`, then `db:update` again.
 5. Run `composer dump-autoload` after adding/removing migration files.
+6. If SQL alone cannot move the data (e.g. compression), add a PHP data step: implement
+   `DataMigrationInterface` and map it in `Migrations::getDataStep()`. It runs before the up file and
+   after the down file, and must be safe to re-run. See `Services/LegacyRevisionsMigration.php`.
 
 Never use `dev:forceschema` unless explicitly asked; it changes migration state without touching the DB.
 

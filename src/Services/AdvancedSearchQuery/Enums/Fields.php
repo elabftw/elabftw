@@ -30,6 +30,7 @@ enum Fields: string
     case Rating = 'rating';
     case State  = 'state';
     case Status = 'status';
+    case Tag = 'tag';
     case Timestamped = 'timestamped';
     case Title = 'title';
     case Visibility = 'visibility';

@@ -41,6 +41,8 @@
       <i class='fas fa-caret-right fa-fw'></i>
     </button>
     <div hidden data-save-hidden='extendedStep_{{ step.id }}' class='w-100'>
+    {{ 'Created:'|trans }} <span title='{{ step.created_at }}' class='relative-moment'></span>
+    <br>
     {{ 'Completion time:'|trans }}
     {% if step.finished %}
       {# data-ma-input-value is what the datetime-local input expects, the displayed value is formatted for humans #}

@@ -25,6 +25,7 @@ use Elabftw\Services\Filter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use PDOStatement;
 use Throwable;
 
 use function array_column;
@@ -69,11 +70,14 @@ final class Steps extends AbstractRest
         $this->assertGroupBelongsToEntity($groupId);
 
         $body = str_replace('|', ' ', $step['body']);
-        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, group_id, body, ordering, finished, finished_time)
-            VALUES(:item_id, :group_id, :body, :ordering, :finished, :finished_time)';
+        $sql = sprintf(
+            'INSERT INTO %s (item_id, group_id, body, ordering, finished, finished_time)
+                VALUES(:item_id, :group_id, :body, :ordering, :finished, :finished_time)',
+            $this->getTable(),
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':group_id', $groupId);
         $req->bindParam(':body', $body);
         $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
         $req->bindParam(':finished', $step['finished'], PDO::PARAM_INT);
@@ -119,28 +123,21 @@ final class Steps extends AbstractRest
      */
     public function importFromHowToStepOld(array $step): void
     {
-        $stepArr = array();
-        $stepArr['body'] = $step['itemListElement'][0]['text'];
-        $stepArr['finished'] = $step['creativeWorkStatus'] === 'finished' ? 1 : 0;
-        $stepArr['finished_time'] = $step['temporal'] ?? null;
-        $stepArr['ordering'] = $step['position'] ?? null;
-        $this->import($stepArr);
+        $this->importFromHowToStep($step, $step['itemListElement'][0]['text']);
     }
 
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        $stepTable = $this->Entity->entityType->value . '_steps';
-        $groupTable = $this->Entity->entityType->value . '_step_groups';
         // Step ordering is local to each group. Default group (group_id = NULL)
         // is displayed first, followed by named groups using their group ordering
         $sql = sprintf(
             'SELECT st.* FROM %s AS st
-                LEFT JOIN %s AS sg ON sg.id = st.group_id AND sg.entity_id = st.item_id
+                LEFT JOIN %s_step_groups AS sg ON sg.id = st.group_id AND sg.entity_id = st.item_id
                 WHERE st.item_id = :id
                 ORDER BY (st.group_id IS NOT NULL) ASC, sg.ordering ASC, sg.id ASC, st.ordering ASC, st.id ASC',
-            $stepTable,
-            $groupTable,
+            $this->getTable(),
+            $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':id', $this->Entity->id, PDO::PARAM_INT);
@@ -152,10 +149,8 @@ final class Steps extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $sql = 'SELECT * FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req = $this->Db->prepare(sprintf('SELECT * FROM %s WHERE id = :id AND item_id = :item_id', $this->getTable()));
+        $this->bindStepIds($req);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
@@ -168,17 +163,18 @@ final class Steps extends AbstractRest
      */
     public function duplicate(AbstractEntity $targetEntity, int $id, int $newId): array
     {
-        $sourceTable = $this->Entity->entityType->value;
-        $targetTable = $targetEntity->entityType->value;
         // Copy groups first because copied steps must reference the new group ids,
         // not the ids belonging to the source entity
         $groupMap = new StepGroups($this->Entity)->duplicate($targetEntity, $id, $newId);
-        $stepsql = sprintf('SELECT id, body, ordering, is_immutable, group_id FROM %s_steps WHERE item_id = :id', $sourceTable);
+        $stepsql = sprintf('SELECT id, body, ordering, is_immutable, group_id FROM %s WHERE item_id = :id', $this->getTable());
         $stepreq = $this->Db->prepare($stepsql);
         $stepreq->bindParam(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($stepreq);
 
-        $sql = sprintf('INSERT INTO %s_steps (item_id, body, ordering, is_immutable, group_id) VALUES (:item_id, :body, :ordering, :is_immutable, :group_id)', $targetTable);
+        $sql = sprintf(
+            'INSERT INTO %s_steps (item_id, body, ordering, is_immutable, group_id) VALUES (:item_id, :body, :ordering, :is_immutable, :group_id)',
+            $targetEntity->entityType->value,
+        );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $newId, PDO::PARAM_INT);
         $stepsMap = array();
@@ -187,7 +183,7 @@ final class Steps extends AbstractRest
             $req->bindParam(':body', $step['body']);
             $req->bindParam(':ordering', $step['ordering'], PDO::PARAM_INT);
             $req->bindParam(':is_immutable', $step['is_immutable'], PDO::PARAM_INT);
-            $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $this->Db->bindNullableInt($req, ':group_id', $groupId);
             $this->Db->execute($req);
             $stepsMap[(int) $step['id']] = $this->Db->lastInsertId();
         }
@@ -201,17 +197,12 @@ final class Steps extends AbstractRest
     {
         $this->Entity->canOrExplode(AccessType::Write);
 
-        $table = $this->Entity->entityType->value . '_steps';
-        if ($params->table->value !== $table) {
+        if ($params->table->value !== $this->getTable()) {
             throw new ImproperActionException(_('The steps table does not match the entity type.'));
         }
 
         $steps = array_column($this->readAll(), null, 'id');
-        $enforceImmutability = in_array(
-            $this->Entity->entityType,
-            array(EntityType::Experiments, EntityType::Items),
-            true,
-        );
+        $enforceImmutability = $this->enforcesImmutability();
         foreach ($params->ordering as $id) {
             if (!array_key_exists($id, $steps)) {
                 throw new ImproperActionException(_('Cannot reorder a step that does not belong to this entity.'));
@@ -221,21 +212,16 @@ final class Steps extends AbstractRest
             }
         }
 
-        $sql = sprintf(
-            'UPDATE %s_steps SET ordering = :ordering WHERE id = :id AND item_id = :item_id',
-            $this->Entity->entityType->value,
-        );
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare(sprintf('UPDATE %s SET ordering = :ordering WHERE id = :id AND item_id = :item_id', $this->getTable()));
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         foreach ($params->ordering as $ordering => $id) {
-            $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-            $req->bindParam(':id', $id, PDO::PARAM_INT);
-            $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+            $req->bindValue(':ordering', $ordering, PDO::PARAM_INT);
+            $req->bindValue(':id', $id, PDO::PARAM_INT);
             $this->Db->execute($req);
         }
 
         $this->Entity->touch();
-        $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('steps', 'Reordered steps'));
+        $this->logChange('Reordered steps');
     }
 
     #[Override]
@@ -250,8 +236,7 @@ final class Steps extends AbstractRest
                 throw new ImproperActionException(_('Invalid grouped steps ordering.'));
             }
             $this->updateGroupedOrdering($params['grouped_ordering']);
-            $Changelog = new Changelog($this->Entity);
-            $Changelog->create(new ContentParams('steps', 'Reordered steps'));
+            $this->logChange('Reordered steps');
             return $this->readAll();
         }
         if ($action === Action::Update && $this->id === null) {
@@ -261,34 +246,11 @@ final class Steps extends AbstractRest
             Action::Finish => $this->toggleFinished(),
             Action::Notif => $this->toggleNotif(),
             Action::NotifDestroy => $this->destroyNotif(),
-            Action::Update => (
-                function () use ($params) {
-                    // prevent updates to protected fields on immutable steps
-                    $protected = array('body', 'ordering', 'is_immutable', 'group_id');
-                    $enforceImmutability = in_array($this->Entity->entityType->value, array('experiments', 'items'), true);
-                    // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
-                    if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
-                        throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments or resources.'));
-                    }
-                    if ($enforceImmutability && $this->readOne()['is_immutable'] === 1
-                        && count(array_intersect(array_keys($params), $protected)) > 0) {
-                        throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
-                    }
-                    foreach ($params as $key => $value) {
-                        if ($key === 'group_id') {
-                            $this->updateGroupId($value);
-                            continue;
-                        }
-                        // value can be null with deadline removal
-                        $this->update(new StepParams($key, $value ?? ''));
-                    }
-                }
-            )(),
+            Action::Update => $this->updateFields($params),
             Action::ForceLock => $this->setImmutable(1),
             Action::ForceUnlock => $this->setImmutable(0),
             default => throw new ImproperActionException('Invalid action for steps.'),
         };
-        $Changelog = new Changelog($this->Entity);
         $message = $action->value;
         if ($this->id !== null) {
             if ($action === Action::Finish) {
@@ -298,7 +260,7 @@ final class Steps extends AbstractRest
                 $message = sprintf('Updated step with id: %d', $this->id);
             }
         }
-        $Changelog->create(new ContentParams('steps', $message));
+        $this->logChange($message);
         if ($this->id) {
             return $this->readOne();
         }
@@ -310,12 +272,8 @@ final class Steps extends AbstractRest
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
-        $groupId = ($reqBody['group_id'] ?? null) === null || ($reqBody['group_id'] ?? '') === ''
-            ? null
-            : (int) $reqBody['group_id'];
-        $id = $this->create($reqBody['body'] ?? 'RTFM', $groupId);
-        $Changelog = new Changelog($this->Entity);
-        $Changelog->create(new ContentParams('steps', sprintf('Created step with id: %d', $id)));
+        $id = $this->create($reqBody['body'] ?? 'RTFM', $this->toGroupId($reqBody['group_id'] ?? null));
+        $this->logChange(sprintf('Created step with id: %d', $id));
         return $id;
     }
 
@@ -324,42 +282,87 @@ final class Steps extends AbstractRest
     {
         $this->Entity->canOrExplode(AccessType::Write);
         $this->Entity->touch();
-        $Changelog = new Changelog($this->Entity);
         /** @psalm-suppress PossiblyNullArgument */
-        $Changelog->create(new ContentParams('steps', sprintf('Deleted step with id: %d', $this->id)));
+        $this->logChange(sprintf('Deleted step with id: %d', $this->id));
 
         $this->getStepDeadline()->destroy();
 
-        $sql = 'DELETE FROM ' . $this->Entity->entityType->value . '_steps WHERE id = :id AND item_id = :item_id';
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare(sprintf('DELETE FROM %s WHERE id = :id AND item_id = :item_id', $this->getTable()));
+        $this->bindStepIds($req);
+        return $this->Db->execute($req);
+    }
+
+    private function getTable(): string
+    {
+        return $this->Entity->entityType->value . '_steps';
+    }
+
+    // Bind the step id and its parent entity id, so a query can never reach a step from another entity
+    private function bindStepIds(PDOStatement $req): void
+    {
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        return $this->Db->execute($req);
+    }
+
+    // Immutability is set on templates and enforced on the experiments and resources created from them
+    private function enforcesImmutability(): bool
+    {
+        return in_array($this->Entity->entityType, array(EntityType::Experiments, EntityType::Items), true);
+    }
+
+    // Group ids arrive from requests as null, '' or a numeric value. NULL means Default group
+    private function toGroupId(mixed $value): ?int
+    {
+        return $value === null || $value === '' ? null : (int) $value;
+    }
+
+    private function logChange(string $message): void
+    {
+        new Changelog($this->Entity)->create(new ContentParams('steps', $message));
     }
 
     private function setImmutable(int $value): bool
     {
-        $sql = sprintf(
-            'UPDATE %s_steps SET is_immutable = :content WHERE item_id = :item_id',
-            $this->Entity->entityType->value,
-        );
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare(sprintf('UPDATE %s SET is_immutable = :content WHERE item_id = :item_id', $this->getTable()));
         $req->bindValue(':content', $value, PDO::PARAM_INT);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }
 
+    private function updateFields(array $params): bool
+    {
+        // prevent updates to protected fields on immutable steps
+        $protected = array('body', 'ordering', 'is_immutable', 'group_id');
+        $enforceImmutability = $this->enforcesImmutability();
+        // if we're on experiments/items, prevent any change to is_immutable. It is only allowed on templates
+        if ($enforceImmutability && array_key_exists('is_immutable', $params)) {
+            throw new ImproperActionException(_('The immutability parameter cannot be modified from experiments or resources.'));
+        }
+        if ($enforceImmutability && $this->readOne()['is_immutable'] === 1
+            && count(array_intersect(array_keys($params), $protected)) > 0) {
+            throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
+        }
+        foreach ($params as $key => $value) {
+            if ($key === 'group_id') {
+                $this->updateGroupId($value);
+                continue;
+            }
+            // value can be null with deadline removal
+            $this->update(new StepParams($key, $value ?? ''));
+        }
+        return true;
+    }
+
     private function update(StepParams $params): bool
     {
         $sql = sprintf(
-            'UPDATE %s_steps SET %s = :content WHERE id = :id AND item_id = :item_id',
-            $this->Entity->entityType->value,
+            'UPDATE %s SET %s = :content WHERE id = :id AND item_id = :item_id',
+            $this->getTable(),
             $params->getColumn(),
         );
         $req = $this->Db->prepare($sql);
         $req->bindValue(':content', $params->getContent());
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->bindStepIds($req);
         $res = $this->Db->execute($req);
 
         if ($params->getColumn() === 'deadline') {
@@ -381,10 +384,10 @@ final class Steps extends AbstractRest
         $this->assertGroupBelongsToEntity($groupId);
         $ordering = $this->getNextOrdering($groupId);
 
-        $sql = 'INSERT INTO ' . $this->Entity->entityType->value . '_steps (item_id, group_id, body, ordering) VALUES(:item_id, :group_id, :body, :ordering)';
+        $sql = sprintf('INSERT INTO %s (item_id, group_id, body, ordering) VALUES(:item_id, :group_id, :body, :ordering)', $this->getTable());
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':group_id', $groupId);
         $req->bindValue(':body', $body);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
         $this->Db->execute($req);
@@ -398,18 +401,17 @@ final class Steps extends AbstractRest
      */
     private function updateGroupId(mixed $value): bool
     {
-        $groupId = $value === null || $value === '' ? null : (int) $value;
+        $groupId = $this->toGroupId($value);
         $this->assertGroupBelongsToEntity($groupId);
         $ordering = $this->getNextOrdering($groupId);
         $sql = sprintf(
-            'UPDATE %s_steps SET group_id = :group_id, ordering = :ordering WHERE id = :id AND item_id = :item_id',
-            $this->Entity->entityType->value,
+            'UPDATE %s SET group_id = :group_id, ordering = :ordering WHERE id = :id AND item_id = :item_id',
+            $this->getTable(),
         );
         $req = $this->Db->prepare($sql);
-        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':group_id', $groupId);
         $req->bindParam(':ordering', $ordering, PDO::PARAM_INT);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->bindStepIds($req);
         return $this->Db->execute($req);
     }
 
@@ -427,24 +429,20 @@ final class Steps extends AbstractRest
             $nextPosition[$key] = ($nextPosition[$key] ?? 0) + 1;
         }
 
-        $enforceImmutability = in_array(
-            $this->Entity->entityType,
-            array(EntityType::Experiments, EntityType::Items),
-            true,
-        );
+        $enforceImmutability = $this->enforcesImmutability();
         $seen = array();
         $sql = sprintf(
-            'UPDATE %s_steps SET group_id = :group_id, ordering = :ordering WHERE id = :id AND item_id = :item_id',
-            $this->Entity->entityType->value,
+            'UPDATE %s SET group_id = :group_id, ordering = :ordering WHERE id = :id AND item_id = :item_id',
+            $this->getTable(),
         );
         $req = $this->Db->prepare($sql);
+        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
 
         foreach ($groups as $group) {
             if (!is_array($group) || !array_key_exists('step_ids', $group) || !is_array($group['step_ids'])) {
                 throw new ImproperActionException(_('Invalid grouped steps ordering.'));
             }
-            $rawGroupId = $group['group_id'] ?? null;
-            $groupId = $rawGroupId === null || $rawGroupId === '' ? null : (int) $rawGroupId;
+            $groupId = $this->toGroupId($group['group_id'] ?? null);
             $this->assertGroupBelongsToEntity($groupId);
 
             foreach ($group['step_ids'] as $ordering => $rawStepId) {
@@ -453,15 +451,14 @@ final class Steps extends AbstractRest
                     throw new ImproperActionException(_('Cannot reorder a step that does not belong to this entity.'));
                 }
                 $seen[$stepId] = true;
-                $currentGroupId = $steps[$stepId]['group_id'] === null ? null : (int) $steps[$stepId]['group_id'];
+                $currentGroupId = $this->toGroupId($steps[$stepId]['group_id']);
                 if ($enforceImmutability && (int) $steps[$stepId]['is_immutable'] === 1
                     && ($currentGroupId !== $groupId || $positions[$stepId] !== $ordering)) {
                     throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
                 }
-                $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+                $this->Db->bindNullableInt($req, ':group_id', $groupId);
                 $req->bindValue(':ordering', $ordering, PDO::PARAM_INT);
                 $req->bindValue(':id', $stepId, PDO::PARAM_INT);
-                $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
                 $this->Db->execute($req);
             }
         }
@@ -487,12 +484,12 @@ final class Steps extends AbstractRest
         // MySQL's <=> is null-safe, so this query works for both a real group
         // id and Default group where group_id is NULL
         $sql = sprintf(
-            'SELECT COALESCE(MAX(ordering), -1) + 1 AS next_ordering FROM %s_steps WHERE item_id = :item_id AND group_id <=> :group_id',
-            $this->Entity->entityType->value,
+            'SELECT COALESCE(MAX(ordering), -1) + 1 AS next_ordering FROM %s WHERE item_id = :item_id AND group_id <=> :group_id',
+            $this->getTable(),
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $this->Db->bindNullableInt($req, ':group_id', $groupId);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
     }
@@ -500,18 +497,17 @@ final class Steps extends AbstractRest
     private function toggleFinished(): bool
     {
         $sql = sprintf(
-            'UPDATE %s_steps
+            'UPDATE %s
                 SET finished = !finished,
                     finished_time = NOW(),
                     deadline = null,
                     deadline_notif = 0
                 WHERE id = :id
                     AND item_id = :item_id',
-            $this->Entity->entityType->value
+            $this->getTable(),
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->bindStepIds($req);
         $res = $this->Db->execute($req);
 
         // delete potential notification if step is finished
@@ -530,19 +526,9 @@ final class Steps extends AbstractRest
         try {
             $step = $this->readOneForUpdate();
             // base the toggle on the stored flag so the column and the notifications table cannot drift apart
-            if ($step['deadline_notif'] === 1) {
-                $res = $this->destroyNotif();
-                $this->Db->commit();
-                return $res;
-            }
-            if ($step['deadline'] === null) {
-                throw new ImproperActionException(_('A deadline is required to enable a notification for this step.'));
-            }
-            $StepDeadline = $this->getStepDeadline($step['deadline']);
-            // remove any leftover notification first, as StepDeadline::create() would otherwise treat it as a toggle off
-            $StepDeadline->destroy();
-            $StepDeadline->create();
-            $res = $this->setDeadlineNotif('1');
+            $res = $step['deadline_notif'] === 1
+                ? $this->destroyNotif()
+                : $this->createNotif($step['deadline']);
             $this->Db->commit();
             return $res;
         } catch (Throwable $e) {
@@ -557,37 +543,44 @@ final class Steps extends AbstractRest
     private function readOneForUpdate(): array
     {
         $sql = sprintf(
-            'SELECT deadline, deadline_notif FROM %s_steps WHERE id = :id AND item_id = :item_id FOR UPDATE',
-            $this->Entity->entityType->value,
+            'SELECT deadline, deadline_notif FROM %s WHERE id = :id AND item_id = :item_id FOR UPDATE',
+            $this->getTable(),
         );
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $this->bindStepIds($req);
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
+    }
+
+    private function createNotif(?string $deadline): bool
+    {
+        if ($deadline === null) {
+            throw new ImproperActionException(_('A deadline is required to enable a notification for this step.'));
+        }
+        $StepDeadline = $this->getStepDeadline($deadline);
+        // remove any leftover notification first, as StepDeadline::create() would otherwise treat it as a toggle off
+        $StepDeadline->destroy();
+        $StepDeadline->create();
+
+        return $this->setDeadlineNotif(true);
     }
 
     private function destroyNotif(): bool
     {
         $this->getStepDeadline()->destroy();
 
-        return $this->setDeadlineNotif('0');
+        return $this->setDeadlineNotif(false);
     }
 
     /**
      * set the deadline_notif column so we know whether this step has a notif set for the deadline
      */
-    private function setDeadlineNotif(string $value): bool
+    private function setDeadlineNotif(bool $enabled): bool
     {
-        $sql = sprintf(
-            'UPDATE %s_steps SET deadline_notif = %s WHERE id = :id AND item_id = :item_id',
-            $this->Entity->entityType->value,
-            $value,
-        );
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
+        $req = $this->Db->prepare(sprintf('UPDATE %s SET deadline_notif = :value WHERE id = :id AND item_id = :item_id', $this->getTable()));
+        $req->bindValue(':value', (int) $enabled, PDO::PARAM_INT);
+        $this->bindStepIds($req);
         return $this->Db->execute($req);
     }
 

@@ -54,6 +54,13 @@ if (window.location.pathname === '/sysconfig.php') {
   );
 }
 
+if (document.getElementById('audit-logs-table')) {
+  void import(
+    /* webpackChunkName: 'audit-logs-table' */
+    './audit-logs-table'
+  );
+}
+
 if (document.getElementById('compounds-table')) {
   void import(
     /* webpackChunkName: 'compounds-table' */

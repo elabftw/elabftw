@@ -1073,6 +1073,13 @@ tr.upload-group-drop-target td {
   background-color: rgba(41, 174, 185, 0.5);
 }
 
+/* make it obvious that a step date (deadline, completion time) can be clicked to be modified */
+.step-datetime {
+  border: 1px dashed rgba(127, 127, 127, 0.6);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
 

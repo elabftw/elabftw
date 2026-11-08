@@ -9,7 +9,6 @@ import tinymce from 'tinymce/tinymce';
 import { Editor } from 'tinymce/tinymce';
 import { DateTime } from 'luxon';
 import i18next from './i18n';
-import type { DropzoneFile } from 'dropzone';
 import 'tinymce/models/dom';
 import 'tinymce/icons/default';
 import 'tinymce/themes/silver';
@@ -75,6 +74,7 @@ import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
 import { isDarkTheme } from './theme';
+import { getClipboardImages, getPastedImageName, getUploadUrl, uploadFileToEntity } from './pasteImage';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -130,28 +130,17 @@ const tinymceEditImage = {
 // see issue about adding an interface for this object: https://github.com/tinymce/tinymce/issues/7982
 interface TinyMCEBlobInfo {
   blob(): Blob;
-  name(): string;
+  filename(): string;
 }
 
 /**
  * This function handles image uploads dropped in the editor or uploaded with the Image plugin
  */
 const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve, reject) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dropzoneEl = document.getElementById('elabftw-dropzone') as any;
-  const dropZone = dropzoneEl.dropzone;
-  // when a file is added to dropZone (and uploaded), hook into the "complete" event
-  // and reload uploadsDiv so we can grab the image url to replace the blob in the editor
-  dropZone.on('complete', () => {
-    if (dropZone.getUploadingFiles().length === 0 && dropZone.getQueuedFiles().length === 0) {
-      reloadElements(['uploadsDiv']).then(() => {
-        resolve(document.getElementById('last-uploaded-link').dataset.url);
-      });
-    }
-  });
   // Edgecase for editing an image using tinymce ImageTools
   // Check if it was selected. This is set by an event hook below
-  if (tinymceEditImage.selected === true) {
+  // uploadId is only set when the selected image is an existing upload
+  if (tinymceEditImage.selected === true && tinymceEditImage.uploadId !== 0) {
     // Note: confirm will trigger the SelectionChange event hook below again
     if (confirm(i18next.t('replace-edited-file'))) {
       const formData = new FormData();
@@ -172,7 +161,7 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
         // fetch info about the newly created upload
         return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
       }).then(json => {
-        resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+        resolve(getUploadUrl(json));
         // save here because using the old real_name will not return anything from the db (status is archived now)
         updateEntityBody();
         reloadElements(['uploadsDiv']);
@@ -183,19 +172,16 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
       tinymce.activeEditor.undoManager.undo();
       reject('Action cancelled');
     }
-  // If the blob has no filename, ask for one. (Firefox edgecase: Embedded image in Data URL)
-  } else if (typeof blobInfo.name() === 'undefined') {
-    const filename = prompt('Enter filename with extension e.g. .jpeg');
-    if (typeof filename !== 'undefined' && filename !== null) {
-      const file = new File([blobInfo.blob()], filename, { lastModified: new Date().getTime(), type: blobInfo.blob().type }) as DropzoneFile;
-      dropZone.addFile(file);
-    } else {
-      // Just disregard the edit if the name prompt is cancelled
-      tinymce.activeEditor.undoManager.undo();
-      reject('Action cancelled');
-    }
   } else {
-    dropZone.addFile(blobInfo.blob());
+    // tinymce names pasted/dropped images "mceclip0.png" (images_reuse_filename is off) and data uri images "blobid...", so give them a meaningful name
+    const blob = blobInfo.blob();
+    const filename = /^(mceclip|blobid)/.test(blobInfo.filename()) ? getPastedImageName(blob.type) : blobInfo.filename();
+    // tinymce shows its own error notification on reject, so don't show the api one too
+    uploadFileToEntity(blob, filename, false).then(url => {
+      resolve(url);
+      // tinymce swaps the blob src for the url once this promise resolves: save after that so the upload is referenced in the body
+      window.setTimeout(() => updateEntityBody(), 0);
+    }).catch(error => reject({ message: error.message, remove: true }));
   }
 });
 
@@ -428,6 +414,22 @@ export function getTinymceBaseConfig(page: string): object {
         if (page === 'edit' && editor.plugins.autoresize) {
           window.requestAnimationFrame(() => editor.execCommand('mceAutoResize'));
         }
+      });
+      // Take over image pastes: when the clipboard also has html (e.g. "Copy Image" in a browser), tinymce
+      // would insert the remote url (blocked by CSP, so a broken image) instead of the image data
+      editor.on('paste', (event: ClipboardEvent) => {
+        const images = page === 'edit' ? getClipboardImages(event.clipboardData) : [];
+        if (images.length === 0) {
+          return;
+        }
+        event.preventDefault();
+        images.forEach(image => {
+          const name = getPastedImageName(image.type);
+          uploadFileToEntity(image, name).then(url => {
+            editor.insertContent(`<img src="${url}" alt="${name}" />`);
+            updateEntityBody();
+          });
+        });
       });
       // Hook into the blur event - Finalize potential changes to images if user clicks outside of editor
       editor.on('blur', () => {

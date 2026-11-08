@@ -66,7 +66,7 @@ getEnv() {
     maintenance_mode=${MAINTENANCE_MODE:-false}
     auto_db_init=${AUTO_DB_INIT:-false}
     auto_db_update=${AUTO_DB_UPDATE:-false}
-    # max number of seconds to wait for the database to become reachable before running db:install or db:update
+    # max number of seconds to wait for the database to accept queries before running db:install or db:update
     db_wait_timeout=${DB_WAIT_TIMEOUT:-120}
     aws_ak=${ELAB_AWS_ACCESS_KEY:-}
     aws_sk=${ELAB_AWS_SECRET_KEY:-}
@@ -426,7 +426,33 @@ startupMessage() {
     say "info: starting server listening internally on port 8080 in ${http_mode}"
 }
 
-# Wait for the database to accept TCP connections
+# Connect to the database with the configured credentials and run a trivial query
+# A TCP check alone is not enough: mysqld can accept connections while still booting
+# Credentials are passed through the environment so they don't show up in the process list
+dbPing() {
+    DB_HOST="$db_host" DB_PORT="$db_port" DB_NAME="$db_name" DB_USER="$db_user" \
+        DB_PASSWORD="$db_password" DB_CERT_PATH="$db_cert_path" \
+        timeout 5 php -r '
+            $opts = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3);
+            if (getenv("DB_CERT_PATH") !== "") {
+                $opts[PDO::MYSQL_ATTR_SSL_CA] = getenv("DB_CERT_PATH");
+            }
+            try {
+                $pdo = new PDO(
+                    sprintf("mysql:host=%s;port=%s;dbname=%s", getenv("DB_HOST"), getenv("DB_PORT"), getenv("DB_NAME")),
+                    getenv("DB_USER"),
+                    getenv("DB_PASSWORD"),
+                    $opts,
+                );
+                $pdo->query("SELECT 1");
+            } catch (PDOException $e) {
+                fwrite(STDERR, $e->getMessage() . PHP_EOL);
+                exit(1);
+            }
+        ' 2>&1
+}
+
+# Wait for the database to accept authenticated queries
 # This avoids a race condition on docker daemon restart where depends_on is not honored
 # and the web container starts before mysql is ready: https://github.com/elabftw/elabftw/issues/7467
 waitForDb() {
@@ -439,18 +465,18 @@ waitForDb() {
         say "warning: invalid DB_WAIT_TIMEOUT value: ${db_wait_timeout}, using 120"
         db_wait_timeout=120
     fi
-    local start elapsed
+    local start elapsed last_error
     start=$(date +%s)
     say "info: waiting for database at ${db_host}:${db_port} (timeout: ${db_wait_timeout}s)"
-    until timeout 2 bash -c ">/dev/tcp/${db_host}/${db_port}" 2>/dev/null; do
+    until last_error=$(dbPing); do
         elapsed=$(( $(date +%s) - start ))
         if [ "$elapsed" -ge "$db_wait_timeout" ]; then
-            say "error: database at ${db_host}:${db_port} still unreachable after ${elapsed}s, continuing anyway"
+            say "error: database at ${db_host}:${db_port} still not ready after ${elapsed}s, continuing anyway. Last error: ${last_error:-timeout}"
             return 0
         fi
         sleep 1
     done
-    say "info: database is reachable"
+    say "info: database is ready"
     db_ready=true
 }
 

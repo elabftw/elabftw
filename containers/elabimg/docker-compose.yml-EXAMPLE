@@ -283,7 +283,7 @@ services:
         #- AUTO_DB_UPDATE=false
 
         # optional: when AUTO_DB_INIT or AUTO_DB_UPDATE is enabled, wait up to this number of seconds
-        # for the database to be reachable before running the init/update step
+        # for the database to accept queries before running the init/update step
         # default value: 120
         #- DB_WAIT_TIMEOUT=120
 

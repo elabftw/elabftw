@@ -1448,7 +1448,7 @@ components:
           type: boolean
           default: false
           description: |
-            If "true", the action will import the files of the original entity.
+            If "true", the action will import the files of the original entity. Files linked in the main text (such as inserted images) are always copied.
         linkToOriginal:
           type: boolean
           default: true

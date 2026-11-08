@@ -524,6 +524,25 @@ final class SamlTest extends TestCase
         self::assertNull($result->orcid);
     }
 
+    public function testInitialTeamSelectionTreatsEmptyNamesAsUnknown(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-empty-names@example.com';
+        $samlUserdata['User.FirstName'] = '';
+        $samlUserdata['User.LastName'] = array('');
+        unset($samlUserdata['User.team']);
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $result = $this->assertIdpResponse($samlUserdata, $config);
+
+        self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
+        self::assertSame('Unknown', $result->firstname);
+        self::assertSame('Unknown', $result->lastname);
+    }
+
     public function testInitialTeamSelectionHandlesMissingOptionalAttributeSettings(): void
     {
         $samlUserdata = $this->samlUserdata;

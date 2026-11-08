@@ -450,7 +450,17 @@ window.addEventListener('beforeunload', event => {
 });
 
 // ACTIVATE FANCYBOX
-$('[data-fancybox]').fancybox();
+// Fancybox inserts the caption with jQuery .html(), and data-caption holds user input (file name or comment),
+// so the caption must be escaped here or it becomes active HTML once the attribute is decoded.
+// Set it on the defaults too, so elements reloaded later and opened through fancybox's delegated handler are covered.
+// Read the raw attribute: jQuery .data() would also try to parse it as JSON.
+function fancyboxCaption(this: HTMLElement | JQuery): string {
+  const caption = document.createElement('span');
+  caption.textContent = $(this).attr('data-caption') ?? '';
+  return caption.innerHTML;
+}
+(($ as unknown) as { fancybox: { defaults: { caption: unknown } } }).fancybox.defaults.caption = fancyboxCaption;
+$('[data-fancybox]').fancybox({ caption: fancyboxCaption });
 
 const uploadsDiv = document.getElementById('uploadsDiv');
 new MutationObserver(() => {

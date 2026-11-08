@@ -446,14 +446,15 @@ waitForDb() {
         # bin/console connects and queries the config table before doing anything else
         # so it exits with the same codes chronos relies on (from sysexits.h):
         # 75: cannot connect, retry; 69: connected but structure not installed, the database is up
-        # 124 comes from timeout, if the connection hangs
+        # a hanging connection is stopped by timeout: coreutils exits with 124, but busybox (alpine) lets
+        # the command die from SIGTERM so the shell sees 143
         rc=0
         output=$(timeout 10 /elabftw/bin/console list 2>&1) || rc=$?
         case "$rc" in
             0|69)
                 break
                 ;;
-            75|124)
+            75|124|143)
                 ;;
             *)
                 say "error: unexpected exit code ${rc} while checking the database, continuing anyway. Output: ${output}"

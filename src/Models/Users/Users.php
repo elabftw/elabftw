@@ -670,7 +670,6 @@ class Users extends AbstractRest
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        // TODO check when admin if unreference doesn't cause issue
         return $this->readOne();
     }
 

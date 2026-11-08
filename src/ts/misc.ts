@@ -973,6 +973,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
   const requester = await ApiC.getJson('users/me');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userTeams = user.teams as any;
+  const canRemoveFromTeam = Boolean(requester.is_sysadmin) || Boolean(requester.can_manage_users2teams);
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
@@ -983,8 +984,9 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.classList.add('user-badge', 'm-1');
     teamBadge.innerText = team.name;
     // REMOVE TEAM BUTTON
+    // only Sysadmins and users who can manage users/teams association can remove a user from a team
     // users must keep one team; requester cannot remove themselves from their current team
-    if (userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
+    if (canRemoveFromTeam && userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
       const removeTeamBtn = document.createElement('button');
       removeTeamBtn.type = 'button';
       removeTeamBtn.classList.add('btn', 'btn-danger-ghost', 'btn-sm', 'ml-2');

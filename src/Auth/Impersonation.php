@@ -188,5 +188,11 @@ final class Impersonation
                 throw new ForbiddenException(_('Admins can only impersonate users without elevated privileges.'));
             }
         }
+        // a user can read entries from all their teams: impersonating them must not reveal data of a team the Admin doesn't administer
+        foreach ($target->getActiveTeamIds() as $teamId) {
+            if (!new TeamsHelper($teamId)->isAdmin((int) $requester->userid)) {
+                throw new ForbiddenException(_('This user is also in a team where you are not Admin: you cannot impersonate them.'));
+            }
+        }
     }
 }

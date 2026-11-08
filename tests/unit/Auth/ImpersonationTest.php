@@ -163,6 +163,69 @@ final class ImpersonationTest extends TestCase
         }
     }
 
+    /**
+     * The target is in the Admin's team, but also in a team where the Admin is not Admin: impersonating them would reveal that team's data
+     */
+    public function testAdminCannotImpersonateUserAlsoInAnotherTeam(): void
+    {
+        $admin = $this->getAdmin();
+        $targetId = $this->getUserIdFromEmail('user1@demo.elabftw.net');
+        $Impersonation = new Impersonation($this->getSession($admin), true);
+        // works while the target is only in the Admin's team
+        $Impersonation->start($admin, $targetId);
+        $Impersonation->stop();
+
+        $Db = Db::getConnection();
+        $req = $Db->prepare('INSERT IGNORE INTO users2teams (users_id, teams_id, is_admin) VALUES (:userid, :team, 0)');
+        $req->bindValue(':userid', $targetId, PDO::PARAM_INT);
+        $req->bindValue(':team', self::SYSADMIN_TEAM, PDO::PARAM_INT);
+        $Db->execute($req);
+        $inserted = $req->rowCount() === 1;
+        try {
+            $Session = $this->getSession($admin);
+            try {
+                new Impersonation($Session, true)->start($admin, $targetId);
+                $this->fail('An Admin impersonated a user who is in a team where they are not Admin.');
+            } catch (ForbiddenException) {
+                $this->assertSame($admin->userid, $Session->get('userid'));
+            }
+        } finally {
+            if ($inserted) {
+                $req = $Db->prepare('DELETE FROM users2teams WHERE users_id = :userid AND teams_id = :team');
+                $req->bindValue(':userid', $targetId, PDO::PARAM_INT);
+                $req->bindValue(':team', self::SYSADMIN_TEAM, PDO::PARAM_INT);
+                $Db->execute($req);
+            }
+        }
+    }
+
+    public function testAdminImpersonationEndsWhenTargetJoinsAnotherTeam(): void
+    {
+        $admin = $this->getAdmin();
+        $targetId = $this->getUserIdFromEmail('user1@demo.elabftw.net');
+        $Session = $this->getSession($admin);
+        $Impersonation = new Impersonation($Session, true);
+        $Impersonation->start($admin, $targetId);
+
+        $Db = Db::getConnection();
+        $req = $Db->prepare('INSERT IGNORE INTO users2teams (users_id, teams_id, is_admin) VALUES (:userid, :team, 0)');
+        $req->bindValue(':userid', $targetId, PDO::PARAM_INT);
+        $req->bindValue(':team', self::SYSADMIN_TEAM, PDO::PARAM_INT);
+        $Db->execute($req);
+        $inserted = $req->rowCount() === 1;
+        try {
+            $this->expectException(ForbiddenException::class);
+            $Impersonation->validate();
+        } finally {
+            if ($inserted) {
+                $req = $Db->prepare('DELETE FROM users2teams WHERE users_id = :userid AND teams_id = :team');
+                $req->bindValue(':userid', $targetId, PDO::PARAM_INT);
+                $req->bindValue(':team', self::SYSADMIN_TEAM, PDO::PARAM_INT);
+                $Db->execute($req);
+            }
+        }
+    }
+
     public function testUserCannotImpersonate(): void
     {
         $user = new AuthenticatedUser($this->getUserIdFromEmail('user1@demo.elabftw.net'), self::ADMIN_TEAM);

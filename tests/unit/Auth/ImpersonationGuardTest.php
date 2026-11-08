@@ -22,6 +22,7 @@ use Elabftw\Traits\TestsUtilsTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+use function array_merge;
 use function json_encode;
 use function sprintf;
 
@@ -54,6 +55,29 @@ final class ImpersonationGuardTest extends TestCase
             'ucp form' => array(self::getPostRequest('/app/controllers/UcpController.php')),
             'login form' => array(self::getPostRequest('/app/controllers/LoginController.php')),
             'unknown entrypoint' => array(self::getPostRequest('/app/controllers/SomeNewController.php')),
+            'method override on a controller' => array(Request::create(
+                '/app/controllers/UcpController.php',
+                Request::METHOD_POST,
+                array('mfa_secret' => 'JBSWY3DPEHPK3PXP', 'mfa_code' => '123456'),
+                server: array('SCRIPT_NAME' => '/app/controllers/UcpController.php', 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET'),
+            )),
+            'method override on the api' => array(self::getJsonRequest(Request::METHOD_POST, '/api/v2/users/me', array('limit_nb' => 15), array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET'))),
+            'get with a body on a controller' => array(Request::create(
+                '/app/controllers/SortableAjaxController.php',
+                Request::METHOD_GET,
+                server: array('SCRIPT_NAME' => '/app/controllers/SortableAjaxController.php', 'CONTENT_TYPE' => 'application/json'),
+                content: json_encode(array('table' => 'todolist', 'ordering' => array('todoItem_1')), JSON_THROW_ON_ERROR),
+            )),
+            'options with a body on a controller' => array(Request::create(
+                '/app/controllers/SortableAjaxController.php',
+                Request::METHOD_OPTIONS,
+                server: array('SCRIPT_NAME' => '/app/controllers/SortableAjaxController.php', 'CONTENT_TYPE' => 'application/json'),
+                content: json_encode(array('table' => 'todolist', 'ordering' => array('todoItem_1')), JSON_THROW_ON_ERROR),
+            )),
+            'get on a controller' => array(Request::create('/app/controllers/UcpController.php', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/app/controllers/UcpController.php'))),
+            'options on the api' => array(Request::create('/api/v2/experiments', Request::METHOD_OPTIONS, server: array('SCRIPT_NAME' => self::API))),
+            'edit mode with an extra character' => array(Request::create('/experiments.php?mode=edit_&id=1', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/experiments.php'))),
+            'edit mode with a digit' => array(Request::create('/experiments.php?mode=ed1it&id=1', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/experiments.php'))),
             'switch team' => array(Request::create('/login.php?switch_team=1', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/login.php'))),
             'read a user webhook' => array(Request::create('/api/v2/users/me/webhooks/1', Request::METHOD_GET, server: array('SCRIPT_NAME' => self::API))),
             'read a team webhook' => array(Request::create('/api/v2/teams/current/webhooks/1', Request::METHOD_GET, server: array('SCRIPT_NAME' => self::API))),
@@ -82,6 +106,9 @@ final class ImpersonationGuardTest extends TestCase
             'browse a page' => array(Request::create('/database.php', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/database.php'))),
             'stop impersonation' => array(self::getPostRequest('/app/controllers/ImpersonationController.php', array('action' => 'stop'))),
             'logout' => array(Request::create('/app/logout.php', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/app/logout.php'))),
+            'change language' => array(Request::create('/app/controllers/UnauthRequestHandler.php?lang=fr_FR', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/app/controllers/UnauthRequestHandler.php'))),
+            'download a file' => array(Request::create('/app/download.php?f=ab/abc.png&storage=1', Request::METHOD_GET, server: array('SCRIPT_NAME' => '/app/download.php'))),
+            'head on a page' => array(Request::create('/experiments.php', Request::METHOD_HEAD, server: array('SCRIPT_NAME' => '/experiments.php'))),
         );
     }
 
@@ -127,12 +154,29 @@ final class ImpersonationGuardTest extends TestCase
         $this->assertArrayNotHasKey('sig_privkey', $user->readOne());
     }
 
-    private static function getJsonRequest(string $method, string $uri, array $body = array()): Request
+    #[DataProvider('provideCanWrite')]
+    public function testCanWrite(string $script, bool $expected): void
+    {
+        $this->assertSame($expected, new ImpersonationGuard()->canWrite(Request::create($script, server: array('SCRIPT_NAME' => $script))));
+    }
+
+    public static function provideCanWrite(): array
+    {
+        return array(
+            'stop impersonation' => array('/app/controllers/ImpersonationController.php', true),
+            'logout' => array('/app/logout.php', true),
+            'api' => array(self::API, false),
+            'page' => array('/experiments.php', false),
+            'download' => array('/app/download.php', false),
+        );
+    }
+
+    private static function getJsonRequest(string $method, string $uri, array $body = array(), array $server = array()): Request
     {
         return Request::create(
             $uri,
             $method,
-            server: array('CONTENT_TYPE' => 'application/json', 'SCRIPT_NAME' => self::API),
+            server: array_merge(array('CONTENT_TYPE' => 'application/json', 'SCRIPT_NAME' => self::API), $server),
             content: json_encode($body, JSON_THROW_ON_ERROR),
         );
     }

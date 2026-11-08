@@ -129,7 +129,10 @@ final class App
             }
             // outside of the try block above: a refused request must not kill the session
             if ($this->Users->impersonatorId !== null) {
-                new ImpersonationGuard()->assertAllowed($this->Request);
+                $Guard = new ImpersonationGuard();
+                $Guard->assertAllowed($this->Request);
+                // whatever happens next in this request, nothing can be written in the name of the impersonated user
+                Db::getConnection()->setReadOnly(!$Guard->canWrite($this->Request));
             }
 
             if ($this->Session->get('is_anon') === 1) {

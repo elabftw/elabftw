@@ -323,13 +323,14 @@ final class Uploads extends AbstractRest
      */
     public function readBinary(): Response
     {
-        $storageFs = Storage::from($this->uploadData['storage'])->getStorage()->getFs();
+        $storage = Storage::from($this->uploadData['storage']);
 
         $DownloadController = new DownloadController(
-            $storageFs,
+            $storage->getStorage()->getFs(),
             $this->uploadData['long_name'],
+            $this->Entity->Users,
+            $storage,
             $this->uploadData['real_name'],
-            forceDownload: false,
         );
         return $DownloadController->getResponse();
     }

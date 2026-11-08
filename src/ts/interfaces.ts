@@ -69,6 +69,14 @@ enum Method {
   DELETE = 'DELETE',
 }
 
+// mirrors the BookingApprovalStatus php enum
+enum BookingApprovalStatus {
+  NoApproval = 0,
+  Pending = 1,
+  Approved = 2,
+  Rejected = 3,
+}
+
 enum ProcurementState {
   Pending = 10,
   Validated = 20,
@@ -126,6 +134,7 @@ enum Action {
 
 enum Model {
   Apikey = 'apikeys',
+  AuditLogs = 'audit_logs',
   Comment = 'comments',
   Compounds = 'compounds',
   Config = 'config',
@@ -217,6 +226,7 @@ interface Entity {
 
 export {
   Action,
+  BookingApprovalStatus,
   EntityType,
   SingularEntityType,
   FileType,

@@ -74,7 +74,7 @@ import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
 import { isDarkTheme } from './theme';
-import { getClipboardImages, getPastedImageName, uploadFileToEntity } from './pasteImage';
+import { getClipboardImages, getPastedImageName, getUploadUrl, uploadFileToEntity } from './pasteImage';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -161,7 +161,7 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
         // fetch info about the newly created upload
         return ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${newId}`);
       }).then(json => {
-        resolve(`app/download.php?f=${json.long_name}&storage=${json.storage}`);
+        resolve(getUploadUrl(json));
         // save here because using the old real_name will not return anything from the db (status is archived now)
         updateEntityBody();
         reloadElements(['uploadsDiv']);

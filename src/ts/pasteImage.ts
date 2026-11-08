@@ -33,7 +33,13 @@ export async function uploadFileToEntity(file: Blob, filename: string, notifOnEr
   const upload = await ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${getNewIdFromPostRequest(resp)}`);
   // restore the collapsed state of upload groups, like the dropzone does
   reloadElements(['uploadsDiv']).then(() => adjustHiddenState());
-  return `app/download.php?f=${encodeURIComponent(upload.long_name)}&storage=${encodeURIComponent(upload.storage)}`;
+  return getUploadUrl(upload);
+}
+
+// long_name must stay verbatim (not url-encoded): the backend finds uploads referenced in the body by searching for it,
+// to rewrite links when duplicating an entry and to block deletion of an upload still in use
+export function getUploadUrl(upload: { long_name: string; storage: number }): string {
+  return `app/download.php?f=${upload.long_name}&storage=${upload.storage}`;
 }
 
 // office suites put a rendering of the copied cells/text as image next to the text: the text is what the user wants
@@ -70,7 +76,8 @@ export function enableMarkdownImagePaste(textarea: HTMLTextAreaElement): void {
       const placeholder = `![Uploading ${filename}…]()`;
       textarea.setRangeText(`\n${placeholder}\n`, textarea.selectionStart, textarea.selectionEnd, 'end');
       uploadFileToEntity(image, filename).then(url => {
-        replacePlaceholder(textarea, placeholder, `![${filename}](${url})`);
+        // same alt text as "insert in body", which "replace uploaded file" relies on to find the image
+        replacePlaceholder(textarea, placeholder, `![image](${url})`);
         // save so the upload is referenced by the body and not considered orphan
         updateEntityBody();
       }).catch(() => replacePlaceholder(textarea, placeholder, ''));

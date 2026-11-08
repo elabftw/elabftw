@@ -37,6 +37,7 @@ use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use OneLogin\Saml2\Auth as SamlAuthLib;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\NativeClock;
 
 use function _;
@@ -67,6 +68,7 @@ final class Saml
         private readonly SamlAuthLib $SamlAuthLib,
         private readonly array $configArr,
         private readonly array $settings,
+        private readonly LoggerInterface $logger,
     ) {}
 
     public static function getJWTConfig(): Configuration
@@ -216,17 +218,39 @@ final class Saml
         $errors = $this->SamlAuthLib->getErrors();
 
         if (!empty($errors)) {
+            $details = implode(', ', $errors);
+            $reason = $this->SamlAuthLib->getLastErrorReason();
+            if (is_string($reason) && $reason !== '') {
+                $details .= sprintf(' (reason: %s)', $reason);
+            }
+            // always log the details server side so sysadmins can troubleshoot without enabling debug mode
+            $this->logger->error('SAML response validation failed', array(
+                'errors' => $details,
+                'idp' => $this->getIdpEntityId(),
+                'requestId' => $requestId,
+            ));
+
             $error = Messages::GenericError->toHuman();
             if (($this->configArr['saml_debug'] ?? '0') === '1') {
-                $error = implode(', ', $errors);
+                $error = $details;
             }
 
             throw new UnauthorizedException($error);
         }
 
         if (!$this->SamlAuthLib->isAuthenticated()) {
+            $this->logger->error('SAML authentication with IDP failed: response is valid but user is not authenticated', array(
+                'idp' => $this->getIdpEntityId(),
+                'requestId' => $requestId,
+            ));
             throw new UnauthorizedException('Authentication with IDP failed!');
         }
+    }
+
+    private function getIdpEntityId(): string
+    {
+        $entityId = $this->settings['idp']['entityId'] ?? null;
+        return is_string($entityId) && $entityId !== '' ? $entityId : self::UNKNOWN_VALUE;
     }
 
     private function extractAttribute(string $attribute): string

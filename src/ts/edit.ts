@@ -20,6 +20,7 @@ import { Uploader } from './uploader';
 import { getRecoveryData, removeRecoveryData } from './recovery';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { enableMarkdownImagePaste } from './pasteImage';
 
 // remove exclusive edit mode when leaving the page
 window.onbeforeunload = function() {
@@ -31,12 +32,16 @@ const editor = getEditor();
 editor.init('edit');
 
 if (editor.type === 'md') {
-  document.getElementById('body_area')?.addEventListener('keydown', event => {
+  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
+  bodyArea?.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
       event.preventDefault();
       updateEntityBody(false);
     }
   });
+  if (bodyArea) {
+    enableMarkdownImagePaste(bodyArea);
+  }
 }
 
 // initialize the file uploader

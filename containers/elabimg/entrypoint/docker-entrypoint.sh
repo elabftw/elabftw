@@ -426,32 +426,6 @@ startupMessage() {
     say "info: starting server listening internally on port 8080 in ${http_mode}"
 }
 
-# Connect to the database with the configured credentials and run a trivial query
-# A TCP check alone is not enough: mysqld can accept connections while still booting
-# Credentials are passed through the environment so they don't show up in the process list
-dbPing() {
-    DB_HOST="$db_host" DB_PORT="$db_port" DB_NAME="$db_name" DB_USER="$db_user" \
-        DB_PASSWORD="$db_password" DB_CERT_PATH="$db_cert_path" \
-        timeout 5 php -r '
-            $opts = array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3);
-            if (getenv("DB_CERT_PATH") !== "") {
-                $opts[PDO::MYSQL_ATTR_SSL_CA] = getenv("DB_CERT_PATH");
-            }
-            try {
-                $pdo = new PDO(
-                    sprintf("mysql:host=%s;port=%s;dbname=%s", getenv("DB_HOST"), getenv("DB_PORT"), getenv("DB_NAME")),
-                    getenv("DB_USER"),
-                    getenv("DB_PASSWORD"),
-                    $opts,
-                );
-                $pdo->query("SELECT 1");
-            } catch (PDOException $e) {
-                fwrite(STDERR, $e->getMessage() . PHP_EOL);
-                exit(1);
-            }
-        ' 2>&1
-}
-
 # Wait for the database to accept authenticated queries
 # This avoids a race condition on docker daemon restart where depends_on is not honored
 # and the web container starts before mysql is ready: https://github.com/elabftw/elabftw/issues/7467
@@ -465,13 +439,30 @@ waitForDb() {
         say "warning: invalid DB_WAIT_TIMEOUT value: ${db_wait_timeout}, using 120"
         db_wait_timeout=120
     fi
-    local start elapsed last_error
+    local start elapsed output rc
     start=$(date +%s)
     say "info: waiting for database at ${db_host}:${db_port} (timeout: ${db_wait_timeout}s)"
-    until last_error=$(dbPing); do
+    while true; do
+        # bin/console connects and queries the config table before doing anything else
+        # so it exits with the same codes chronos relies on (from sysexits.h):
+        # 75: cannot connect, retry; 69: connected but structure not installed, the database is up
+        # 124 comes from timeout, if the connection hangs
+        rc=0
+        output=$(timeout 10 /elabftw/bin/console list 2>&1) || rc=$?
+        case "$rc" in
+            0|69)
+                break
+                ;;
+            75|124)
+                ;;
+            *)
+                say "error: unexpected exit code ${rc} while checking the database, continuing anyway. Output: ${output}"
+                return 0
+                ;;
+        esac
         elapsed=$(( $(date +%s) - start ))
         if [ "$elapsed" -ge "$db_wait_timeout" ]; then
-            say "error: database at ${db_host}:${db_port} still not ready after ${elapsed}s, continuing anyway. Last error: ${last_error:-timeout}"
+            say "error: database at ${db_host}:${db_port} still not ready after ${elapsed}s, continuing anyway. Last output: ${output:-timeout}"
             return 0
         fi
         sleep 1

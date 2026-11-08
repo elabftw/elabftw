@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Authentication;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Models\Users\ExistingUser;
@@ -642,6 +643,81 @@ final class SamlTest extends TestCase
 
         self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
         self::assertSame('saml-unknown-team-select@example.com', $result->email);
+    }
+
+    public function testNewUserCannotSelectTeamWhenNoProvidedTeamExistsAndSyncIsEnabled(): void
+    {
+        // with sync enabled, picking a team would only defer the failure to the next login
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-unknown-team-sync@example.com';
+        $samlUserdata['User.team'] = array('SAML nonexistent team only');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_create'] = '0';
+        $config['saml_team_default'] = '-1';
+
+        $this->expectException(ImproperActionException::class);
+
+        $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserCannotSelectTeamWhenIdpSendsNoTeamAndSyncIsEnabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-no-team-sync-select@example.com';
+        unset($samlUserdata['User.team']);
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $this->expectException(ImproperActionException::class);
+
+        $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserCannotSelectTeamWhenIdpSendsEmptyTeamValuesAndSyncIsEnabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-empty-team-values-sync@example.com';
+        $samlUserdata['User.team'] = array('', ' ');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $this->expectException(ImproperActionException::class);
+
+        $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserIsNotCreatedInDefaultTeamWhenIdpSendsNoTeamAndSyncIsEnabled(): void
+    {
+        $email = 'saml-no-team-sync-default@example.com';
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = $email;
+        unset($samlUserdata['User.team']);
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_default'] = '2';
+
+        $rejected = false;
+        try {
+            $this->assertIdpResponse($samlUserdata, $config);
+        } catch (ImproperActionException) {
+            $rejected = true;
+        }
+        self::assertTrue($rejected);
+
+        // the account must not exist, or it would be stuck failing synchronization on every login
+        $this->expectException(ResourceNotFoundException::class);
+        ExistingUser::fromEmail($email);
     }
 
     public function testNewUserCanSelectTeamWhenIdpSendsEmptyTeamValues(): void

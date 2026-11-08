@@ -320,28 +320,14 @@ final class Saml
      */
     private function getTeamsForNewUser(): ?array
     {
-        $teamAttribute = $this->settings['idp']['teamAttr'] ?? null;
-        $teams = null;
+        $teams = $this->getTeamsFromAttribute();
 
-        if (is_string($teamAttribute) && $teamAttribute !== '') {
-            $teams = $this->samlUserdata[$teamAttribute] ?? null;
-        }
-
-        if (is_string($teams)) {
-            $teams = array($teams);
-        }
-
-        if ($teams !== null && !is_array($teams)) {
+        if (empty($teams) && $this->isTeamSyncEnabled()) {
+            // synchronization would remove the user from any team assigned here and fail on every login
             throw new ImproperActionException(
-                _('Invalid team attribute returned by IDP.'),
+                _('Could not find team(s) in IDP response!'),
             );
         }
-
-        // SAML attributes are multi-valued, so an IdP with nothing to send can still send array('')
-        $teams = array_values(array_filter(
-            $teams ?? array(),
-            static fn(mixed $team): bool => !is_string($team) || trim($team) !== '',
-        ));
 
         $teamId = (int) ($this->configArr['saml_team_default'] ?? 0);
 
@@ -360,8 +346,14 @@ final class Saml
         }
 
         // The team attribute is often prefilled from federation metadata: when its value matches no team
-        // and teams cannot be created, let the user pick one instead of failing the login
-        if ($teamId === -1 && !$this->allowTeamCreation() && !$this->anyTeamExists($teams)) {
+        // and teams cannot be created, let the user pick one instead of failing the login.
+        // Not with team synchronization: the next login would try to resolve the same unknown team and fail.
+        if (
+            $teamId === -1
+            && !$this->isTeamSyncEnabled()
+            && !$this->allowTeamCreation()
+            && !$this->anyTeamExists($teams)
+        ) {
             return null;
         }
 
@@ -381,9 +373,14 @@ final class Saml
         return true;
     }
 
+    private function isTeamSyncEnabled(): bool
+    {
+        return ($this->configArr['saml_sync_teams'] ?? '0') === '1';
+    }
+
     private function synchronizeTeams(Users $user): void
     {
-        if (($this->configArr['saml_sync_teams'] ?? '0') !== '1') {
+        if (!$this->isTeamSyncEnabled()) {
             return;
         }
 
@@ -403,27 +400,48 @@ final class Saml
             );
         }
 
-        $teams = $this->samlUserdata[$teamAttribute] ?? null;
+        $teams = $this->getTeamsFromAttribute();
         if (empty($teams)) {
             throw new ImproperActionException(
                 'Could not find team(s) in IDP response!',
             );
         }
 
+        return new Teams(new Users())->getTeamsFromIdOrNameOrOrgidArray(
+            $teams,
+            $this->allowTeamCreation(),
+        );
+    }
+
+    /**
+     * Teams sent by the IdP, without blank values
+     *
+     * @return list<mixed>
+     */
+    private function getTeamsFromAttribute(): array
+    {
+        $teamAttribute = $this->settings['idp']['teamAttr'] ?? null;
+        $teams = null;
+
+        if (is_string($teamAttribute) && $teamAttribute !== '') {
+            $teams = $this->samlUserdata[$teamAttribute] ?? null;
+        }
+
         if (is_string($teams)) {
             $teams = array($teams);
         }
 
-        if (!is_array($teams)) {
+        if ($teams !== null && !is_array($teams)) {
             throw new ImproperActionException(
-                'Invalid team attribute returned by IDP.',
+                _('Invalid team attribute returned by IDP.'),
             );
         }
 
-        return new Teams(new Users())->getTeamsFromIdOrNameOrOrgidArray(
-            array_values($teams),
-            $this->allowTeamCreation(),
-        );
+        // SAML attributes are multi-valued, so an IdP with nothing to send can still send array('')
+        return array_values(array_filter(
+            $teams ?? array(),
+            static fn(mixed $team): bool => !is_string($team) || trim($team) !== '',
+        ));
     }
 
     private function getExistingUser(

@@ -74,7 +74,7 @@ import type { MathJaxObject } from '@mathjax/src/js/components/startup.js';
 declare const MathJax: MathJaxObject;
 import { entity } from './getEntity';
 import { isDarkTheme } from './theme';
-import { getClipboardImages, getPastedImageName, uploadFileToEntity } from './pasteImage';
+import { getClipboardImages, getExtFromMime, getPastedImageName, uploadFileToEntity } from './pasteImage';
 
 // AUTOSAVE
 const doneTypingInterval = 7000;  // time in ms between end of typing and save
@@ -139,7 +139,8 @@ interface TinyMCEBlobInfo {
 const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve, reject) => {
   // Edgecase for editing an image using tinymce ImageTools
   // Check if it was selected. This is set by an event hook below
-  // uploadId is only set for images that are existing uploads, so a freshly pasted image never lands here
+  // uploadId is only set for images that are existing uploads, and the paste handler resets this state,
+  // so a pasted image is never treated as an edit of a previously selected image
   if (tinymceEditImage.selected === true && tinymceEditImage.uploadId !== 0) {
     // Note: confirm will trigger the SelectionChange event hook below again
     if (confirm(i18next.t('replace-edited-file'))) {
@@ -178,8 +179,9 @@ const imagesUploadHandler = (blobInfo: TinyMCEBlobInfo) => new Promise((resolve,
     const blob = blobInfo.blob();
     const filename = (typeof name === 'undefined' || /^(mceclip|blobid|image$)/.test(name))
       ? getPastedImageName(blob.type)
-      : (/\.[a-z0-9]+$/i.test(name) ? name : `${name}.${(blob.type.split('/')[1] || 'png').replace('jpeg', 'jpg')}`);
-    uploadFileToEntity(blob, filename).then(url => {
+      : (/\.[a-z0-9]+$/i.test(name) ? name : `${name}.${getExtFromMime(blob.type)}`);
+    // tinymce shows its own error notification on reject, so don't show the api one too
+    uploadFileToEntity(blob, filename, false).then(url => {
       resolve(url);
       // tinymce swaps the blob src for the url once this promise resolves: save after that so the upload is referenced in the body
       window.setTimeout(() => updateEntityBody(), 0);
@@ -428,6 +430,8 @@ export function getTinymceBaseConfig(page: string): object {
           return;
         }
         event.preventDefault();
+        // the paste replaces any selected image: forget it, or images_upload_handler would offer to overwrite its file with the pasted one
+        tinymceEditImage.reset();
         images.forEach(image => {
           const reader = new FileReader();
           reader.addEventListener('load', () => {
@@ -458,6 +462,10 @@ export function getTinymceBaseConfig(page: string): object {
           const searchParams = new URL(selectedImage.src).searchParams;
           // Get all the uploads from that entity
           ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}`).then(json => {
+            // selection moved (or image was replaced by a paste) while we were waiting: don't attach a stale upload id
+            if (editor.selection.getNode() !== selectedImage) {
+              return;
+            }
             // Now find the one corresponding to the image selected in the body
             const upload = json.find(upload => upload.long_name === searchParams.get('f'));
             if (!upload) {

@@ -54,6 +54,7 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             'author:"Toto Le sysadmin" body:"some text goes here"',
             'elabid:7bebdd3512dc6cbee0b1 locked:yes rating:5 rating:unrated',
             'status:"only meaningful with experiments but no error"',
+            'tag:"some tag" OR tag:s:another-tag',
             'timestamped:0 timestamped:true title:"very cool experiment" visibility:%owner',
             'date:>2020.06,21 date:2020/06-21..20201231',
             'group:"Group Name"',

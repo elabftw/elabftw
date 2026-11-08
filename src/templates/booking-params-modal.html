@@ -37,6 +37,28 @@
                 <span class='slider'></span>
               </label>
             </div>
+            <hr>
+            <h4>{{ 'Booking approval'|trans }}</h4>
+            <div class='d-flex justify-content-between'>
+              <label for='requiresApprovalSwitch'>{{ 'Require approval for bookings'|trans }}</label>
+              <label class='switch' title='{{ 'Require approval for bookings'|trans }}'>
+                <input type='checkbox' id='requiresApprovalSwitch' data-ignore='1' {{ Entity.entityData.requires_booking_approval == 1 ? 'checked="checked"' }}>
+                <span class='slider'></span>
+              </label>
+            </div>
+            <p class='smallgray'>{{ 'Pending requests block the time slot.'|trans }}</p>
+            {# APPROVERS: same users autocomplete as the permissions modal, any user of the instance can be an approver #}
+            <label for='bookingApprovers_select_users'>{{ 'Approvers (one or more users)'|trans }}</label>
+            <div class='ts-wrapper'>
+              {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
+              <select id='bookingApprovers_select_users' data-ignore='1' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for users'|trans }}' data-tom-select='1' {{ Entity.entityData.requires_booking_approval == 0 or Entity.entityData.is_bookable == 0 ? 'disabled' }}>
+                {% for user in App.Users.readNamesFromIds(Entity.entityData.approvers|default([])) %}
+                  <option value='user:{{ user.userid }}' selected>{{ user.fullname }} ({{ user.email }})</option>
+                {% endfor %}
+              </select>
+              <input type='text' class='form-control mb-2' id='bookingApprovers-users-select-input' data-ignore='1' placeholder='{{ 'Search for users'|trans }}' aria-label='{{ 'Search for users'|trans }}'>
+            </div>
+            <p class='smallgray'>{{ 'Approvers can book without approval.'|trans }}</p>
 
             <hr>
             <h4>{{ 'Cancellation rules'|trans }}</h4>

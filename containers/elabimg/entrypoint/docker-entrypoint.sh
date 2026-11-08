@@ -436,7 +436,8 @@ dbInit() {
 dbUpdate() {
     if isTrue "$auto_db_update"; then
         say "info: updating database structure"
-        /elabftw/bin/console db:update
+        # 69: the database is empty, there is nothing to update until it is installed
+        /elabftw/bin/console db:update || [ "$?" -eq 69 ]
     fi
 }
 

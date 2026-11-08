@@ -22,6 +22,7 @@ use Elabftw\Auth\UserLoginValidator;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\DatabaseNotInstalledException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Config;
@@ -68,7 +69,7 @@ try {
     // PDO will throw an exception if the SQL structure is not imported yet
     try {
         $Config = Config::getConfig();
-    } catch (DatabaseErrorException | PDOException $e) {
+    } catch (DatabaseErrorException | DatabaseNotInstalledException | PDOException $e) {
         $Logger->critical('', array('Exception' => $e));
         throw new ImproperActionException('<html><body style="padding:8vmin;background-color: #dbdbdb;color: #343434;font-family: sans-serif"><h1>Error connecting to MySQL server</h1><h2>Possible solutions:</h2><ul style="line-height:150%"><li>Make sure the database is initialized with <code style="background-color: black;color:white;padding:5px;border-radius: 5px;font-weight: bold">docker exec elabftw bin/init db:install</code></li><li>Make sure hostname and credentials for MySQL are correctly configured through environment variables</li><li>Make sure the database is operational and reachable (firewalls)</li></ul></body></html>');
     }

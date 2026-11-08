@@ -53,7 +53,8 @@ CREATE TABLE `audit_logs` (
   `requester_userid` INT UNSIGNED NOT NULL,
   `target_userid` INT UNSIGNED NOT NULL,
   `body` TEXT NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_audit_logs_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --

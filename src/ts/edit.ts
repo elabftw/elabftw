@@ -32,13 +32,13 @@ const editor = getEditor();
 editor.init('edit');
 
 if (editor.type === 'md') {
-  document.getElementById('body_area')?.addEventListener('keydown', event => {
+  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
+  bodyArea?.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
       event.preventDefault();
       updateEntityBody(false);
     }
   });
-  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
   if (bodyArea) {
     enableMarkdownImagePaste(bodyArea);
   }

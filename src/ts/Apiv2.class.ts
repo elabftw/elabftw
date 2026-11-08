@@ -81,14 +81,9 @@ export class Api {
     let notifOnError = true;
     if (isFormData) {
       // FormData values are strings, and the flags must not reach the server as form fields
-      if (params.get('notifOnSaved') === '0') {
-        notifOnSaved = false;
-      }
+      notifOnSaved = params.get('notifOnSaved') !== '0';
+      notifOnError = params.get('notifOnError') !== '0';
       params.delete('notifOnSaved');
-
-      if (params.get('notifOnError') === '0') {
-        notifOnError = false;
-      }
       params.delete('notifOnError');
     } else {
       if (params['notifOnSaved'] === 0) {

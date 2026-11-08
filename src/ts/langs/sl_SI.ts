@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Arhiviraj uporabnika",
     "archive-user-description": "Arhiviranje uporabnika pomeni, da bo njegov račun onemogočen. To dejanje je reverzibilno.",
     "association-date": "Datum povezave",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Barva ozadja",

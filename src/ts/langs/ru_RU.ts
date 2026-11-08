@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Пользователь в архиве",
     "archive-user-description": "Архивирование пользователя означает, что его учетная запись будет отключена. Это действие обратимо.",
     "association-date": "Дата привязки",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Цвет фона",

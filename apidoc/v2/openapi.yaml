@@ -3626,13 +3626,13 @@ paths:
       description: |
         Get the events recorded in the audit logs, most recent first. Only a Sysadmin can use this endpoint.
 
-        Without a `limit` query parameter, all events are returned.
+        At most 10000 events are returned per request, even without a `limit` query parameter or with a higher one. Use `offset` to read older events.
       operationId: read-audit-logs
       parameters:
         - in: query
           name: limit
           required: false
-          description: Limit the number of results. If not set, all events are returned.
+          description: Limit the number of results. If not set or above 10000, 10000 is used.
           schema:
             type: integer
           example: 120

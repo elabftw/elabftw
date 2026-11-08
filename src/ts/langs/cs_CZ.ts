@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Archivovat uživatele",
     "archive-user-description": "Archivace uživatele znamená, že jeho účet bude deaktivován. Tato akce je vratná.",
     "association-date": "Datum přidružení",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Barva pozadí",

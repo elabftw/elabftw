@@ -17,6 +17,7 @@ const t = {
     "archive-user": "归档用户",
     "archive-user-description": "归档用户意味着他们的账户将被禁用。此操作是可逆的。",
     "association-date": "关联日期",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "背景颜色",

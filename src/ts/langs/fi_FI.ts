@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Arkistoi käyttäjä",
     "archive-user-description": "Käyttäjän arkistointi tarkoittaa, että hänen tilinsä poistetaan käytöstä. Tämä toiminto on peruutettava.",
     "association-date": "Liittämispäivä",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Taustaväri",

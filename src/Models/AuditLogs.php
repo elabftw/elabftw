@@ -28,7 +28,8 @@ use function array_map;
  */
 final class AuditLogs extends AbstractRest
 {
-    public const int DEFAULT_LIMIT = 50;
+    // the table grows with every login, so never send more rows than a browser can handle in one go
+    public const int MAX_LIMIT = 10000;
 
     public function __construct(private Users $requester)
     {
@@ -54,18 +55,6 @@ final class AuditLogs extends AbstractRest
         return $Db->lastInsertId();
     }
 
-    public static function read(int $limit = self::DEFAULT_LIMIT, int $offset = 0): array
-    {
-        $Db = Db::getConnection();
-        $sql = 'SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT :limit OFFSET :offset';
-        $req = $Db->prepare($sql);
-        $req->bindParam(':limit', $limit, PDO::PARAM_INT);
-        $req->bindParam(':offset', $offset, PDO::PARAM_INT);
-        $Db->execute($req);
-
-        return $req->fetchAll();
-    }
-
     #[Override]
     public function getApiPath(): string
     {
@@ -74,13 +63,17 @@ final class AuditLogs extends AbstractRest
 
     /**
      * Read events with the names of involved users, most recent first
-     * A limit of 0 (the default when no limit query parameter is given) means no limit
+     * At most MAX_LIMIT events are returned, use offset to read older ones
      */
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $this->requester->isSysadminOrExplode();
         $limit = $queryParams?->getLimit() ?? 0;
+        // a limit of 0 (no limit query parameter) still gets capped
+        if ($limit <= 0 || $limit > self::MAX_LIMIT) {
+            $limit = self::MAX_LIMIT;
+        }
         $offset = $queryParams?->getOffset() ?? 0;
         // sort on id too, as several events can share the same created_at second
         $sql = "SELECT audit_logs.id, audit_logs.created_at, audit_logs.category,
@@ -90,15 +83,11 @@ final class AuditLogs extends AbstractRest
             FROM audit_logs
             LEFT JOIN users AS requester ON (requester.userid = audit_logs.requester_userid)
             LEFT JOIN users AS target ON (target.userid = audit_logs.target_userid)
-            ORDER BY audit_logs.created_at DESC, audit_logs.id DESC";
-        if ($limit > 0) {
-            $sql .= ' LIMIT :limit OFFSET :offset';
-        }
+            ORDER BY audit_logs.created_at DESC, audit_logs.id DESC
+            LIMIT :limit OFFSET :offset";
         $req = $this->Db->prepare($sql);
-        if ($limit > 0) {
-            $req->bindValue(':limit', $limit, PDO::PARAM_INT);
-            $req->bindValue(':offset', $offset, PDO::PARAM_INT);
-        }
+        $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $req->bindValue(':offset', $offset, PDO::PARAM_INT);
         $this->Db->execute($req);
 
         return array_map(

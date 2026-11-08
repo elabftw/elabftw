@@ -28,11 +28,6 @@ class AuditLogsTest extends \PHPUnit\Framework\TestCase
         $this->AuditLogs = new AuditLogs(new Users(1, 1));
     }
 
-    public function testRead(): void
-    {
-        $this->assertIsArray(AuditLogs::read());
-    }
-
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/audit_logs/', $this->AuditLogs->getApiPath());
@@ -44,6 +39,7 @@ class AuditLogsTest extends \PHPUnit\Framework\TestCase
         AuditLogs::create(new UserLogin(1, 1));
         $all = $this->AuditLogs->readAll();
         $this->assertGreaterThanOrEqual(2, count($all));
+        $this->assertLessThanOrEqual(AuditLogs::MAX_LIMIT, count($all));
         $this->assertArrayHasKey('category_name', $all[0]);
         $this->assertArrayHasKey('requester_fullname', $all[0]);
         $this->assertArrayHasKey('target_fullname', $all[0]);

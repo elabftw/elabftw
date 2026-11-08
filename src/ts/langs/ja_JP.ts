@@ -17,6 +17,7 @@ const t = {
     "archive-user": "アーカイブユーザー",
     "archive-user-description": "ユーザーをアーカイブすると、そのユーザーのアカウントは無効になります。この操作は元に戻すことができます。",
     "association-date": "関連付け日",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "背景色",

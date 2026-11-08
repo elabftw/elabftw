@@ -17,6 +17,7 @@ const t = {
     "archive-user": "封存用戶",
     "archive-user-description": "將使用者封存意味著其帳戶將被停用。此操作可撤銷。",
     "association-date": "關聯日期",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "背景顏色",

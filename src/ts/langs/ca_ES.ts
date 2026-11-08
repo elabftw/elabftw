@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Usuari actiu",
     "archive-user-description": "Arxivar un usuari significa que el seu compte es desactivarà. Aquesta acció és reversible.",
     "association-date": "Data d'associació",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Color de fons",

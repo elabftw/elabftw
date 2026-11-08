@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Archive user",
     "archive-user-description": "Archiving a user means their account will be disabled. This action is reversible.",
     "association-date": "Association date",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Background color",

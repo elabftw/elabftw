@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Arhiivi kasutaja",
     "archive-user-description": "Kasutaja arhiveerimine tähendab tema konto sulgemist. See toiming on tagasipööratav.",
     "association-date": "Seostamise kuupäev",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Taustavärv",

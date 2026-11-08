@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Архів користувача",
     "archive-user-description": "Архівування користувача означає, що його обліковий запис буде вимкнено. Цю дію можна скасувати.",
     "association-date": "Дата пов’язання",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Колір фону",

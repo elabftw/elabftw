@@ -35,6 +35,8 @@ const COLUMN_STATE_STORAGE_KEY = 'persistent_audit_logs_table_column_state_v1';
 
 // the audit logs table can grow very large, so only the most recent events are loaded by default
 const RECENT_EVENTS_LIMIT = 120;
+// the server never returns more than this (AuditLogs::MAX_LIMIT), even when loading all events
+const MAX_EVENTS_LIMIT = 10000;
 
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
@@ -80,6 +82,7 @@ const AuditLogsTable = () => {
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
   const [allLoaded, setAllLoaded] = useState(false);
+  const [hitMaxLimit, setHitMaxLimit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const onGridReady = event => {
@@ -142,13 +145,13 @@ const AuditLogsTable = () => {
 
   const fetchData = async (loadAll = false) => {
     setIsLoading(true);
-    // without a limit parameter, the API returns all the events
-    const query = loadAll ? Model.AuditLogs : `${Model.AuditLogs}?limit=${RECENT_EVENTS_LIMIT}`;
+    const query = `${Model.AuditLogs}?limit=${loadAll ? MAX_EVENTS_LIMIT : RECENT_EVENTS_LIMIT}`;
     try {
       const events = await ApiC.getJson(query);
       setRowData(events);
       // if we got less than what we asked for, everything is already there
       setAllLoaded(loadAll || events.length < RECENT_EVENTS_LIMIT);
+      setHitMaxLimit(events.length >= MAX_EVENTS_LIMIT);
     } catch (error) {
       notify.error(error);
       console.error(`Could not load audit logs: ${error}`);
@@ -210,6 +213,9 @@ const AuditLogsTable = () => {
           storageKey={COLUMN_STATE_STORAGE_KEY}
         />
       </div>
+      {hitMaxLimit && (
+        <p className='text-center my-4'>{i18next.t('audit-logs-max', { num: MAX_EVENTS_LIMIT })}</p>
+      )}
       {!allLoaded && (
         <div className='text-center my-4'>
           <p>{i18next.t('audit-logs-recent', { num: RECENT_EVENTS_LIMIT })}</p>

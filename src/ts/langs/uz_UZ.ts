@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Arxiv foydalanuvchisi",
     "archive-user-description": "Foydalanuvchini arxivlash uning hisobi o'chirilishini anglatadi. Bu harakat qaytarilishi mumkin.",
     "association-date": "Biriktirish sanasi",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Fon rangi",

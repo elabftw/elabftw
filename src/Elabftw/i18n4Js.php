@@ -61,6 +61,7 @@ final class i18n4Js
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
             'association-date' => _('Association date'),
+            'audit-logs-max' => _('Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.'),
             'audit-logs-recent' => _('Only the {{num}} most recent events are loaded.'),
             'auto-size-columns' => _('Auto-size columns'),
             'background-color' => _('Background color'),

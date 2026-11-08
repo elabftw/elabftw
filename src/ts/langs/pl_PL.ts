@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Archiwizuj użytkownika",
     "archive-user-description": "Archiwizacja użytkownika oznacza dezaktywację jego konta. To działanie jest odwracalne.",
     "association-date": "Data powiązania",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Kolor tła",

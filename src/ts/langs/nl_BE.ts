@@ -17,6 +17,7 @@ const t = {
     "archive-user": "Archiveer gebruiker",
     "archive-user-description": "Het archiveren van een gebruiker betekent dat zijn/haar account wordt uitgeschakeld. Deze actie is omkeerbaar.",
     "association-date": "Koppelingsdatum",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "Achtergrondkleur",

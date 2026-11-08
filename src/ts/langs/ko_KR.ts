@@ -17,6 +17,7 @@ const t = {
     "archive-user": "사용자 보관",
     "archive-user-description": "사용자를 보관하면 계정이 비활성화됩니다. 이 작업은 되돌릴 수 있습니다.",
     "association-date": "연결 날짜",
+    "audit-logs-max": "Only the {{num}} most recent events can be shown here. Use the API with the offset parameter to read older events.",
     "audit-logs-recent": "Only the {{num}} most recent events are loaded.",
     "auto-size-columns": "Auto-size columns",
     "background-color": "배경색",

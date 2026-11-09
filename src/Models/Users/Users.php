@@ -23,7 +23,6 @@ use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
-use Elabftw\Enums\Messages;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
@@ -928,7 +927,7 @@ class Users extends AbstractRest
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -952,7 +951,7 @@ class Users extends AbstractRest
     public function isAdminOrExplode(): void
     {
         if (!$this->isSysadmin() && !$this->isAdmin()) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -961,20 +960,10 @@ class Users extends AbstractRest
         return $this->userData['userid'] === $this->requester->userData['userid'];
     }
 
-    /**
-     * readOne() returns a limited profile instead of throwing, so use this to protect what belongs to the user
-     */
-    public function canReadFullProfileOrExplode(): void
-    {
-        if (!$this->canReadFullProfile()) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
-        }
-    }
-
     public function isSelfOrExplode(): void
     {
         if ($this->isSelf() === false) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -1031,11 +1020,7 @@ class Users extends AbstractRest
 
     private function canReadFullProfile(): bool
     {
-        // it's ourself or we are sysadmin
-        if ($this->requester->getUserid() === $this->getUserid() || $this->requester->isSysadmin()) {
-            return true;
-        }
-        return $this->requester->isAdmin() && $this->requester->isAdminOf($this->getUserid());
+        return $this->requester->isAdminOf($this->getUserid());
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool
@@ -1090,7 +1075,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 

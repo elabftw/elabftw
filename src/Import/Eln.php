@@ -459,16 +459,17 @@ class Eln extends AbstractZip
                 }
             }
         }
+        $str = static fn(mixed $value): ?string => is_string($value) && $value !== '' ? $value : null;
         return new Compound(
-            cas: $casNumber,
+            cas: $str($casNumber),
             cid: $pubchemCid,
-            inChI: $node['inChI'] ?? null,
-            inChIKey: $node['inChIKey'] ?? null,
-            name: $node['name'] ?? null,
-            iupacName: $node['iupacName'] ?? null,
-            smiles: $node['smiles'] ?? null,
-            molecularFormula: $node['molecularFormula'] ?? null,
-            molecularWeight: isset($node['molecularWeight']) ? (float) $node['molecularWeight'] : null,
+            inChI: $str($node['inChI'] ?? null),
+            inChIKey: $str($node['inChIKey'] ?? null),
+            name: $str($node['name'] ?? null),
+            iupacName: $str($node['iupacName'] ?? null),
+            smiles: $str($node['smiles'] ?? null),
+            molecularFormula: $str($node['molecularFormula'] ?? null),
+            molecularWeight: is_numeric($node['molecularWeight'] ?? null) ? (float) $node['molecularWeight'] : null,
         );
     }
 

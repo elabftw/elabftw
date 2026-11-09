@@ -458,7 +458,7 @@ final class Apiv2Controller extends AbstractApiController
             };
         }
         if ($this->Model instanceof Users) {
-            $this->Model->canReadFullProfileOrExplode();
+            $this->Model->readOne();
             return match ($submodel) {
                 ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new UserRequestActions($this->Model),

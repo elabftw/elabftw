@@ -240,7 +240,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $res = $Controller->getResponse();
         self::assertSame(Response::HTTP_OK, $res->getStatusCode());
         $json = json_decode((string) $res->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertSame(array('firstname', 'lastname', 'email'), array_keys($json));
+        self::assertSame(array('firstname', 'lastname', 'fullname', 'email'), array_keys($json));
         self::assertStringContainsString('***', $json['email']);
     }
 
@@ -261,7 +261,7 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $admin = $this->getRandomUserInTeam(2, admin: 1);
         // userid 1 is only in team 1
         $json = $this->getUserAs($admin, 1);
-        self::assertSame(array('firstname', 'lastname', 'email'), array_keys($json));
+        self::assertSame(array('firstname', 'lastname', 'fullname', 'email'), array_keys($json));
     }
 
     public function testSysadminReadsProfileOfAnyUser(): void

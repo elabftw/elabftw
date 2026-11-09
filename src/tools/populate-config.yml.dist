@@ -413,8 +413,8 @@ teams:
           <h2>Conclusion</h2>
           <p>Elution fractions 2 and 3 contained the strongest target-protein signal and were selected for pooling. The pooled sample can now proceed to buffer exchange and downstream characterization.</p>
 
-      - title: Custom fields
-        category: Demo
+      - title: Links in custom fields
+        category: Dev
         body: '<p>Experiment with a lot of custom fields: single and multiple</p>'
         tags:
           - eln
@@ -435,6 +435,16 @@ teams:
               "Multiple compounds": {"type": "compounds", "value_labels": ["Caffeine", "Aspirin"], "value": [1, 2], "allow_multi_values": true}
             }
           }
+        experiments_links:
+          - 24
+          - 25
+        items_links:
+          - 23
+          - 21
+          - 22
+        compounds_links:
+          - 1
+          - 2
 
     user_groups:
       - name: Super secret project

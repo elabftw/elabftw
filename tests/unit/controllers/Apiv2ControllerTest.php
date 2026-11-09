@@ -408,4 +408,23 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertNotContains($eventB, $ids);
         self::assertSame(array($ItemA->id), array_values(array_unique(array_map('intval', array_column($events, 'item')))));
     }
+
+    public function testNestedEventsCanBeFilteredByOwner(): void
+    {
+        $Item = $this->getFreshBookableItem(1);
+        $start = new DateTimeImmutable('+5 hour')->format('c');
+        $end = new DateTimeImmutable('+6 hour')->format('c');
+        $eventId = new Scheduler($Item)->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'nested owner filter'));
+        $uri = sprintf('/%s%d/events', $Item->getApiPath(), $Item->id);
+
+        // filtering on the owner keeps the event
+        $Controller = new Apiv2Controller($Item->Users, Request::create($uri, 'GET', array('eventOwner' => $Item->Users->userid)));
+        $ids = array_map('intval', array_column(json_decode((string) $Controller->getResponse()->getContent(), true), 'id'));
+        self::assertContains($eventId, $ids);
+
+        // filtering on another user excludes it
+        $Controller = new Apiv2Controller($Item->Users, Request::create($uri, 'GET', array('eventOwner' => $Item->Users->userid + 1)));
+        $ids = array_map('intval', array_column(json_decode((string) $Controller->getResponse()->getContent(), true), 'id'));
+        self::assertNotContains($eventId, $ids);
+    }
 }

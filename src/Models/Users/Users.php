@@ -548,6 +548,7 @@ class Users extends AbstractRest
             return array(
                 'firstname' => $userData['firstname'],
                 'lastname' => $userData['lastname'],
+                'fullname' => $userData['fullname'],
                 'email' => self::maskEmail($userData['email']),
             );
         }

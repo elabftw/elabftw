@@ -445,7 +445,8 @@ class Eln extends AbstractZip
         $casNumber = null;
         $pubchemCid = null;
 
-        foreach ($node['identifier'] ?? array() as $identifier) {
+        $identifiers = is_array($node['identifier'] ?? null) ? $node['identifier'] : array();
+        foreach ($identifiers as $identifier) {
             if (!is_array($identifier)) {
                 continue;
             }

@@ -40,7 +40,6 @@ use RuntimeException;
 use function array_push;
 use function ksort;
 use function array_column;
-use function array_key_exists;
 use function array_key_first;
 use function array_merge;
 use function array_reduce;
@@ -59,6 +58,9 @@ use function sprintf;
 use function strtr;
 use function array_map;
 use function array_values;
+use function array_is_list;
+use function is_array;
+use function is_string;
 
 /**
  * Make an ELN archive
@@ -510,32 +512,56 @@ class MakeEln extends AbstractMakeEln
         if (empty($metadata[Metadata::ExtraFields->value])) {
             return $res;
         }
-        // now add one for all the extra fields
+        // now add one (or several for multi-value fields) for all the extra fields
         foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
-            if (!array_key_exists('value', $props)) {
-                $props['value'] = null;
-            } elseif ($props['value'] === '') {
-                $props['value'] = null;
+            $value = $props['value'] ?? null;
+            // a multi-value field is exported as one PropertyValue per value, with ".0", ".1", ... appended to the propertyID
+            // see "Nested metadata" in https://github.com/TheELNConsortium/TheELNFileFormat/blob/master/SPECIFICATION.md
+            if (is_array($value) && array_is_list($value) && !empty($value)) {
+                $labels = $props['value_labels'] ?? array();
+                foreach ($value as $index => $subValue) {
+                    $pv = $this->extraFieldToPropertyValue(sprintf('%s.%d', $name, $index), (string) $name, $props, $subValue);
+                    if (is_array($labels) && isset($labels[$index]) && is_string($labels[$index]) && $labels[$index] !== '') {
+                        $pv['alternateName'] = $labels[$index];
+                    }
+                    $res['ids'][] = array('@id' => $pv['@id']);
+                    $res['nodes'][] = $pv;
+                }
+                continue;
             }
-            // https://schema.org/PropertyValue
-            $id = 'pv://' . Tools::getUuidv4();
-            $res['ids'][] = array('@id' => $id);
-
-            $pv = array();
-            $pv['@type'] = 'PropertyValue';
-            $pv['@id'] = $id;
-            $pv['propertyID'] = $name;
-            $pv['valueReference'] = $props['type'];
-            $pv['value'] = $props['value'] ?? '';
-            if (!empty($props['description'])) {
-                $pv['description'] = $props['description'];
-            }
-            if (!empty($props['unit'])) {
-                $pv['unitText'] = $props['unit'];
-            }
+            $pv = $this->extraFieldToPropertyValue((string) $name, (string) $name, $props, $value);
+            $res['ids'][] = array('@id' => $pv['@id']);
             $res['nodes'][] = $pv;
         }
         return $res;
+    }
+
+    /**
+     * Build a https://schema.org/PropertyValue node for an extra field (or one value of a multi-value extra field)
+     */
+    protected function extraFieldToPropertyValue(string $propertyId, string $name, array $props, mixed $value): array
+    {
+        if ($value === null || is_array($value)) {
+            $value = '';
+        }
+        $pv = array(
+            '@id' => 'pv://' . Tools::getUuidv4(),
+            '@type' => 'PropertyValue',
+            'propertyID' => $propertyId,
+            'name' => $name,
+            'value' => $value,
+        );
+        // the type of the extra field (text, number, email, ...). valueReference is meant to point to a related node, not hold a type string
+        if (!empty($props['type'])) {
+            $pv['additionalType'] = $props['type'];
+        }
+        if (!empty($props['description'])) {
+            $pv['description'] = $props['description'];
+        }
+        if (!empty($props['unit'])) {
+            $pv['unitText'] = $props['unit'];
+        }
+        return $pv;
     }
 
     protected function getUserRors(Users $user): array

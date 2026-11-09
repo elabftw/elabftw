@@ -198,6 +198,7 @@ final class Config extends AbstractRest
             ('s3_exports_endpoint', ''),
             ('s3_exports_verify_cert', '1'),
             ('s3_exports_use_path_style_endpoint', '0'),
+            ('pdf_footer_text', ''),
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
@@ -300,8 +301,8 @@ final class Config extends AbstractRest
         // loop the array and update config
         foreach ($params as $name => $value) {
             if ($this->configArr[$name] !== $value) {
-                // prevent incorrect html in these two things
-                if (in_array($name, array('login_announcement', 'announcement', 'admin_panel_custom_msg'), true)) {
+                // prevent incorrect html in these free text settings
+                if (in_array($name, array('login_announcement', 'announcement', 'admin_panel_custom_msg', 'pdf_footer_text'), true)) {
                     $value = Filter::body($value);
                 }
                 // for permissions, ensure at least one remains active

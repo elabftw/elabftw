@@ -41,6 +41,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
 use Symfony\Component\HttpFoundation\Response;
@@ -257,6 +258,10 @@ final class MakeController extends AbstractController
 
     private function makeSchedulerReport(): Response
     {
+        // bookings are internal team data: the scheduler is not available to anonymous visitors
+        if ($this->requester instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
         $defaultStart = '2018-12-23T00:00:00+01:00';
         $defaultEnd = '2119-12-23T00:00:00+01:00';
 

@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use DateTimeImmutable;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -20,6 +21,7 @@ use Elabftw\Models\ApiKeys;
 use Elabftw\Models\BodyRevisions;
 use Elabftw\Models\Config;
 use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
@@ -29,6 +31,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_keys;
+use function array_column;
+use function array_map;
+use function array_unique;
+use function array_values;
 use function basename;
 use function json_decode;
 use function sprintf;
@@ -424,6 +430,39 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             'Unknown "action" value. Expected one of: getcollections, gettypes.',
             $data['message']
         );
+    }
+
+    public function testAnonymousUserCannotReadEvents(): void
+    {
+        $Item = $this->getFreshBookableItem(1);
+        $Item->patch(Action::Update, array('canread_base' => BasePermissions::Full->value));
+        $itemUri = sprintf('/%s%d', $Item->getApiPath(), $Item->id);
+        foreach (array($itemUri . '/events', $itemUri . '/events/1') as $uri) {
+            $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($uri));
+            self::assertSame(Response::HTTP_FORBIDDEN, $Controller->getResponse()->getStatusCode(), $uri);
+        }
+    }
+
+    public function testNestedEventsAreScopedToParentItem(): void
+    {
+        $ItemA = $this->getFreshBookableItem(1);
+        $ItemB = $this->getFreshBookableItem(1);
+        $start = new DateTimeImmutable('+3 hour')->format('c');
+        $end = new DateTimeImmutable('+4 hour')->format('c');
+        $eventA = new Scheduler($ItemA)->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'nested scope A'));
+        $eventB = new Scheduler($ItemB)->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'nested scope B'));
+
+        $Controller = new Apiv2Controller(
+            $ItemA->Users,
+            Request::create(sprintf('/%s%d/events', $ItemA->getApiPath(), $ItemA->id)),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $events = json_decode((string) $res->getContent(), true);
+        $ids = array_map('intval', array_column($events, 'id'));
+        self::assertContains($eventA, $ids);
+        self::assertNotContains($eventB, $ids);
+        self::assertSame(array($ItemA->id), array_values(array_unique(array_map('intval', array_column($events, 'item')))));
     }
 
     private function getUserAs(Users $requester, int $userid): array

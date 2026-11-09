@@ -688,14 +688,33 @@ export function permissionsToJson(extra: string[]): string {
   return JSON.stringify(json);
 }
 
+// only these schemes become clickable: anything else (javascript:, data:, vbscript:...) could run code on click
+const SAFE_LINK_PROTOCOLS = ['http:', 'https:', 'ftp:', 'mailto:'];
+
+// return a normalized href if the user-provided value is a safe absolute URL, or null otherwise
+export function getSafeHref(value: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(value.trim());
+  } catch {
+    return null;
+  }
+  return SAFE_LINK_PROTOCOLS.includes(parsed.protocol) ? parsed.href : null;
+}
+
 // go over all the type: url elements and create a link dynamically
 export function generateMetadataLink(): void {
   document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+    const text = (el as HTMLSpanElement).textContent ?? '';
+    const href = getSafeHref(text);
+    // leave the element as plain text if the value isn't a safe URL
+    if (href === null) {
+      return;
+    }
     const link = document.createElement('a');
     link.classList.add('d-block');
-    const url = (el as HTMLSpanElement).innerText;
-    link.href = url;
-    link.text = url;
+    link.href = href;
+    link.textContent = text;
     el.replaceWith(link);
   });
 }
@@ -936,6 +955,17 @@ export function toggleEditCompound(json: object): void {
     input.checked = json[param] === 1;
   });
   document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  // don't show the molecule of a previously opened compound
+  const moleculeDiv = document.getElementById('compoundMoleculeDiv');
+  if (moleculeDiv) {
+    moleculeDiv.querySelectorAll('img').forEach(img => {
+      if (img.src.startsWith('blob:')) {
+        URL.revokeObjectURL(img.src);
+      }
+      img.remove();
+    });
+    moleculeDiv.hidden = true;
+  }
   (document.getElementById('compoundLink-pubchem') as HTMLLinkElement).href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json['pubchem_cid']}`;
   $('#editCompoundModal').modal('toggle');
 }

@@ -685,7 +685,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testReadAllWithFilters(): void
     {
         $Items = $this->getFreshBookableItem(2);
-        $categoryId = $Items->entityData['category'];
+        // Isolate this test from events created in other resources/categories.
+        $categoryId = (new ResourcesCategories(new Teams($Items->Users, 2)))->create('Scheduler filters test');
+        $Items->patch(Action::Update, array('category' => $categoryId));
         $Scheduler = new Scheduler($Items);
 
         $title = 'The filtered event';
@@ -693,24 +695,18 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         // Filtering by item id
         $q = $this->Scheduler->getQueryParams(new InputBag(array('items' => array($Items->id))));
-        $allEvents = $this->Scheduler->readAll();
         $filteredEvent = $this->Scheduler->readAll($q);
-
-        $this->assertNotEmpty($allEvents);
         $this->assertCount(1, $filteredEvent);
-        $this->assertEquals($title, $filteredEvent[0]['title_only']);
-        $this->assertEquals($Items->id, $filteredEvent[0]['items_id'], 'Item ID should match the filtered item');
+        $this->assertSame($title, $filteredEvent[0]['title_only']);
+        $this->assertSame($Items->id, (int) $filteredEvent[0]['items_id']);
 
-        // Filtering by category
-        $titleItem2 = sprintf('New Item in category %d', $categoryId);
+        // Filtering by this test's unique category
+        $titleItem2 = 'Second filtered event';
         $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $titleItem2));
-
         $qCat = $this->Scheduler->getQueryParams(new InputBag(array('category' => $categoryId)));
         $filteredCatEvents = $this->Scheduler->readAll($qCat);
-        // two events in given category now
         $this->assertCount(2, $filteredCatEvents);
-        $this->assertEquals($title, $filteredCatEvents[0]['title_only']);
-        $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
+        $this->assertEqualsCanonicalizing(array($title, $titleItem2), array_column($filteredCatEvents, 'title_only'));
     }
 
     public function testPatch(): void

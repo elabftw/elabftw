@@ -29,6 +29,7 @@ use function array_filter;
 use function array_merge;
 use function sprintf;
 use function str_repeat;
+use function array_values;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
@@ -203,7 +204,7 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $leafId = $this->StorageUnits->createImmutable(array($root, 'X', str_repeat('Y', 255)));
         $expectedPath = $root . ' > X > ' . str_repeat('Y', 255);
 
-        $paths = array_column(array_merge(...$this->StorageUnits->readAllRecursive()), 'full_path');
+        $paths = array_column(array_merge(...array_values($this->StorageUnits->readAllRecursive())), 'full_path');
         $this->assertContains($expectedPath, $paths);
 
         $this->StorageUnits->setId($leafId);

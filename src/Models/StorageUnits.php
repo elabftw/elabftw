@@ -31,11 +31,13 @@ use Throwable;
 use function _;
 use function array_key_exists;
 use function array_map;
+use function count;
 use function filter_var;
 use function implode;
 use function in_array;
 use function is_int;
 use function is_string;
+use function mb_strlen;
 use function sprintf;
 use function trim;
 
@@ -56,6 +58,18 @@ final class StorageUnits extends AbstractRest
      */
     private const array CONTAINER_TABLES = array('containers2items', 'containers2experiments');
 
+    // width of storage_units.name
+    private const int MAX_NAME_LENGTH = 255;
+
+    // how many levels a single import may create: keeps paths far below FULL_PATH_LENGTH
+    // and recursion far below MySQL's cte_max_recursion_depth
+    private const int MAX_IMPORT_DEPTH = 32;
+
+    // full_path is built by concatenation in recursive CTEs, where MySQL fixes the column
+    // type from the anchor member: without a wide cast it inherits VARCHAR(255) from name
+    // and any path longer than one name makes the whole (instance-wide) query fail
+    private const int FULL_PATH_LENGTH = 16383;
+
     public function __construct(public Users $requester, private bool $requireEditRights, ?int $id = null)
     {
         parent::__construct();
@@ -75,6 +89,7 @@ final class StorageUnits extends AbstractRest
         // (original_id) rather than for the ancestor the current row happens to be on
         $occupancy = self::occupancySql('storage_hierarchy.original_id');
         // Recursive CTE to find the full path of a specific id
+        $fullPathLength = self::FULL_PATH_LENGTH;
         $sql = "
             WITH RECURSIVE storage_hierarchy AS (
                 -- Base case: Start with the given id
@@ -85,7 +100,7 @@ final class StorageUnits extends AbstractRest
                     parent_id,
                     parent_id AS original_parent_id,
                     capacity,
-                    CAST(name AS CHAR(1000)) AS full_path,
+                    CAST(name AS CHAR({$fullPathLength})) AS full_path,
                     0 AS level_depth
                 FROM
                     storage_units
@@ -102,7 +117,7 @@ final class StorageUnits extends AbstractRest
                     parent.parent_id,
                     child.original_parent_id,
                     child.capacity,
-                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
+                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR({$fullPathLength})) AS full_path,
                     child.level_depth + 1
                 FROM
                     storage_units AS parent
@@ -354,6 +369,9 @@ final class StorageUnits extends AbstractRest
 
     public function createImmutable(array $locations): int
     {
+        if (count($locations) > self::MAX_IMPORT_DEPTH) {
+            throw new ImproperActionException(sprintf(_('A location cannot have more than %d levels.'), self::MAX_IMPORT_DEPTH));
+        }
         $parent = null;
         $id = 0;
 
@@ -387,6 +405,7 @@ final class StorageUnits extends AbstractRest
 
     public function create(string $unitName, ?int $parentId = null, ?int $capacity = null): int
     {
+        $this->assertNameLength($unitName);
         $sql = 'INSERT INTO storage_units(parent_id, name, capacity) VALUES(:parent_id, :name, :capacity)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':parent_id', $parentId);
@@ -398,6 +417,7 @@ final class StorageUnits extends AbstractRest
 
     public function update(CommentParam $params): bool
     {
+        $this->assertNameLength($params->getContent());
         $sql = 'UPDATE storage_units SET
             name = :name
             WHERE id = :id';
@@ -643,11 +663,19 @@ final class StorageUnits extends AbstractRest
         $this->Db->execute($req);
     }
 
+    private function assertNameLength(string $unitName): void
+    {
+        if (mb_strlen($unitName) > self::MAX_NAME_LENGTH) {
+            throw new ImproperActionException(sprintf(_('Input is too long. Maximum length is %d characters.'), self::MAX_NAME_LENGTH));
+        }
+    }
+
     private function readHierarchyRows(): array
     {
         // counted in the final projection, not in the CTE: the recursion does not need it,
         // so this way it costs two indexed lookups per unit instead of two per branch
         $occupancy = self::occupancySql('storage_hierarchy.id');
+        $fullPathLength = self::FULL_PATH_LENGTH;
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)
             SELECT
@@ -655,7 +683,7 @@ final class StorageUnits extends AbstractRest
                 name,
                 parent_id,
                 capacity,
-                name AS full_path,
+                CAST(name AS CHAR({$fullPathLength})) AS full_path,
                 0 AS level_depth,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
             FROM
@@ -671,7 +699,7 @@ final class StorageUnits extends AbstractRest
                 child.name,
                 child.parent_id,
                 child.capacity,
-                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
+                CAST(CONCAT(parent.full_path, ' > ', child.name) AS CHAR({$fullPathLength})) AS full_path,
                 parent.level_depth + 1,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
             FROM
@@ -761,6 +789,7 @@ final class StorageUnits extends AbstractRest
     ): string {
         $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
+        $fullPathLength = self::FULL_PATH_LENGTH;
         $selectedStorageHierarchy = $includeStorageDescendants
             ? ', selected_storage_hierarchy AS (
                 SELECT id AS storage_id
@@ -781,7 +810,7 @@ final class StorageUnits extends AbstractRest
                     su.id AS storage_id,
                     su.name AS storage_name,
                     su.parent_id,
-                    su.name AS full_path
+                    CAST(su.name AS CHAR({$fullPathLength})) AS full_path
                 FROM storage_units AS su
                 WHERE su.parent_id IS NULL -- Root-level units
 
@@ -791,7 +820,7 @@ final class StorageUnits extends AbstractRest
                     su.id AS storage_id,
                     su.name AS storage_name,
                     su.parent_id,
-                    CONCAT(parent.full_path, ' > ', su.name) AS full_path
+                    CAST(CONCAT(parent.full_path, ' > ', su.name) AS CHAR({$fullPathLength})) AS full_path
                 FROM storage_units AS su
                 INNER JOIN storage_hierarchy AS parent ON su.parent_id = parent.storage_id
             )

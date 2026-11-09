@@ -69,6 +69,7 @@ final class UpdateDatabase extends Command
                 (int) $Config->configArr['schema'],
                 new Sql($this->sqlFs, $output),
                 $Migrations,
+                $output,
             );
             $newSchema = $Update->runUpdateScript($input->getOption('force'));
             $output->writeln(sprintf('<info>Database is up to date (legacy schema %d).</info>', $newSchema));

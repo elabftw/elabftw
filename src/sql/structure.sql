@@ -53,7 +53,8 @@ CREATE TABLE `audit_logs` (
   `requester_userid` INT UNSIGNED NOT NULL,
   `target_userid` INT UNSIGNED NOT NULL,
   `body` TEXT NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_audit_logs_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -260,41 +261,6 @@ CREATE TABLE IF NOT EXISTS `experiments_request_actions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `experiments_revisions`
---
-
-CREATE TABLE `experiments_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
-CREATE TABLE `items_types_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
---
--- RELATIONSHIPS FOR TABLE `experiments_revisions`:
---   `item_id`
---       `experiments` -> `id`
---   `userid`
---       `users` -> `userid`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `experiments_step_groups`
 --
 
@@ -434,31 +400,6 @@ CREATE TABLE `experiments_templates_changelog` (
   `content` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Table structure for table `experiments_templates_revisions`
---
-
-CREATE TABLE `experiments_templates_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:
---   `item_id`
---       `experiments_templates` -> `id`
---   `userid`
---       `users` -> `userid`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `experiments_templates_comments`
@@ -824,27 +765,6 @@ CREATE TABLE IF NOT EXISTS `items_request_actions` (
 --       `users` -> `userid`
 --   `target_userid`
 --       `users` -> `userid`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `items_revisions`
---
-
-CREATE TABLE `items_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `items_revisions`:
 --
 
 -- --------------------------------------------------------
@@ -1934,17 +1854,6 @@ ALTER TABLE `experiments2items`
   ADD CONSTRAINT `fk_experiments2items_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `experiments_revisions`
---
-ALTER TABLE `experiments_revisions`
-  ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `items_types_revisions`
-  ADD CONSTRAINT FOREIGN KEY (`item_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `experiments_steps`
 --
 ALTER TABLE `experiments_steps`
@@ -1973,17 +1882,6 @@ ALTER TABLE `experiments_templates`
 --
 ALTER TABLE `exports`
   ADD CONSTRAINT `fk_exports_requester_userid_users_userid` FOREIGN KEY (`requester_userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `experiments_templates_revisions`
---
-ALTER TABLE `experiments_templates_revisions`
-  ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id`
-    FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid`
-    FOREIGN KEY (`userid`) REFERENCES `users`(`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_templates_request_actions`
@@ -2028,13 +1926,6 @@ ALTER TABLE `items_request_actions`
   ADD CONSTRAINT `fk_items_request_actions_target_users_userid`
     FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
     ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `items_revisions`
---
-ALTER TABLE `items_revisions`
-  ADD CONSTRAINT `fk_items_revisions_items_id` FOREIGN KEY (`item_id`) REFERENCES `items`(`id`) ON DELETE cascade ON UPDATE cascade,
-  ADD CONSTRAINT `fk_items_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
 
 --
 -- Constraints for table `items_edit_mode`
@@ -2767,6 +2658,108 @@ ALTER TABLE `experiments_templates_comments`
 ALTER TABLE `items_types_comments`
   ADD INDEX `idx_items_types_comments_item_created` (`item_id`, `created_at`);
 -- end schema 216
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_body_revisions`
+--
+
+CREATE TABLE `experiments_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_experiments_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_experiments_body_revisions_experiments_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_experiments_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `items_body_revisions`
+--
+
+CREATE TABLE `items_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_items_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_items_body_revisions_items_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_items_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `experiments_templates_body_revisions`
+--
+
+CREATE TABLE `experiments_templates_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_experiments_templates_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_templates_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_experiments_templates_body_revisions_experiments_templates_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_experiments_templates_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `items_types_body_revisions`
+--
+
+CREATE TABLE `items_types_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_items_types_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_types_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_items_types_body_revisions_items_types_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_items_types_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 COMMIT;
 

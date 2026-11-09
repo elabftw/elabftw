@@ -87,6 +87,46 @@ export function toRelative(title: string, locale: string, timezone = document.ge
   );
 }
 
+export const SQL_DATETIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+/* eslint-disable-next-line quotes */
+export const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
+// datetimes are stored without timezone, as wall-clock times of the server timezone
+// 'system' (the browser timezone) is only a fallback for when the server timezone is not exposed
+export function serverTimezone(): string {
+  return document.getElementById('user-prefs')?.dataset.timezone || 'system';
+}
+
+// interpret a stored datetime in the server timezone and move it to the browser one
+export function serverToLocal(value: string): DateTime {
+  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale, zone: serverTimezone() }).toLocal();
+}
+
+// interpret a datetime-local input value in the browser timezone and convert it to a storable server datetime
+export function localInputToServer(value: string): DateTime {
+  // fromISO accepts the value with or without seconds, as browsers may send either
+  return DateTime.fromISO(value).setZone(serverTimezone());
+}
+
+// DISPLAY DATETIMES IN THE BROWSER TIMEZONE
+// the server renders them in its own timezone: elements carry the raw stored value so it can be converted here
+export function localizeDatetimes(): void {
+  document.querySelectorAll<HTMLElement>('.local-datetime[data-datetime]').forEach(el => {
+    const dt = serverToLocal(el.dataset.datetime);
+    if (dt.isValid) {
+      el.textContent = dt.toLocaleString(DateTime.DATETIME_MED);
+    }
+  });
+  // datetime-local inputs created by malle are prefilled with this attribute, so it must be in the browser timezone too
+  document.querySelectorAll<HTMLElement>('[data-local-input-datetime]').forEach(el => {
+    const dt = serverToLocal(el.dataset.localInputDatetime);
+    if (dt.isValid) {
+      el.dataset.maInputValue = dt.toFormat(DATETIME_LOCAL_FORMAT);
+    }
+  });
+}
+
 // Add a listener for all elements triggered by an event
 // and POST an update request
 // select will be on change, text inputs on blur
@@ -559,6 +599,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   makeSortableGreatAgain();
   makeMalleableColumnsGreatAgain();
   relativeMoment();
+  localizeDatetimes();
 }
 
 /**
@@ -940,6 +981,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
   const requester = await ApiC.getJson('users/me');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userTeams = user.teams as any;
+  const canRemoveFromTeam = Boolean(requester.is_sysadmin) || Boolean(requester.can_manage_users2teams);
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
@@ -950,8 +992,9 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.classList.add('user-badge', 'm-1');
     teamBadge.innerText = team.name;
     // REMOVE TEAM BUTTON
+    // only Sysadmins and users who can manage users/teams association can remove a user from a team
     // users must keep one team; requester cannot remove themselves from their current team
-    if (userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
+    if (canRemoveFromTeam && userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
       const removeTeamBtn = document.createElement('button');
       removeTeamBtn.type = 'button';
       removeTeamBtn.classList.add('btn', 'btn-danger-ghost', 'btn-sm', 'ml-2');

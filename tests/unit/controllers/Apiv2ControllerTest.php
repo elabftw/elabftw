@@ -18,9 +18,9 @@ use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\BodyRevisions;
 use Elabftw\Models\Config;
 use Elabftw\Models\Links\Containers2ItemsLinks;
-use Elabftw\Models\Revisions;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
@@ -178,7 +178,8 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         foreach (array(EntityType::Experiments, EntityType::Items) as $entityType) {
             $Entity = $entityType->toInstance($user);
             $Entity->setId($Entity->create(canreadBase: BasePermissions::Full));
-            $revisionId = new Revisions($Entity)->dbInsert('Previous body');
+            $Entity->patch(Action::Update, array('body' => 'Previous body'));
+            $revisionId = new BodyRevisions($Entity)->readAll()[0]['id'];
             $entityUri = sprintf('/%s%d', $Entity->getApiPath(), $Entity->id);
 
             $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($entityUri));

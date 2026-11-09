@@ -1,0 +1,86 @@
+/**
+ * @author Nicolas CARPi <nico-git@deltablot.email>
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+import { ApiC } from './api';
+import { Model } from './interfaces';
+import { entity } from './getEntity';
+import { adjustHiddenState, getNewIdFromPostRequest, reloadElements, updateEntityBody } from './misc';
+
+// clipboard images have no meaningful name (e.g. "image.png" or tinymce's "mceclip0"), so build one
+// the random suffix keeps names unique when several images are pasted within the same second,
+// as the name is also used for the markdown placeholder
+export function getPastedImageName(mime: string): string {
+  const now = new Date();
+  const pad = (n: number): string => String(n).padStart(2, '0');
+  const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const ext = (mime.split('/')[1] || 'png').replace('jpeg', 'jpg').replace(/\+xml$/, '');
+  return `pasted-image-${stamp}-${crypto.randomUUID().slice(0, 8)}.${ext}`;
+}
+
+// upload a file as attachment of the current entity and resolve with the url to use in the body
+// notifOnError: set to false when the caller reports the error itself, to avoid showing it twice
+export async function uploadFileToEntity(file: Blob, filename: string, notifOnError = true): Promise<string> {
+  const formData = new FormData();
+  formData.set('file', file, filename);
+  if (!notifOnError) {
+    formData.set('notifOnError', '0');
+  }
+  const resp = await ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, formData);
+  const upload = await ApiC.getJson(`${entity.type}/${entity.id}/${Model.Upload}/${getNewIdFromPostRequest(resp)}`);
+  // restore the collapsed state of upload groups, like the dropzone does
+  reloadElements(['uploadsDiv']).then(() => adjustHiddenState());
+  return getUploadUrl(upload);
+}
+
+// long_name must stay verbatim (not url-encoded): the backend finds uploads referenced in the body by searching for it,
+// to rewrite links when duplicating an entry and to block deletion of an upload still in use
+export function getUploadUrl(upload: { long_name: string; storage: number }): string {
+  return `app/download.php?f=${upload.long_name}&storage=${upload.storage}`;
+}
+
+// office suites put a rendering of the copied cells/text as image next to the text: the text is what the user wants
+// but "Copy Image" in a browser gives an html <img> pointing to the remote url (blocked by CSP) and/or that url as text: the image data is what we want
+// only look at text/plain: parsing the clipboard html would feed untrusted markup to an html parser (XSS sink),
+// and every source that puts html with real text in the clipboard also puts that text as text/plain
+export function getClipboardImages(data: DataTransfer | null): File[] {
+  const text = data?.getData('text/plain').trim();
+  if (!data || (text && !/^(https?|file|data):\S*$/.test(text))) {
+    return [];
+  }
+  return Array.from(data.files).filter(file => file.type.startsWith('image/'));
+}
+
+// the user may have kept typing during the upload: edit in place so the cursor position is kept
+function replacePlaceholder(textarea: HTMLTextAreaElement, placeholder: string, replacement: string): void {
+  const start = textarea.value.indexOf(placeholder);
+  if (start !== -1) {
+    textarea.setRangeText(replacement, start, start + placeholder.length, 'preserve');
+  }
+}
+
+export function enableMarkdownImagePaste(textarea: HTMLTextAreaElement): void {
+  textarea.addEventListener('paste', (event: ClipboardEvent) => {
+    const images = getClipboardImages(event.clipboardData);
+    if (images.length === 0) {
+      // let regular text paste happen
+      return;
+    }
+    event.preventDefault();
+    images.forEach(image => {
+      const filename = getPastedImageName(image.type);
+      // placeholder at cursor so user can keep typing while the upload happens
+      const placeholder = `![Uploading ${filename}…]()`;
+      textarea.setRangeText(`\n${placeholder}\n`, textarea.selectionStart, textarea.selectionEnd, 'end');
+      uploadFileToEntity(image, filename).then(url => {
+        // same alt text as "insert in body", which "replace uploaded file" relies on to find the image
+        replacePlaceholder(textarea, placeholder, `![image](${url})`);
+        // save so the upload is referenced by the body and not considered orphan
+        updateEntityBody();
+      }).catch(() => replacePlaceholder(textarea, placeholder, ''));
+    });
+  });
+}

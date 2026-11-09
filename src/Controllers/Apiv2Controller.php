@@ -277,6 +277,10 @@ final class Apiv2Controller extends AbstractApiController
             $containersCount = $this->Model->countContainersForEntity();
             return array('has_containers' => $containersCount > 0, 'containers_count' => $containersCount);
         }
+        // events nested under an entity must stay scoped to that entity, not every readable resource
+        if ($this->Model instanceof Scheduler && $this->hasSubmodel) {
+            return $this->Model->readOne();
+        }
         $queryParams = $this->Model->getQueryParams($this->Request->query);
         return $this->Model->readAll($queryParams);
     }
@@ -541,6 +545,10 @@ final class Apiv2Controller extends AbstractApiController
         if (!in_array($this->endpoint, $allowedEndpoints, true)) {
             throw new ForbiddenException();
         };
+        // bookings are internal team data: the scheduler is not available to anonymous visitors
+        if ($this->Model instanceof Scheduler) {
+            throw new ForbiddenException();
+        }
         // anon users cannot enumerate another user's endpoint
         if (
             $this->endpoint === ApiEndpoint::Users

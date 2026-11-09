@@ -24,6 +24,7 @@ use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use ReflectionMethod;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
 use ZipArchive;
@@ -347,6 +348,42 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         } finally {
             putenv($previous === false ? 'IMPORT_MAX_TOTAL_BYTES' : 'IMPORT_MAX_TOTAL_BYTES=' . $previous);
         }
+    }
+
+    public function testTrustedMetadataUserReference(): void
+    {
+        $Users = new Users(1, 1);
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+        $Import = new TrustedEln(
+            $Users,
+            $Users,
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            CompoundsFactory::getCompounds($Users),
+        );
+
+        new ReflectionProperty(Eln::class, 'graph')->setValue($Import, array(
+            array('@id' => '#user', 'email' => $Users->userData['email']),
+            array('@id' => '#invalid-user'),
+        ));
+
+        $Method = new ReflectionMethod(TrustedEln::class, 'getMetadataUserReference');
+
+        // Empty reference: use the parent method.
+        $this->assertSame(0, $Method->invoke($Import, ''));
+
+        // Existing user: return their ID.
+        $this->assertSame($Users->getUserid(), $Method->invoke($Import, '#user'));
+
+        // Missing email: catch the exception and return 0.
+        $this->assertSame(0, $Method->invoke($Import, '#invalid-user'));
     }
 
     public function testImportExperimentsMulti(): void

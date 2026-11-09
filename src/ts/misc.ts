@@ -947,6 +947,17 @@ export function toggleEditCompound(json: object): void {
     input.checked = json[param] === 1;
   });
   document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  // don't show the molecule of a previously opened compound
+  const moleculeDiv = document.getElementById('compoundMoleculeDiv');
+  if (moleculeDiv) {
+    moleculeDiv.querySelectorAll('img').forEach(img => {
+      if (img.src.startsWith('blob:')) {
+        URL.revokeObjectURL(img.src);
+      }
+      img.remove();
+    });
+    moleculeDiv.hidden = true;
+  }
   (document.getElementById('compoundLink-pubchem') as HTMLLinkElement).href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json['pubchem_cid']}`;
   $('#editCompoundModal').modal('toggle');
 }

@@ -277,6 +277,10 @@ final class Apiv2Controller extends AbstractApiController
             $containersCount = $this->Model->countContainersForEntity();
             return array('has_containers' => $containersCount > 0, 'containers_count' => $containersCount);
         }
+        // events nested under an entity must stay scoped to that entity, not every readable resource
+        if ($this->Model instanceof Scheduler && $this->hasSubmodel) {
+            return $this->Model->readOne();
+        }
         $queryParams = $this->Model->getQueryParams($this->Request->query);
         // events nested under an entity must stay scoped to that entity, not every readable resource
         if ($this->Model instanceof Scheduler && $this->hasSubmodel) {

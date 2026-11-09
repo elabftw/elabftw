@@ -905,6 +905,11 @@ components:
             type: string
             example: 'test email subject'
             default: 'test email subject'
+          pdf_footer_text:
+            description: Custom text (limited HTML allowed) added to the footer of every generated PDF.
+            type: string
+            example: 'Institute of Example Science - Lab notebook'
+            default: ''
           privacy_policy:
             type: string
             example: ''

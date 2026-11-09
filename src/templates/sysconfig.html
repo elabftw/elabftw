@@ -269,6 +269,20 @@
     ) }}
   </div>
 
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'PDF footer'|trans }}</h2>
+  <div class='pl-3 mb-5'>
+    <label for='pdfFooterTextInput' class='mb-3'>{{ 'The following text will be added to the footer of all generated PDF files. Use it to display the name of your institution, for instance.'|trans }}</label>
+    <div class='input-group'>
+      <input class='form-control' type='text' id='pdfFooterTextInput' name='pdf_footer_text' value='{{ App.Config.configArr.pdf_footer_text|e('html_attr') }}' />
+      <div class='input-group-append'>
+        <button type='button' data-action='patch-announcement' data-operation='save' data-inputid='pdfFooterTextInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+      <div class='input-group-append'>
+        <button type='button' data-action='patch-announcement' data-operation='clear' data-inputid='pdfFooterTextInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
+    </div>
+  </div>
+
   <h2 class='p-2 pl-3 section-title' id='existingRors'>{{ 'Research Organization Registry (ROR)'|trans }}</h2>
 
   <div class='mb-2' data-svelte-component='rors' data-endpoint='instance/rors'></div>
@@ -732,7 +746,6 @@
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_exports_verify_cert'} %}
     {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_exports_use_path_style_endpoint'} %}
-
   </div>
 </div>
 

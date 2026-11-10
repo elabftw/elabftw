@@ -64,11 +64,13 @@
     pattern={options.pattern}
     title={options.title}
     autocomplete='new-password'
+    spellcheck={false}
+    autocapitalize='none'
     aria-describedby={`${id}-requirements`}
     {required}
   />
   <div class='input-group-append'>
-    <button type='button' class='btn btn-ghost' title={labels.showPassword} aria-label={labels.showPassword} onclick={() => visible = !visible}>
+    <button type='button' class='btn btn-ghost' title={labels.showPassword} aria-label={labels.showPassword} aria-pressed={visible} aria-controls={id} onclick={() => visible = !visible}>
       <i class:fa-eye={!visible} class:fa-eye-slash={visible} class='fas' aria-hidden='true'></i>
     </button>
   </div>

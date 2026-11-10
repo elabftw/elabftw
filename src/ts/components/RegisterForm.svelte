@@ -92,21 +92,23 @@
         type='email'
         id='email'
         autocomplete='email'
+        autocapitalize='none'
+        spellcheck={false}
         required
       />
       {#if options.emailDomain}
         <button
           type='button'
           class='mt-1 btn btn-secondary btn-sm'
+          aria-expanded={showDomains}
+          aria-controls='allowed-email-domains'
           onclick={() => showDomains = !showDomains}
         >
           {options.labels.showDomains}
         </button>
-        {#if showDomains}
-          <p class='smallgray'>
+          <p id='allowed-email-domains' class='smallgray' hidden={!showDomains}>
             {options.labels.allowedDomains}
           </p>
-        {/if}
       {/if}
     </div>
 

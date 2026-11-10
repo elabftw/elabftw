@@ -133,6 +133,12 @@ jobs:
               docker exec elabtmp yarn jslint
             fi
       - run:
+          name: Run frontend regression tests
+          command: |
+            if [ "$CIRCLE_NODE_INDEX" -eq "1" ]; then
+              docker exec elabtmp yarn test:frontend
+            fi
+      - run:
           name: Run PHP-CS-Fixer
           command: |
             if [ "$CIRCLE_NODE_INDEX" -eq "2" ]; then

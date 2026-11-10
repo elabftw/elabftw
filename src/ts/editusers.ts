@@ -32,7 +32,7 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
       if (el.dataset.checkArchived === '1') {
         // look for an archived user with the same email address
         const matchedArchivedUsers = [];
-        const archivedUsers = await ApiC.getJson(`users?onlyArchived=1&q=${values['email']}`);
+        const archivedUsers = await ApiC.getJson('users', { onlyArchived: 1, q: values['email'] });
         archivedUsers.forEach(user => {
           if (user.email === values['email']) {
             matchedArchivedUsers.push(user);
@@ -40,6 +40,7 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
         });
         if (matchedArchivedUsers.length > 0) {
           const archivedUsersFoundList = (document.getElementById('archivedUsersFoundList') as HTMLUListElement);
+          archivedUsersFoundList.replaceChildren();
           matchedArchivedUsers.forEach(user => {
             const archivedUser = document.createElement('li');
             archivedUser.textContent = `${user.fullname} (${user.email})`;

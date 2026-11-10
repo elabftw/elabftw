@@ -152,6 +152,7 @@
     "psalm": "composer run-script psalm",
     "static": "composer run-script psalm && composer run-script phpstan",
     "test": "tests/run.sh",
+    "test:frontend": "node --experimental-vm-modules tests/frontend/regressions.test.mjs",
     "test:clean": "php vendor/bin/codecept clean",
     "twigcs": "php vendor/bin/twigcs",
     "unit": "tests/run.sh unit",

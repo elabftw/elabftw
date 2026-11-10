@@ -1671,7 +1671,7 @@ on('search-pubchem', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
   const resultTableDiv = document.getElementById('pubChemSearchResultTableDiv');
   // we will handle errors differently here
-  ApiC.getJson(`compounds?search_pubchem_${el.dataset.from}=${inputEl.value}`, { notifOnError: 0 }).then(json => {
+  ApiC.getJson('compounds', { [`search_pubchem_${el.dataset.from}`]: inputEl.value, notifOnError: 0 }).then(json => {
     const compounds = Array.isArray(json) ? json : [json];
     const table = document.createElement('table');
     table.classList.add('table');

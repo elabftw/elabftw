@@ -15,6 +15,7 @@ namespace Elabftw\Import;
 use DateTimeImmutable;
 use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\CreateUploadFromFs;
+use Elabftw\Elabftw\Metadata;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BodyContentType;
@@ -49,7 +50,9 @@ use Override;
 use ZipArchive;
 
 use function array_column;
+use function array_filter;
 use function array_find;
+use function array_intersect_key;
 use function array_is_list;
 use function array_values;
 use function basename;
@@ -94,10 +97,17 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
-    /** @var list<array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: list<string>, is_multiple: bool}> */
+    /** @var list<array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> */
     private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
+
+    /**
+     * Datasets that are the target of an experiments/items extra field, with the type the field expects.
+     * A forced entity type must not apply to them, or the reference would point to the wrong kind of entry.
+     * @var array<string, EntityType|null>
+     */
+    private array $metadataTargetTypes = array();
 
     private array $insertedCompounds = array();
 
@@ -175,6 +185,15 @@ class Eln extends AbstractZip
     {
         // if it is present in the object, it means we force the entityType
         if ($this->entityType !== null) {
+            $referencedType = $this->metadataTargetTypes[$dataset['@id'] ?? ''] ?? null;
+            if ($referencedType !== null && $referencedType !== $this->entityType) {
+                $this->logger->notice(sprintf(
+                    'Keeping %s as %s: it is referenced by an extra field of that type.',
+                    $dataset['@id'],
+                    $referencedType->value,
+                ));
+                return $referencedType;
+            }
             return $this->entityType;
         }
         // otherwise try looking into "genre" attribute
@@ -373,13 +392,14 @@ class Eln extends AbstractZip
             return;
         }
         $isMultiple = is_array($value) && array_is_list($value);
+        // keep the original position of each value: value_labels are matched to values by index
         $targetAtIds = array();
-        foreach ($isMultiple ? $value : array($value) as $reference) {
+        foreach ($isMultiple ? $value : array($value) as $index => $reference) {
             if (is_array($reference) && is_string($reference['@id'] ?? null)) {
-                $targetAtIds[] = $reference['@id'];
+                $targetAtIds[$index] = $reference['@id'];
             } elseif ($type === ExtraFieldReference::Users) {
                 // the user was not exported as a Person node: keep the value, as an unknown user
-                $targetAtIds[] = '';
+                $targetAtIds[$index] = '';
             }
         }
         $this->metadataReferencesToResolve[] = array(
@@ -396,19 +416,22 @@ class Eln extends AbstractZip
     private function resolveMetadataReferences(): void
     {
         $insertedIds = array_column($this->insertedEntities, 'id', 'item_@id');
+        $insertedTypes = array_column($this->insertedEntities, 'entity_type', 'item_@id');
         foreach ($this->metadataReferencesToResolve as $ref) {
             $targetIds = array();
-            foreach ($ref['targets'] as $targetAtId) {
+            foreach ($ref['targets'] as $index => $targetAtId) {
                 $targetId = match ($ref['type']) {
                     ExtraFieldReference::Users => $this->getMetadataUserReference($targetAtId),
                     ExtraFieldReference::Compounds => $this->getOrCreateCompound($targetAtId),
-                    ExtraFieldReference::Experiments, ExtraFieldReference::Items => $insertedIds[$targetAtId] ?? null,
+                    // the id is only meaningful if the target was imported as the type the field expects
+                    ExtraFieldReference::Experiments => ($insertedTypes[$targetAtId] ?? null) === EntityType::Experiments ? $insertedIds[$targetAtId] : null,
+                    ExtraFieldReference::Items => ($insertedTypes[$targetAtId] ?? null) === EntityType::Items ? $insertedIds[$targetAtId] : null,
                 };
                 if ($targetId === null) {
                     $this->logger->warning(sprintf('Could not resolve metadata reference %s in field %s.', $targetAtId, $ref['field']));
                     continue;
                 }
-                $targetIds[] = $targetId;
+                $targetIds[$index] = $targetId;
             }
             $entity = $ref['entity_type']->toInstance($ref['users'], $ref['id'], true, true);
             if ($targetIds === array()) {
@@ -418,9 +441,61 @@ class Eln extends AbstractZip
                 ));
                 continue;
             }
+            $values = array_values($targetIds);
+            // update values and labels together, so a label never ends up on another value
             $entity->patch(Action::UpdateMetadataField, array(
-                $ref['field'] => $ref['is_multiple'] ? $targetIds : $targetIds[0],
+                $ref['field'] => array(
+                    'value' => $ref['is_multiple'] ? $values : $values[0],
+                    'value_labels' => $this->getResolvedValueLabels($entity, $ref['field'], $targetIds),
+                ),
             ));
+        }
+    }
+
+    /**
+     * Keep only the labels of the values that could be resolved, in the same order
+     */
+    private function getResolvedValueLabels(AbstractEntity $entity, string $field, array $resolvedTargets): ?array
+    {
+        $extraField = new Metadata($entity->entityData['metadata'] ?? null)->getExtraFields()[$field] ?? array();
+        $labels = $extraField['value_labels'] ?? null;
+        if (!is_array($labels) || !array_is_list($labels)) {
+            return null;
+        }
+        $labels = array_values(array_intersect_key($labels, $resolvedTargets));
+        if ($labels === array() || array_filter($labels, is_string(...)) !== $labels) {
+            return null;
+        }
+        return $labels;
+    }
+
+    /**
+     * Find the datasets referenced by experiments/items extra fields, and the type each field expects
+     */
+    private function collectMetadataTargetTypes(): void
+    {
+        foreach ($this->graph as $node) {
+            if (($node['@type'] ?? null) !== 'PropertyValue') {
+                continue;
+            }
+            $entityType = match (ExtraFieldReference::tryFrom((string) ($node['valueReference'] ?? ''))) {
+                ExtraFieldReference::Experiments => EntityType::Experiments,
+                ExtraFieldReference::Items => EntityType::Items,
+                default => null,
+            };
+            $value = $node['value'] ?? null;
+            if ($entityType === null || !is_array($value)) {
+                continue;
+            }
+            foreach (array_is_list($value) ? $value : array($value) as $reference) {
+                $atId = is_array($reference) ? ($reference['@id'] ?? null) : null;
+                if (!is_string($atId)) {
+                    continue;
+                }
+                // referenced with two different types: no type can satisfy both, so let the forced one apply
+                $known = array_key_exists($atId, $this->metadataTargetTypes);
+                $this->metadataTargetTypes[$atId] = $known && $this->metadataTargetTypes[$atId] !== $entityType ? null : $entityType;
+            }
         }
     }
 
@@ -544,6 +619,7 @@ class Eln extends AbstractZip
                 }
             }
         }
+        $this->collectMetadataTargetTypes();
         return count($this->crateNodeHasPart);
     }
 
@@ -564,8 +640,10 @@ class Eln extends AbstractZip
         $this->Entity = $entityType->toInstance($Author, bypassReadPermission: true, bypassWritePermission: true);
 
         // CATEGORY
-        $categoryId = $this->category;
-        if (isset($dataset['about']) && $this->category === null) {
+        // a forced category belongs to the forced entity type: do not apply it to a dataset that kept its own type
+        $forcedCategory = $this->entityType === null || $entityType === $this->entityType ? $this->category : null;
+        $categoryId = $forcedCategory;
+        if (isset($dataset['about']) && $forcedCategory === null) {
             $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
             $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
         }
@@ -741,8 +819,8 @@ class Eln extends AbstractZip
 
         // Make sure an explicitly requested import category is applied before
         // custom_id so uniqueness is checked against the final category.
-        if ($this->category !== null) {
-            $this->Entity->update(new EntityParams('category', $this->category));
+        if ($forcedCategory !== null) {
+            $this->Entity->update(new EntityParams('category', $forcedCategory));
         }
 
         // do the CUSTOM ID after everything (especially after the category)

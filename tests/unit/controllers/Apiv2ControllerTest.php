@@ -227,6 +227,29 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             Request::create('/api/v2/users/1/rors', 'GET'),
         );
         $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testCannotReadRorsOfUserOutsideOfTeam(): void
+    {
+        $admin = $this->getRandomUserInTeam(2, admin: 1);
+        // userid 1 is only in team 1
+        $Controller = new Apiv2Controller(
+            $admin,
+            Request::create('/api/v2/users/1/rors', 'GET'),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testCanReadOwnRors(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create(sprintf('/api/v2/users/%d/rors', $user->getUserid()), 'GET'),
+        );
+        $res = $Controller->getResponse();
         self::assertSame(Response::HTTP_OK, $res->getStatusCode());
     }
 

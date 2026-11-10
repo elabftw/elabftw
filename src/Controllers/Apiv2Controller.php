@@ -462,7 +462,13 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::Notifications => new UserNotifications($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new UserRequestActions($this->Model),
                 ApiSubModels::SigKeys => new SigKeys($this->requester, $this->subId),
-                ApiSubModels::Rors => new Users2Rors($this->Model->getUserid(), $this->requester->isAdminOf($this->Model->getUserid()), $this->subIdString),
+                ApiSubModels::Rors => new Users2Rors(
+                    $this->Model->getUserid(),
+                    $this->requester->isAdminOf($this->Model->getUserid()),
+                    $this->subIdString,
+                    // any user can get the limited profile of another user, but affiliations are not part of it
+                    canread: $this->requester->isAdminOf($this->Model->getUserid()),
+                ),
                 ApiSubModels::Webhooks => UsersWebhooks::forRequester($this->requester, $this->Model->getUserid(), $this->subId),
                 // the uploads users/X/uploads endpoint forces the use of the requester
                 ApiSubModels::Uploads => new UserUploads($this->requester, $this->subId),

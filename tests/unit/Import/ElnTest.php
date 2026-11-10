@@ -13,6 +13,7 @@ namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\Storage;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
@@ -20,6 +21,7 @@ use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Params\EntityParams;
 use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -384,6 +386,59 @@ class ElnTest extends \PHPUnit\Framework\TestCase
 
         // Missing email: catch the exception and return 0.
         $this->assertSame(0, $Method->invoke($Import, '#invalid-user'));
+    }
+
+    public function testForcedTypeKeepsTypeOfMetadataReferenceTargets(): void
+    {
+        $Import = $this->getElnForReflection(EntityType::Experiments);
+        new ReflectionProperty(Eln::class, 'graph')->setValue($Import, array(
+            array('@id' => '#pv-items', '@type' => 'PropertyValue', 'valueReference' => 'items', 'value' => array('@id' => './resource-b/')),
+            array('@id' => '#pv-multi', '@type' => 'PropertyValue', 'valueReference' => 'experiments', 'value' => array(array('@id' => './experiment-c/'))),
+            // referenced with both types: the forced type applies
+            array('@id' => '#pv-x1', '@type' => 'PropertyValue', 'valueReference' => 'items', 'value' => array('@id' => './ambiguous/')),
+            array('@id' => '#pv-x2', '@type' => 'PropertyValue', 'valueReference' => 'experiments', 'value' => array('@id' => './ambiguous/')),
+        ));
+        new ReflectionMethod(Eln::class, 'collectMetadataTargetTypes')->invoke($Import);
+        $GetEntityType = new ReflectionMethod(Eln::class, 'getEntityType');
+
+        $this->assertSame(EntityType::Items, $GetEntityType->invoke($Import, array('@id' => './resource-b/', 'genre' => 'experiment')));
+        $this->assertSame(EntityType::Experiments, $GetEntityType->invoke($Import, array('@id' => './experiment-c/')));
+        $this->assertSame(EntityType::Experiments, $GetEntityType->invoke($Import, array('@id' => './ambiguous/')));
+        $this->assertSame(EntityType::Experiments, $GetEntityType->invoke($Import, array('@id' => './not-referenced/', 'genre' => 'resource')));
+    }
+
+    public function testResolveMetadataReferencesChecksTypeAndKeepsLabelsAligned(): void
+    {
+        $Users = new Users(1, 1);
+        $Import = $this->getElnForReflection(EntityType::Experiments);
+        $Entity = new Experiments($Users);
+        $Entity->setId($Entity->create());
+        $Target = new Experiments($Users);
+        $targetId = $Target->create();
+        $Entity->update(new EntityParams('metadata', json_encode(array(
+            'extra_fields' => array(
+                'linked' => array('type' => 'experiments', 'allow_multi_values' => true, 'value' => array(123, 456), 'value_labels' => array('Control', 'Sample')),
+                'resource' => array('type' => 'items', 'value' => 789, 'value_labels' => array('Some resource')),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        new ReflectionProperty(Eln::class, 'insertedEntities')->setValue($Import, array(
+            array('item_@id' => './experiment-b/', 'id' => $targetId, 'entity_type' => EntityType::Experiments, 'users' => $Users),
+        ));
+        new ReflectionProperty(Eln::class, 'metadataReferencesToResolve')->setValue($Import, array(
+            // the first value was not exported: its label must go away with it
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'linked', 'type' => ExtraFieldReference::Experiments, 'targets' => array(1 => './experiment-b/'), 'is_multiple' => true),
+            // the target was imported as an experiment: it cannot fill an items field
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'resource', 'type' => ExtraFieldReference::Items, 'targets' => array(0 => './experiment-b/'), 'is_multiple' => false),
+        ));
+        new ReflectionMethod(Eln::class, 'resolveMetadataReferences')->invoke($Import);
+
+        $Entity = new Experiments($Users, $Entity->id);
+        $extraFields = json_decode($Entity->entityData['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+        $this->assertEquals(array($targetId), $extraFields['linked']['value']);
+        $this->assertSame(array('Sample'), $extraFields['linked']['value_labels']);
+        $this->assertEmpty($extraFields['resource']['value']);
+        $this->assertEmpty($extraFields['resource']['value_labels'] ?? null);
     }
 
     public function testImportExperimentsMulti(): void
@@ -762,5 +817,19 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             }
         }
         $this->fail(sprintf('Could not find imported experiment with title "%s".', $title));
+    }
+
+    private function getElnForReflection(?EntityType $entityType): Eln
+    {
+        $Users = new Users(1, 1);
+        return new Eln(
+            $Users,
+            $Users,
+            new UploadedFile(dirname(__DIR__, 2) . '/_data/single-experiment.eln', 'importable.eln', null, UPLOAD_ERR_OK, true),
+            $this->fs,
+            $this->logger,
+            CompoundsFactory::getCompounds($Users),
+            $entityType,
+        );
     }
 }

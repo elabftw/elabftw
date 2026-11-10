@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
+{% import 'permissions.macro.html' as perm %}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
@@ -266,7 +267,7 @@
       <span class='col-form-label d-inline-block' id='defaultCanreadSetting'>{{ 'Default visibility for new experiments'|trans }}</span>
       <div>
         {% set rw = 'canread' %}
-        {{ include('view-permissions-details.html', {identifier: 'canreaddefaultPermissions', can_base: App.Users.userData.default_read_base_human}) }}
+        {{ perm.details('canreaddefaultPermissionsDiv', App.Users.userData.default_read|canToHuman(App.Users), App.Users.userData.default_read_base_human) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true, can_base: App.Users.userData.default_read_base}) }}
         <button type='button' aria-labelledby='defaultCanreadSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
           <i class='fas fa-square-plus fa-2x'></i>
@@ -279,7 +280,7 @@
       <span class='col-form-label d-inline-block' id='defaultCanwriteSetting'>{{ 'Default write permission for new experiments'|trans }}</span>
       <div>
         {% set rw = 'canwrite' %}
-        {{ include('view-permissions-details.html', {identifier: 'canwritedefaultPermissions', can_base: App.Users.userData.default_write_base_human}) }}
+        {{ perm.details('canwritedefaultPermissionsDiv', App.Users.userData.default_write|canToHuman(App.Users), App.Users.userData.default_write_base_human) }}
         {{ include('permissions-edit-modal.html', {ucpPage: true, can_base: App.Users.userData.default_write_base}) }}
         <button type='button' aria-labelledby='defaultCanwriteSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
           <i class='fas fa-square-plus fa-2x'></i>

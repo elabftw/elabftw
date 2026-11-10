@@ -97,34 +97,58 @@ export function parseReactionRxn(rxn: string): Array<{ role: ReactionRole; molfi
   return result;
 }
 
-export async function reactionFromKetcher(ketcher: Ketcher): Promise<Reaction> {
-  const scheme: Reaction['scheme'] = JSON.parse(await ketcher.getKet());
-  // Multi-arrow drawings need an explicit stage model; never silently flatten them.
-  if (scheme.root.nodes.filter(node => node.type === 'arrow').length !== 1) {
-    throw new Error('Draw exactly one reaction arrow to create a reaction record.');
-  }
-  const rxn = await ketcher.getRxn('v3000');
-  const components: ReactionComponent[] = [];
-  for (const entry of parseReactionRxn(rxn)) {
-    const component = { ...emptyComponent(), ...entry };
-    component.smiles = (await ketcher.structService.convert({ struct: entry.molfile, output_format: ChemicalMimeType.DaylightSmiles })).struct;
+/** Each RXN entry becomes a component with the identifiers and properties Indigo can compute for it. */
+async function componentFromEntry(ketcher: Ketcher, entry: { role: ReactionRole; molfile: string }): Promise<ReactionComponent> {
+  const [smiles, inchiKey, properties] = await Promise.all([
+    ketcher.structService.convert({ struct: entry.molfile, output_format: ChemicalMimeType.DaylightSmiles }),
     // Generic structures and organometallics may not have usable identifiers or
     // masses. Preserve their structures and allow manual properties instead.
-    component.inchi_key = await ketcher.structService.getInChIKey(entry.molfile).catch(() => '');
-    const properties = await ketcher.structService.calculate({ struct: entry.molfile, properties: ['molecular-weight', 'gross'] }).catch(() => null);
-    const weight = Number(properties?.['molecular-weight']);
-    component.molecular_weight = Number.isFinite(weight) && weight > 0 ? weight : null;
-    component.molecular_formula = String(properties?.gross ?? '');
-    components.push(component);
-  }
-  const blob = await ketcher.generateImage(JSON.stringify(scheme), { outputFormat: 'png' });
-  const preview = await new Promise<string>((resolve, reject) => {
+    ketcher.structService.getInChIKey(entry.molfile).catch(() => ''),
+    ketcher.structService.calculate({ struct: entry.molfile, properties: ['molecular-weight', 'gross'] }).catch(() => null),
+  ]);
+  const weight = Number(properties?.['molecular-weight']);
+  return {
+    ...emptyComponent(), ...entry,
+    smiles: smiles.struct,
+    inchi_key: inchiKey,
+    molecular_weight: Number.isFinite(weight) && weight > 0 ? weight : null,
+    molecular_formula: String(properties?.gross ?? ''),
+  };
+}
+
+async function previewFromKet(ketcher: Ketcher, ket: string): Promise<string> {
+  const blob = await ketcher.generateImage(ket, { outputFormat: 'png' });
+  return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result).split(',')[1]);
     reader.onerror = () => reject(reader.error);
     reader.readAsDataURL(blob);
   });
-  const firstReactant = components.find(component => component.role === 'reactant').component_key;
+}
+
+/** A component reference survives a drawing change only if its component does */
+function keptKey(key: string | null, components: ReactionComponent[]): string | null {
+  return key !== null && components.some(component => component.component_key === key) ? key : null;
+}
+
+/** The reaction needs a reference, so the first reactant takes over a lost one */
+function keptOrFirstReactant(key: string | null, components: ReactionComponent[]): string | null {
+  return keptKey(key, components) ?? components.find(component => component.role === 'reactant')?.component_key ?? null;
+}
+
+export async function reactionFromKetcher(ketcher: Ketcher): Promise<Reaction> {
+  const ket = await ketcher.getKet();
+  const scheme: Reaction['scheme'] = JSON.parse(ket);
+  // Multi-arrow drawings need an explicit stage model; never silently flatten them.
+  if (scheme.root.nodes.filter(node => node.type === 'arrow').length !== 1) {
+    throw new Error('Draw exactly one reaction arrow to create a reaction record.');
+  }
+  const rxn = await ketcher.getRxn('v3000');
+  const [components, preview] = await Promise.all([
+    Promise.all(parseReactionRxn(rxn).map(entry => componentFromEntry(ketcher, entry))),
+    previewFromKet(ketcher, ket),
+  ]);
+  const firstReactant = keptOrFirstReactant(null, components);
   return {
     title: '', scheme, rxn, preview_png: preview, temperature_c: null, duration_s: null,
     pressure_pa: null, atmosphere: '', conditions_notes: '',
@@ -136,7 +160,7 @@ export async function reactionFromKetcher(ketcher: Ketcher): Promise<Reaction> {
  * removed structures lose their old quantities only after explicit confirmation. */
 export function replaceReactionDrawing(previous: Reaction, drawing: Reaction): Reaction {
   const remaining = [...previous.components];
-  drawing.components = drawing.components.map(component => {
+  const components = drawing.components.map(component => {
     const matches = (old: ReactionComponent) => (component.inchi_key ? old.inchi_key === component.inchi_key : component.smiles === old.smiles)
       && (old.role === 'product') === (component.role === 'product');
     let match = remaining.findIndex(old => matches(old) && old.role === component.role);
@@ -146,11 +170,11 @@ export function replaceReactionDrawing(previous: Reaction, drawing: Reaction): R
     return { ...old, molfile: component.molfile, smiles: component.smiles, inchi_key: component.inchi_key };
   });
   // Table-only additives are useful even if not drawn above the arrow.
-  drawing.components.push(...remaining.filter(component => ['reagent', 'catalyst', 'solvent'].includes(component.role)));
-  const keys = drawing.components.map(component => component.component_key);
+  components.push(...remaining.filter(component => ['reagent', 'catalyst', 'solvent'].includes(component.role)));
   return {
-    ...previous, scheme: drawing.scheme, rxn: drawing.rxn, preview_png: drawing.preview_png, components: drawing.components,
-    reference_component_key: keys.includes(previous.reference_component_key) ? previous.reference_component_key : drawing.components.find(component => component.role === 'reactant')?.component_key ?? null,
-    yield_basis_component_key: keys.includes(previous.yield_basis_component_key) ? previous.yield_basis_component_key : null,
+    ...previous, scheme: drawing.scheme, rxn: drawing.rxn, preview_png: drawing.preview_png, components,
+    reference_component_key: keptOrFirstReactant(previous.reference_component_key, components),
+    // no yield basis is a valid choice, so a lost one is not replaced
+    yield_basis_component_key: keptKey(previous.yield_basis_component_key, components),
   };
 }

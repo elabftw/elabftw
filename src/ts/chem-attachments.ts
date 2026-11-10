@@ -7,10 +7,11 @@
  */
 import type { Ketcher } from 'ketcher-core';
 import type { Upload } from './interfaces';
-import $ from 'jquery';
 import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
-import { adjustHiddenState, reloadElements } from './misc';
+import { hideModal, isModalShown, onModalEvent, showModal } from './common';
+import { BusyState, showFormError } from './form-state';
+import { adjustHiddenState, errorMessage, reloadElements } from './misc';
 import { showTab } from './tabbed-sections';
 import { notify } from './notify';
 import { on } from './handlers';
@@ -23,6 +24,9 @@ on('chem-load-file', async el => {
   const load = await loaderReady;
   await load(el.dataset.uploadid, el.dataset.name);
 });
+
+const saveModalSelector = '#chemSaveAttachmentModal';
+const loadModalSelector = '#chemLoadAttachmentModal';
 
 export function initChemAttachments(ketcher: Ketcher): void {
   const saveForm = document.getElementById('chemSaveAttachmentForm') as HTMLFormElement;
@@ -40,12 +44,10 @@ export function initChemAttachments(ketcher: Ketcher): void {
   const empty = document.getElementById('chemAttachmentsEmpty');
   const saveError = document.getElementById('chemSaveAttachmentError');
   const loadError = document.getElementById('chemLoadAttachmentError');
-  const saveModal = $('#chemSaveAttachmentModal');
-  const loadModal = $('#chemLoadAttachmentModal');
   const endpoint = saveForm.dataset.endpoint;
   const extensions: string[] = JSON.parse(saveForm.dataset.extensions);
   const isCompatible = (name: string): boolean => extensions.some(extension => name.toLowerCase().endsWith('.' + extension));
-  let busy = false;
+  const state = new BusyState([saveButton, loadButton]);
 
   const formats = [
     { value: 'ket', label: 'KET', extension: 'ket', content: () => ketcher.getKet() },
@@ -59,22 +61,12 @@ export function initChemAttachments(ketcher: Ketcher): void {
   ];
   formatSelect.replaceChildren(...formats.map(format => new Option(format.label, format.value)));
 
-  const showError = (element: HTMLElement, error: unknown): void => {
-    element.textContent = error instanceof Error ? error.message : String(error);
-    element.hidden = false;
-  };
-
-  const setBusy = (form: HTMLFormElement, value: boolean): void => {
-    busy = value;
-    saveButton.disabled = value;
-    loadButton.disabled = value;
-    form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLButtonElement>('input, select, button')
-      .forEach(control => control.disabled = value);
-  };
   // Avoid dismissing a modal while its save/load operation is still running.
-  saveModal.add(loadModal).on('hide.bs.modal', event => {
-    if (busy) event.preventDefault();
-  });
+  for (const selector of [saveModalSelector, loadModalSelector]) {
+    onModalEvent(selector, 'hide', event => {
+      if (state.busy) event.preventDefault();
+    });
+  }
 
   saveButton.disabled = false;
   loadButton.disabled = false;
@@ -86,36 +78,31 @@ export function initChemAttachments(ketcher: Ketcher): void {
         || (option.value.startsWith('rxn') && !isReaction);
     });
     if (formatSelect.selectedOptions[0].disabled) formatSelect.value = 'ket';
-    saveModal.modal('show');
+    showModal(saveModalSelector);
   };
-  saveModal.on('shown.bs.modal', () => filename.focus());
+  onModalEvent(saveModalSelector, 'shown', () => filename.focus());
 
   saveForm.onsubmit = async event => {
     event.preventDefault();
-    if (busy) return;
+    if (state.busy) return;
     filename.value = filename.value.trim();
     if (!saveForm.reportValidity()) return;
     const format = formats.find(format => format.value === formatSelect.value);
     if (!format) return;
 
     saveError.hidden = true;
-    setBusy(saveForm, true);
-    try {
+    const saved = await state.run(saveForm, async () => {
       const content = await format.content();
       const name = filename.value.replace(/\.(ket|mol|rxn|smi|smiles|png|svg)$/i, '') + '.' + format.extension;
       const file = new File([content], name, { type: content instanceof Blob ? content.type : 'text/plain' });
       const data = new FormData();
       data.append('file', file);
       await ApiC.post(endpoint, data);
-      busy = false;
-      saveModal.modal('hide');
-      // The file is already saved, even if refreshing the attachment list fails.
-      await reloadElements(['uploadsDiv']).then(() => adjustHiddenState()).catch(error => notify.error(error));
-    } catch (error) {
-      showError(saveError, error);
-    } finally {
-      setBusy(saveForm, false);
-    }
+    }, error => showFormError(saveError, error));
+    if (!saved) return;
+    hideModal(saveModalSelector);
+    // The file is already saved, even if refreshing the attachment list fails.
+    await reloadElements(['uploadsDiv']).then(() => adjustHiddenState()).catch(error => notify.error(error));
   };
 
   loadButton.onclick = async () => {
@@ -126,14 +113,14 @@ export function initChemAttachments(ketcher: Ketcher): void {
     attachmentSelect.disabled = true;
     loadSubmit.disabled = true;
     loadButton.disabled = true;
-    loadModal.modal('show');
+    showModal(loadModalSelector);
     try {
       const uploads = await ApiC.getJson<Upload[]>(endpoint);
       const compatible = uploads.filter(upload => isCompatible(upload.real_name));
       attachmentSelect.replaceChildren(...compatible.map(upload => new Option(upload.real_name, String(upload.id))));
       empty.hidden = compatible.length > 0;
     } catch (error) {
-      showError(loadError, error);
+      showFormError(loadError, error);
     } finally {
       loading.hidden = true;
       attachmentSelect.disabled = attachmentSelect.options.length === 0;
@@ -143,23 +130,21 @@ export function initChemAttachments(ketcher: Ketcher): void {
   };
 
   const loadAttachment = async (uploadId: string, name: string): Promise<void> => {
-    if (busy || !isCompatible(name)) return;
+    if (state.busy || !isCompatible(name)) return;
     loadError.hidden = true;
-    setBusy(loadForm, true);
-    try {
+    const loaded = await state.run(loadForm, async () => {
       const response = await ApiC.get(`${endpoint}/${uploadId}`, { format: 'binary', notifOnError: 0 });
       const content = await response.text();
-      if (!await loadChemDrawing(ketcher, content, { confirm: loadForm.dataset.confirm, error: loadForm.dataset.error })) return;
-      filename.value = name.replace(/\.[^.]+$/, '');
-      busy = false;
-      loadModal.modal('hide');
-      showTab('chem', { scroll: true });
-    } catch (error) {
-      showError(loadError, error);
-      if (!loadModal.hasClass('show')) notify.error(error instanceof Error ? error.message : String(error));
-    } finally {
-      setBusy(loadForm, false);
-    }
+      return loadChemDrawing(ketcher, content, { confirm: loadForm.dataset.confirm, error: loadForm.dataset.error });
+    }, error => {
+      showFormError(loadError, error);
+      // Loading from the attachments list happens with the modal closed, where the form error is not visible.
+      if (!isModalShown(loadModalSelector)) notify.error(errorMessage(error));
+    });
+    if (!loaded) return;
+    filename.value = name.replace(/\.[^.]+$/, '');
+    hideModal(loadModalSelector);
+    showTab('chem', { scroll: true });
   };
 
   loadForm.onsubmit = event => {

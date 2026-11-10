@@ -15,10 +15,13 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\ReactionSearch;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_map;
+use function intval;
 use function uniqid;
 
 final class ReactionSearchTest extends TestCase
@@ -115,12 +118,19 @@ final class ReactionSearchTest extends TestCase
                 array('role' => 'product', 'smiles' => 'COc1ccccc1', 'inchi_key' => self::ANISOLE),
             ),
         ));
-        $ids = new ReactionSearch(EntityType::Experiments, new InputBag(array('reaction_key' => $key)))->getEntityIds();
+        $ids = $this->search(array('reaction_key' => $key));
         $this->assertContains($this->Entity->id, $ids);
         $this->assertContains($other->id, $ids);
 
         new Reactions($this->Entity, $this->reactionId)->destroy();
         $this->assertNotFound(array('reaction_key' => $key));
+    }
+
+    public function testCopiesAreFoundLikeTheirSource(): void
+    {
+        // the copy has no fingerprints of its own to compute: they are copied
+        $copy = EntityType::Experiments->toInstance($this->Entity->Users, $this->Entity->duplicate());
+        $this->assertContains($copy->id, $this->search(array('reaction_structure' => 'c1ccccc1', 'reaction_role' => 'product')));
     }
 
     public function testResourceLinkAndRole(): void
@@ -155,10 +165,12 @@ final class ReactionSearchTest extends TestCase
 
     public function testValidation(): void
     {
-        $this->assertFalse(new ReactionSearch(EntityType::Experiments, new InputBag(array('reaction_role' => 'product', 'reaction_exact' => '1')))->isActive());
+        $inactive = new ReactionSearch(EntityType::Experiments, new InputBag(array('reaction_role' => 'product', 'reaction_exact' => '1')));
+        $this->assertFalse($inactive->isActive());
+        $this->assertSame('', $inactive->getFilterSql());
         foreach (array(array('reaction_key' => 'abc'), array('reaction_compound' => 'x'), array('reaction_structure' => 'not a structure')) as $query) {
             try {
-                new ReactionSearch(EntityType::Experiments, new InputBag($query))->getEntityIds();
+                $this->search($query);
                 $this->fail('Accepted an invalid reaction search');
             } catch (ImproperActionException) {
                 $this->addToAssertionCount(1);
@@ -168,12 +180,23 @@ final class ReactionSearchTest extends TestCase
 
     private function assertFound(array $query): void
     {
-        $this->assertContains($this->Entity->id, new ReactionSearch(EntityType::Experiments, new InputBag($query))->getEntityIds());
+        $this->assertContains($this->Entity->id, $this->search($query));
     }
 
     private function assertNotFound(array $query): void
     {
-        $this->assertNotContains($this->Entity->id, new ReactionSearch(EntityType::Experiments, new InputBag($query))->getEntityIds());
+        $this->assertNotContains($this->Entity->id, $this->search($query));
+    }
+
+    /** Ids of all the experiments the filter keeps, without the permissions of a listing */
+    private function search(array $query): array
+    {
+        $ReactionSearch = new ReactionSearch(EntityType::Experiments, new InputBag($query));
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT entity.id FROM experiments AS entity WHERE 1=1' . $ReactionSearch->getFilterSql());
+        $ReactionSearch->bindValues($req);
+        $Db->execute($req);
+        return array_map(intval(...), $req->fetchAll(PDO::FETCH_COLUMN));
     }
 
     private function countFingerprints(): int

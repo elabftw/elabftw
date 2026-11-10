@@ -12,6 +12,7 @@ namespace Elabftw\Services;
 
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
+use Elabftw\Models\FingerprintTable;
 use Symfony\Component\Process\Exception\RuntimeException as ProcessException;
 
 use function array_key_exists;
@@ -63,7 +64,7 @@ final class ReactionFingerprinter
             return null;
         }
         $data = $fp['data'] ?? null;
-        if (!is_array($data) || count($data) !== 32 || array_sum($data) === 0) {
+        if (!is_array($data) || count($data) !== FingerprintTable::WORDS || array_sum($data) === 0) {
             return null;
         }
         $ints = array();

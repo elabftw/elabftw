@@ -8,6 +8,7 @@
 import {
   clearForm,
   collectForm,
+  errorMessage,
   mkSpin,
   mkSpinStop,
   reloadEntitiesShow,
@@ -106,8 +107,10 @@ function initReactionSearch(): void {
     // the entries list hides failed queries, so check a structure first to tell what is wrong with it
     if (values.reaction_structure !== '') {
       const params: Record<string, string | number> = { limit: 1, notifOnError: 0 };
+      // the criteria without a field of their own come from the url
+      const urlParams = new URLSearchParams(window.location.search);
       for (const param of REACTION_SEARCH_PARAMS) {
-        const value = values[param] ?? new URLSearchParams(window.location.search).get(param) ?? '';
+        const value = values[param] ?? urlParams.get(param) ?? '';
         if (value !== '') {
           params[param] = value;
         }
@@ -115,7 +118,7 @@ function initReactionSearch(): void {
       try {
         await ApiC.getJson(entity.type, params);
       } catch (error) {
-        errorEl.textContent = error instanceof Error ? error.message : String(error);
+        errorEl.textContent = errorMessage(error);
         errorEl.hidden = false;
         return;
       }

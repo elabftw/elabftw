@@ -17,9 +17,6 @@ use InvalidArgumentException;
 use PDO;
 
 use function array_sum;
-use function count;
-use function rtrim;
-use function sprintf;
 
 /**
  * Fingerprints for compounds
@@ -28,39 +25,22 @@ final class Fingerprints
 {
     protected Db $Db;
 
+    private FingerprintTable $Table;
+
     public function __construct(private ?int $compound = null)
     {
         $this->Db = Db::getConnection();
+        $this->Table = FingerprintTable::forCompounds();
     }
 
     public function create(array $fp): int
     {
-        $this->assertCompoundSet();
+        $compound = $this->getCompoundOrExplode();
         // it's fine to send us an empty fp, but we won't record it
         if (array_sum($fp) === 0) {
             return 0;
         }
-        if (count($fp) !== 32) {
-            throw new InvalidArgumentException('Fingerprint payload must contain 32 integers');
-        }
-        $sql = 'INSERT INTO compounds_fingerprints (id, ';
-        for ($i = 0; $i < 32; $i++) {
-            $sql .= sprintf('fp%d,', $i);
-        }
-        $sql = rtrim($sql, ',');
-        $sql .= ') VALUES(:id, ';
-        for ($i = 0; $i < 32; $i++) {
-            $sql .= sprintf(':fp%d,', $i);
-        }
-        $sql = rtrim($sql, ',');
-        $sql .= ')';
-
-        $req = $this->Db->prepare($sql);
-        for ($i = 0; $i < 32; $i++) {
-            $req->bindParam(":fp$i", $fp[$i], PDO::PARAM_INT);
-        }
-        $req->bindParam(':id', $this->compound, PDO::PARAM_INT);
-        $this->Db->execute($req);
+        $this->Table->insert($compound, $fp);
         return $this->Db->lastInsertId();
     }
 
@@ -73,23 +53,17 @@ final class Fingerprints
 
     public function destroy(): bool
     {
-        $this->assertCompoundSet();
+        $compound = $this->getCompoundOrExplode();
         $sql = 'DELETE FROM compounds_fingerprints WHERE id = :id';
         $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->compound, PDO::PARAM_INT);
+        $req->bindValue(':id', $compound, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
     }
 
     public function search(array $fp): array
     {
-        $sql = 'SELECT entity_id, entity_type FROM compounds WHERE 1=1';
-        foreach ($fp as $key => $value) {
-            if ($value == 0) {
-                continue;
-            }
-            $sql .= sprintf(' AND fp%d & %d = %d', $key, $value, $value);
-        }
+        $sql = 'SELECT entity_id, entity_type FROM compounds WHERE 1=1' . FingerprintTable::containsSql($fp);
         $req = $this->Db->prepare($sql . ' LIMIT 2');
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -107,10 +81,8 @@ final class Fingerprints
         return $req->fetchAll();
     }
 
-    private function assertCompoundSet(): void
+    private function getCompoundOrExplode(): int
     {
-        if ($this->compound === null) {
-            throw new InvalidArgumentException('Compound id is required for this operation');
-        }
+        return $this->compound ?? throw new InvalidArgumentException('Compound id is required for this operation');
     }
 }

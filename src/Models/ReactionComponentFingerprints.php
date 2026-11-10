@@ -11,11 +11,8 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
-use InvalidArgumentException;
 use PDO;
 
-use function count;
-use function implode;
 use function sprintf;
 
 /**
@@ -25,9 +22,12 @@ final class ReactionComponentFingerprints
 {
     private Db $Db;
 
+    private FingerprintTable $Table;
+
     public function __construct()
     {
         $this->Db = Db::getConnection();
+        $this->Table = FingerprintTable::forReactionComponents();
     }
 
     /**
@@ -48,24 +48,23 @@ final class ReactionComponentFingerprints
 
     public function upsert(int $componentId, array $fingerprint): void
     {
-        if (count($fingerprint) !== 32) {
-            throw new InvalidArgumentException('Fingerprint payload must contain 32 integers');
-        }
-        $columns = array('component_id');
-        $placeholders = array(':component_id');
-        for ($i = 0; $i < 32; $i++) {
-            $columns[] = sprintf('fp%d', $i);
-            $placeholders[] = sprintf(':fp%d', $i);
-        }
+        $this->Table->replace($componentId, $fingerprint);
+    }
+
+    /** The components of a copied reaction have the same structures as the source ones, matched by their key */
+    public function copy(int $sourceReaction, int $copyReaction): void
+    {
         $req = $this->Db->prepare(sprintf(
-            'REPLACE INTO reaction_component_fingerprints (%s) VALUES (%s)',
-            implode(', ', $columns),
-            implode(', ', $placeholders),
+            'INSERT INTO reaction_component_fingerprints (component_id, %s)
+            SELECT copy.id, %s FROM reaction_components AS source
+            INNER JOIN reaction_component_fingerprints AS f ON (f.component_id = source.id)
+            INNER JOIN reaction_components AS copy ON (copy.reaction_id = :copy AND copy.component_key = source.component_key)
+            WHERE source.reaction_id = :source',
+            FingerprintTable::wordColumns(),
+            FingerprintTable::wordColumns('f'),
         ));
-        $req->bindValue(':component_id', $componentId, PDO::PARAM_INT);
-        for ($i = 0; $i < 32; $i++) {
-            $req->bindValue(sprintf(':fp%d', $i), (int) $fingerprint[$i], PDO::PARAM_INT);
-        }
+        $req->bindValue(':copy', $copyReaction, PDO::PARAM_INT);
+        $req->bindValue(':source', $sourceReaction, PDO::PARAM_INT);
         $this->Db->execute($req);
     }
 }

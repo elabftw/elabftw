@@ -1,0 +1,32 @@
+{# texts and icon of a permission, shared by its overview section and its edit modal #}
+{# rw: canread, canwrite, canbook, canread_target or canwrite_target. key: icon, label, modalTitle or lockdownLabel (only for read and write) #}
+{% macro text(rw, key) -%}
+  {%- set texts = {
+    canread: {icon: 'eye', label: 'Who can view'|trans, modalTitle: 'Select who can see this entry'|trans, lockdownLabel: 'Lock down read permissions'|trans},
+    canwrite: {icon: 'user-pen', label: 'Who can edit'|trans, modalTitle: 'Select who can edit this entry'|trans, lockdownLabel: 'Lock down write permissions'|trans},
+    canbook: {icon: 'calendar-plus', label: 'Who can book'|trans, modalTitle: 'Select who can book this entry'|trans},
+  } -%}
+  {#- the derived entry permissions of a template read like the entry ones -#}
+  {{- texts[rw|replace({'_target': ''})][key]|default('') -}}
+{%- endmacro %}
+
+{# what a permission gives access to: its base and the teams, user groups and users added to it #}
+{# required: can (from canToHuman filter), can_base (human readable base), id: reloaded after saving, see save-permissions in common.ts #}
+{% macro details(id, can, can_base, class='') %}
+  <div id='{{ id }}' {%- if class %} class='{{ class }}'{% endif %}>
+    <div class='permissions-base'><i class='fas fa-fw fa-user-shield mr-1 smallgray' aria-hidden='true'></i>{{ can_base }}</div>
+    {% if can.teams or can.teamgroups or can.users %}
+      <ul class='list-unstyled d-flex flex-wrap mb-0'>
+        {% for team in can.teams %}
+          <li class='permissions-chip'><i class='fas fa-users' aria-hidden='true'></i><span class='sr-only'>{{ 'Team'|trans }}:</span>{{ team.name }}</li>
+        {% endfor %}
+        {% for group in can.teamgroups %}
+          <li class='permissions-chip'><i class='fas fa-user-group' aria-hidden='true'></i><span class='sr-only'>{{ 'User Groups'|trans }}:</span>{{ group.name }}</li>
+        {% endfor %}
+        {% for user in can.users %}
+          <li class='permissions-chip'><i class='fas fa-user' aria-hidden='true'></i><span class='sr-only'>{{ 'User'|trans }}:</span>{{ user.fullname }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+{% endmacro %}

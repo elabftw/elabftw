@@ -7,8 +7,8 @@
  */
 
 import { Ketcher } from 'ketcher-core';
-import $ from 'jquery';
 import './ketcher-editor';
+import { showModal } from './common';
 import { notify } from './notify';
 import { on } from './handlers';
 
@@ -43,7 +43,8 @@ on('create-compound-from-editor', async () => {
     ]);
     smilesInput.value = smiles;
     inchiInput.value = inchi;
-    $('#createCompoundModal').modal('toggle');
+    // the button that triggers this is outside of the modal, so it is never already shown
+    showModal('#createCompoundModal');
   } catch (error) {
     notify.error('Failed to get molecular data from editor');
     console.error('Ketcher error:', error);

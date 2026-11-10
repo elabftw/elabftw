@@ -15,6 +15,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Users\AnonymousUser;
@@ -27,14 +28,18 @@ use Elabftw\Services\ReactionIdentity;
 use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
+use PDOStatement;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
+use function array_diff;
+use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
 use function array_replace;
+use function base64_decode;
 use function filter_var;
-use function htmlspecialchars;
 use function implode;
 use function is_array;
 use function json_decode;
@@ -49,6 +54,23 @@ use function array_column;
 final class Reactions extends AbstractRest
 {
     use SetIdTrait;
+
+    /** Entered or derived on save: a copy with these is the same reaction */
+    private const array CONTENT_COLUMNS = array(
+        'title', 'scheme', 'rxn', 'reaction_smiles', 'reaction_key', 'preview_png', 'temperature_c', 'duration_s', 'pressure_pa',
+        'atmosphere', 'conditions_notes', 'reference_component_key', 'yield_basis_component_key',
+    );
+
+    private const array COMPONENT_COLUMNS = array(
+        'component_key', 'ordering', 'role', 'name', 'molfile', 'smiles', 'inchi_key', 'molecular_formula', 'molecular_weight',
+        'compound_id', 'item_id', 'material_form', 'purity_percent', 'density_g_ml', 'concentration_mol_l', 'coefficient',
+        'planned_basis', 'planned_unit', 'planned_value', 'actual_basis', 'actual_unit', 'actual_value',
+    );
+
+    /** Only needed to draw, edit or export a reaction, not to display it with its entry */
+    private const array LARGE_COLUMNS = array('scheme', 'rxn', 'preview_png');
+
+    private const array LARGE_COMPONENT_COLUMNS = array('molfile');
 
     public function __construct(
         private AbstractEntity $Entity,
@@ -72,22 +94,30 @@ final class Reactions extends AbstractRest
         if ($queryParams !== null && $queryParams->getQuery()->getInt('history_of') > 0) {
             return $this->readHistory($queryParams->getQuery()->getInt('history_of'));
         }
-        $req = $this->Db->prepare('SELECT r.* FROM reactions r JOIN ' . $this->linkTable() . ' l ON l.reaction_id = r.id
-            WHERE l.entity_id = :entity_id AND r.state = :state ORDER BY l.ordering, r.id');
-        $req->bindValue(':entity_id', $this->Entity->id, PDO::PARAM_INT);
-        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $reactions = $req->fetchAll();
-        if ($reactions === array()) {
-            return array();
-        }
-        $ids = implode(',', array_map(static fn(array $r): int => (int) $r['id'], $reactions));
-        $req = $this->Db->q('SELECT * FROM reaction_components WHERE reaction_id IN (' . $ids . ') ORDER BY ordering, id');
-        $components = array();
-        foreach ($req->fetchAll() as $component) {
-            $components[$component['reaction_id']][] = $component;
-        }
-        return array_map(fn(array $r): array => $this->hydrate($r, $components[$r['id']] ?? array()), $reactions);
+        return $this->readFull();
+    }
+
+    /**
+     * The current reactions with everything needed to draw, edit or export them.
+     * Like readSummaries(), it is for callers that already checked Read access on the entity.
+     */
+    public function readFull(): array
+    {
+        return $this->readCurrent('r.*', '*');
+    }
+
+    /**
+     * The current reactions without their large columns (nor the molfile of their components): what an entry needs
+     * to display them. has_preview tells if the preview can be loaded with readBinary().
+     */
+    public function readSummaries(): array
+    {
+        return $this->readCurrent(
+            'r.id, r.version, r.state, r.created_at, r.modified_at, r.created_by, r.modified_by, '
+                . self::columns(array_diff(self::CONTENT_COLUMNS, self::LARGE_COLUMNS), 'r')
+                . ", r.preview_png != '' AS has_preview",
+            'id, reaction_id, ' . self::columns(array_diff(self::COMPONENT_COLUMNS, self::LARGE_COMPONENT_COLUMNS)),
+        );
     }
 
     #[Override]
@@ -95,10 +125,24 @@ final class Reactions extends AbstractRest
     {
         $this->Entity->canOrExplode(AccessType::Read);
         $reaction = $this->readRow($this->id ?? 0);
-        $req = $this->Db->prepare('SELECT * FROM reaction_components WHERE reaction_id = :id ORDER BY ordering, id');
-        $req->bindValue(':id', $reaction['id'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->hydrate($reaction, $req->fetchAll());
+        return $this->hydrate($reaction, $this->readComponents((int) $reaction['id']));
+    }
+
+    /** The preview image is served on its own, so an entry does not carry the previews of its reactions */
+    public function readBinary(): Response
+    {
+        $this->Entity->canOrExplode(AccessType::Read);
+        $reaction = $this->readRow($this->id ?? 0, columns: 'r.id, r.version, r.preview_png');
+        $png = base64_decode($reaction['preview_png'], true);
+        if ($png === false || $png === '') {
+            throw new ResourceNotFoundException();
+        }
+        return new Response($png, Response::HTTP_OK, array(
+            'Content-Type' => 'image/png',
+            'Cache-Control' => 'private, no-cache',
+            // a saved change bumps the version, so the browser only downloads a preview again after a change
+            'ETag' => sprintf('"reaction-%d-%d"', $reaction['id'], $reaction['version']),
+        ));
     }
 
     #[Override]
@@ -138,15 +182,14 @@ final class Reactions extends AbstractRest
         $this->Db->beginTransaction();
         try {
             $this->lockOwner();
-            $current = $this->readOne();
+            // only a current reaction can be deleted
+            $this->readRow($this->id ?? 0, columns: 'r.id');
             $req = $this->Db->prepare('UPDATE reactions SET state = :state, version = version + 1, modified_by = :userid WHERE id = :id');
             $req->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
             $req->bindValue(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
             $req->bindValue(':id', $this->id, PDO::PARAM_INT);
             $this->Db->execute($req);
-            $deleted = array_replace($current, $this->readRow($this->id ?? 0, true));
-            $deleted['scheme'] = $current['scheme'];
-            $this->recordChange($deleted, 'Deleted');
+            $this->recordChange('Deleted', withDrawing: false);
             $this->Db->commit();
             return true;
         } catch (Throwable $e) {
@@ -155,11 +198,23 @@ final class Reactions extends AbstractRest
         }
     }
 
+    /**
+     * Copied in SQL rather than saved again: the source was validated when it was saved, with its links and fingerprints,
+     * so copying an entry does not wait for Open Babel or check links again (anyone who can read the source can see them).
+     */
     public function duplicate(AbstractEntity $target): void
     {
-        foreach ($this->readAll() as $reaction) {
-            // Reading the source already authorized access to these saved links.
-            new self($target, null, $this->fingerprinter)->save(new ReactionParams($reaction), null, $reaction['components']);
+        $this->Entity->canOrExplode(AccessType::Read);
+        $target->canOrExplode(AccessType::Write);
+        $this->Db->beginTransaction();
+        try {
+            foreach ($this->readCurrent('r.id', null) as $reaction) {
+                new self($target, null, $this->fingerprinter)->copyFrom((int) $reaction['id']);
+            }
+            $this->Db->commit();
+        } catch (Throwable $e) {
+            $this->Db->rollBack();
+            throw $e;
         }
     }
 
@@ -170,7 +225,7 @@ final class Reactions extends AbstractRest
             WHERE l.entity_id = :id ORDER BY h.reaction_id, h.version');
         $req->bindValue(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return array_map(static fn(array $row): array => json_decode($row['snapshot'], true, 512, JSON_THROW_ON_ERROR), $req->fetchAll());
+        return self::expandHistory(array_map(static fn(array $row): array => self::decode($row['snapshot']), $req->fetchAll()));
     }
 
     /** Import foreign snapshots without retaining installation-local links. */
@@ -206,6 +261,7 @@ final class Reactions extends AbstractRest
             $fields['reaction_key'] = ReactionIdentity::key($params->components);
             $fields['modified_by'] = $this->Entity->Users->userData['userid'];
             $creating = $this->id === null;
+            $drawingChanged = true;
             if ($creating) {
                 $fields['created_by'] = $fields['modified_by'];
                 $id = $this->insert('reactions', $fields);
@@ -216,11 +272,11 @@ final class Reactions extends AbstractRest
                 if ((int) $current['version'] !== $expectedVersion) {
                     throw new ImproperActionException('This reaction has changed. Reload it before saving.');
                 }
+                // the JSON column does not give back the text it was given: compare the documents
+                $drawingChanged = $current['rxn'] !== $fields['rxn'] || self::decodeScheme($current['scheme']) != self::decodeScheme($fields['scheme']);
                 $assignments = implode(', ', array_map(static fn(string $field): string => $field . ' = :' . $field, array_keys($fields)));
                 $req = $this->Db->prepare('UPDATE reactions SET ' . $assignments . ', version = version + 1 WHERE id = :id');
-                foreach ($fields as $field => $value) {
-                    $req->bindValue(':' . $field, $value, $value === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
-                }
+                $this->bindFields($req, $fields);
                 $req->bindValue(':id', $this->id, PDO::PARAM_INT);
                 $this->Db->execute($req);
                 $req = $this->Db->prepare('DELETE FROM reaction_components WHERE reaction_id = :id');
@@ -234,8 +290,7 @@ final class Reactions extends AbstractRest
                     new ReactionComponentFingerprints()->upsert($componentId, $fingerprints[$component['component_key']]);
                 }
             }
-            $reaction = $this->readOne();
-            $this->recordChange($reaction, $creating ? 'Created' : 'Updated');
+            $this->recordChange($creating ? 'Created' : 'Updated', $drawingChanged);
             $this->Db->commit();
             return $this->id ?? throw new ImproperActionException('Missing reaction id.');
         } catch (Throwable $e) {
@@ -261,7 +316,7 @@ final class Reactions extends AbstractRest
     /** Deleted reactions keep their link row: append after them instead of counting current reactions. */
     private function getNextOrdering(): int
     {
-        $req = $this->Db->prepare('SELECT COALESCE(MAX(ordering) + 1, 0) FROM ' . $this->linkTable() . ' WHERE entity_id = :entity_id');
+        $req = $this->Db->prepare('SELECT COALESCE(MAX(ordering), -1) + 1 FROM ' . $this->linkTable() . ' WHERE entity_id = :entity_id');
         $req->bindValue(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
@@ -276,9 +331,9 @@ final class Reactions extends AbstractRest
         $this->Entity->canOrExplode(AccessType::Read);
     }
 
-    private function readRow(int $id, bool $includeDeleted = false): array
+    private function readRow(int $id, bool $includeDeleted = false, string $columns = 'r.*'): array
     {
-        $req = $this->Db->prepare('SELECT r.* FROM reactions r JOIN ' . $this->linkTable() . ' l ON l.reaction_id = r.id
+        $req = $this->Db->prepare('SELECT ' . $columns . ' FROM reactions r JOIN ' . $this->linkTable() . ' l ON l.reaction_id = r.id
             WHERE r.id = :id AND l.entity_id = :entity_id' . ($includeDeleted ? '' : ' AND r.state = 1'));
         $req->bindValue(':id', $id, PDO::PARAM_INT);
         $req->bindValue(':entity_id', $this->Entity->id, PDO::PARAM_INT);
@@ -305,49 +360,161 @@ final class Reactions extends AbstractRest
         }
     }
 
+    private static function decode(string $json): array
+    {
+        return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    private static function decodeScheme(?string $scheme): ?array
+    {
+        return $scheme === null ? null : self::decode($scheme);
+    }
+
+    private static function columns(array $names, string $alias = ''): string
+    {
+        return implode(', ', array_map(static fn(string $name): string => ($alias === '' ? '' : $alias . '.') . $name, $names));
+    }
+
+    /** Current (not deleted) reactions of the entry, in their order. Without component columns, components are not read. */
+    private function readCurrent(string $columns, ?string $componentColumns): array
+    {
+        $req = $this->Db->prepare('SELECT ' . $columns . ' FROM reactions r JOIN ' . $this->linkTable() . ' l ON l.reaction_id = r.id
+            WHERE l.entity_id = :entity_id AND r.state = :state ORDER BY l.ordering, r.id');
+        $req->bindValue(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $reactions = $req->fetchAll();
+        if ($componentColumns === null || $reactions === array()) {
+            return $reactions;
+        }
+        $ids = implode(',', array_map(static fn(array $r): int => (int) $r['id'], $reactions));
+        $req = $this->Db->q('SELECT ' . $componentColumns . ' FROM reaction_components WHERE reaction_id IN (' . $ids . ') ORDER BY ordering, id');
+        $components = array();
+        foreach ($req->fetchAll() as $component) {
+            $components[$component['reaction_id']][] = $component;
+        }
+        return array_map(fn(array $r): array => $this->hydrate($r, $components[$r['id']] ?? array()), $reactions);
+    }
+
+    private function readComponents(int $reactionId): array
+    {
+        $req = $this->Db->prepare('SELECT * FROM reaction_components WHERE reaction_id = :id ORDER BY ordering, id');
+        $req->bindValue(':id', $reactionId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
     private function hydrate(array $reaction, array $components): array
     {
-        $reaction['scheme'] = $reaction['scheme'] === null ? null : json_decode($reaction['scheme'], true, 512, JSON_THROW_ON_ERROR);
+        if (array_key_exists('scheme', $reaction)) {
+            $reaction['scheme'] = self::decodeScheme($reaction['scheme']);
+        }
         $reaction['components'] = new ReactionCalculator()->calculate($reaction, $components);
         return $reaction;
     }
 
-    private function recordChange(array $reaction, string $verb): void
+    /** This instance is the copy: a new reaction of its entity, made from the source reaction */
+    private function copyFrom(int $sourceId): void
     {
+        $userid = $this->Entity->Users->userData['userid'];
+        $req = $this->Db->prepare(sprintf(
+            'INSERT INTO reactions (%1$s, created_by, modified_by) SELECT %1$s, :created_by, :modified_by FROM reactions WHERE id = :source',
+            self::columns(self::CONTENT_COLUMNS),
+        ));
+        $req->bindValue(':created_by', $userid, PDO::PARAM_INT);
+        $req->bindValue(':modified_by', $userid, PDO::PARAM_INT);
+        $req->bindValue(':source', $sourceId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $this->setId($this->Db->lastInsertId());
+        $this->insert($this->linkTable(), array('reaction_id' => $this->id, 'entity_id' => $this->Entity->id, 'ordering' => $this->getNextOrdering()));
+
+        $req = $this->Db->prepare(sprintf(
+            'INSERT INTO reaction_components (reaction_id, %1$s) SELECT :copy, %1$s FROM reaction_components WHERE reaction_id = :source',
+            self::columns(self::COMPONENT_COLUMNS),
+        ));
+        $req->bindValue(':copy', $this->id, PDO::PARAM_INT);
+        $req->bindValue(':source', $sourceId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        new ReactionComponentFingerprints()->copy($sourceId, $this->id ?? 0);
+        $this->recordChange('Created', withDrawing: true);
+    }
+
+    /**
+     * A revision keeps the reaction as stored, but not what is derived from it: the preview renders the scheme,
+     * and the quantities are calculated again when reading the history. The drawing is only kept when it changed,
+     * see expandHistory().
+     */
+    private function recordChange(string $verb, bool $withDrawing): void
+    {
+        $snapshot = $this->readRow($this->id ?? 0, true);
+        unset($snapshot['preview_png']);
+        if ($withDrawing) {
+            $snapshot['scheme'] = self::decodeScheme($snapshot['scheme']);
+        } else {
+            unset($snapshot['scheme'], $snapshot['rxn']);
+        }
+        $snapshot['components'] = $this->readComponents((int) $snapshot['id']);
         $this->insert('reaction_revisions', array(
-            'reaction_id' => $reaction['id'],
-            'version' => $reaction['version'],
-            'snapshot' => json_encode($reaction, JSON_THROW_ON_ERROR),
+            'reaction_id' => $snapshot['id'],
+            'version' => $snapshot['version'],
+            'snapshot' => json_encode($snapshot, JSON_THROW_ON_ERROR),
             'created_by' => $this->Entity->Users->userData['userid'],
         ));
         $this->Entity->touch();
-        new Changelog($this->Entity)->create(new ContentParams('reactions', sprintf('%s reaction "%s" with id: %d', $verb, htmlspecialchars($reaction['title'], ENT_QUOTES), $this->id ?? 0)));
+        // the changelog table escapes this target when it is displayed
+        new Changelog($this->Entity)->create(new ContentParams('reactions', sprintf('%s reaction "%s" with id: %d', $verb, $snapshot['title'], $this->id ?? 0)));
+    }
+
+    /**
+     * Give each revision the drawing it had (the last one stored for its reaction) and its calculated quantities.
+     * The snapshots are in version order for each reaction.
+     */
+    private static function expandHistory(array $snapshots): array
+    {
+        $drawings = array();
+        return array_map(static function (array $snapshot) use (&$drawings): array {
+            if (array_key_exists('rxn', $snapshot)) {
+                $drawings[$snapshot['id']] = array('scheme' => $snapshot['scheme'], 'rxn' => $snapshot['rxn']);
+            }
+            $snapshot += $drawings[$snapshot['id']] ?? array();
+            $snapshot['components'] = new ReactionCalculator()->calculate($snapshot, $snapshot['components']);
+            return $snapshot;
+        }, $snapshots);
     }
 
     private function readHistory(int $id): array
     {
         $this->canReadHistoryOrExplode();
-        $this->readRow($id, true);
+        $this->readRow($id, true, 'r.id');
         $req = $this->Db->prepare('SELECT version, created_at, created_by, snapshot FROM reaction_revisions WHERE reaction_id = :id ORDER BY version');
         $req->bindValue(':id', $id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        return array_map(static function (array $row): array {
-            $row['snapshot'] = json_decode($row['snapshot'], true, 512, JSON_THROW_ON_ERROR);
-            return $row;
-        }, $req->fetchAll());
+        $rows = $req->fetchAll();
+        $snapshots = self::expandHistory(array_map(static fn(array $row): array => self::decode($row['snapshot']), $rows));
+        return array_map(
+            static fn(array $row, array $snapshot): array => array_replace($row, array('snapshot' => $snapshot)),
+            $rows,
+            $snapshots,
+        );
     }
 
     /** Only called with internal table/column names, never request keys. */
     private function insert(string $table, array $fields): int
     {
-        $columns = implode(', ', array_keys($fields));
-        $placeholders = implode(', ', array_map(static fn(string $name): string => ':' . $name, array_keys($fields)));
-        $req = $this->Db->prepare('INSERT INTO ' . $table . ' (' . $columns . ') VALUES (' . $placeholders . ')');
+        $columns = array_keys($fields);
+        $placeholders = array_map(static fn(string $name): string => ':' . $name, $columns);
+        $req = $this->Db->prepare(sprintf('INSERT INTO %s (%s) VALUES (%s)', $table, implode(', ', $columns), implode(', ', $placeholders)));
+        $this->bindFields($req, $fields);
+        $this->Db->execute($req);
+        return $this->Db->lastInsertId();
+    }
+
+    /** Placeholders are named after the columns, see insert() and save() */
+    private function bindFields(PDOStatement $req, array $fields): void
+    {
         foreach ($fields as $name => $value) {
             $req->bindValue(':' . $name, $value, $value === null ? PDO::PARAM_NULL : PDO::PARAM_STR);
         }
-        $this->Db->execute($req);
-        return $this->Db->lastInsertId();
     }
 
     private function linkTable(): string

@@ -28,6 +28,7 @@ use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Notifications\MathjaxFailed;
 use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
@@ -268,6 +269,8 @@ class MakePdf extends AbstractMakePdf
                 $this->Entity->entityData['uploads'][$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
             }
         }
+        // the entry only has reaction summaries, and the PDF cannot load their previews from the API like a page does
+        $this->Entity->entityData['reactions'] = new Reactions($this->Entity)->readFull();
 
         $Changelog = new Changelog($this->Entity);
 

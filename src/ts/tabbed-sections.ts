@@ -7,6 +7,7 @@
  */
 import { on } from './handlers';
 import { toggleIcon } from './misc';
+import { readStorage, writeStorage } from './localStorage';
 
 /**
  * Sections of the edit page that group several editors under tabs, like the main text and chemical editor,
@@ -25,24 +26,8 @@ import { toggleIcon } from './misc';
 const inactiveClass = 'entity-body-pane-inactive';
 
 function store(key: string | undefined, value: string): void {
-  if (!key) {
-    return;
-  }
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // storage can be unavailable (private browsing), the display still changes
-  }
-}
-
-function read(key: string | undefined): string | null {
-  if (!key) {
-    return null;
-  }
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
+  if (key) {
+    writeStorage(key, value);
   }
 }
 
@@ -109,14 +94,9 @@ on('toggle-tabbed-section', (el: HTMLElement) => {
   setSectionCollapsed(el, el.getAttribute('aria-expanded') === 'true');
 });
 
+// the heading is a role=button: its keyboard activation is in common.ts, with the toggle-next ones
 document.addEventListener('keydown', (event: KeyboardEvent) => {
   const target = event.target as HTMLElement;
-  // the heading is a role=button, so it needs the keyboard activation a real button has
-  if (target.matches?.('[data-action="toggle-tabbed-section"]') && (event.key === ' ' || event.key === 'Enter')) {
-    event.preventDefault();
-    setSectionCollapsed(target, target.getAttribute('aria-expanded') === 'true');
-    return;
-  }
   // arrow keys move between tabs, as expected for a tablist
   if (target.matches?.('[role="tab"][data-action="switch-tab-pane"]') && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
     const tabs = Array.from(target.closest('[role="tablist"]').querySelectorAll<HTMLElement>('[role="tab"]'));
@@ -128,13 +108,13 @@ document.addEventListener('keydown', (event: KeyboardEvent) => {
 
 // restore the remembered state, the server renders the defaults
 document.querySelectorAll<HTMLElement>('[role="tablist"][data-storage-key]').forEach(menu => {
-  const stored = read(menu.dataset.storageKey);
+  const stored = readStorage(menu.dataset.storageKey);
   if (stored && menu.contains(getTab(stored))) {
     showTab(stored);
   }
 });
 document.querySelectorAll<HTMLElement>('[data-action="toggle-tabbed-section"][data-storage-key]').forEach(toggle => {
-  const stored = read(toggle.dataset.storageKey);
+  const stored = readStorage(toggle.dataset.storageKey);
   if (stored === '1' || stored === '0') {
     setSectionCollapsed(toggle, stored === '1');
   }

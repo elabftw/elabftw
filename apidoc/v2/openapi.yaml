@@ -10266,6 +10266,8 @@ paths:
         schema:
           type: integer
         description: Read revision snapshots of this reaction, including deleted records; scoped to the owning entry. Not available to anonymous users.
+          Snapshots have no preview_png. The entry itself (GET /{entity_type}/{id}) only has reaction summaries, without scheme, rxn, preview_png
+          and component molfile, but with has_preview.
       responses:
         '200':
           description: Reaction records or revision snapshots.
@@ -10369,13 +10371,25 @@ paths:
       - Reactions
       operationId: read-reaction
       summary: Read a reaction belonging to this entry.
+      parameters:
+      - name: format
+        in: query
+        schema:
+          type: string
+          enum:
+          - binary
+        description: Get the preview image instead of the record (404 if the reaction has none).
       responses:
         '200':
-          description: Reaction record.
+          description: Reaction record, or its preview with format=binary.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/reaction'
+            image/png:
+              schema:
+                type: string
+                format: binary
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

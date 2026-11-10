@@ -21,6 +21,7 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
 import { storeRecoveryData } from './recovery';
+import { readStorage } from './localStorage';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
@@ -486,6 +487,14 @@ export async function reloadEntitiesShow(): Promise<void | Response> {
   await MathJax.typesetPromise();
 }
 
+// turn whatever a catch block received into a message we can show to the user
+export function errorMessage(error: unknown, fallback?: string): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return fallback ?? String(error);
+}
+
 export function getSafeElementById(id: string): HTMLElement {
   return document.getElementById(id)
     ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
@@ -609,7 +618,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach((el: HTMLElement) => {
     const localStorageKey = el.dataset.saveHidden + '-isHidden';
-    const localStorageValue = localStorage.getItem(localStorageKey);
+    const localStorageValue = readStorage(localStorageKey);
     const button = document.querySelector(`[data-toggle-target="${el.dataset.saveHidden}"]`) || el.previousElementSibling;
     if (!button) {
       return;
@@ -626,6 +635,11 @@ export function adjustHiddenState(): void {
     const isHidden = el.hasAttribute('hidden');
     toggleIcon((button as HTMLElement), isHidden);
   });
+}
+
+// the uploads are rendered again by the server: restore the collapsed state of their groups
+export function reloadUploads(): Promise<void> {
+  return reloadElements(['uploadsDiv']).then(() => adjustHiddenState());
 }
 
 // update category or status, returns the color as string

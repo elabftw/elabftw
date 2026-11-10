@@ -14,7 +14,7 @@ import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import Heartbeat from './Heartbeat.class';
 import ScrollButtons from './ScrollButtons.class';
-import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
+import { clearLocalStorage, rememberLastSelected, selectLastSelected, writeStorage } from './localStorage';
 import {
   adjustHiddenState,
   clearForm,
@@ -715,12 +715,12 @@ document.addEventListener('wheel', () => {
 }, { passive: true });
 
 /**
- * make 'toggle next' elements accessible by keyboard
+ * make togglable section headings (role=button) accessible by keyboard
  * redirect to click event
  */
 document.getElementById('container').addEventListener('keydown', event => {
   const el = event.target as HTMLElement;
-  if (el.matches('[data-action="toggle-next"]')
+  if (el.matches('[data-action="toggle-next"], [data-action="toggle-tabbed-section"]')
       && (event.key === ' ' || event.key === 'Enter' || event.key === 'Spacebar')) {
     el.dispatchEvent(new Event('click', { bubbles: true, cancelable: false }));
     event.preventDefault();
@@ -920,23 +920,27 @@ on('clear-form', (el: HTMLElement) => {
 // open the edit modal above the permissions overview: hiding the overview first makes the backdrop flash
 // bootstrap 4 has no stacking support, so the z-index of the second modal and its backdrop must be raised
 on('edit-permission', (el: HTMLElement) => {
-  const editor = $(`#${el.dataset.target}`);
+  const editorSelector = `#${el.dataset.target}`;
+  const editor = document.querySelector<HTMLElement>(editorSelector);
+  if (!editor) return;
   // closing the edit modal also resets the scrollbar compensation added by the overview, which shifts the page behind
   const padded = Array.from(document.querySelectorAll<HTMLElement>('body, .fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
   const paddings = padded.map(elem => elem.style.paddingRight);
   // bootstrap defaults are 1040 for the backdrop and 1050 for the modal
-  editor.css('z-index', 1070);
-  editor.one('hidden.bs.modal', () => {
-    editor.css('z-index', '');
+  editor.style.zIndex = '1070';
+  // jquery is kept here: bootstrap 4 fires its modal events through it only, and this cleanup must run once per opening
+  $(editor).one('hidden.bs.modal', () => {
+    editor.style.zIndex = '';
     // the edit modal removed it while closing, but the overview is still open and the page must not scroll
     document.body.classList.add('modal-open');
     padded.forEach((elem, index) => { elem.style.paddingRight = paddings[index]; });
     // back to where the keyboard user was in the overview
     el.focus();
   });
-  editor.modal('show');
+  showModal(editorSelector);
   // the backdrop of the modal we just opened is added synchronously at the end of the body
-  $('.modal-backdrop').last().css('z-index', 1060);
+  const backdrops = document.querySelectorAll<HTMLElement>('.modal-backdrop');
+  backdrops[backdrops.length - 1].style.zIndex = '1060';
 });
 
 on('save-permissions', (el: HTMLElement) => {
@@ -1026,7 +1030,7 @@ on('toggle-next', (el: HTMLElement) => {
 
   // save the hidden state of the target element in localStorage
   if (targetEl.dataset.saveHidden) {
-    localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
+    writeStorage(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
   }
 
   // now deal with icon of executor element
@@ -1672,6 +1676,27 @@ export function showModal(modalSelector: string) {
 export function showModalAndFocusFirstInput(modalSelector: string) {
   focusFirstTextInputOnShown(modalSelector);
   showModal(modalSelector);
+}
+
+export function hideModal(modalSelector: string): void {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).modal('hide');
+}
+
+export function isModalShown(modalSelector: string): boolean {
+  return document.querySelector(modalSelector)?.classList.contains('show') ?? false;
+}
+
+// bootstrap 4 fires its modal events through jquery only, so native listeners never see them
+export function onModalEvent(
+  modalSelector: string,
+  event: 'show' | 'shown' | 'hide' | 'hidden',
+  handler: (event: JQuery.TriggeredEvent) => void,
+): void {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).on(`${event}.bs.modal`, handler);
 }
 
 on('update-entity-body', async (el: HTMLElement) => {

@@ -24,6 +24,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
 use Elabftw\Services\ReactionSearch;
 use Override;
+use PDOStatement;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function explode;
@@ -54,7 +55,7 @@ final class DisplayParams extends BaseQueryParams
 
     protected string $orderIsPinnedSql = 'is_pinned DESC,';
 
-    private ?string $reactionFilterSql = null;
+    private ?ReactionSearch $ReactionSearch = null;
 
     public function __construct(
         private Users $requester,
@@ -135,7 +136,13 @@ final class DisplayParams extends BaseQueryParams
     #[Override]
     public function getFilterSql(): string
     {
-        return $this->filterSql . $this->getReactionFilterSql();
+        return $this->filterSql . $this->getReactionSearch()->getFilterSql();
+    }
+
+    #[Override]
+    public function bindFilterValues(PDOStatement $req): void
+    {
+        $this->getReactionSearch()->bindValues($req);
     }
 
     #[Override]
@@ -226,16 +233,12 @@ final class DisplayParams extends BaseQueryParams
     }
 
     /**
-     * Computed on first use only: DisplayParams are also built from the request when reading a single entry,
-     * and that must not run the reaction search
+     * Built on first use only: DisplayParams are also built from the request when reading a single entry,
+     * and that must not validate the reaction search
      */
-    private function getReactionFilterSql(): string
+    private function getReactionSearch(): ReactionSearch
     {
-        if ($this->reactionFilterSql === null) {
-            $ReactionSearch = new ReactionSearch($this->entityType, $this->getQuery());
-            $this->reactionFilterSql = $ReactionSearch->isActive() ? Tools::getIdFilterSql($ReactionSearch->getEntityIds()) : '';
-        }
-        return $this->reactionFilterSql;
+        return $this->ReactionSearch ??= new ReactionSearch($this->entityType, $this->getQuery());
     }
 
     /**

@@ -5,8 +5,7 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import $ from 'jquery';
-import { getInput, reloadElements } from './misc';
+import { getInput, reloadUploads } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import type { Upload } from './interfaces';
@@ -16,6 +15,7 @@ import { on } from './handlers';
 import { notify } from './notify';
 import { getUploadUrl, uploadFileToEntity } from './pasteImage';
 import { showTab } from './tabbed-sections';
+import { hideModal, showModal } from './common';
 
 const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
 if (doodleCanvas) {
@@ -148,7 +148,7 @@ if (doodleCanvas) {
   });
 
   // pick one of the image attachments of the entry
-  const loadModal = $('#doodleLoadAttachmentModal');
+  const loadModal = '#doodleLoadAttachmentModal';
   const loadForm = document.getElementById('doodleLoadAttachmentForm') as HTMLFormElement;
   const attachmentSelect = document.getElementById('doodleAttachmentSelect') as HTMLSelectElement;
   const loadSubmit = loadForm.querySelector<HTMLButtonElement>('[type="submit"]');
@@ -164,7 +164,7 @@ if (doodleCanvas) {
     attachmentSelect.replaceChildren();
     attachmentSelect.disabled = true;
     loadSubmit.disabled = true;
-    loadModal.modal('show');
+    showModal(loadModal);
     try {
       const uploads = await ApiC.getJson<StoredUpload[]>(`${entity.type}/${entity.id}/${Model.Upload}`);
       compatible = uploads.filter(upload => isCompatible(upload.real_name));
@@ -185,7 +185,7 @@ if (doodleCanvas) {
     if (!upload || !confirmReplace()) {
       return;
     }
-    loadModal.modal('hide');
+    hideModal(loadModal);
     void loadImage(getUploadUrl(upload));
   });
 
@@ -263,9 +263,8 @@ if (doodleCanvas) {
     hasContent = false;
   });
 
-  document.getElementById('saveCanvas').addEventListener('click', (e) => {
+  document.getElementById('saveCanvas').addEventListener('click', () => {
     const image = doodleCanvas.toDataURL();
-    const elDataset = (e.target as HTMLButtonElement).dataset;
     const realName = prompt(i18next.t('request-filename'));
     if (realName === null || realName === '') {
       return;
@@ -276,7 +275,8 @@ if (doodleCanvas) {
       'real_name': realName,
       'content': image,
     };
-    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
+    // sent as a data url: the server adds the png extension when the name has none
+    ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadUploads());
   });
 
   /**

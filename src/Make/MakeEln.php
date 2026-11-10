@@ -28,6 +28,7 @@ use Elabftw\Models\Compounds;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
@@ -353,8 +354,10 @@ class MakeEln extends AbstractMakeEln
         }
         // JSON-LD's @json preserves nested local snapshots without interpreting
         // their installation-local ids as references to other crate nodes.
-        if (!empty($e['reactions'])) {
-            $datasetNode['https://www.elabftw.net/ns#reactions'] = array('@type' => '@json', '@value' => $e['reactions']);
+        // The entry only has their summaries: an import needs the drawings too.
+        $reactions = new Reactions($entity)->readFull();
+        if ($reactions !== array()) {
+            $datasetNode['https://www.elabftw.net/ns#reactions'] = array('@type' => '@json', '@value' => $reactions);
         }
         // METADATA (extra fields)
         if ($e['metadata']) {

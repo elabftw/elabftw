@@ -8,7 +8,7 @@
 import {
   escapeRegExp,
   getNewIdFromPostRequest,
-  reloadElements,
+  reloadUploads,
   updateEntityBody,
 } from './misc';
 import { Target, Model, Action } from './interfaces';
@@ -248,7 +248,7 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
       method: 'POST',
       body: formData,
     }).then(resp => {
-      reloadElements(['uploadsDiv']);
+      void reloadUploads();
       // return early if longName is not found in body
       if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
         && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)

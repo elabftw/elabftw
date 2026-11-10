@@ -614,17 +614,10 @@ final class Compounds extends AbstractRest
         $sql .= 'FROM compounds_fingerprints AS cf
             LEFT JOIN compounds AS c ON cf.id = c.id';
         $sql .= ' WHERE 1=1 AND c.state IN (:state_normal, :state_archived)';
-        foreach ($fp['data'] as $key => $value) {
-            if ($value == 0) {
-                continue;
-            }
-            // this will do an approximate substructure search
-            $exactModifier = sprintf(' & %d ', $value);
-            if ($exact) {
-                $exactModifier = '';
-            }
-            $sql .= sprintf(' AND fp%d %s = %d', $key, $exactModifier, $value);
-        }
+        // without $exact, this is an approximate substructure search
+        $sql .= $exact
+            ? FingerprintTable::equalsSql($fp['data'], 'cf', ignoreEmptyWords: true)
+            : FingerprintTable::containsSql($fp['data'], 'cf');
 
         $sql .= ' ORDER BY similarity_score, id DESC LIMIT 500';
         $req = $this->Db->prepare($sql);

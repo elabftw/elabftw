@@ -340,7 +340,9 @@ When a new Experiment or Resource is created from that template, the locked step
 
 ## Spreadsheet Editor
 
-With version 5.3 comes a new spreadsheet editor, present in the edit page of an entry, in the **Spreadsheet** tab of the **Editors** section. The **Image** and **JSON** tabs of the same section hold the drawing tool and the JSON editor. The selected tab is remembered. In the **Image** tab, use **Load attachment** to draw on an image already attached to the entry, or **Upload image** to attach a new image and load it in the editor at once. It lets users display and manipulate tabular data directly inside eLabFTW, with support for common spreadsheet operations and formula calculations (e.g. CSV / XLSX import-export, cell arithmetic, SUM, ROW, etc.).
+With version 5.3 comes a new spreadsheet editor, present in the edit page of an entry, in the **Spreadsheet** tab of the **Editors** section. It lets users display and manipulate tabular data directly inside eLabFTW, with support for common spreadsheet operations and formula calculations (e.g. CSV / XLSX import-export, cell arithmetic, SUM, ROW, etc.).
+
+The **Image** and **JSON** tabs of the same section hold the drawing tool and the JSON editor. The selected tab is remembered. In the **Image** tab, use **Load attachment** to draw on an image already attached to the entry, or **Upload image** to attach a new image and load it in the editor at once.
 
 <figure>
   <img src="/img/spreadsheet-editor.webp" alt="spreadsheet editor" />

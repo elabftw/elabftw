@@ -1,7 +1,10 @@
 {# searchLinks: link to the reaction search of experiments, not wanted in a PDF #}
 {% set searchLinks = searchLinks|default(false) %}
-{% if reaction.preview_png %}
+{# a PDF gets the preview inline (see MakePdf), a page loads it from the API: the entry only has reaction summaries #}
+{% if reaction.preview_png|default('') %}
   <img class='img-fluid mb-2' src='data:image/png;base64,{{ reaction.preview_png }}' alt='{{ 'Reaction scheme'|trans }}'>
+{% elseif reaction.has_preview|default(false) %}
+  <img class='img-fluid mb-2' src='/api/v2/{{ Entity.entityType.value }}/{{ Entity.id }}/reactions/{{ reaction.id }}?format=binary' alt='{{ 'Reaction scheme'|trans }}' loading='lazy'>
 {% endif %}
 <p>
   {% if reaction.temperature_c is not null %}{{ reaction.temperature_c + 0 }} °C; {% endif %}

@@ -453,6 +453,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
 
         $this->bindExtendedValues($req);
         $this->Db->execute($req);
@@ -512,6 +513,7 @@ abstract class AbstractEntity extends AbstractRest
         $req = $this->Db->prepare($sql);
         $userid = $this->Users->getUserid();
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -711,7 +713,8 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['step_groups'] = new StepGroups($this)->readAll();
-        $this->entityData['reactions'] = new Reactions($this)->readAll();
+        // summaries only: this runs on every read of the entry, including the response to each autosave
+        $this->entityData['reactions'] = new Reactions($this)->readSummaries();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
@@ -780,6 +783,8 @@ abstract class AbstractEntity extends AbstractRest
         $base['revisions'] = $isAnonymous
             ? array()
             : new BodyRevisions($this)->readAll();
+        // a full export carries what is needed to draw and edit the reactions again
+        $base['reactions'] = new Reactions($this)->readFull();
         $base['reaction_history'] = $isAnonymous
             ? array()
             : new Reactions($this)->readAllHistory();
@@ -826,6 +831,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':teamid', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
+        $displayParams->bindFilterValues($req);
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
         }
@@ -1523,6 +1529,7 @@ abstract class AbstractEntity extends AbstractRest
         $req = $this->Db->prepare($sql);
         $userid = $this->Users->getUserid();
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
         $this->Db->execute($req);
 
         return $this->hydrateTags($req->fetchAll());

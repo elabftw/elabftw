@@ -18,7 +18,7 @@ import {
   sendSpreadsheetMessage,
 } from './spreadsheet-utils';
 import type { SpreadsheetWorkbook } from './spreadsheet-utils';
-import { adjustHiddenState, collectForm, relativeMoment, reloadElements } from './misc';
+import { adjustHiddenState, collectForm, errorMessage, relativeMoment, reloadElements } from './misc';
 import { showTab } from './tabbed-sections';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
@@ -394,7 +394,7 @@ const withSpreadsheetData = async (callback: (
     if (revision !== spreadsheetRevision) return;
     await callback(workbook, revision, documentRevision);
   } catch (error) {
-    notify.error(error instanceof Error ? error.message : 'Unexpected spreadsheet error.');
+    notify.error(errorMessage(error, 'Unexpected spreadsheet error.'));
   } finally {
     spreadsheetSaving = false;
     saveSpreadsheetButton.disabled = false;
@@ -441,7 +441,7 @@ if (spreadsheetIframe) {
       spreadsheetUpload = null;
       replaceSpreadsheetButton.disabled = true;
     }
-  }).catch(error => notify.error(error instanceof Error ? error.message : 'Spreadsheet editor is not available.'));
+  }).catch(error => notify.error(errorMessage(error, 'Spreadsheet editor is not available.')));
 }
 
 window.addEventListener('beforeunload', event => {

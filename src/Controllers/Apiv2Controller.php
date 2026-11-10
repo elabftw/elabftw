@@ -291,12 +291,12 @@ final class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Binary => (
                 function () {
-                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports || $this->Model instanceof Branding) {
+                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports || $this->Model instanceof Branding || $this->Model instanceof Reactions) {
                         $response = $this->Model->readBinary();
                         $response->isNotModified($this->Request);
                         return $response;
                     }
-                    throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding endpoints.');
+                    throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding/reactions endpoints.');
                 }
             )(),
             ExportFormat::Csv,

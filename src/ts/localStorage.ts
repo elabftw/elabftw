@@ -6,6 +6,24 @@
  * @package elabftw
  */
 
+// storage can be unavailable (private browsing, blocked site data): reading then gives nothing and writing is skipped,
+// so the page still works, only without remembering
+export function readStorage(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+export function writeStorage(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // nothing to remember it in
+  }
+}
+
 // custom clear function so we keep the persistent keys
 export function clearLocalStorage() {
   const prefix = 'persistent_';

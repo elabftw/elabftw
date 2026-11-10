@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Controllers\Apiv2Controller;
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
@@ -15,12 +16,18 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use function array_column;
+use function array_diff_key;
+use function array_flip;
+use function array_map;
+use function base64_decode;
+use function intval;
 use function array_merge;
 use function json_decode;
 use function json_encode;
@@ -29,6 +36,9 @@ use function sprintf;
 final class ReactionsTest extends TestCase
 {
     use TestsUtilsTrait;
+
+    // 1x1 pixel
+    private const string PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
     public function testAllEntryTypesAndIndependentDuplication(): void
     {
@@ -172,6 +182,66 @@ final class ReactionsTest extends TestCase
         new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('title' => 'Second')));
         new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('title' => 'Third')));
         $this->assertSame(array('Second', 'Third'), array_column(new Reactions($entity)->readAll(), 'title'));
+    }
+
+    public function testEntryReadsSummariesAndTheApiServesThePreview(): void
+    {
+        $entity = $this->getFreshExperiment();
+        $id = new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('preview_png' => self::PNG)));
+        $summary = $entity->readOne()['reactions'][0];
+        foreach (array('scheme', 'rxn', 'preview_png') as $column) {
+            $this->assertArrayNotHasKey($column, $summary);
+        }
+        $this->assertArrayNotHasKey('molfile', $summary['components'][0]);
+        $this->assertSame(1, (int) $summary['has_preview']);
+        // quantities are still calculated, for display
+        $this->assertArrayHasKey('actual', $summary['components'][0]);
+        $this->assertArrayHasKey('rxn', $entity->readOneFull()['reactions'][0]);
+
+        $uri = sprintf('/api/v2/experiments/%d/reactions/%d?format=binary', $entity->id, $id);
+        $response = new Apiv2Controller($entity->Users, Request::create($uri))->getResponse();
+        $this->assertSame(Response::HTTP_OK, $response->getStatusCode(), (string) $response->getContent());
+        $this->assertSame('image/png', $response->headers->get('Content-Type'));
+        $this->assertSame(base64_decode(self::PNG, true), $response->getContent());
+    }
+
+    public function testDuplicationCopiesTheStoredReaction(): void
+    {
+        $entity = $this->getFreshExperiment();
+        new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('preview_png' => self::PNG, 'temperature_c' => 25)));
+        $copy = EntityType::Experiments->toInstance($entity->Users, $entity->duplicate());
+        $source = new Reactions($entity)->readFull()[0];
+        $copied = new Reactions($copy)->readFull()[0];
+        $this->assertNotSame($source['id'], $copied['id']);
+        // a column missing from the copy would show here
+        $own = array_flip(array('id', 'created_at', 'modified_at', 'components'));
+        $this->assertSame(array_diff_key($source, $own), array_diff_key($copied, $own));
+        $stripIds = static fn(array $component): array => array_diff_key($component, array_flip(array('id', 'reaction_id')));
+        $this->assertSame(array_map($stripIds, $source['components']), array_map($stripIds, $copied['components']));
+        // the copy has its own history, starting with its creation
+        $this->assertCount(1, new Reactions($copy)->readAll(new BaseQueryParams(query: new InputBag(array('history_of' => $copied['id'])))));
+    }
+
+    public function testHistoryStoresTheDrawingOnlyWhenItChanges(): void
+    {
+        $entity = $this->getFreshExperiment();
+        $id = new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('preview_png' => self::PNG)));
+        $model = new Reactions($entity, $id);
+        $model->patch(Action::Update, array('version' => 1, 'title' => 'Renamed'));
+        $model->patch(Action::Update, array('version' => 2, 'scheme' => array('root' => array('nodes' => array(array('type' => 'arrow'))))));
+
+        $Db = Db::getConnection();
+        $req = $Db->prepare('SELECT JSON_CONTAINS_PATH(snapshot, \'one\', \'$.rxn\') FROM reaction_revisions WHERE reaction_id = :id ORDER BY version');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $Db->execute($req);
+        $this->assertSame(array(1, 0, 1), array_map(intval(...), $req->fetchAll(PDO::FETCH_COLUMN)));
+
+        // but each revision is read with the drawing it had
+        $history = array_column($model->readAll(new BaseQueryParams(query: new InputBag(array('history_of' => $id)))), 'snapshot');
+        $this->assertSame($history[0]['scheme'], $history[1]['scheme']);
+        $this->assertNotSame($history[1]['scheme'], $history[2]['scheme']);
+        $this->assertArrayNotHasKey('preview_png', $history[0]);
+        $this->assertArrayHasKey('actual', $history[1]['components'][0]);
     }
 
     private function data(): array

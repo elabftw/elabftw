@@ -10,21 +10,20 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
+use Elabftw\Models\FingerprintTable;
 use Elabftw\Params\ReactionParams;
 use PDO;
+use PDOStatement;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
 use function addcslashes;
 use function filter_var;
-use function array_map;
 use function in_array;
-use function intval;
 use function mb_strlen;
 use function preg_match;
 use function sprintf;
@@ -33,8 +32,9 @@ use function substr;
 use function trim;
 
 /**
- * Find the entries of a type that contain a current (not deleted) reaction matching all the criteria.
- * It only selects candidate ids: the listing query applies the read permissions and the other filters.
+ * Filter a listing to the entries of a type that contain a current (not deleted) reaction matching all the criteria.
+ * It is a subquery of the listing, which applies the read permissions and the other filters: the matching ids never
+ * go through PHP, however many there are. The listing binds the values with bindValues().
  *
  * - reaction_q: text in the title, conditions or atmosphere of the reaction, or the name or formula of a component
  * - reaction_structure: SMILES or InChIKey of a component; reaction_exact switches from related to identical structures
@@ -63,6 +63,11 @@ final class ReactionSearch
     private ?int $item = null;
 
     private ?string $key = null;
+
+    /** Built on first use, with its binds: a structure search runs Open Babel */
+    private ?string $filterSql = null;
+
+    private array $binds = array();
 
     public function __construct(
         private EntityType $entityType,
@@ -99,42 +104,51 @@ final class ReactionSearch
         return $this->text !== '' || $this->hasComponentCriteria() || $this->key !== null;
     }
 
-    public function getEntityIds(): array
+    /** Condition on entity.id for the listing query, empty without search criteria */
+    public function getFilterSql(): string
     {
         if (!$this->isActive()) {
-            throw new ImproperActionException('No reaction search criteria.');
+            return '';
         }
-        $binds = array(':state' => array(State::Normal->value, PDO::PARAM_INT));
+        return $this->filterSql ??= $this->buildFilterSql();
+    }
+
+    /** Call it on the statement that contains getFilterSql() */
+    public function bindValues(PDOStatement $req): void
+    {
+        $this->getFilterSql();
+        foreach ($this->binds as $name => $bind) {
+            $req->bindValue($name, $bind[0], $bind[1]);
+        }
+    }
+
+    /** The placeholders are prefixed so they cannot collide with the ones of the listing query */
+    private function buildFilterSql(): string
+    {
+        $this->binds = array(':rs_state' => array(State::Normal->value, PDO::PARAM_INT));
         $sql = sprintf(
-            'SELECT DISTINCT links.entity_id FROM reactions2%s AS links
-            INNER JOIN reactions AS r ON (r.id = links.reaction_id AND r.state = :state)
+            ' AND entity.id IN (SELECT links.entity_id FROM reactions2%s AS links
+            INNER JOIN reactions AS r ON (r.id = links.reaction_id AND r.state = :rs_state)
             WHERE 1=1',
             $this->entityType->value,
         );
         if ($this->key !== null) {
-            $sql .= ' AND r.reaction_key = :reaction_key';
-            $binds[':reaction_key'] = array($this->key, PDO::PARAM_STR);
+            $sql .= ' AND r.reaction_key = :rs_key';
+            $this->binds[':rs_key'] = array($this->key, PDO::PARAM_STR);
         }
         if ($this->text !== '') {
-            $sql .= ' AND (r.title LIKE :text_title OR r.conditions_notes LIKE :text_notes OR r.atmosphere LIKE :text_atmosphere
+            $sql .= ' AND (r.title LIKE :rs_text_title OR r.conditions_notes LIKE :rs_text_notes OR r.atmosphere LIKE :rs_text_atmosphere
                 OR EXISTS (SELECT 1 FROM reaction_components AS tc WHERE tc.reaction_id = r.id
-                    AND (tc.name LIKE :text_name OR tc.molecular_formula LIKE :text_formula)))';
+                    AND (tc.name LIKE :rs_text_name OR tc.molecular_formula LIKE :rs_text_formula)))';
             $like = '%' . addcslashes($this->text, '%_\\') . '%';
             foreach (array('title', 'notes', 'atmosphere', 'name', 'formula') as $field) {
-                $binds[':text_' . $field] = array($like, PDO::PARAM_STR);
+                $this->binds[':rs_text_' . $field] = array($like, PDO::PARAM_STR);
             }
         }
         if ($this->hasComponentCriteria()) {
-            $sql .= $this->getComponentSql($binds);
+            $sql .= $this->getComponentSql();
         }
-
-        $Db = Db::getConnection();
-        $req = $Db->prepare($sql);
-        foreach ($binds as $name => $bind) {
-            $req->bindValue($name, $bind[0], $bind[1]);
-        }
-        $Db->execute($req);
-        return array_map(intval(...), $req->fetchAll(PDO::FETCH_COLUMN));
+        return $sql . ')';
     }
 
     private function hasComponentCriteria(): bool
@@ -143,32 +157,32 @@ final class ReactionSearch
     }
 
     /** All the component criteria apply to the same component */
-    private function getComponentSql(array &$binds): string
+    private function getComponentSql(): string
     {
         $join = '';
         $where = '';
         if ($this->role !== null) {
-            $where .= ' AND c.role = :role';
-            $binds[':role'] = array($this->role, PDO::PARAM_STR);
+            $where .= ' AND c.role = :rs_role';
+            $this->binds[':rs_role'] = array($this->role, PDO::PARAM_STR);
         }
         if ($this->compound !== null) {
-            $where .= ' AND c.compound_id = :compound';
-            $binds[':compound'] = array($this->compound, PDO::PARAM_INT);
+            $where .= ' AND c.compound_id = :rs_compound';
+            $this->binds[':rs_compound'] = array($this->compound, PDO::PARAM_INT);
         }
         if ($this->item !== null) {
-            $where .= ' AND c.item_id = :item';
-            $binds[':item'] = array($this->item, PDO::PARAM_INT);
+            $where .= ' AND c.item_id = :rs_item';
+            $this->binds[':rs_item'] = array($this->item, PDO::PARAM_INT);
         }
         if ($this->structure !== '') {
             if (preg_match(self::INCHIKEY_REGEX, strtoupper($this->structure)) === 1) {
                 $inchiKey = strtoupper($this->structure);
                 if ($this->exact) {
-                    $where .= ' AND c.inchi_key = :inchi_key';
-                    $binds[':inchi_key'] = array($inchiKey, PDO::PARAM_STR);
+                    $where .= ' AND c.inchi_key = :rs_inchi_key';
+                    $this->binds[':rs_inchi_key'] = array($inchiKey, PDO::PARAM_STR);
                 } else {
                     // the first block encodes the connectivity: also match stereoisomers, isotopologues and other protonation states
-                    $where .= ' AND c.inchi_key LIKE :inchi_key';
-                    $binds[':inchi_key'] = array(substr($inchiKey, 0, 14) . '-%', PDO::PARAM_STR);
+                    $where .= ' AND c.inchi_key LIKE :rs_inchi_key';
+                    $this->binds[':rs_inchi_key'] = array(substr($inchiKey, 0, 14) . '-%', PDO::PARAM_STR);
                 }
             } else {
                 $join = ' INNER JOIN reaction_component_fingerprints AS f ON (f.component_id = c.id)';
@@ -188,15 +202,9 @@ final class ReactionSearch
         if ($fingerprint === null) {
             throw new ImproperActionException(_('Could not read this structure: enter a SMILES or an InChIKey.'));
         }
-        $sql = '';
-        foreach ($fingerprint as $index => $value) {
-            if ($this->exact) {
-                $sql .= sprintf(' AND f.fp%d = %d', $index, $value);
-            } elseif ($value !== 0) {
-                $sql .= sprintf(' AND (f.fp%d & %d) = %d', $index, $value, $value);
-            }
-        }
-        return $sql;
+        return $this->exact
+            ? FingerprintTable::equalsSql($fingerprint, 'f')
+            : FingerprintTable::containsSql($fingerprint, 'f');
     }
 
     private function getId(InputBag $query, string $name): ?int

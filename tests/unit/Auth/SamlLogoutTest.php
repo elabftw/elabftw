@@ -4,9 +4,27 @@ declare(strict_types=1);
 
 namespace Elabftw\Auth;
 
+use Codeception\Attribute\DataProvider;
 use OneLogin\Saml2\Auth;
-use PHPUnit\Framework\Attributes\DataProvider;
+use OpenSSLCertificateSigningRequest;
 use PHPUnit\Framework\TestCase;
+
+use function base64_encode;
+use function gmdate;
+use function gzdeflate;
+use function openssl_csr_new;
+use function openssl_csr_sign;
+use function openssl_pkey_new;
+use function openssl_sign;
+use function openssl_x509_export;
+use function parse_str;
+use function preg_replace_callback;
+use function str_replace;
+use function strtolower;
+use function urlencode;
+
+use const OPENSSL_ALGO_SHA256;
+use const OPENSSL_KEYTYPE_RSA;
 
 final class SamlLogoutTest extends TestCase
 {
@@ -29,7 +47,7 @@ final class SamlLogoutTest extends TestCase
             $key = openssl_pkey_new(array('private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA));
             self::assertNotFalse($key);
             $csr = openssl_csr_new(array('commonName' => 'idp.example.test'), $key, array('digest_alg' => 'sha256'));
-            self::assertNotFalse($csr);
+            self::assertInstanceOf(OpenSSLCertificateSigningRequest::class, $csr);
             $certificate = openssl_csr_sign($csr, null, $key, 1, array('digest_alg' => 'sha256'));
             self::assertNotFalse($certificate);
             self::assertTrue(openssl_x509_export($certificate, $cert));
@@ -60,7 +78,9 @@ final class SamlLogoutTest extends TestCase
                 $encoded = urlencode($value);
                 return $lowercase ? preg_replace_callback('/%[0-9A-F]{2}/', static fn(array $match): string => strtolower($match[0]), $encoded) : $encoded;
             };
-            $query = 'SAMLResponse=' . $encode(base64_encode(gzdeflate($xml)))
+            $compressed = gzdeflate($xml);
+            self::assertNotFalse($compressed);
+            $query = 'SAMLResponse=' . $encode(base64_encode($compressed))
                 . '&RelayState=' . $encode('https://sp.example.test/home?a=b+c')
                 . '&SigAlg=' . $encode('http://www.w3.org/2001/04/xmldsig-more#rsa-sha256');
             self::assertTrue(openssl_sign($query, $signature, $key, OPENSSL_ALGO_SHA256));

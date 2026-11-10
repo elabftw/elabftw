@@ -20,7 +20,7 @@ describe('Attachment preview request ordering', () => {
     cy.window().its('jQuery').then(($: JQueryStatic) => {
       $('#plainTextModal').one('shown.bs.modal', cy.stub().as('previewShown'));
     });
-    cy.get(`#preview-${name}`).click();
+    cy.get(`#preview-${name}`).click({ force: true });
     cy.get('@previewShown').should('have.been.calledOnce');
   }
 

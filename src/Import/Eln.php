@@ -673,6 +673,9 @@ class Eln extends AbstractZip
         // CREATE ENTITY
         $entityId = $this->Entity->create();
         $this->Entity->setId($entityId);
+        if ($categoryId !== null) {
+            $this->Entity->update(new EntityParams('category', $categoryId));
+        }
         $this->logger->debug(sprintf('Created %s with id: %d', $this->Entity->entityType->value, $entityId));
         // Groups must exist before steps or files are imported, regardless of JSON property order.
         $this->importGroups($dataset);
@@ -710,7 +713,7 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->update(new EntityParams('category', $categoryId));
+                    // Applied above even when the source dataset has no about field.
                     break;
                     // COMMENTS
                 case 'comment':

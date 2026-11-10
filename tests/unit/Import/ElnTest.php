@@ -862,6 +862,43 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(1, $Import->getInserted());
     }
 
+    public function testForcedCategoryWithoutSourceAbout(): void
+    {
+        $title = 'Forced category without source about';
+        $crate = array('@graph' => array(
+            array('@id' => 'ro-crate-metadata.json', '@type' => 'CreativeWork', 'about' => array('@id' => './')),
+            array('@id' => './', '@type' => 'Dataset', 'hasPart' => array(array('@id' => './record/'))),
+            array('@id' => './record/', '@type' => 'Dataset', 'name' => $title),
+        ));
+        $archivePath = tempnam(sys_get_temp_dir(), 'elabftw-forced-category-');
+        $this->assertIsString($archivePath);
+        $archive = new ZipArchive();
+        $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
+        $this->assertTrue($archive->addFromString('import/ro-crate-metadata.json', json_encode($crate, JSON_THROW_ON_ERROR)));
+        $this->assertTrue($archive->close());
+        $Experiment = null;
+        try {
+            $Users = new Users(1, 1);
+            $Import = new Eln(
+                $Users,
+                $Users,
+                new UploadedFile($archivePath, 'category.eln', null, UPLOAD_ERR_OK, true),
+                $this->fs,
+                $this->logger,
+                CompoundsFactory::getCompounds($Users),
+                EntityType::Experiments,
+                category: 1,
+            );
+            $Import->import();
+            $this->assertSame(1, $Import->getInserted());
+            $Experiment = $this->getExperimentFromTitle($title);
+            $this->assertSame(1, $Experiment->readOne()['category']);
+        } finally {
+            unlink($archivePath);
+            $Experiment?->destroy();
+        }
+    }
+
     private function getExperimentFromTitle(string $title): Experiments
     {
         $Experiments = new Experiments(new Users(1, 1));

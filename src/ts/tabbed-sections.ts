@@ -94,9 +94,15 @@ on('toggle-tabbed-section', (el: HTMLElement) => {
   setSectionCollapsed(el, el.getAttribute('aria-expanded') === 'true');
 });
 
-// the heading is a role=button: its keyboard activation is in common.ts, with the toggle-next ones
 document.addEventListener('keydown', (event: KeyboardEvent) => {
   const target = event.target as HTMLElement;
+  // the heading is a role=button, so it needs the keyboard activation a real button has.
+  // It is toggled here directly: going through the synthetic click of toggle-next (common.ts) broke collapsing it with Space
+  if (target.matches?.('[data-action="toggle-tabbed-section"]') && (event.key === ' ' || event.key === 'Enter')) {
+    event.preventDefault();
+    setSectionCollapsed(target, target.getAttribute('aria-expanded') === 'true');
+    return;
+  }
   // arrow keys move between tabs, as expected for a tablist
   if (target.matches?.('[role="tab"][data-action="switch-tab-pane"]') && (event.key === 'ArrowLeft' || event.key === 'ArrowRight')) {
     const tabs = Array.from(target.closest('[role="tablist"]').querySelectorAll<HTMLElement>('[role="tab"]'));

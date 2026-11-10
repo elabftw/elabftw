@@ -715,12 +715,12 @@ document.addEventListener('wheel', () => {
 }, { passive: true });
 
 /**
- * make togglable section headings (role=button) accessible by keyboard
+ * make 'toggle next' elements accessible by keyboard
  * redirect to click event
  */
 document.getElementById('container').addEventListener('keydown', event => {
   const el = event.target as HTMLElement;
-  if (el.matches('[data-action="toggle-next"], [data-action="toggle-tabbed-section"]')
+  if (el.matches('[data-action="toggle-next"]')
       && (event.key === ' ' || event.key === 'Enter' || event.key === 'Spacebar')) {
     el.dispatchEvent(new Event('click', { bubbles: true, cancelable: false }));
     event.preventDefault();
@@ -1681,6 +1681,12 @@ export function showModalAndFocusFirstInput(modalSelector: string) {
 export function hideModal(modalSelector: string): void {
   const modal = document.querySelector<HTMLElement>(modalSelector);
   if (!modal) return;
+  // bootstrap 4 ignores hide while the modal is still fading in, and it would stay open: hide it once it is shown
+  const instance = $(modal).data('bs.modal') as { _isShown?: boolean; _isTransitioning?: boolean } | undefined;
+  if (instance?._isShown && instance._isTransitioning) {
+    $(modal).one('shown.bs.modal', () => $(modal).modal('hide'));
+    return;
+  }
   $(modal).modal('hide');
 }
 

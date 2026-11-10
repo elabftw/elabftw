@@ -27,24 +27,24 @@ describe('Editors section', () => {
   });
 
   it('uploads an image and loads it in the image editor, then loads it again from the attachments', () => {
-    // 1x1 png: the editor adds the minimum margin of 40px above and below it
-    const png = Cypress.Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+    // 432x131 png: the editor adds a margin of a tenth of its largest side (43px) above and below it.
+    // Select a file from disk: a Buffer built in the spec was uploaded as UTF-8 text, so the stored png could not be decoded.
     cy.get('[data-cy="editors-section-toggle"]').click();
     cy.get('[data-cy="editors-tab-image"]').click();
     cy.intercept('POST', '**/api/v2/experiments/*/uploads').as('upload');
-    cy.get('[data-cy="doodle-upload-input"]').selectFile({ contents: png, fileName: 'dot.png', mimeType: 'image/png' }, { force: true });
+    cy.get('[data-cy="doodle-upload-input"]').selectFile('tests/_data/example.png', { force: true });
     cy.wait('@upload').its('response.statusCode').should('eq', 201);
-    cy.get('#doodleCanvas').should('have.attr', 'height', '81');
-    cy.get('#uploadsDiv').should('contain', 'dot.png');
+    cy.get('#doodleCanvas').should('have.attr', 'height', '217');
+    cy.get('#uploadsDiv').should('contain', 'example.png');
 
     // back to the default size, then load the attachment we just uploaded
     cy.get('#clearCanvas').click();
     cy.get('#doodleCanvas').invoke('attr', 'height', '600');
     cy.get('[data-cy="doodle-load-attachment"]').click();
-    cy.get('[data-cy="doodle-attachment-select"]').should('contain', 'dot.png');
+    cy.get('[data-cy="doodle-attachment-select"]').should('contain', 'example.png');
     cy.get('[data-cy="doodle-load-attachment-submit"]').should('be.enabled').click();
     cy.get('#doodleLoadAttachmentModal').should('not.be.visible');
-    cy.get('#doodleCanvas').should('have.attr', 'height', '81');
+    cy.get('#doodleCanvas').should('have.attr', 'height', '217');
   });
 
   it('makes the image canvas as wide as the editor', () => {
@@ -76,6 +76,8 @@ describe('Editors section', () => {
   it('collapses with the keyboard', () => {
     cy.get('[data-cy="editors-section-toggle"]').focus().type('{enter}');
     cy.get('#editorsDiv').should('be.visible');
+    // the page may still be initializing the chem tab (Ketcher, compounds table) and move focus: wait until it is back
+    cy.focused().should('have.attr', 'data-cy', 'editors-section-toggle');
     cy.get('[data-cy="editors-section-toggle"]').type(' ');
     cy.get('#editorsDiv').should('not.be.visible');
   });

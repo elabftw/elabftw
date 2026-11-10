@@ -32,7 +32,8 @@ document.addEventListener('tab-shown', (event: CustomEvent<string>) => {
   }
   window.requestAnimationFrame(() => {
     if (editor.plugins.autoresize) {
-      editor.execCommand('mceAutoResize');
+      // a layout change must not move the focus into the editor
+      editor.execCommand('mceAutoResize', false, undefined, { skip_focus: true });
     }
     window.dispatchEvent(new Event('scroll'));
   });

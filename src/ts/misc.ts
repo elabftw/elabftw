@@ -532,6 +532,13 @@ function addUsersConfig(select: HTMLSelectElement, config): void {
   if (select.id.endsWith('_select_users')) {
     const filter = document.getElementById(`${select.id}_only_active`) as HTMLInputElement | null;
     let filterVersion = 0;
+    let queryBeforeBlur = '';
+    // TomSelect clears its textbox on blur, before the checkbox change event.
+    // Capture the query first so mouse and keyboard toggles can repeat it.
+    if (filter) {
+      const input = config['controlInput'] as HTMLInputElement;
+      input.addEventListener('blur', () => { queryBeforeBlur = input.value; }, true);
+    }
     config['load'] = (query: string, callback) => {
       if (!query.length) return callback();
       const version = filterVersion;
@@ -543,10 +550,11 @@ function addUsersConfig(select: HTMLSelectElement, config): void {
       filterVersion++;
       const ts = (select as HTMLSelectElement & { tomselect?: TomSelect }).tomselect;
       if (!ts) return;
+      const query = ts.inputValue() || queryBeforeBlur;
       // clearOptions retains selected users while invalidating cached searches.
       ts.clearOptions();
+      ts.setTextboxValue(query);
       ts.refreshOptions(false);
-      const query = ts.getTextboxValue();
       if (query.length) ts.load(query);
     });
   }

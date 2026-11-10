@@ -13,12 +13,18 @@ describe('Permission user search', () => {
 
   function openPermissions() {
     cy.visit('/ucp.php?tab=1');
+    // Bootstrap focuses the modal after the opening transition. Wait for that
+    // event so it cannot blur TomSelect and erase a search while we are typing.
+    cy.window().its('jQuery').then(($: JQueryStatic) => {
+      $(modal).one('shown.bs.modal', cy.stub().as('permissionsShown'));
+    });
     cy.get('[data-target="permModal-canreaddefaultPermissions"]').click();
+    cy.get('@permissionsShown').should('have.been.calledOnce');
     cy.get(modal).should('be.visible');
   }
 
   it('filters suggestions without removing selected users and reloads the same query', () => {
-    cy.intercept('GET', '**/api/v2/users/?*', req => {
+    cy.intercept({ method: 'GET', pathname: '/api/v2/users/' }, req => {
       const onlyActive = new URL(req.url).searchParams.get('onlyActive') === '1';
       req.alias = onlyActive ? 'activeUsers' : 'allUsers';
       req.reply(onlyActive ? [active] : [active, selected, archived]);
@@ -38,12 +44,16 @@ describe('Permission user search', () => {
     cy.get(input).focus();
     cy.get(`${modal} .option[data-value="user:90103"]`).should('exist');
     cy.get(select).invoke('val').should('include', 'user:90102');
+    cy.get(input).clear();
+    cy.get(toggle).click();
+    cy.get(input).should('have.value', '');
+    cy.get(select).invoke('val').should('include', 'user:90102');
     // Do not save these synthetic selections or change any account permissions.
   });
 
   it('ignores a response from before the filter changed', () => {
     let unfilteredRequestStarted = false;
-    cy.intercept('GET', '**/api/v2/users/?*', req => {
+    cy.intercept({ method: 'GET', pathname: '/api/v2/users/' }, req => {
       const onlyActive = new URL(req.url).searchParams.get('onlyActive') === '1';
       if (onlyActive) {
         req.alias = 'activeUsers';

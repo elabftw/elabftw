@@ -23,8 +23,10 @@ describe('Exclusive edit mode', () => {
     cy.get('#canwrite_select_base').should('be.visible').select('Only members of the team');
     cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
-    // log out Toto
-    cy.request('/app/logout.php');
+    // Navigate away so the editor cannot finish a reload after the next login.
+    // The onbeforeunload override above still preserves the exclusive edit lock.
+    cy.visit('/app/logout.php');
+    cy.location('pathname').should('eq', '/login.php');
   };
 
   const accessEntityAsTiti = () => {

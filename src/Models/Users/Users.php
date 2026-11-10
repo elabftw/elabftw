@@ -23,7 +23,6 @@ use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
-use Elabftw\Enums\Messages;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
@@ -368,6 +367,7 @@ class Users extends AbstractRest
           u.firstname,
           u.lastname,
           u.created_at,
+          u.modified_at,
           u.orgid,
           u.email,
           (u.mfa_secret IS NOT NULL)       AS has_mfa_enabled,
@@ -422,6 +422,7 @@ class Users extends AbstractRest
           u.firstname,
           u.lastname,
           u.created_at,
+          u.modified_at,
           u.orgid,
           u.email,
           has_mfa_enabled,
@@ -517,8 +518,9 @@ class Users extends AbstractRest
             $removeKeys = array_diff($removeKeys, array('teams'));
         }
         return array_map(function (array $user) use ($isSysadmin, $removeKeys): array {
+            // modified_at changes on every login, so it is as sensitive as last_login
             if (!$isSysadmin) {
-                unset($user['last_login']);
+                unset($user['last_login'], $user['modified_at']);
             }
             if ($isSysadmin || $this->requester->isAdminOf($user['userid'])) {
                 return $user;
@@ -541,15 +543,24 @@ class Users extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->canReadOrExplode();
         $userData = $this->readOneFull();
+        if (!$this->canReadFullProfile()) {
+            return array(
+                'firstname' => $userData['firstname'],
+                'lastname' => $userData['lastname'],
+                'fullname' => $userData['fullname'],
+                'email' => self::maskEmail($userData['email']),
+            );
+        }
+
         unset($userData['password']);
         unset($userData['password_hash']);
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        // modified_at changes on every login, so it is as sensitive as last_login
         if (!$this->requester->isSysadmin()) {
-            unset($userData['last_login']);
+            unset($userData['last_login'], $userData['modified_at']);
         }
         // keep sig_privkey in response if requester is target
         if ($this->requester->getUserid() !== $this->getUserid()) {
@@ -564,7 +575,7 @@ class Users extends AbstractRest
      */
     public function readNamesFromIds(array $idArr): array
     {
-        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        $onlyIds = self::keepValidIds($idArr);
         if (empty($onlyIds)) {
             return array();
         }
@@ -578,6 +589,22 @@ class Users extends AbstractRest
             }
             return $user;
         }, $req->fetchAll());
+    }
+
+    /**
+     * Resolve user ids into names only, in a single query: use it when the email is not needed,
+     * as readNamesFromIds() runs a query per user to know if the email must be masked
+     */
+    public function readFullnamesFromIds(array $idArr): array
+    {
+        $onlyIds = self::keepValidIds($idArr);
+        if (empty($onlyIds)) {
+            return array();
+        }
+        $sql = "SELECT userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname FROM users WHERE userid IN (" . implode(',', $onlyIds) . ') ORDER BY fullname ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     public function isAdminSomewhere(): bool
@@ -650,7 +677,6 @@ class Users extends AbstractRest
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        // TODO check when admin if unreference doesn't cause issue
         return $this->readOne();
     }
 
@@ -917,7 +943,7 @@ class Users extends AbstractRest
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -941,7 +967,7 @@ class Users extends AbstractRest
     public function isAdminOrExplode(): void
     {
         if (!$this->isSysadmin() && !$this->isAdmin()) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -953,7 +979,7 @@ class Users extends AbstractRest
     public function isSelfOrExplode(): void
     {
         if ($this->isSelf() === false) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -1008,19 +1034,9 @@ class Users extends AbstractRest
         throw new ForbiddenException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
-    private function canReadOrExplode(): void
+    private function canReadFullProfile(): bool
     {
-        // it's ourself or we are sysadmin
-        if ($this->requester->getUserid() === $this->getUserid() || $this->requester->isSysadmin()) {
-            return;
-        }
-        if (!$this->requester->isAdmin && !$this->isSelf()) {
-            throw new ForbiddenException('This endpoint requires admin privileges to access other users.');
-        }
-        // check we view user of our team, unless we are sysadmin and we can access it
-        if (!$this->requester->isAdminOf($this->getUserid())) {
-            throw new ForbiddenException('User tried to access user from other team.');
-        }
+        return $this->requester->isAdminOf($this->getUserid());
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool
@@ -1075,7 +1091,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -1138,6 +1154,12 @@ class Users extends AbstractRest
         }
         // isAdminOf() also covers the requester themselves and can_manage_users2teams
         return $this->requester->isSysadmin() || $this->requester->isAdminOf($userid);
+    }
+
+    // only positive integers can be user ids, and casting them makes them safe to put in an IN () clause
+    private static function keepValidIds(array $idArr): array
+    {
+        return array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
     }
 
     private static function maskEmail(string $email): string

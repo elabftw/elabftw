@@ -1073,6 +1073,13 @@ tr.upload-group-drop-target td {
   background-color: rgba(41, 174, 185, 0.5);
 }
 
+/* make it obvious that a step date (deadline, completion time) can be clicked to be modified */
+.step-datetime {
+  border: 1px dashed rgba(127, 127, 127, 0.6);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
 
@@ -1954,11 +1961,18 @@ input:user-invalid {
 
 #metadataDiv {
   textarea,
-  input {
+  input,
+  select {
     &:required:invalid {
       background-color: var(--mediumyellow);
       color: var(--chrome-bg);
     }
+  }
+
+  [data-purpose='radio-holder']:has(input:required:invalid) {
+    background-color: var(--mediumyellow);
+    border-radius: 4px;
+    padding: 4px 8px;
   }
 }
 
@@ -1989,6 +2003,28 @@ input:user-invalid {
   border: 1px solid transparent;
   border-radius: 5px;
   padding: 1px;
+}
+
+// h1 holding the custom id badge and the malleable title
+.entity-title {
+  align-items: center;
+  display: flex;
+
+  // malle replaces the title span with a block form, which would otherwise wrap below the custom id
+  > form {
+    flex-grow: 1;
+  }
+}
+
+.custom-id-badge {
+  background-color: var(--superlight);
+  border: 1px solid var(--firstlevel);
+  border-radius: 0.25rem;
+  color: var(--medium);
+  flex-shrink: 0;
+  font-size: 0.75em;
+  line-height: 1;
+  padding: 0.15em 0.4em;
 }
 
 .active-filter-badge {

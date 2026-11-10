@@ -133,6 +133,7 @@
     currentRelated: number | null;
     currentRelatedOrigin: string;
     currentReactionParams: Record<string, string>;
+    currentCompound: number | null;
   };
 
   // reaction search filters, see initReactionSearch() in show.ts
@@ -310,6 +311,7 @@
       currentRelated: getCurrentUrlNumberParam('related'),
       currentRelatedOrigin: getCurrentUrlParam('related_origin'),
       currentReactionParams: getCurrentReactionParams(),
+      currentCompound: getCurrentUrlNumberParam('compound'),
     };
   }
 
@@ -333,6 +335,7 @@
       context.currentRelated,
       context.currentRelatedOrigin,
       context.currentReactionParams,
+      context.currentCompound,
       currentReloadVersion,
     ]);
   }
@@ -415,6 +418,7 @@
       currentRelated,
       currentRelatedOrigin,
       currentReactionParams,
+      currentCompound,
     } = context;
     const seq = ++requestSeq;
     error = '';
@@ -482,6 +486,9 @@
       }
 
       Object.assign(params, currentReactionParams);
+      if (currentCompound !== null) {
+        params['compound'] = currentCompound;
+      }
 
       // don't display errors
       params['notifOnError'] = 0;

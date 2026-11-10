@@ -23,6 +23,8 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Language;
 use Elabftw\Exceptions\AppException;
+use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\DatabaseNotInstalledException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Filter;
@@ -160,9 +162,6 @@ final class Config extends AbstractRest
             ('allow_permission_useronly', '1'),
             ('admins_import_users', '0'),
             ('admins_archive_users', '1'),
-            ('max_revisions', '10'),
-            ('min_delta_revisions', '100'),
-            ('min_days_revisions', '23'),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),
@@ -199,6 +198,7 @@ final class Config extends AbstractRest
             ('s3_exports_endpoint', ''),
             ('s3_exports_verify_cert', '1'),
             ('s3_exports_use_path_style_endpoint', '0'),
+            ('pdf_footer_text', ''),
             ('blox_anon', '0'),
             ('blox_enabled', '1'),
             ('enforce_mfa', '0'),
@@ -301,8 +301,8 @@ final class Config extends AbstractRest
         // loop the array and update config
         foreach ($params as $name => $value) {
             if ($this->configArr[$name] !== $value) {
-                // prevent incorrect html in these two things
-                if (in_array($name, array('login_announcement', 'announcement', 'admin_panel_custom_msg'), true)) {
+                // prevent incorrect html in these free text settings
+                if (in_array($name, array('login_announcement', 'announcement', 'admin_panel_custom_msg', 'pdf_footer_text'), true)) {
                     $value = Filter::body($value);
                 }
                 // for permissions, ensure at least one remains active
@@ -405,7 +405,15 @@ final class Config extends AbstractRest
     {
         $sql = 'SELECT * FROM config';
         $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
+        try {
+            $this->Db->execute($req);
+        } catch (DatabaseErrorException $e) {
+            // 42S02: base table not found, so the structure was never imported
+            if ($e->getSqlstate() === '42S02') {
+                throw new DatabaseNotInstalledException($e);
+            }
+            throw $e;
+        }
         $res = $req->fetchAll(PDO::FETCH_COLUMN | PDO::FETCH_GROUP);
         // we want key => value array
         return array_map(fn($v): mixed => $v[0], $res);

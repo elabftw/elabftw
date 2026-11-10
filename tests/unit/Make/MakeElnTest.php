@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
@@ -42,6 +43,7 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
             new Instance2Rors(),
             new Teams2Rors($Users->getTeam(), false),
             new Users2Rors($Users->getUserid(), false),
+            CompoundsFactory::getCompounds($Users),
         );
     }
 

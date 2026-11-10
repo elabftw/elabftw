@@ -18,6 +18,7 @@
         <div class='row'>
           <div class='col-md-6'>
             <ul class='list-unstyled'>
+              <li class='mb-2'><kbd>attachment:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>body:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>category:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>custom_id:</kbd> {{ 'number'|trans }}</li>
@@ -34,185 +35,145 @@
               <li class='mb-2'><kbd>owner:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>rating:</kbd> {{ '1, 2, 3, 4, 5, or unrated or 0'|trans }}</li>
               <li class='mb-2'><kbd>status:</kbd> {{ 'simple or quoted term'|trans }}</li>
+              <li class='mb-2'><kbd>tag:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>timestamped:</kbd> {{ 'yes or no'|trans }}</li>
               <li class='mb-2'><kbd>title:</kbd> {{ 'simple or quoted term'|trans }}</li>
               <li class='mb-2'><kbd>visibility:</kbd> {{ 'simple or quoted term'|trans }}</li>
             </ul>
           </div>
         </div>
+        {# reusable syntax-highlighted snippets: the code itself is query syntax and must not be translated #}
+        {% set op = "<code><span class='token operator'>%s</span></code>" %}
+        {% set punct = "<code><span class='token punctuation'>%s</span></code>" %}
+        {% set str = "<code><span class='token string'>%s</span></code>" %}
+        {% set imp = "<code><span class='token important'>%s</span></code>" %}
+        {% set ex = '<em><code>%s</code></em>' %}
+        {% set blank = '<code>&blank;</code>' %}
+        {% set kw = "<span class='token keyword'>%s</span>" %}
+        {% set sp = "<span class='token string'>%s</span>" %}
+        {% set spo = "<span class='token operator'>%s</span>" %}
+        {% set spp = "<span class='token punctuation'>%s</span>" %}
+        {% set spn = "<span class='token number'>%s</span>" %}
+        {% set spb = "<span class='token boolean'>%s</span>" %}
+        {% set termA = sp|format('termA') %}
+        {% set termB = sp|format('termB') %}
+        {% set termC = sp|format('termC') %}
+        {% set dateFormatsLink = "<a href='#dateFormats'>" ~ 'See accepted date formats below'|trans ~ '</a>' %}
+        {% set termOrQuoted = 'Term or Quoted term'|trans %}
+        {% set booleanValues = [
+          '%s or %s'|trans|format(spb|format('yes'), spb|format('no')),
+          '%s or %s'|trans|format(spb|format('true'), spb|format('false')),
+          '%s or %s'|trans|format(spn|format('1'), spn|format('0')),
+          '%s or %s'|trans|format(spb|format('on'), spb|format('off')),
+        ]|join(', ') %}
         <dl>
-          <dt>Term</dt>
-          <dd>A sequence of characters without space (<code>&blank;</code>),
-              <code><span class='token operator'>|</span></code>,
-              <code><span class='token operator'>&amp;</span></code>,
-              <code><span class='token operator'>!</span></code>,
-              <code><span class='token punctuation'>(</span></code>,
-              <code><span class='token punctuation'>)</span></code>,
-              <code><span class='token punctuation'>:</span></code>,
-              <code><span class='token string'>'</span></code> and
-              <code><span class='token string'>"</span></code>.<br>
-              <em><code><span class='token string'>termA</span></code></em> or
-              <em><code><span class='token string'>termB</span></code></em> or
-              <em><code><span class='token string'>456</span></code></em>
+          <dt>{{ 'Term'|trans }}</dt>
+          <dd>{{ 'A sequence of characters without space (%s), %s, %s, %s, %s, %s, %s, %s and %s.'|trans|format(blank, op|format('|'), op|format('&amp;'), op|format('!'), punct|format('('), punct|format(')'), punct|format(':'), str|format("'"), str|format('"'))|raw }}<br>
+            {{ '%s or %s or %s'|trans|format(ex|format(sp|format('termA')), ex|format(sp|format('termB')), ex|format(sp|format('456')))|raw }}
           </dd>
-          <dt>Quoted term</dt>
-          <dd>A sequence of characters including space (<code>&blank;</code>)
-              enclosed in single (<code><span class='token string'>'</span></code>)
-              or double (<code><span class='token string'>"</span></code>) quotation marks.<br>
-              <em><code><span class='token string'>'Hello world'</span></code></em> or
-              <em><code><span class='token string'>"I love eLabFTW!"</span></code></em>
+          <dt>{{ 'Quoted term'|trans }}</dt>
+          <dd>{{ 'A sequence of characters including space (%s) enclosed in single (%s) or double (%s) quotation marks.'|trans|format(blank, str|format("'"), str|format('"'))|raw }}<br>
+            {{ '%s or %s'|trans|format(ex|format(sp|format("'Hello world'")), ex|format(sp|format('"I love eLabFTW!"')))|raw }}
           </dd>
         </dl>
-        <p>Two wildcards are available. The percent sign
-          (<code><span class='token important'>%</span></code>)
-          matches zero or more characters while the underscore
-          (<code><span class='token important'>_</span></code>)
-          matches exactly one character. To search for literal
-          <code><span class='token important'>%</span></code> or
-          <code><span class='token important'>_</span></code>
-          the characters need to be escaped with a backslash
-          <code><span class='token important'>\%</span></code> or
-          <code><span class='token important'>\_</span></code>.</p>
-        <h3>Term concatenation and grouping</h3>
-        <p>Terms can be connected in different ways:</p>
+        <p>{{ 'Two wildcards are available. The percent sign (%s) matches zero or more characters while the underscore (%s) matches exactly one character. To search for literal %s or %s the characters need to be escaped with a backslash %s or %s.'|trans|format(imp|format('%'), imp|format('_'), imp|format('%'), imp|format('_'), imp|format('\\%'), imp|format('\\_'))|raw }}</p>
+        <h3>{{ 'Term concatenation and grouping'|trans }}</h3>
+        <p>{{ 'Terms can be connected in different ways:'|trans }}</p>
         <ul>
           <li>
-            <code><span class='token operator'>OR</span></code> or
-            <code><span class='token operator'>|</span></code>:
-            <em><code><span class='token string'>termA</span> <span class='token operator'>OR</span> <span class='token string'>termB</span></code></em> or
-            <em><code><span class='token string'>termA</span><span class='token operator'>|</span><span class='token string'>termB</span></code></em>
+            {{ '%s or %s: %s or %s'|trans|format(op|format('OR'), op|format('|'), ex|format(termA ~ ' ' ~ spo|format('OR') ~ ' ' ~ termB), ex|format(termA ~ spo|format('|') ~ termB))|raw }}
           </li>
           <li>
-            <code><span class='token operator'>AND</span></code>,
-            <code><span class='token operator'>&amp;</span></code> or
-            space (<code>&blank;</code>):
-            <em><code><span class='token string'>termA</span> <span class='token operator'>AND</span> <span class='token string'>termB</span></code></em> or
-            <em><code><span class='token string'>termA</span><span class='token operator'>&amp;</span><span class='token string'>termB</span></code></em> or
-            <em><code><span class='token string'>termA</span>&nbsp;<span class='token string'>termB</span></code></em>
+            {{ '%s, %s or space (%s): %s or %s or %s'|trans|format(op|format('AND'), op|format('&amp;'), blank, ex|format(termA ~ ' ' ~ spo|format('AND') ~ ' ' ~ termB), ex|format(termA ~ spo|format('&amp;') ~ termB), ex|format(termA ~ '&nbsp;' ~ termB))|raw }}
           </li>
           <li>
-            <code><span class='token operator'>NOT</span></code>,
-            <code><span class='token operator'>!</span></code>:
-            <em><code><span class='token operator'>NOT</span> <span class='token string'>termA</span></code></em> or
-            <em><code><span class='token operator'>!</span><span class='token string'>termA</span></code></em>
+            {{ '%s or %s: %s or %s'|trans|format(op|format('NOT'), op|format('!'), ex|format(spo|format('NOT') ~ ' ' ~ termA), ex|format(spo|format('!') ~ termA))|raw }}
           </li>
-          <li>Parenthesis <code><span class='token punctuation'>()</span></code>: <em><code><span class='token punctuation'>(</span><span class='token string'>termA</span> <span class='token operator'>OR</span> <span class='token string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>AND</span> <span class='token operator'>!</span><span class='token string'>termC</span></code></em></li>
+          <li>
+            {{ 'Parenthesis %s: %s'|trans|format(punct|format('()'), ex|format(spp|format('(') ~ termA ~ ' ' ~ spo|format('OR') ~ ' ' ~ termB ~ spp|format(')') ~ ' ' ~ spo|format('AND') ~ ' ' ~ spo|format('!') ~ termC))|raw }}
+          </li>
         </ul>
-        <p>The operators are listed in increasing order of precedence. Note the whitespace around the operators.
-          <code><span class='token operator'>OR</span></code>,
-          <code><span class='token operator'>AND</span></code> and
-          <code><span class='token operator'>NOT</span></code>
-          require to be surrounded by whitespace while
-          <code><span class='token operator'>|</span></code>,
-          <code><span class='token operator'>&amp;</span></code> and
-          <code><span class='token operator'>!</span></code>
-          don't.<br>
-          <em><code><span class='token string'>termA</span> <span class='token string'>termB</span> <span class='token operator'>OR</span> <span class='token string'>termC</span></code></em>
-          is equivalent to
-          <em><code><span class='token punctuation'>(</span><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token simple-term string'>termB</span><span class='token punctuation'>)</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span></code></em>.
-          To give priority to
-          <code><span class='token operator'>OR</span></code>,
-          use parenthesis:
-          <em><code><span class='token simple-term string'>termA</span> <span class='token operator'>AND</span> <span class='token punctuation'>(</span><span class='token simple-term string'>termB</span> <span class='token operator'>OR</span> <span class='token simple-term string'>termC</span><span class='token punctuation'>)</span></code></em>.
+        <p>{{ 'The operators are listed in increasing order of precedence. Note the whitespace around the operators.'|trans }}
+          {{ "%s, %s and %s require to be surrounded by whitespace while %s, %s and %s don't."|trans|format(op|format('OR'), op|format('AND'), op|format('NOT'), op|format('|'), op|format('&amp;'), op|format('!'))|raw }}<br>
+          {{ '%s is equivalent to %s.'|trans|format(ex|format(termA ~ ' ' ~ termB ~ ' ' ~ spo|format('OR') ~ ' ' ~ termC), ex|format(spp|format('(') ~ termA ~ ' ' ~ spo|format('AND') ~ ' ' ~ termB ~ spp|format(')') ~ ' ' ~ spo|format('OR') ~ ' ' ~ termC))|raw }}
+          {{ 'To give priority to %s, use parenthesis: %s.'|trans|format(op|format('OR'), ex|format(termA ~ ' ' ~ spo|format('AND') ~ ' ' ~ spp|format('(') ~ termB ~ ' ' ~ spo|format('OR') ~ ' ' ~ termC ~ spp|format(')')))|raw }}
         </p>
-        <h3>Field/value pair searches</h3>
-        <p>Field/value pairs are also applicable in the quick search fields.</p>
-        <p>Basic syntax <code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token string'>value</span></code></p>
-        <p>By default wildcards are added to Terms and Quoted terms. The strict switch (<code><span class='token keyword'>field</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>value</span></code>) disables the wildcards.</p>
+        <h3>{{ 'Field/value pair searches'|trans }}</h3>
+        <p>{{ 'Field/value pairs are also applicable in the quick search fields.'|trans }}</p>
+        <p>{{ 'Basic syntax: %s'|trans|format(fieldValue)|raw }}</p>
+        {% set strictSwitch = '<code>' ~ kw|format('field'|trans) ~ spp|format(':') ~ kw|format('s') ~ spp|format(':') ~ sp|format('value'|trans) ~ '</code>' %}
+        <p>{{ 'By default wildcards are added to Terms and Quoted terms. The strict switch (%s) disables the wildcards.'|trans|format(strictSwitch)|raw }}</p>
+        {% set key = sp|format('key'|trans) %}
+        {% set value = sp|format('value'|trans) %}
         <dl>
-          <dt><span class='token keyword'>body</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>category</span></dt>
-          <dd>Term or Quoted term; Only if Database is selected.</dd>
-          <dt><span class='token keyword'>created_at</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>custom_id</span></dt>
-          <dd>Custom ID (integer) of an experiment or item</dd>
-          <dt><span class='token keyword'>date</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>elabid</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>extrafield</span></dt>
-          <dd>Uses a different syntax: <span class='token keyword'>extrafield</span><span class='token punctuation'>:</span><span class='token keyword'>s</span><span class='token punctuation'>:</span><span class='token string'>key</span><span class='token punctuation'>:</span><span class='token string'>value</span> (<span class='token keyword'>s</span><span class='token punctuation'>:</span> is optional and only affects <span class='token string'>value</span>).
-            <br><span class='token string'>key</span> (Name of field) and <span class='token string'>value</span> (search term) can be a Term or Quoted term.
-            <br><span class='token string'>key</span> has to be an exact match, hence there are no wildcards. However, two asterisks (<span class='token string'>**</span>) can be use to search absolutely all fields.
-            <br><span class='token string'>value</span> can use wildcards as described above.
+          <dt>{{ kw|format('body')|raw }}</dt>
+          <dd>{{ termOrQuoted }}</dd>
+          <dt>{{ kw|format('category')|raw }}</dt>
+          <dd>{{ 'Term or Quoted term; Only if Database is selected.'|trans }}</dd>
+          <dt>{{ kw|format('created_at')|raw }}</dt>
+          <dd>{{ dateFormatsLink|raw }}</dd>
+          <dt>{{ kw|format('custom_id')|raw }}</dt>
+          <dd>{{ 'Custom ID (integer) of an experiment or item'|trans }}</dd>
+          <dt>{{ kw|format('date')|raw }}</dt>
+          <dd>{{ dateFormatsLink|raw }}</dd>
+          <dt>{{ kw|format('elabid')|raw }}</dt>
+          <dd>{{ termOrQuoted }}</dd>
+          <dt>{{ kw|format('extrafield')|raw }}</dt>
+          <dd>{{ 'Uses a different syntax: %s (%s is optional and only affects %s).'|trans|format(kw|format('extrafield') ~ spp|format(':') ~ kw|format('s') ~ spp|format(':') ~ key ~ spp|format(':') ~ value, kw|format('s') ~ spp|format(':'), value)|raw }}
+            <br>{{ '%s (name of field) and %s (search term) can be a Term or Quoted term.'|trans|format(key, value)|raw }}
+            <br>{{ '%s has to be an exact match, hence there are no wildcards. However, two asterisks (%s) can be used to search absolutely all fields.'|trans|format(key, sp|format('**'))|raw }}
+            <br>{{ '%s can use wildcards as described above.'|trans|format(value)|raw }}
           </dd>
-          <dt><span class='token keyword'>group</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>id</span></dt>
-          <dd>Id (integer) of an experiment or item</dd>
-          <dt><span class='token keyword'>locked</span></dt>
-          <dd><span class='token boolean'>yes</span> or <span class='token boolean'>no</span>,
-              <span class='token boolean'>true</span> or <span class='token boolean'>false</span>,
-              <span class='token number'>1</span> or <span class='token number'>0</span>,
-              <span class='token boolean'>on</span> or <span class='token boolean'>off</span>
-          </dd>
-          <dt><span class='token keyword'>locked_at</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>rating</span></dt>
-          <dd><span class='token number'>1</span>,
-              <span class='token number'>2</span>,
-              <span class='token number'>3</span>,
-              <span class='token number'>4</span>,
-              <span class='token number'>5</span>,
-              <span class='token constant'>unrated</span> or
-              <span class='token number'>0</span>
-          </dd>
-          <dt><span class='token keyword'>owner</span></dt>
+          <dt>{{ kw|format('group')|raw }}</dt>
+          <dd>{{ termOrQuoted }}</dd>
+          <dt>{{ kw|format('id')|raw }}</dt>
+          <dd>{{ 'ID (integer) of an experiment or item'|trans }}</dd>
+          <dt>{{ kw|format('locked')|raw }}</dt>
+          <dd>{{ booleanValues|raw }}</dd>
+          <dt>{{ kw|format('locked_at')|raw }}</dt>
+          <dd>{{ dateFormatsLink|raw }}</dd>
+          <dt>{{ kw|format('rating')|raw }}</dt>
+          <dd>{{ '%s or %s'|trans|format([spn|format('1'), spn|format('2'), spn|format('3'), spn|format('4'), spn|format('5'), "<span class='token constant'>unrated</span>"]|join(', '), spn|format('0'))|raw }}</dd>
+          <dt>{{ kw|format('owner')|raw }}</dt>
           <dd>
-            Term or Quoted term<br>
-            Without any owner the entire team will be searched.
+            {{ termOrQuoted }}<br>
+            {{ 'Without any owner the entire team will be searched.'|trans }}
           </dd>
-          <dt><span class='token keyword'>status</span></dt>
-          <dd>Term or Quoted term; Only if Experiment is selected.</dd>
-          <dt><span class='token keyword'>timestamped</span></dt>
-          <dd><span class='token boolean'>yes</span> or
-              <span class='token boolean'>no</span>,
-              <span class='token boolean'>true</span> or
-              <span class='token boolean'>false</span>,
-              <span class='token number'>1</span> or
-              <span class='token number'>0</span>,
-              <span class='token boolean'>on</span> or
-              <span class='token boolean'>off</span>
-          </dd>
-          <dt><span class='token keyword'>timestamped_at</span></dt>
-          <dd><a href='#dateFormats'>See accepted date formats below</a></dd>
-          <dt><span class='token keyword'>title</span></dt>
-          <dd>Term or Quoted term</dd>
-          <dt><span class='token keyword'>visibility</span></dt>
-          <dd>Term or Quoted term<br>
+          <dt>{{ kw|format('status')|raw }}</dt>
+          <dd>{{ 'Term or Quoted term; Only if Experiment is selected.'|trans }}</dd>
+          <dt>{{ kw|format('timestamped')|raw }}</dt>
+          <dd>{{ booleanValues|raw }}</dd>
+          <dt>{{ kw|format('timestamped_at')|raw }}</dt>
+          <dd>{{ dateFormatsLink|raw }}</dd>
+          <dt>{{ kw|format('title')|raw }}</dt>
+          <dd>{{ termOrQuoted }}</dd>
+          <dt>{{ kw|format('visibility')|raw }}</dt>
+          <dd>{{ termOrQuoted }}<br>
               {# A group name (e.g., <span class='token string'>'Lab Heroes'</span>) or #}
-              <span class='token string'>public</span>,
-              <span class='token string'>organization</span>,
-              <span class='token string'>myteam</span>,
-              <span class='token string'>user</span>, or
-              <span class='token string'>useronly</span>.
+              {{ '%s or %s'|trans|format([sp|format('public'), sp|format('organization'), sp|format('myteam'), sp|format('user')]|join(', '), sp|format('useronly'))|raw }}.
           </dd>
         </dl>
-        <h3 id='dateFormats'>Date formats</h3>
-        <p>A date has to be provided in the following format: <code><span class='token number'>YYYYMMDD</span></code>,
-          i.e., four digit year, two digit month, and two digit day.
-          Year, month and day can&mdash;but don't have to&mdash;be separated by
-          hyphen (<code><span class='token operator'>-</span></code>),
-          slash (<code><span class='token operator'>/</span></code>),
-          period (<code><span class='token operator'>.</span></code>),
-          or comma (<code><span class='token operator'>,</span></code>).<br>
-          Either a <strong>single date</strong> or a <strong>date range</strong> can be used.</p>
+        {% set dateWord = 'date'|trans %}
+        <h3 id='dateFormats'>{{ 'Date formats'|trans }}</h3>
+        <p>{{ "A date has to be provided in the following format: %s, i.e., four digit year, two digit month, and two digit day. Year, month and day can—but don't have to—be separated by hyphen (%s), slash (%s), period (%s), or comma (%s)."|trans|format("<code><span class='token number'>YYYYMMDD</span></code>", op|format('-'), op|format('/'), op|format('.'), op|format(','))|raw }}<br>
+          {{ 'Either a %ssingle date%s or a %sdate range%s can be used.'|trans|format('<strong>', '</strong>', '<strong>', '</strong>')|raw }}</p>
         <dl>
-          <dt>Single date: <span class='token operator'>operator</span><span class='token number'>date<span></dt>
-          <dd>operator: <code><span class='token operator'>&lt;</span></code>, <code><span class='token operator'>&lt;=</span></code>, <code><span class='token operator'>=</span></code>, <code><span class='token operator'>&gt;=</span></code>, <code><span class='token operator'>&gt;</span></code>, or <code><span class='token operator'>!=</span></code><br>
-            An operator is optional. default is <span class='token operator'>=</span><br>
-            e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>17890714</span></span></code></em> or
-            <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token operator'>&gt;</span><span class='token number'>1909</span><span class='token punctuation'>-</span><span class='token number'>12</span><span class='token punctuation'>-</span><span class='token number'>12</span></span></code></em> or
-            <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token operator'>&gt;=</span><span class='token number'>1867</span><span class='token punctuation'>.</span><span class='token number'>11</span><span class='token punctuation'>.</span><span class='token number'>07</span></span></code></em>
+          <dt>{{ 'Single date: %s'|trans|format(spo|format('operator'|trans) ~ spn|format(dateWord))|raw }}</dt>
+          <dd>{{ 'Operator: %s'|trans|format('%s or %s'|trans|format([op|format('&lt;'), op|format('&lt;='), op|format('='), op|format('&gt;='), op|format('&gt;')]|join(', '), op|format('!=')))|raw }}<br>
+            {{ 'An operator is optional. Default is %s.'|trans|format(spo|format('='))|raw }}<br>
+            {% set dateKw = "<span class='token field-date keyword'>date" ~ spp|format(':') ~ '%s</span>' %}
+            {{ 'e.g., %s'|trans|format('%s or %s or %s'|trans|format(
+              ex|format(dateKw|format(spn|format('17890714'))),
+              ex|format(dateKw|format(spo|format('&gt;') ~ spn|format('1909') ~ spp|format('-') ~ spn|format('12') ~ spp|format('-') ~ spn|format('12'))),
+              ex|format(dateKw|format(spo|format('&gt;=') ~ spn|format('1867') ~ spp|format('.') ~ spn|format('11') ~ spp|format('.') ~ spn|format('07')))
+            ))|raw }}
           </dd>
-          <dt>Date range: <span class='token number'>date</span><span class='token operator'>..</span><span class='token number'>date</span></dt>
-          <dd>Two dates separated by two periods (<code><span class='token operator'>..</span></code>)<br>
-            e.g., <em><code><span class='token field-date keyword'>date<span class='token punctuation'>:</span><span class='token number'>20200101</span><span class='token operator'>..</span><span class='token number'>20201231</span></span></code></em>
+          <dt>{{ 'Date range: %s'|trans|format(spn|format(dateWord) ~ spo|format('..') ~ spn|format(dateWord))|raw }}</dt>
+          <dd>{{ 'Two dates separated by two periods (%s)'|trans|format(op|format('..'))|raw }}<br>
+            {{ 'e.g., %s'|trans|format(ex|format(dateKw|format(spn|format('20200101') ~ spo|format('..') ~ spn|format('20201231'))))|raw }}
           </dd>
         </dl>
-        <p>Date fields ending with <span class='token keyword'>_at</span> only accept dates between <em><code><span class='token number'>1970</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>02</span></em></code> and <em><code><span class='token number'>2038</span><span class='token punctuation'>-</span><span class='token number'>01</span><span class='token punctuation'>-</span><span class='token number'>18</span></em></code>.</p>
+        <p>{{ 'Date fields ending with %s only accept dates between %s and %s.'|trans|format(kw|format('_at'), ex|format(spn|format('1970') ~ spp|format('-') ~ spn|format('01') ~ spp|format('-') ~ spn|format('02')), ex|format(spn|format('2038') ~ spp|format('-') ~ spn|format('01') ~ spp|format('-') ~ spn|format('18')))|raw }}</p>
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>

@@ -21,8 +21,10 @@ use Elabftw\Elabftw\SchemaVersionChecker;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\DatabaseNotInstalledException;
 use Elabftw\Models\Config;
 use Elabftw\Services\Email;
+use PDOException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Mailer\Exception\InvalidArgumentException;
 use Symfony\Component\Mailer\Mailer;
@@ -35,16 +37,26 @@ use function dirname;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
+// exit codes from sysexits.h: chronos relies on them to stay quiet while the database cannot be used yet
+const EXIT_DB_NOT_INSTALLED = 69;
+const EXIT_DB_UNREACHABLE = 75;
+
 $Application = new Application();
 $logger = new ConsoleLogger(new ConsoleOutput());
 try {
     $Config = Config::getConfig();
+} catch (PDOException $e) {
+    $logger->error('Cannot connect to the database: ' . $e->getMessage());
+    exit(EXIT_DB_UNREACHABLE);
+} catch (DatabaseNotInstalledException $e) {
+    $logger->error($e->getMessage());
+    exit(EXIT_DB_NOT_INSTALLED);
 } catch (DatabaseErrorException $e) {
-    $logger->error('Database is not yet installed. Run bin/init db:install.');
-    exit;
+    $logger->error('Database error: ' . $e->getMessage());
+    exit(1);
 } catch (AppException $e) {
     $logger->error($e->getMessage());
-    exit;
+    exit(1);
 }
 
 $sqlFs = FsTools::getFs(dirname(__DIR__) . '/src/sql');
@@ -88,7 +100,6 @@ $Application->add(new StatusDatabase($sqlFs, useBuildInfo: !Env::asBool('DEV_MOD
 $Application->add(new RevertSchema($sqlFs, useBuildInfo: !Env::asBool('DEV_MODE')));
 $Application->add(new UpdateTo3());
 $Application->add(new UpdateTo34());
-$Application->add(new SnapFingers());
 $Application->add(new ForceSchema($Migrations));
 $Application->add(new GenSchema($sqlFs));
 $Application->add(new MfaCode());

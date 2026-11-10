@@ -112,6 +112,7 @@ use function ucfirst;
 use function array_fill;
 use function array_map;
 use function count;
+use function ctype_digit;
 use function array_replace;
 use function trim;
 use function array_filter;
@@ -405,6 +406,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $displayFilterSql = $displayParams->getFilterSql();
         $withCompounds = $this->needsCompoundsJoin($displayFilterSql);
+        $withUploads = $this->needsUploadsJoin();
 
         $EntitySqlBuilder = $this->getSqlBuilder();
         if ($searchJoinSql !== '' && $EntitySqlBuilder instanceof EntitySqlBuilder) {
@@ -412,7 +414,7 @@ abstract class AbstractEntity extends AbstractRest
         }
         if (
             $EntitySqlBuilder instanceof EntitySqlBuilder
-            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds)
+            && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds, $withUploads)
         ) {
             return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
         }
@@ -421,6 +423,7 @@ abstract class AbstractEntity extends AbstractRest
             $displayParams->getRelatedOrigin(),
             $withCompounds,
             withWriteAccess: true,
+            withUploads: $withUploads,
         );
 
         $sql .= ' WHERE 1=1 ';
@@ -744,8 +747,7 @@ abstract class AbstractEntity extends AbstractRest
         );
 
         if (
-            $this->Users instanceof AnonymousUser
-            && $accessKey !== ''
+            $accessKey !== ''
             && $entityAccessKey !== ''
             && hash_equals($entityAccessKey, $accessKey)
         ) {
@@ -777,7 +779,7 @@ abstract class AbstractEntity extends AbstractRest
         $isAnonymous = $this->Users instanceof AnonymousUser;
         $base['revisions'] = $isAnonymous
             ? array()
-            : (new Revisions($this))->readAll();
+            : new BodyRevisions($this)->readAll();
         $base['reaction_history'] = $isAnonymous
             ? array()
             : new Reactions($this)->readAllHistory();
@@ -973,7 +975,7 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
-    // Update an entity. The revision is saved before so it can easily compare old and new body.
+    // Update an entity. A new body is recorded in the revisions once it is saved.
     public function update(ContentParamsInterface $params): bool
     {
         if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
@@ -1006,18 +1008,6 @@ abstract class AbstractEntity extends AbstractRest
             throw new UnprocessableContentException(_('Cannot modify permissions immutability settings.'));
         }
 
-        // save a revision for body target
-        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
-            $Config = Config::getConfig();
-            $Revisions = new Revisions(
-                $this,
-                (int) $Config->configArr['max_revisions'],
-                (int) $Config->configArr['min_delta_revisions'],
-                (int) $Config->configArr['min_days_revisions'],
-            );
-            $Revisions->create((string) $content);
-        }
-
         $Changelog = new Changelog($this);
         $Changelog->create($params);
         // getColumn cannot be malicious here because of the previous switch
@@ -1028,13 +1018,20 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         // custom_id could be used twice unintentionally
         try {
-            return $this->Db->execute($req);
+            $res = $this->Db->execute($req);
         } catch (DatabaseErrorException $e) {
             if ($params->getColumn() === 'custom_id' && $e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
             throw $e;
         }
+
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
+            new BodyRevisions($this)->create((string) $content);
+            // a later body update in the same request must be compared with this body
+            $this->entityData['body'] = $content;
+        }
+        return $res;
     }
 
     public function timestamp(): array
@@ -1075,14 +1072,8 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Timestamp);
 
-        // force create a revision
-        $Revisions = new Revisions(
-            $this,
-            (int) $Config->configArr['max_revisions'],
-            (int) $Config->configArr['min_delta_revisions'],
-            (int) $Config->configArr['min_days_revisions'],
-        );
-        $Revisions->dbInsert($this->entityData['body']);
+        // the timestamped body must be in the revisions
+        new BodyRevisions($this)->create((string) ($this->entityData['body'] ?? ''));
 
         return $this->readOne();
     }
@@ -1173,9 +1164,8 @@ abstract class AbstractEntity extends AbstractRest
         foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
             $freshTags->postAction(Action::Create, array('tag' => $tag));
         }
-        if ($copyFiles) {
-            $sourceEntity->Uploads->duplicate($fresh);
-        }
+        // files shown in the body are always copied, or the copy would display files it doesn't own (#6187)
+        $sourceEntity->Uploads->duplicate($fresh, onlyLinkedInBody: !$copyFiles);
         return $newId;
     }
 
@@ -1439,9 +1429,8 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
-        // force create a revision
-        $Revisions = new Revisions($this, 9000, 0, 0);
-        $Revisions->dbInsert($this->entityData['body']);
+        // the signed body must be in the revisions
+        new BodyRevisions($this)->create((string) ($this->entityData['body'] ?? ''));
         return $this->readOne();
     }
 
@@ -1489,6 +1478,7 @@ abstract class AbstractEntity extends AbstractRest
         bool $extended,
         string $searchJoinSql,
         bool $withCompounds,
+        bool $withUploads,
     ): bool {
         return $displayParams instanceof DisplayParams
             && !($this->Users instanceof AnonymousUser)
@@ -1498,6 +1488,7 @@ abstract class AbstractEntity extends AbstractRest
             && !$displayParams->isFull()
             && $displayParams->getRelatedOrigin() === null
             && !$withCompounds
+            && !$withUploads
             && $this->filterSql === ''
             && $displayParams->orderby === Orderby::Lastchange
             && $displayParams->sort === Sort::Desc
@@ -1545,11 +1536,13 @@ abstract class AbstractEntity extends AbstractRest
                 'value' => '%' . $query . '%',
             );
         }
-        $this->extendedValues[] = array(
-            'param' => ':simpleQueryCustomId',
-            'value' => $query,
-            'type' => PDO::PARAM_INT,
-        );
+        if (ctype_digit($query)) {
+            $this->extendedValues[] = array(
+                'param' => ':simpleQueryCustomId',
+                'value' => $query,
+                'type' => PDO::PARAM_INT,
+            );
+        }
         $this->extendedValues[] = array(
             'param' => ':simpleQueryFulltext',
             'value' => $this->toBooleanFulltextQuery($query),
@@ -1559,7 +1552,7 @@ abstract class AbstractEntity extends AbstractRest
     private function isAdvancedSearchQuery(string $query): bool
     {
         return preg_match(
-            '/(?:^|\s)(?:author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|tag|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
             $query,
         ) === 1
             || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;
@@ -1581,13 +1574,20 @@ abstract class AbstractEntity extends AbstractRest
             'SELECT search_entity.id
             FROM %1$s AS search_entity
             WHERE MATCH(search_entity.title, search_entity.body, search_entity.elabid, search_entity.metadata_search)
-                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)
-            UNION
-            SELECT search_entity.id
-            FROM %1$s AS search_entity
-            WHERE search_entity.custom_id = :simpleQueryCustomId',
+                AGAINST (:simpleQueryFulltext IN BOOLEAN MODE)',
             $table,
         );
+
+        // only look at custom_id for integer queries: MySQL casts a string like "81-30-1" (a CAS number) to 81
+        if (ctype_digit($query)) {
+            $sql .= sprintf(
+                ' UNION
+                SELECT search_entity.id
+                FROM %1$s AS search_entity
+                WHERE search_entity.custom_id = :simpleQueryCustomId',
+                $table,
+            );
+        }
 
         if ($this->hasShortFulltextToken($query)) {
             $sql .= sprintf(
@@ -1610,6 +1610,12 @@ abstract class AbstractEntity extends AbstractRest
         return $this->sqlReferencesCompounds($this->extendedFilter)
             || $this->sqlReferencesCompounds($this->filterSql)
             || $this->sqlReferencesCompounds($displayFilterSql);
+    }
+
+    // joining uploads is expensive, so only do it when the query searches attachments
+    private function needsUploadsJoin(): bool
+    {
+        return str_contains($this->extendedFilter, 'uploads.');
     }
 
     private function sqlReferencesCompounds(string $sql): bool

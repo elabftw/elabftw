@@ -86,6 +86,15 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($this->Compounds->destroy());
     }
 
+    public function testCreateWithoutMolecularWeight(): void
+    {
+        // an imported compound can have no known weight, but the column is not nullable
+        $compoundId = $this->Compounds->create(name: 'Weightless', molecularWeight: null);
+        $this->Compounds->setId($compoundId);
+        $this->assertEquals(0, (float) $this->Compounds->readOne()['molecular_weight']);
+        $this->assertTrue($this->Compounds->destroy());
+    }
+
     public function testPostAction(): void
     {
         $fixturesFs = Storage::FIXTURES->getStorage()->getFs();

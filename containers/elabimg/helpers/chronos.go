@@ -24,6 +24,13 @@ const (
 	dailyTaskTimeout  = 2 * time.Hour
 )
 
+// bin/console exits with these codes (from sysexits.h) when the database cannot be used yet:
+// right after a deployment it can be empty, or still loading a dump.
+const (
+	exitDbNotInstalled = 69
+	exitDbUnreachable  = 75
+)
+
 var (
 	// jitter to avoid all tasks executing at the exact same second
 	jitter time.Duration
@@ -68,31 +75,34 @@ func main() {
 
 // scheduleWeekly runs cmdArgs each week at the given weekday/hour/minute.
 func scheduleWeekly(ctx context.Context, weekday time.Weekday, hour, min int, cmdArgs []string) {
+	t := &task{args: cmdArgs, timeout: dailyTaskTimeout}
 	for {
 		// computed after the previous run, so it is always the next week
 		next := nextWeekdayTime(time.Now(), weekday, hour, min)
 		if !waitOrExit(ctx, time.Until(next)+jitter) {
 			return
 		}
-		runPHP(ctx, dailyTaskTimeout, cmdArgs)
+		t.run(ctx)
 	}
 }
 
 // scheduleDaily runs cmdArgs each day at the given hour/minute.
 func scheduleDaily(ctx context.Context, hour, min int, cmdArgs []string) {
+	t := &task{args: cmdArgs, timeout: dailyTaskTimeout}
 	for {
 		// computed after the previous run, so it is always the next day
 		next := nextDailyTime(time.Now(), hour, min)
 		if !waitOrExit(ctx, time.Until(next)+jitter) {
 			return
 		}
-		runPHP(ctx, dailyTaskTimeout, cmdArgs)
+		t.run(ctx)
 	}
 }
 
 // scheduleEveryMinute runs cmdArgs every 1 minute on the minute.
 // A run that lasts longer delays the next one: the ticker drops the ticks in between.
 func scheduleEveryMinute(ctx context.Context, cmdArgs []string) {
+	t := &task{args: cmdArgs, timeout: minuteTaskTimeout}
 	if !waitOrExit(ctx, jitter) {
 		return
 	}
@@ -103,7 +113,7 @@ func scheduleEveryMinute(ctx context.Context, cmdArgs []string) {
 	for {
 		select {
 		case <-ticker.C:
-			runPHP(ctx, minuteTaskTimeout, cmdArgs)
+			t.run(ctx)
 		case <-ctx.Done():
 			return
 		}
@@ -147,9 +157,46 @@ func waitOrExit(ctx context.Context, d time.Duration) bool {
 	}
 }
 
-// runPHP executes: php /elabftw/bin/console <cmdArgs...>
+// task is a scheduled command. It remembers whether the database was usable on its last run,
+// so a database that is not ready is reported once instead of on every run.
+type task struct {
+	args         []string
+	timeout      time.Duration
+	waitingForDb bool
+}
+
+func (t *task) run(ctx context.Context) {
+	out, err := runPHP(ctx, t.timeout, t.args)
+	name := strings.Join(t.args, " ")
+	if dbNotReady(err) {
+		if !t.waitingForDb {
+			log.Printf("%s: database not ready, skipping this task until it is — output:\n%s", name, string(out))
+			t.waitingForDb = true
+		}
+		return
+	}
+	if t.waitingForDb {
+		log.Printf("%s: database is ready, resuming", name)
+		t.waitingForDb = false
+	}
+	if err != nil {
+		log.Printf("error: %s: %v — output:\n%s", name, err, string(out))
+	}
+}
+
+// dbNotReady tells if bin/console stopped because the database cannot be used yet
+func dbNotReady(err error) bool {
+	var exitErr *exec.ExitError
+	if !errors.As(err, &exitErr) {
+		return false
+	}
+	code := exitErr.ExitCode()
+	return code == exitDbNotInstalled || code == exitDbUnreachable
+}
+
+// runPHP executes: php /elabftw/bin/console <cmdArgs...> and returns its combined output.
 // The command gets SIGTERM when its timeout expires or chronos stops, then SIGKILL after killDelay.
-func runPHP(ctx context.Context, timeout time.Duration, cmdArgs []string) {
+func runPHP(ctx context.Context, timeout time.Duration, cmdArgs []string) ([]byte, error) {
 	runCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	args := append([]string{consolePath}, cmdArgs...)
@@ -159,11 +206,8 @@ func runPHP(ctx context.Context, timeout time.Duration, cmdArgs []string) {
 	}
 	cmd.WaitDelay = killDelay
 	out, err := cmd.CombinedOutput()
-	task := strings.Join(cmdArgs, " ")
 	if errors.Is(runCtx.Err(), context.DeadlineExceeded) {
-		log.Printf("error: %s did not finish within %v", task, timeout)
+		log.Printf("error: %s did not finish within %v", strings.Join(cmdArgs, " "), timeout)
 	}
-	if err != nil {
-		log.Printf("error: %s: %v — output:\n%s", task, err, string(out))
-	}
+	return out, err
 }

@@ -300,6 +300,8 @@ final class Compounds extends AbstractRest
         bool $isVpvb = false,
         bool $isVpvm = false,
     ): int {
+        // the column cannot be null: a compound without a known weight gets the column default
+        $molecularWeight ??= 0.00;
         $compoundData = array(
             'inchi' => $inchi,
             'inchi_key' => $inchiKey,

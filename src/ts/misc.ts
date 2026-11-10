@@ -20,6 +20,7 @@ import $ from 'jquery';
 import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
+import { storeRecoveryData } from './recovery';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
@@ -84,6 +85,46 @@ export function toRelative(title: string, locale: string, timezone = document.ge
       .fromFormat(title, 'yyyy-MM-dd HH:mm:ss', {'locale': locale, 'zone': timezone})
       .toRelative() ?? ''
   );
+}
+
+export const SQL_DATETIME_FORMAT = 'yyyy-MM-dd HH:mm:ss';
+/* eslint-disable-next-line quotes */
+export const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm";
+
+// datetimes are stored without timezone, as wall-clock times of the server timezone
+// 'system' (the browser timezone) is only a fallback for when the server timezone is not exposed
+export function serverTimezone(): string {
+  return document.getElementById('user-prefs')?.dataset.timezone || 'system';
+}
+
+// interpret a stored datetime in the server timezone and move it to the browser one
+export function serverToLocal(value: string): DateTime {
+  const locale = document.getElementById('user-prefs')?.dataset.jslang ?? 'en';
+  return DateTime.fromFormat(value, SQL_DATETIME_FORMAT, { locale, zone: serverTimezone() }).toLocal();
+}
+
+// interpret a datetime-local input value in the browser timezone and convert it to a storable server datetime
+export function localInputToServer(value: string): DateTime {
+  // fromISO accepts the value with or without seconds, as browsers may send either
+  return DateTime.fromISO(value).setZone(serverTimezone());
+}
+
+// DISPLAY DATETIMES IN THE BROWSER TIMEZONE
+// the server renders them in its own timezone: elements carry the raw stored value so it can be converted here
+export function localizeDatetimes(): void {
+  document.querySelectorAll<HTMLElement>('.local-datetime[data-datetime]').forEach(el => {
+    const dt = serverToLocal(el.dataset.datetime);
+    if (dt.isValid) {
+      el.textContent = dt.toLocaleString(DateTime.DATETIME_MED);
+    }
+  });
+  // datetime-local inputs created by malle are prefilled with this attribute, so it must be in the browser timezone too
+  document.querySelectorAll<HTMLElement>('[data-local-input-datetime]').forEach(el => {
+    const dt = serverToLocal(el.dataset.localInputDatetime);
+    if (dt.isValid) {
+      el.dataset.maInputValue = dt.toFormat(DATETIME_LOCAL_FORMAT);
+    }
+  });
 }
 
 // Add a listener for all elements triggered by an event
@@ -257,6 +298,10 @@ export function collectForm(form: HTMLElement): object {
   let params = {};
   inputs.forEach(input => {
     const el = input;
+    // TomSelect search inputs have no name attribute and must not be collected.
+    if (!el.name) {
+      return;
+    }
     el.classList.remove('border-danger');
     if (el.reportValidity() === false) {
       console.error(el);
@@ -554,6 +599,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
   makeSortableGreatAgain();
   makeMalleableColumnsGreatAgain();
   relativeMoment();
+  localizeDatetimes();
 }
 
 /**
@@ -642,14 +688,33 @@ export function permissionsToJson(extra: string[]): string {
   return JSON.stringify(json);
 }
 
+// only these schemes become clickable: anything else (javascript:, data:, vbscript:...) could run code on click
+const SAFE_LINK_PROTOCOLS = ['http:', 'https:', 'ftp:', 'mailto:'];
+
+// return a normalized href if the user-provided value is a safe absolute URL, or null otherwise
+export function getSafeHref(value: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(value.trim());
+  } catch {
+    return null;
+  }
+  return SAFE_LINK_PROTOCOLS.includes(parsed.protocol) ? parsed.href : null;
+}
+
 // go over all the type: url elements and create a link dynamically
 export function generateMetadataLink(): void {
   document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+    const text = (el as HTMLSpanElement).textContent ?? '';
+    const href = getSafeHref(text);
+    // leave the element as plain text if the value isn't a safe URL
+    if (href === null) {
+      return;
+    }
     const link = document.createElement('a');
     link.classList.add('d-block');
-    const url = (el as HTMLSpanElement).innerText;
-    link.href = url;
-    link.text = url;
+    link.href = href;
+    link.textContent = text;
     el.replaceWith(link);
   });
 }
@@ -699,12 +764,23 @@ export function replaceWithTitle(): void {
     if (el instanceof HTMLInputElement) {
       changedAttribute = 'value';
     }
+    const notFound = (): void => {
+      const message = i18next.t('resource-not-found');
+      el[changedAttribute] = el instanceof HTMLInputElement ? `${el.dataset.id} - ${message}` : message;
+      el.classList.add('color-warning');
+    };
+    // 0 is an entry that could not be found during an import, and the api would read it as "no id"
+    if (el.dataset.id === '0') {
+      notFound();
+      return;
+    }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`, { notifOnError: 0 }).then(json => {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
       const userDisplayName =
         String(json.fullname ?? '').trim() ||
+        `${json.firstname ?? ''} ${json.lastname ?? ''}`.trim() ||
         String(json.email ?? '').trim() ||
         String(json.userid ?? '');
       if (!(el instanceof HTMLInputElement)) {
@@ -722,7 +798,7 @@ export function replaceWithTitle(): void {
         // EDIT MODE (input): default = 'id - entity title'
         switch (el.dataset.endpoint) {
         case Model.User:
-          value = `${json.userid} - ${userDisplayName}`;
+          value = `${el.dataset.id} - ${userDisplayName}`;
           break;
         case Model.Compounds:
           value = `${json.id} - ${json.name}` + casNumber;
@@ -732,10 +808,7 @@ export function replaceWithTitle(): void {
         }
       }
       el[changedAttribute] = value;
-    }).catch(() => {
-      el[changedAttribute] = i18next.t('resource-not-found');
-      el.classList.add('color-warning');
-    });
+    }).catch(notFound);
   });
 }
 
@@ -777,10 +850,7 @@ export async function updateEntityBody(redirect = true): Promise<void> {
   }).catch(() => {
     // detect if the session timedout (Session expired error is thrown)
     // store the modifications in local storage to prevent any data loss
-    localStorage.setItem('body', editor.getContent());
-    localStorage.setItem('id', String(entity.id));
-    localStorage.setItem('type', entity.type);
-    localStorage.setItem('date', new Date().toLocaleString());
+    storeRecoveryData(entity.type, entity.id, editor.getContent());
     // reload the page so user gets redirected to the login page
     location.reload();
   });
@@ -885,6 +955,17 @@ export function toggleEditCompound(json: object): void {
     input.checked = json[param] === 1;
   });
   document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  // don't show the molecule of a previously opened compound
+  const moleculeDiv = document.getElementById('compoundMoleculeDiv');
+  if (moleculeDiv) {
+    moleculeDiv.querySelectorAll('img').forEach(img => {
+      if (img.src.startsWith('blob:')) {
+        URL.revokeObjectURL(img.src);
+      }
+      img.remove();
+    });
+    moleculeDiv.hidden = true;
+  }
   (document.getElementById('compoundLink-pubchem') as HTMLLinkElement).href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json['pubchem_cid']}`;
   $('#editCompoundModal').modal('toggle');
 }
@@ -930,6 +1011,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
   const requester = await ApiC.getJson('users/me');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userTeams = user.teams as any;
+  const canRemoveFromTeam = Boolean(requester.is_sysadmin) || Boolean(requester.can_manage_users2teams);
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
@@ -940,8 +1022,9 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.classList.add('user-badge', 'm-1');
     teamBadge.innerText = team.name;
     // REMOVE TEAM BUTTON
+    // only Sysadmins and users who can manage users/teams association can remove a user from a team
     // users must keep one team; requester cannot remove themselves from their current team
-    if (userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
+    if (canRemoveFromTeam && userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
       const removeTeamBtn = document.createElement('button');
       removeTeamBtn.type = 'button';
       removeTeamBtn.classList.add('btn', 'btn-danger-ghost', 'btn-sm', 'ml-2');

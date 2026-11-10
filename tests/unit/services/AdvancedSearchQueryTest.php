@@ -50,9 +50,11 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
             ' TEST TEST1 AND TEST2 OR TEST3 NOT TEST4 & TEST5',
             '| TEST6 AND ! TEST7 (TEST8 or TEST9) "T E S T 1 0"',
             '\'T E S T 1 1\' "chinese 汉语 漢語 中文" "japanese 日本語 ひらがな 平仮名 カタカナ 片仮名"',
+            'attachment:"file.txt" attachment:s:comment',
             'author:"Toto Le sysadmin" body:"some text goes here"',
             'elabid:7bebdd3512dc6cbee0b1 locked:yes rating:5 rating:unrated',
             'status:"only meaningful with experiments but no error"',
+            'tag:"some tag" OR tag:s:another-tag',
             'timestamped:0 timestamped:true title:"very cool experiment" visibility:%owner',
             'date:>2020.06,21 date:2020/06-21..20201231',
             'group:"Group Name"',
@@ -87,6 +89,21 @@ class AdvancedSearchQueryTest extends \PHPUnit\Framework\TestCase
         $whereClause = $advancedSearchQuery->getWhereClause();
         $this->assertStringStartsWith(' AND (categoryt.title LIKE :', $whereClause['where']);
         $this->assertStringEndsWith(')', $whereClause['where']);
+    }
+
+    // the OR of a != date must not leak out of its term when combined with AND (#7698)
+    public function testTimestampNotEqualIsGrouped(): void
+    {
+        $advancedSearchQuery = new AdvancedSearchQuery('created_at:!=20221209 title:Aspirin', new VisitorParameters(
+            'experiments',
+            $this->groups,
+        ));
+        $whereClause = $advancedSearchQuery->getWhereClause();
+        $this->assertIsArray($whereClause);
+        $this->assertMatchesRegularExpression(
+            '/\(entity\.created_at < :\w+ OR entity\.created_at > :\w+\) AND /',
+            $whereClause['where'],
+        );
     }
 
     public function testSyntaxError(): void

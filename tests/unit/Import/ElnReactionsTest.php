@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\Action;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Reactions;
@@ -38,12 +39,13 @@ final class ElnReactionsTest extends TestCase
         $source->lock();
         $users = new Users(1, 1);
         $logger = $this->createStub(LoggerInterface::class);
-        $maker = new MakeEln($logger, $this->createStub(ZipStream::class), $users, array($source), new Instance2Rors(), new Teams2Rors(1), new Users2Rors(1), includeLinkedEntities: false);
+        $compounds = CompoundsFactory::getCompounds($users);
+        $maker = new MakeEln($logger, $this->createStub(ZipStream::class), $users, array($source), new Instance2Rors(), new Teams2Rors(1), new Users2Rors(1), $compounds, includeLinkedEntities: false);
         $path = tempnam(sys_get_temp_dir(), 'reaction-eln-');
         $this->assertIsString($path);
         try {
             $maker->writeToFile($path);
-            $import = new Eln($users, $users, new UploadedFile($path, 'reaction.eln', test: true), new ElabCache()->getFs(), $logger);
+            $import = new Eln($users, $users, new UploadedFile($path, 'reaction.eln', test: true), new ElabCache()->getFs(), $logger, $compounds);
             $import->import();
             $inserted = new ReflectionProperty(Eln::class, 'insertedEntities')->getValue($import);
             $this->assertCount(1, $inserted);

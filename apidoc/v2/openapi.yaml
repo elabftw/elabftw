@@ -68,6 +68,18 @@ components:
           summary: The related entry is an experiment.
           value: experiments
 
+    SearchCompound:
+      name: compound
+      in: query
+      schema:
+        type: integer
+      description: |
+        Look only for entries linked to this compound id.
+      examples:
+        first:
+          summary: Look for entries linked to compound with id 42.
+          value: 42
+
     Category:
       name: category
       in: query
@@ -553,6 +565,38 @@ components:
           type: integer
         team_name:
           type: string
+
+    # AUDIT LOG
+    audit_log:
+      type: object
+      properties:
+        id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        category:
+          type: integer
+          description: Numerical value of the category of the event.
+        category_name:
+          type: string
+          description: Human readable name of the category of the event.
+          example: Login
+        requester_userid:
+          type: integer
+          description: Userid of the user who did the action. 0 if no user was involved.
+        requester_fullname:
+          type: string
+          nullable: true
+        target_userid:
+          type: integer
+          description: Userid of the user targeted by the action. 0 if no user was involved.
+        target_fullname:
+          type: string
+          nullable: true
+        body:
+          type: string
+          description: Description of the event.
 
     # CHANGELOG
     changelog:
@@ -1063,19 +1107,6 @@ components:
             type: string
             example: 'otconfigured@example.com'
             default: 'notconfigured@example.com'
-          max_revisions:
-            type: string
-            example: '10'
-            default: '10'
-          min_days_revisions:
-            type: string
-            example: '23'
-            default: '23'
-          min_delta_revisions:
-            description: Minimum number of characters changed required to trigger a revision save.
-            type: string
-            example: '100'
-            default: '100'
           onboarding_email_active:
             enum: [0, 1]
             type: string
@@ -1102,6 +1133,11 @@ components:
             type: string
             example: 'test email subject'
             default: 'test email subject'
+          pdf_footer_text:
+            description: Custom text (limited HTML allowed) added to the footer of every generated PDF.
+            type: string
+            example: 'Institute of Example Science - Lab notebook'
+            default: ''
           privacy_policy:
             type: string
             example: ''
@@ -1645,7 +1681,7 @@ components:
           type: boolean
           default: false
           description: |
-            If "true", the action will import the files of the original entity.
+            If "true", the action will import the files of the original entity. Files linked in the main text (such as inserted images) are always copied.
         linkToOriginal:
           type: boolean
           default: true
@@ -1685,6 +1721,26 @@ components:
           type: integer
           description: Whether the event is bookable (1 = yes, 0 = no)
           example: 1
+        canapprove:
+          type: integer
+          enum: [0, 1]
+          description: Whether the authenticated user may approve this pending booking.
+        approval_status:
+          type: integer
+          enum: [0, 1, 2, 3]
+          description: 0 no approval required, 1 pending, 2 approved, 3 rejected. Overdue is a UI label for past pending events, not a stored status.
+        approved_by:
+          type: integer
+          nullable: true
+          description: User ID of the person who made the approval decision.
+        approved_at:
+          type: string
+          nullable: true
+          description: Timestamp of the approval decision.
+        approval_comment:
+          type: string
+          nullable: true
+          description: Optional decision reason.
         created_at:
           type: string
           format: date-time
@@ -2048,6 +2104,17 @@ components:
       properties:
         is_bookable:
           type: integer
+        requires_booking_approval:
+          type: integer
+          enum: [0, 1]
+          description: Require approval for new bookings. Include approvers when updating; disabling approval does not change pending requests or remove configured approvers.
+        approvers:
+          type: array
+          uniqueItems: true
+          description: Approver user IDs. Users may belong to any team or be archived or unvalidated.
+          items:
+            type: integer
+            minimum: 1
         canbook_base:
           type: number
           description: |
@@ -2231,6 +2298,11 @@ components:
           type: integer
         item_id:
           type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        depth:
+          type: integer
         body:
           type: string
         body_html:
@@ -2241,6 +2313,10 @@ components:
           type: string
         userid:
           type: integer
+          nullable: true
+        fullname:
+          type: string
+          nullable: true
     # experiments_status and items_status are statuslike
     statuslike:
       type: object
@@ -2291,6 +2367,9 @@ components:
           description: Only editable via templates. Immutability persists on derived experiments or resources.
           enum: [ 0, 1 ]
           type: integer
+        created_at:
+          type: string
+          description: Step creation timestamp. Steps created before this field existed carry the time of the database upgrade.
     step_group:
       type: object
       properties:
@@ -2658,6 +2737,9 @@ components:
             created_at:
               type: string
               description: Account creation timestamp.
+            modified_at:
+              type: string
+              description: Last time the user row was modified, including logins and settings changes. Only visible to Sysadmins.
             validated:
               type: integer
             valid_until:
@@ -3022,6 +3104,7 @@ x-parameterGroups:
     - $ref: "#/components/parameters/SearchExtended"
     - $ref: '#/components/parameters/SearchRelated'
     - $ref: '#/components/parameters/SearchRelatedOrigin'
+    - $ref: '#/components/parameters/SearchCompound'
     - $ref: '#/components/parameters/Category'
     - $ref: '#/components/parameters/Status'
     - $ref: '#/components/parameters/Tags'
@@ -3773,6 +3856,40 @@ paths:
            $ref: '#/components/responses/Unauthorized'
         '403':
            $ref: '#/components/responses/Forbidden'
+
+  # AUDIT LOGS
+  /audit_logs:
+    summary: Read audit logs
+    get:
+      tags: ['Audit logs']
+      summary: Read audit logs
+      description: |
+        Get the events recorded in the audit logs, most recent first. Only a Sysadmin can use this endpoint.
+
+        At most 10000 events are returned per request, even without a `limit` query parameter or with a higher one. Use `offset` to read older events.
+      operationId: read-audit-logs
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          description: Limit the number of results. If not set or above 10000, 10000 is used.
+          schema:
+            type: integer
+          example: 120
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: A list of audit log events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/audit_log'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 
   # COMPOUNDS
   /compounds:
@@ -4700,7 +4817,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entity'
+                $ref: '#/components/schemas/item'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5665,6 +5782,38 @@ paths:
       tags: ['Events']
       summary: Read all events in the team.
       operationId: read-events
+      parameters:
+        - name: approval_status
+          in: query
+          description: Comma-separated statuses (0 no approval, 1 pending, 2 approved, 3 rejected). Defaults to 0,1,2.
+          schema:
+            type: string
+            pattern: '^[0-3](,[0-3])*$'
+          example: '1,2,3'
+        - name: userid
+          in: query
+          description: Filter by booking owner user ID.
+          schema:
+            type: integer
+            minimum: 1
+        - name: approver
+          in: query
+          description: Filter by designated approver user ID. This does not grant approval permissions to the requester.
+          schema:
+            type: integer
+            minimum: 1
+        - name: start
+          in: query
+          description: Beginning of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          description: End of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
+          schema:
+            type: string
+            format: date
       responses:
         '200':
           description: A list of booked slots.
@@ -5808,6 +5957,22 @@ paths:
           application/json:
             schema:
               oneOf:
+                - type: object
+                  required: [action, target, decision]
+                  description: Approve or reject a pending request. Only its designated approvers may decide.
+                  properties:
+                    action:
+                      type: string
+                      enum: [update]
+                    target:
+                      type: string
+                      enum: [approval]
+                    decision:
+                      type: string
+                      enum: [approved, rejected]
+                    comment:
+                      type: string
+                      description: Optional reason for the decision.
                 - type: object
                   required: [target, start, end]
                   properties:
@@ -7242,7 +7407,6 @@ paths:
                       email: lara@tombraider.com
                       validated: 1
                       created_at: "1996-10-25 20:34:04"
-                      last_login: "2025-02-14 12:23:45"
                       valid_until: "2025-08-29"
                       is_sysadmin: 0
                       fullname: Lara Croft
@@ -9242,6 +9406,7 @@ paths:
     get:
       tags: ['Revisions']
       summary: Read all revisions of that entity.
+      description: Every main text saved is a revision, newest first. Their body is only in the response for a single revision.
       operationId: read-entity-revisions
       responses:
         '200':
@@ -9255,12 +9420,24 @@ paths:
                   properties:
                     id:
                       type: integer
+                    parent_id:
+                      type: integer
+                      nullable: true
+                      description: Revision this one is stored as a change of. Null for a revision stored in full.
+                    depth:
+                      type: integer
+                      description: Number of revisions to rebuild before this one.
                     content_type:
                       type: integer
                     created_at:
                       type: string
+                    userid:
+                      type: integer
+                      nullable: true
+                      description: Null if the user was deleted.
                     fullname:
                       type: string
+                      nullable: true
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

@@ -195,6 +195,17 @@ final class DisplayParams extends BaseQueryParams
             $this->relatedOrigin = EntityType::tryFrom($query->getAlpha('related_origin')) ?? $this->entityType;
         }
 
+        // COMPOUND FILTER
+        // use the compounds link table so only entries actually linked to the compound are returned,
+        // and not entries where a compound property happens to match a text search
+        if (Check::id($query->getInt('compound')) !== false) {
+            $this->filterSql .= sprintf(
+                ' AND entity.id IN (SELECT c2e_filter.entity_id FROM compounds2%s AS c2e_filter WHERE c2e_filter.compound_id = %d)',
+                $this->entityType->value,
+                $query->getInt('compound'),
+            );
+        }
+
         // Note: we use getString() and not getInt() because values can be string separated (1,5)
         // CATEGORY FILTER
         // cat is for backward compatibility

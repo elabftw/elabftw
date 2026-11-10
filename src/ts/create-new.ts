@@ -17,12 +17,35 @@ import i18next from './i18n';
 import { EntityType, Model } from './interfaces';
 import { on } from './handlers';
 import { showModalAndFocusFirstInput } from './common';
+import { notify } from './notify';
+
+let templatesRequestVersion = 0;
+
+async function loadTemplates(query: string): Promise<void> {
+  const version = ++templatesRequestVersion;
+  // Previous rows belong to a different type or filter and must not stay clickable.
+  document.getElementById('tplCreateNewTable').replaceChildren();
+  try {
+    const templates = await ApiC.getJson(query, { notifOnError: 0 });
+    if (version === templatesRequestVersion) {
+      renderTemplates(templates);
+    }
+  } catch (error) {
+    if (version === templatesRequestVersion) {
+      notify.error(error.message);
+    }
+  }
+}
 
 //////////////////////////////////////
 // CREATE NEW CODE                  //
 // code related to create new modal //
 //////////////////////////////////////
 function setTypeRadio(type: EntityType, scope: string = '') {
+  // Also invalidate pending requests when selecting a template type, which
+  // does not start a new search of its own.
+  templatesRequestVersion++;
+  document.getElementById('tplCreateNewTable').replaceChildren();
   // change text of create button
   const createBtn = document.getElementById('createNoTplBtn');
   createBtn.innerText = i18next.t(`create-one-${type}`);
@@ -45,10 +68,8 @@ function setTypeRadio(type: EntityType, scope: string = '') {
     createNewTemplatesDiv.setAttribute('hidden', 'hidden');
   } else {
     const templatesEndpoint = type === EntityType.Experiment ? EntityType.Template : EntityType.ItemType;
-    ApiC.getJson(`${templatesEndpoint}/?fastq&scope=${scope}`).then(templates => {
-      renderTemplates(templates);
-      toggleCategoryList(type);
-    });
+    toggleCategoryList(type);
+    loadTemplates(`${templatesEndpoint}/?fastq&scope=${scope}`);
   }
 }
 
@@ -103,17 +124,13 @@ function onScopeChange(ev: Event) {
       btn.classList.add('active');
     }
   });
-  ApiC.getJson(`${getActiveTemplateEndpoint()}/?fastq&scope=${scope}`).then(templates => {
-    renderTemplates(templates);
-  });
+  loadTemplates(`${getActiveTemplateEndpoint()}/?fastq&scope=${scope}`);
 }
 
 function onCategoryChange(ev: Event) {
   const el = ev.currentTarget;
   if (!(el instanceof HTMLSelectElement)) return;
-  ApiC.getJson(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&category=${el.selectedOptions[0].value}`).then(templates => {
-    renderTemplates(templates);
-  });
+  loadTemplates(`${el.dataset.endpoint}/?fastq&scope=${getScopeValue()}&category=${el.selectedOptions[0].value}`);
 }
 
 on('filter-category', (el: HTMLElement) => {

@@ -97,15 +97,17 @@ export function parseReactionRxn(rxn: string): Array<{ role: ReactionRole; molfi
   return result;
 }
 
-/** Each RXN entry becomes a component with the identifiers and properties Indigo can compute for it. */
+/**
+ * Each RXN entry becomes a component with the identifiers and properties Indigo can compute for it.
+ * Calls to the standalone struct service must not overlap: it listens once per call type, so concurrent calls
+ * of the same type lose their answer (and the promise never settles) or get the answer of another call.
+ */
 async function componentFromEntry(ketcher: Ketcher, entry: { role: ReactionRole; molfile: string }): Promise<ReactionComponent> {
-  const [smiles, inchiKey, properties] = await Promise.all([
-    ketcher.structService.convert({ struct: entry.molfile, output_format: ChemicalMimeType.DaylightSmiles }),
-    // Generic structures and organometallics may not have usable identifiers or
-    // masses. Preserve their structures and allow manual properties instead.
-    ketcher.structService.getInChIKey(entry.molfile).catch(() => ''),
-    ketcher.structService.calculate({ struct: entry.molfile, properties: ['molecular-weight', 'gross'] }).catch(() => null),
-  ]);
+  const smiles = await ketcher.structService.convert({ struct: entry.molfile, output_format: ChemicalMimeType.DaylightSmiles });
+  // Generic structures and organometallics may not have usable identifiers or
+  // masses. Preserve their structures and allow manual properties instead.
+  const inchiKey = await ketcher.structService.getInChIKey(entry.molfile).catch(() => '');
+  const properties = await ketcher.structService.calculate({ struct: entry.molfile, properties: ['molecular-weight', 'gross'] }).catch(() => null);
   const weight = Number(properties?.['molecular-weight']);
   return {
     ...emptyComponent(), ...entry,
@@ -144,10 +146,12 @@ export async function reactionFromKetcher(ketcher: Ketcher): Promise<Reaction> {
     throw new Error('Draw exactly one reaction arrow to create a reaction record.');
   }
   const rxn = await ketcher.getRxn('v3000');
-  const [components, preview] = await Promise.all([
-    Promise.all(parseReactionRxn(rxn).map(entry => componentFromEntry(ketcher, entry))),
-    previewFromKet(ketcher, ket),
-  ]);
+  // one after the other, see componentFromEntry()
+  const components: ReactionComponent[] = [];
+  for (const entry of parseReactionRxn(rxn)) {
+    components.push(await componentFromEntry(ketcher, entry));
+  }
+  const preview = await previewFromKet(ketcher, ket);
   const firstReactant = keptOrFirstReactant(null, components);
   return {
     title: '', scheme, rxn, preview_png: preview, temperature_c: null, duration_s: null,

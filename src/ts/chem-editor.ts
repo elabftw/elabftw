@@ -37,10 +37,10 @@ on('create-compound-from-editor', async () => {
   try {
     const smilesInput = document.getElementById('createCompound-smiles') as HTMLInputElement;
     const inchiInput = document.getElementById('createCompound-inchi') as HTMLInputElement;
-    const [smiles, inchi] = await Promise.all([
-      window.ketcher.getSmiles(),
-      window.ketcher.getInchi(),
-    ]);
+    // not in parallel: both are conversions of the same structure, and the standalone struct service
+    // would give the first answer to both, see componentFromEntry() in reaction.ts
+    const smiles = await window.ketcher.getSmiles();
+    const inchi = await window.ketcher.getInchi();
     smilesInput.value = smiles;
     inchiInput.value = inchi;
     // the button that triggers this is outside of the modal, so it is never already shown

@@ -341,7 +341,9 @@ h5 {
 }
 
 /*  MENU is below main nav */
-.tabbed-menu {
+/* entity-body-tabs reuses the look without the url driven behavior of .tabbed-menu (Tab.class.ts) */
+.tabbed-menu,
+.entity-body-tabs {
   border-bottom: 1px solid var(--firstlevel);
   line-height: 200%;
   padding: 0;
@@ -361,6 +363,13 @@ h5 {
     }
 
   }
+}
+
+/* inactive pane of .entity-body-tabs, see body-tabs.ts for why it is not display: none */
+.entity-body-pane-inactive {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 /* ALERT */

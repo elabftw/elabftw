@@ -10,7 +10,8 @@ import type { Upload } from './interfaces';
 import $ from 'jquery';
 import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
-import { adjustHiddenState, ensureTogglableSectionIsOpen, reloadElements } from './misc';
+import { adjustHiddenState, reloadElements } from './misc';
+import { showBodyTab } from './body-tabs';
 import { notify } from './notify';
 import { on } from './handlers';
 
@@ -152,9 +153,7 @@ export function initChemAttachments(ketcher: Ketcher): void {
       filename.value = name.replace(/\.[^.]+$/, '');
       busy = false;
       loadModal.modal('hide');
-      localStorage.setItem('chemEditorDiv-isHidden', '0');
-      document.getElementById('chemEditorIcon').closest('[aria-expanded]').setAttribute('aria-expanded', 'true');
-      ensureTogglableSectionIsOpen('chemEditorIcon', 'chemEditorDiv');
+      showBodyTab('chem', { scroll: true });
     } catch (error) {
       showError(loadError, error);
       if (!loadModal.hasClass('show')) notify.error(error instanceof Error ? error.message : String(error));

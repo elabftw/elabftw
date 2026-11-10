@@ -9,9 +9,7 @@ describe('Structured reactions', () => {
       .then(response => cy.extractIdFromLocation(response))
       .then(id => { entityId = id; cy.visit(`/experiments.php?mode=edit&id=${id}`); });
     cy.get('[data-cy="chem-create-reaction"]', { timeout: 60000 }).should('be.enabled');
-    cy.get('#chemEditorDiv').then($editor => {
-      if ($editor[0].hidden) cy.get('#chem-editor [data-action="toggle-next"]').click();
-    });
+    cy.get('[data-cy="body-tab-chem"]').click();
   });
 
   it('creates a reaction from the drawing, calculates a yield and preserves it on reload', () => {

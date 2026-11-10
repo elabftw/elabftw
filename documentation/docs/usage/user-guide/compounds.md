@@ -79,8 +79,10 @@ For detailed instructions, click the (?) icon at the top of the editor.
 ## Recording reactions in an entry
 
 The chemical editor is also available while editing experiments, resources and
-their templates. Draw or load a reaction with one arrow, then click **Create
-reaction**. Review the detected reactants, products and reagents, enter a title,
+their templates. It shares its place with the main text: use the tabs above the
+main text to switch to **Chemical editor and reactions**. The selected tab is
+remembered, so other entries open on the same view. Draw or load a reaction with
+one arrow, then click **Create reaction**. Review the detected reactants, products and reagents, enter a title,
 and save the reaction. Saving an editor attachment alone does not create a
 structured reaction record.
 

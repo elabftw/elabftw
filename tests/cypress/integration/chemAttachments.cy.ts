@@ -38,9 +38,35 @@ describe('Chemical editor attachments', () => {
         cy.visit(`/experiments.php?mode=edit&id=${id}`);
       });
     cy.get('[data-cy="chem-save-attachment"]', { timeout: 60000 }).should('be.enabled');
-    cy.get('#chemEditorDiv').then($editor => {
-      if ($editor[0].hidden) cy.get('#chem-editor [data-action="toggle-next"]').click();
-    });
+    cy.get('[data-cy="body-tab-chem"]').click();
+  });
+
+  it('remembers the selected body tab when opening another entry', () => {
+    cy.get('#chemPane').should('be.visible');
+    cy.get('#mainTextPane').should('not.be.visible');
+    cy.get('#mainTextEllipsis').should('not.be.visible');
+    cy.request('POST', '/api/v2/experiments', { title: 'Body tab test' })
+      .then(response => cy.extractIdFromLocation(response))
+      .then(id => cy.visit(`/experiments.php?mode=edit&id=${id}`));
+    cy.get('[data-cy="body-tab-chem"]').should('have.attr', 'aria-selected', 'true');
+    cy.get('#chemPane').should('be.visible');
+    cy.get('[data-cy="body-tab-main"]').click();
+    cy.get('#mainTextPane').should('be.visible');
+    cy.get('#chemPane').should('not.be.visible');
+    cy.reload();
+    cy.get('[data-cy="body-tab-main"]').should('have.attr', 'aria-selected', 'true');
+    cy.get('#chemPane').should('not.be.visible');
+  });
+
+  it('collapses the main section and remembers it', () => {
+    cy.get('[data-cy="body-section-toggle"]').click();
+    cy.get('[data-cy="body-section-toggle"]').should('have.attr', 'aria-expanded', 'false');
+    cy.get('#entityBodyDiv').should('not.be.visible');
+    cy.reload();
+    cy.get('#entityBodyDiv').should('not.be.visible');
+    cy.get('[data-cy="body-section-toggle"]').focus().type('{enter}');
+    cy.get('#entityBodyDiv').should('be.visible');
+    cy.get('#chemPane').should('be.visible');
   });
 
   it('saves an editable KET attachment with the chosen filename', () => {
@@ -120,14 +146,12 @@ describe('Chemical editor attachments', () => {
     expectDrawing('CCO');
   });
 
-  it('loads from the attachment menu and opens the collapsed editor', () => {
+  it('loads from the attachment menu and switches to the chemistry tab', () => {
     attach('ethane.SMI', 'CC').then(response => cy.extractIdFromLocation(response)).then(uploadId => {
       cy.reload();
       cy.get('[data-cy="chem-save-attachment"]', { timeout: 60000 }).should('be.enabled');
       setDrawing('CCO');
-      cy.get('#chemEditorDiv').then($editor => {
-        if (!$editor[0].hidden) cy.get('#chem-editor [data-action="toggle-next"]').click();
-      });
+      cy.get('[data-cy="body-tab-main"]').click();
       cy.window().then(win => cy.stub(win, 'confirm').returns(false).as('replaceDrawing'));
       const openMenu = () => cy.get(`#uploadDiv_${uploadId} .dropdown > [data-toggle="dropdown"]`).click();
       const loadAction = `#uploadDiv_${uploadId} .dropdown-menu [data-action="chem-load-file"]`;
@@ -141,7 +165,7 @@ describe('Chemical editor attachments', () => {
       openMenu();
       cy.get(loadAction).click();
       cy.get('#chemEditorDiv').should('be.visible');
-      cy.get('#chem-editor [aria-controls="chemEditorDiv"]').should('have.attr', 'aria-expanded', 'true');
+      cy.get('[data-cy="body-tab-chem"]').should('have.attr', 'aria-selected', 'true');
       cy.get('#chemLoadAttachmentModal').should('not.be.visible');
       expectDrawing('CC');
     });
@@ -155,9 +179,7 @@ describe('Chemical editor attachments', () => {
         attach('notes.txt', 'Notes');
         cy.reload();
         cy.get('[data-cy="chem-save-attachment"]', { timeout: 60000 }).should('be.enabled');
-        cy.get('#chemEditorDiv').then($editor => {
-          if (!$editor[0].hidden) cy.get('#chem-editor [data-action="toggle-next"]').click();
-        });
+        cy.get('[data-cy="body-tab-main"]').click();
         cy.get(`#uploadDiv_${uploadId} .viewer_3Dmoljs`).should('not.exist');
         cy.get(`#uploadDiv_${uploadId} .icon-overlay[data-action="chem-load-file"]`)
           .should('have.class', 'edit-overlay').click();

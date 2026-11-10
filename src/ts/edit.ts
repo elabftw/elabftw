@@ -13,7 +13,9 @@ import {
 } from './misc';
 import { Target, Model, Action } from './interfaces';
 import './doodle';
+import './body-tabs';
 import { getEditor } from './Editor.class';
+import tinymce from 'tinymce/tinymce';
 import DOMPurify from 'dompurify';
 import { ApiC } from './api';
 import { Uploader } from './uploader';
@@ -21,6 +23,20 @@ import { getRecoveryData, removeRecoveryData } from './recovery';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { enableMarkdownImagePaste } from './pasteImage';
+
+// the main text tab can be shown without a scroll or resize, so let tinymce update its height and sticky toolbar now
+document.addEventListener('body-tab-shown', (event: CustomEvent<string>) => {
+  const editor = tinymce.activeEditor;
+  if (event.detail !== 'main' || !editor) {
+    return;
+  }
+  window.requestAnimationFrame(() => {
+    if (editor.plugins.autoresize) {
+      editor.execCommand('mceAutoResize');
+    }
+    window.dispatchEvent(new Event('scroll'));
+  });
+});
 
 // remove exclusive edit mode when leaving the page
 window.onbeforeunload = function() {

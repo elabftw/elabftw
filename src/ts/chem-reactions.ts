@@ -9,7 +9,8 @@ import type { Ketcher } from 'ketcher-core';
 import Autocomplete from './Autocomplete.class';
 import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
-import { ensureTogglableSectionIsOpen, reloadElements } from './misc';
+import { reloadElements } from './misc';
+import { showBodyTab } from './body-tabs';
 import { notify } from './notify';
 import { emptyComponent, quantityUnits, reactionFromKetcher, replaceReactionDrawing } from './reaction';
 import type { Reaction, ReactionComponent } from './reaction';
@@ -269,7 +270,7 @@ export function initChemReactions(ketcher: Ketcher): void {
           if (!await loadChemDrawing(ketcher, saved.scheme ? JSON.stringify(saved.scheme) : saved.rxn, {
             confirm: form.dataset.confirmLoad, error: 'Could not load this reaction.',
           })) return;
-          ensureTogglableSectionIsOpen('chemEditorIcon', 'chemEditorDiv');
+          showBodyTab('chem', { scroll: true });
         }
       }
     } catch (value) { notify.error(value instanceof Error ? value.message : String(value)); }

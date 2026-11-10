@@ -266,8 +266,15 @@ on('destroy-upload', (el: HTMLElement) => {
   }
 });
 
+let plainTextPreviewController: AbortController | null = null;
+
 on('toggle-modal', async (el: HTMLElement) => {
   if (el.dataset.target !== 'plainTextModal') return;
+  plainTextPreviewController?.abort();
+  const controller = new AbortController();
+  plainTextPreviewController = controller;
+  const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+  plainTextContentDiv.replaceChildren();
   // set the title for modal window
   document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
   // get the file content
@@ -283,30 +290,33 @@ on('toggle-modal', async (el: HTMLElement) => {
     params.set('access_key', accessKey);
   }
 
-  const response = await fetch(
-    `app/download.php?${params.toString()}`,
-  );
-  const plainTextContentDiv = document.getElementById('plainTextContentDiv');
-  if (el.dataset.ext === 'md') {
-    plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
-  } else if (el.dataset.ext === 'json') {
-    const preBlock = document.createElement('pre');
-    preBlock.classList.add('language-json');
-    const codeBlock = document.createElement('code');
-    codeBlock.classList.add('language-json');
-    preBlock.appendChild(codeBlock);
-    response.json().then(content => {
-      // use prismjs to display highlighted pretty-printed json content
-      codeBlock.innerHTML = `${Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json')}`;
-      // make sure to blank any previous content before appending
-      plainTextContentDiv.innerHTML = '';
-      plainTextContentDiv.appendChild(preBlock);
-    });
-  } else if (el.dataset.ext === 'table') {
-    const blob = await response.blob();
-    blob2table(blob, plainTextContentDiv as HTMLDivElement);
-  } else { // TXT
-    response.text().then(content => plainTextContentDiv.innerText = content);
+  try {
+    const response = await fetch(`app/download.php?${params.toString()}`, { signal: controller.signal });
+    if (controller.signal.aborted) return;
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const preview = document.createElement('div');
+    if (el.dataset.ext === 'md') {
+      preview.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
+    } else if (el.dataset.ext === 'json') {
+      const content = await response.json();
+      const preBlock = document.createElement('pre');
+      preBlock.classList.add('language-json');
+      const codeBlock = document.createElement('code');
+      codeBlock.classList.add('language-json');
+      codeBlock.innerHTML = Prism.highlight(JSON.stringify(content, null, 2), Prism.languages.json, 'json');
+      preBlock.appendChild(codeBlock);
+      preview.appendChild(preBlock);
+    } else if (el.dataset.ext === 'table') {
+      await blob2table(await response.blob(), preview);
+    } else {
+      preview.innerText = await response.text();
+    }
+    if (!controller.signal.aborted) {
+      plainTextContentDiv.replaceChildren(...preview.childNodes);
+    }
+  } catch (error) {
+    if (!controller.signal.aborted) notify.error('error-fetch-request', { error });
   }
 });
 

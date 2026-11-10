@@ -100,9 +100,10 @@ final class SamlLogoutTest extends TestCase
             );
             $destroyed = false;
             $auth = new Auth($settings);
-            SamlLogout::process($auth, static function () use (&$destroyed): void {
+            $redirect = SamlLogout::process($auth, static function () use (&$destroyed): void {
                 $destroyed = true;
             });
+            self::assertSame('', $redirect);
             self::assertSame($expected, $auth->getErrors() === array(), $auth->getLastErrorReason() ?? '');
             self::assertSame($expected, $destroyed);
         } finally {

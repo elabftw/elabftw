@@ -1,32 +1,67 @@
-{# required vars: rw: coming from canread or canwrite #}
-{# default icon/label are for canread #}
+{# one section of the permissions modal #}
+{# required vars: rw: canread, canwrite, canbook, canread_target or canwrite_target, can: from canToHuman filter, can_base: human readable base #}
+{# optional var: lockdown: name of the column to lock down the target permissions, only for templates #}
 {# twigcs use-var can #}
 {# see https://github.com/friendsoftwig/twigcs/issues/121 #}
 {% set icon = 'eye' %}
-{% set label = 'Visibility'|trans %}
+{% set label = 'Who can view'|trans %}
 {% set modalTitle = 'Select who can see this entry'|trans %}
+{% set lockdownLabel = 'Lock down read permissions'|trans %}
 {% set immutableVar = rw ~ '_is_immutable' %}
 {% if rw == 'canwrite' or rw == 'canwrite_target' %}
-  {% set icon = 'pencil-alt' %}
-  {% set label = 'Can write'|trans %}
+  {% set icon = 'user-pen' %}
+  {% set label = 'Who can edit'|trans %}
   {% set modalTitle = 'Select who can edit this entry'|trans %}
+  {% set lockdownLabel = 'Lock down write permissions'|trans %}
 {% elseif rw == 'canbook' %}
   {% set icon = 'calendar-plus' %}
-  {% set label = 'Can book'|trans %}
+  {% set label = 'Who can book'|trans %}
   {% set modalTitle = 'Select who can book this entry'|trans %}
 {% endif %}
+{% set permissionsIsDisabled = Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' and not App.Users.isAdmin %}
 
-{% include('permissions-edit-modal.html') %}
-<label class='col-form-label mr-3 edit-mode-label'><i class='fas fa-fw fa-{{ icon }} mr-1' title='{{ label }}'></i>{{ label }}</label>
-{% if not Entity.isReadOnly %}
-  {% set permissionsIsDisabled = false %}
-  {% if Entity.entityData[immutableVar] and Entity.entityType.value != 'experiments_templates' and Entity.entityType.value != 'items_types' and not App.Users.isAdmin %}
-    {% set permissionsIsDisabled = true %}
+<section class='permissions-section' aria-labelledby='permissionsTitle-{{ rw }}'>
+  <div class='d-flex justify-content-between align-items-center'>
+    <h6 class='permissions-section-title' id='permissionsTitle-{{ rw }}'><i class='fas fa-fw fa-{{ icon }} mr-2' aria-hidden='true'></i>{{ label }}</h6>
+    {% if not Entity.isReadOnly %}
+      {% if permissionsIsDisabled %}
+        <button type='button' class='btn btn-sm btn-ghost' disabled aria-describedby='permissionsLocked-{{ rw }}'>
+          <i class='fas fa-fw fa-lock mr-1' aria-hidden='true'></i>{{ 'Locked'|trans }}
+        </button>
+      {% else %}
+        <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn btn-sm btn-ghost' data-action='edit-permission' data-target='permModal-{{ rw }}' data-cy='edit-permission-{{ rw }}'>
+          <i class='fas fa-fw fa-pencil mr-1' aria-hidden='true'></i>{{ 'Edit'|trans }}
+        </button>
+      {% endif %}
+    {% endif %}
+  </div>
+  {# this div is reloaded after saving, see save-permissions in common.ts #}
+  <div id='{{ rw }}Div' class='mt-2'>
+    <div class='permissions-base'><i class='fas fa-fw fa-user-shield mr-1 smallgray' aria-hidden='true'></i>{{ can_base }}</div>
+    {% if can.teams or can.teamgroups or can.users %}
+      <ul class='list-unstyled d-flex flex-wrap mb-0'>
+        {% for team in can.teams %}
+          <li class='permissions-chip'><i class='fas fa-users' aria-hidden='true'></i><span class='sr-only'>{{ 'Team'|trans }}:</span>{{ team.name }}</li>
+        {% endfor %}
+        {% for group in can.teamgroups %}
+          <li class='permissions-chip'><i class='fas fa-user-group' aria-hidden='true'></i><span class='sr-only'>{{ 'User Groups'|trans }}:</span>{{ group.name }}</li>
+        {% endfor %}
+        {% for user in can.users %}
+          <li class='permissions-chip'><i class='fas fa-user' aria-hidden='true'></i><span class='sr-only'>{{ 'User'|trans }}:</span>{{ user.fullname }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+  {% if permissionsIsDisabled %}
+    <p class='smallgray mt-2 mb-0' id='permissionsLocked-{{ rw }}'><i class='fas fa-fw fa-lock mr-1' aria-hidden='true'></i>{{ 'Locked down by the template: only an Admin can change it.'|trans }}</p>
   {% endif %}
-  {# show the button as disabled and without any action related #}
-  <button type='button' title='{{ modalTitle }}' aria-label='{{ modalTitle }}' class='btn {{ not permissionsIsDisabled ? 'btn-transparent' }}' data-action='{{ not permissionsIsDisabled ? 'toggle-modal' }}' data-target='permModal-{{ rw }}' {{ permissionsIsDisabled ? 'disabled' }}>
-    <i class='fas fa-fw fa-square-plus'></i>
-  </button>
-{% endif %}
-<div class='vertical-separator'></div>
-{% include('view-permissions-details.html') %}
+  {% if lockdown is defined %}
+    <div class='d-flex align-items-center mt-2'>
+      <label class='switch ucp-align mb-0'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='{{ lockdown }}' {{ Entity.entityData[lockdown] ? 'checked="checked"' }} id='{{ lockdown }}'>
+        <span class='slider'></span>
+      </label>
+      <label for='{{ lockdown }}' class='col-form-label ml-2 smallgray'>{{ lockdownLabel }}</label>
+    </div>
+  {% endif %}
+</section>

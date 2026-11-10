@@ -96,14 +96,14 @@ Sharing this link will give read access to the recipient. If the checkbox is unc
 For this feature to work, the instance must be accessible from an external network.
 
 ### Option 3: Share with a user on the instance
-You might want to share some entries with a specific user, group, or team present on the Instance. For that, go to the Permissions section of an entry:
+You might want to share some entries with a specific user, group, or team present on the Instance. For that, click the **Permissions** button (share icon) in the toolbar of an entry:
 
 <figure>
-  <img src="/img/user-permission-view.png" alt="user-permission-view" />
-  <figcaption>Permissions for an entry.</figcaption>
+  <img src="/img/toolbar-permissions-btn.webp" alt="permissions button" />
+  <figcaption>Display permissions for an entry.</figcaption>
 </figure>
 
-Click the + sign to display a modal window. From there you can for instance select a Team to add to the base permissions:
+Click the "Edit" button to edit a permission. From there you can for instance select a Team to add to the base permissions:
 
 
 <figure>
@@ -123,13 +123,6 @@ Select the autocompleted user and click "Add".
 <figure>
   <img src="/img/user-permission-view-user2.png" alt="user-permission-view-user2" />
   <figcaption>Collaborator is now selected.</figcaption>
-</figure>
-
-Click "Save" and it will look similar to this now:
-
-<figure>
-  <img src="/img/user-permission-view-user3.png" alt="user-permission-view-user3" />
-  <figcaption>All members of Team "External Collaborators" + Tata Rohan now have access to this entry.</figcaption>
 </figure>
 
 You can also do something similar for edition permissions.

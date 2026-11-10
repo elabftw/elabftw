@@ -1,0 +1,48 @@
+{# PERMISSIONS overview, opened from the toolbar #}
+{# the edit modals are included after it and not in it: a modal in a modal is not displayed correctly. They open above it, see edit-permission in common.ts #}
+<div class='modal fade' id='permissionsModal' tabindex='-1' role='dialog' aria-labelledby='permissionsModalLabel'>
+  <div class='modal-dialog modal-lg' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='permissionsModalLabel'><i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Permissions'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <div class='modal-body' id='permissionsDiv'>
+        {% if Entity.entityData.canread_target %}
+          <h6 class='permissions-group-title'>{{ 'Permissions for the template'|trans }}</h6>
+        {% endif %}
+        {% include 'view-permissions.html' with {rw: 'canread', can_base: Entity.entityData.canread_base_human, can: Entity.entityData.canread|canToHuman(App.Users)} %}
+        {% include 'view-permissions.html' with {rw: 'canwrite', can_base: Entity.entityData.canwrite_base_human, can: Entity.entityData.canwrite|canToHuman(App.Users)} %}
+        {% if Entity.entityData.is_bookable %}
+          {% include 'view-permissions.html' with {rw: 'canbook', can_base: Entity.entityData.canbook_base_human, can: Entity.entityData.canbook|canToHuman(App.Users)} %}
+        {% endif %}
+
+        {# templates also have a read/write target #}
+        {% if Entity.entityData.canread_target %}
+          <h6 class='permissions-group-title'>{{ 'Permissions for the derived entry'|trans }}</h6>
+          <p class='smallgray'>{{ 'Entries created from this template will inherit these permissions. If they are locked down, the permissions will not be modifiable by Users, only Admins.'|trans }}</p>
+          {% include 'view-permissions.html' with {rw: 'canread_target', can: Entity.entityData.canread_target|canToHuman(App.Users), can_base: Entity.entityData.canread_target_base_human, lockdown: 'canread_is_immutable'} %}
+          {% include 'view-permissions.html' with {rw: 'canwrite_target', can: Entity.entityData.canwrite_target|canToHuman(App.Users), can_base: Entity.entityData.canwrite_target_base_human, lockdown: 'canwrite_is_immutable'} %}
+        {% endif %}
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Close'|trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if not Entity.isReadOnly %}
+  {% include 'permissions-edit-modal.html' with {rw: 'canread'} %}
+  {% include 'permissions-edit-modal.html' with {rw: 'canwrite'} %}
+  {# not conditioned on is_bookable: the booking settings can make it bookable and only reload permissionsDiv #}
+  {% if Entity.entityType.value == 'items' %}
+    {% include 'permissions-edit-modal.html' with {rw: 'canbook'} %}
+  {% endif %}
+  {% if Entity.entityData.canread_target %}
+    {% include 'permissions-edit-modal.html' with {rw: 'canread_target'} %}
+    {% include 'permissions-edit-modal.html' with {rw: 'canwrite_target'} %}
+  {% endif %}
+{% endif %}

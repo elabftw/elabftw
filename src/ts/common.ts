@@ -917,6 +917,28 @@ on('clear-form', (el: HTMLElement) => {
   inputs.forEach(input => input.value = '');
 });
 
+// open the edit modal above the permissions overview: hiding the overview first makes the backdrop flash
+// bootstrap 4 has no stacking support, so the z-index of the second modal and its backdrop must be raised
+on('edit-permission', (el: HTMLElement) => {
+  const editor = $(`#${el.dataset.target}`);
+  // closing the edit modal also resets the scrollbar compensation added by the overview, which shifts the page behind
+  const padded = Array.from(document.querySelectorAll<HTMLElement>('body, .fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
+  const paddings = padded.map(elem => elem.style.paddingRight);
+  // bootstrap defaults are 1040 for the backdrop and 1050 for the modal
+  editor.css('z-index', 1070);
+  editor.one('hidden.bs.modal', () => {
+    editor.css('z-index', '');
+    // the edit modal removed it while closing, but the overview is still open and the page must not scroll
+    document.body.classList.add('modal-open');
+    padded.forEach((elem, index) => { elem.style.paddingRight = paddings[index]; });
+    // back to where the keyboard user was in the overview
+    el.focus();
+  });
+  editor.modal('show');
+  // the backdrop of the modal we just opened is added synchronously at the end of the body
+  $('.modal-backdrop').last().css('z-index', 1060);
+});
+
 on('save-permissions', (el: HTMLElement) => {
   const params = {};
   params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);

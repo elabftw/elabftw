@@ -61,7 +61,7 @@
     <div class='d-flex justify-content-between align-items-end'>
       <ul class='entity-body-tabs flex-grow-1 mb-0' id='entityBodyTabs' role='tablist' aria-label='{{ 'Text editor or chemistry'|trans }}'>
         <li role='presentation'><button type='button' class='btn btn-transparent selected' role='tab' id='mainTextTab' aria-controls='mainTextPane' aria-selected='true' data-action='switch-body-tab' data-tab='main' data-cy='body-tab-main'>{{ 'Text editor'|trans }}</button></li>
-        <li role='presentation'><button type='button' class='btn btn-transparent' role='tab' id='chemTab' aria-controls='chemPane' aria-selected='false' tabindex='-1' data-action='switch-body-tab' data-tab='chem' data-cy='body-tab-chem'>{{ 'Chemical editor and reactions'|trans }}</button></li>
+        <li role='presentation'><button type='button' class='btn btn-transparent' role='tab' id='chemTab' aria-controls='chemPane' aria-selected='false' tabindex='-1' data-action='switch-body-tab' data-tab='chem' data-cy='body-tab-chem'>{{ 'Reactions'|trans }}</button></li>
       </ul>
       {% if not Entity.entityData.hide_main_text %}
       <div class='dropdown' id='mainTextEllipsis'>
@@ -157,17 +157,6 @@
 {% include 'links.html' %}
 
 {% include 'storage-view-edit.html' %}
-
-{# PERMISSIONS #}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-user-lock' data-scroll-btn-label='{{ 'Permissions'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
-<div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
-  {% if Entity.entityData.canread_target %}
-    <h5>{{ 'Permissions for the template'|trans }}</h5>
-  {% endif %}
-  {% include 'edit-permissions.html' %}
-  {% include 'view-edit-target-permissions.html' %}
-</div>
-<hr>
 
 {# DOODLE #}
 {# id for the i is needed by the annotate-image action #}

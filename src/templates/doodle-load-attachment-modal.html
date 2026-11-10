@@ -1,0 +1,24 @@
+{# select an image attachment to load in the image editor, see doodle.ts #}
+<div class='modal fade' id='doodleLoadAttachmentModal' tabindex='-1' role='dialog' aria-labelledby='doodleLoadAttachmentModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <form class='modal-content' id='doodleLoadAttachmentForm'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='doodleLoadAttachmentModalLabel'>{{ 'Load attachment'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'><span aria-hidden='true'>&times;</span></button>
+      </div>
+      <div class='modal-body'>
+        <div class='form-group'>
+          <label for='doodleAttachmentSelect'>{{ 'Attachment'|trans }}</label>
+          <select class='form-control' id='doodleAttachmentSelect' name='attachment' required data-cy='doodle-attachment-select'></select>
+        </div>
+        <p id='doodleAttachmentsLoading' role='status'>{{ 'Loading...'|trans }}</p>
+        <p id='doodleAttachmentsEmpty' role='status' hidden>{{ 'No compatible attachments found.'|trans }}</p>
+        <p class='text-muted'>{{ 'Loading an attachment replaces the current drawing.'|trans }}</p>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-cy='doodle-load-attachment-submit' disabled>{{ 'Load'|trans }}</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -11,7 +11,7 @@ import $ from 'jquery';
 import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
 import { adjustHiddenState, reloadElements } from './misc';
-import { showBodyTab } from './body-tabs';
+import { showTab } from './tabbed-sections';
 import { notify } from './notify';
 import { on } from './handlers';
 
@@ -153,7 +153,7 @@ export function initChemAttachments(ketcher: Ketcher): void {
       filename.value = name.replace(/\.[^.]+$/, '');
       busy = false;
       loadModal.modal('hide');
-      showBodyTab('chem', { scroll: true });
+      showTab('chem', { scroll: true });
     } catch (error) {
       showError(loadError, error);
       if (!loadModal.hasClass('show')) notify.error(error instanceof Error ? error.message : String(error));

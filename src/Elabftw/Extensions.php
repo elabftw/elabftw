@@ -80,6 +80,15 @@ final class Extensions
         'webp',
     );
 
+    // images that the browser can draw on the canvas of the image editor
+    public const array DOODLE = array(
+        'bmp',
+        'gif',
+        'jpeg',
+        'jpg',
+        'png',
+    );
+
     public const array HAS_EXIF = array(
         'jpeg',
         'jpg',

@@ -18,7 +18,8 @@ import {
   sendSpreadsheetMessage,
 } from './spreadsheet-utils';
 import type { SpreadsheetWorkbook } from './spreadsheet-utils';
-import { adjustHiddenState, collectForm, ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
+import { adjustHiddenState, collectForm, relativeMoment, reloadElements } from './misc';
+import { showTab } from './tabbed-sections';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -247,7 +248,7 @@ on('xls-load-file', async (el: HTMLElement) => {
   spreadsheetUpload = { id: Number(el.dataset.uploadid), name: el.dataset.name };
   replaceSpreadsheetButton.disabled = spreadsheetSaving;
   spreadsheetDirty = false;
-  ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
+  showTab('spreadsheet', { scroll: true });
 });
 
 // ARCHIVE UPLOAD

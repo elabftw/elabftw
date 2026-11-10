@@ -51,7 +51,7 @@
 
       <div class='dropdown-divider'></div>
       {# Annotate image #}
-      {% set isAnnotImage = ext matches '/(jpg|jpeg|png|gif|bmp)$/i' %}
+      {% set isAnnotImage = ext|lower in constant('Elabftw\\Elabftw\\Extensions::DOODLE') %}
       <button type='button' class='dropdown-item' {% if not isAnnotImage %}disabled{% endif %} data-action='annotate-image' data-storage='{{ upload.storage }}' data-path='{{ upload.long_name|e('html_attr') }}'><i class='fas fa-fw fa-paint-brush mr-1'></i>{{ 'Annotate image'|trans }}</button>
 
       {# JSON EDITOR #}

@@ -13,7 +13,7 @@ import {
 } from './misc';
 import { Target, Model, Action } from './interfaces';
 import './doodle';
-import './body-tabs';
+import './tabbed-sections';
 import { getEditor } from './Editor.class';
 import tinymce from 'tinymce/tinymce';
 import DOMPurify from 'dompurify';
@@ -25,7 +25,7 @@ import { on } from './handlers';
 import { enableMarkdownImagePaste } from './pasteImage';
 
 // the main text tab can be shown without a scroll or resize, so let tinymce update its height and sticky toolbar now
-document.addEventListener('body-tab-shown', (event: CustomEvent<string>) => {
+document.addEventListener('tab-shown', (event: CustomEvent<string>) => {
   const editor = tinymce.activeEditor;
   if (event.detail !== 'main' || !editor) {
     return;
@@ -144,29 +144,6 @@ on('get-next-custom-id', (el: HTMLElement) => {
   ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.SetNextCustomId}).then(res => res.json()).then(json => {
     inputEl.value = String(json.custom_id);
   }).finally(() => button.disabled = false);
-});
-
-on('annotate-image', (el: HTMLElement) => {
-  // show doodle canvas
-  const doodleDiv = document.getElementById('doodleDiv');
-  doodleDiv.removeAttribute('hidden');
-  doodleDiv.scrollIntoView({behavior: 'smooth'});
-  // adjust caret icon
-  const doodleDivIcon = document.getElementById('doodleDivIcon');
-  doodleDivIcon.classList.remove('fa-caret-right');
-  doodleDivIcon.classList.add('fa-caret-down');
-
-  const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
-  const img = new Image();
-  // set src attribute to image path
-  img.addEventListener('load', function() {
-    // make canvas bigger than image
-    context.canvas.width = (this as HTMLImageElement).width * 2;
-    context.canvas.height = (this as HTMLImageElement).height * 2;
-    // add image to canvas
-    context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-  });
-  img.src = `app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`;
 });
 
 on('import-link-body', (el: HTMLElement) => {

@@ -74,4 +74,24 @@ final class UserMembershipFilterTest extends TestCase
         self::assertSame(1, $memberships[1]['is_archived']);
         self::assertSame(0, $memberships[2]['is_archived']);
     }
+
+    public function testReadAllExposesActiveFilterWithoutChangingDefaultResults(): void
+    {
+        $previous = $_GET;
+        try {
+            $_GET = array('onlyActive' => '1', 'team' => '1');
+            self::assertNotContains($this->userid, array_column($this->Users->readAll(), 'userid'));
+            $_GET['team'] = '2';
+            self::assertContains($this->userid, array_column($this->Users->readAll(), 'userid'));
+            unset($_GET['team']);
+            self::assertContains($this->userid, array_column($this->Users->readAll(), 'userid'));
+            $archive = $this->Db->prepare('UPDATE users2teams SET is_archived = 1 WHERE users_id = :userid');
+            $archive->execute(array('userid' => $this->userid));
+            self::assertNotContains($this->userid, array_column($this->Users->readAll(), 'userid'));
+            $_GET = array();
+            self::assertContains($this->userid, array_column($this->Users->readAll(), 'userid'));
+        } finally {
+            $_GET = $previous;
+        }
+    }
 }

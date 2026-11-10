@@ -27,6 +27,7 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\LocalPasswordHash;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
@@ -216,6 +217,18 @@ final class Populate
                         $Templates->ItemsLinks->postAction(Action::Create, array());
                     }
                 }
+                if (isset($template['compounds_links'])) {
+                    $CompoundsLinks = LinksFactory::getCompoundsLinks($Templates);
+                    foreach ($template['compounds_links'] as $target) {
+
+                        // let it fail, we don't care
+                        $CompoundsLinks->setId($target);
+                        try {
+                            $CompoundsLinks->postAction(Action::Create, array());
+                        } catch (ResourceNotFoundException | ForbiddenException) {
+                        }
+                    }
+                }
             }
 
             $ResourcesCategories = new ResourcesCategories($Teams);
@@ -310,6 +323,17 @@ final class Populate
                         }
                     }
                 }
+                if (isset($experiment['compounds_links'])) {
+                    $CompoundsLinks = LinksFactory::getCompoundsLinks($Experiments);
+                    foreach ($experiment['compounds_links'] as $target) {
+                        // let it fail, we don't care
+                        $CompoundsLinks->setId($target);
+                        try {
+                            $CompoundsLinks->postAction(Action::Create, array());
+                        } catch (ResourceNotFoundException | ForbiddenException) {
+                        }
+                    }
+                }
                 $this->output->writeln(sprintf('├ + experiment: %s (id: %d in team: %d)', $experiment['title'], $id, $teamid));
             }
 
@@ -349,6 +373,17 @@ final class Populate
                         foreach ($item['items_links'] as $target) {
                             $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
                             $ItemsLinks->postAction(Action::Create, array());
+                        }
+                    }
+                    if (isset($item['compounds_links'])) {
+                        $CompoundsLinks = LinksFactory::getCompoundsLinks($Items);
+                        foreach ($item['compounds_links'] as $target) {
+                            // let it fail, we don't care
+                            $CompoundsLinks->setId($target);
+                            try {
+                                $CompoundsLinks->postAction(Action::Create, array());
+                            } catch (ResourceNotFoundException | ForbiddenException) {
+                            }
                         }
                     }
                     $this->output->writeln(sprintf('├ + resource: %s (id: %d in team: %d)', $item['title'], $id, $teamid));

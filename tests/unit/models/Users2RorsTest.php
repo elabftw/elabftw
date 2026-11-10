@@ -60,6 +60,20 @@ class Users2RorsTest extends \PHPUnit\Framework\TestCase
         $Users2Rors->postAction(Action::Create, array());
     }
 
+    public function testCannotRead(): void
+    {
+        $Users2Rors = new Users2Rors($this->getUserInTeam(2)->getUserid(), false, $this->ror, canread: false);
+        $this->expectException(ForbiddenException::class);
+        $Users2Rors->readAll();
+    }
+
+    public function testCannotReadOne(): void
+    {
+        $Users2Rors = new Users2Rors($this->getUserInTeam(2)->getUserid(), false, $this->ror, canread: false);
+        $this->expectException(ForbiddenException::class);
+        $Users2Rors->readOne();
+    }
+
     public function testInvalidCreate(): void
     {
         $Users2Rors = new Users2Rors($this->getUserInTeam(2)->getUserid(), true);

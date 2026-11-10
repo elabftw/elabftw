@@ -413,6 +413,38 @@ teams:
           <h2>Conclusion</h2>
           <p>Elution fractions 2 and 3 contained the strongest target-protein signal and were selected for pooling. The pooled sample can now proceed to buffer exchange and downstream characterization.</p>
 
+      - title: Links in custom fields
+        category: Dev
+        body: '<p>Experiment with a lot of custom fields: single and multiple</p>'
+        tags:
+          - eln
+          - imaging
+          - generated from yml
+        # ids 1-23 (experiments) and 1-20 (resources) of this team are the random entries, created with a random visibility:
+        # only reference the entries defined in this file (experiments from 24, resources from 21)
+        metadata: |
+          {
+            "extra_fields": {
+              "Single experiment" : {"type": "experiments", "value": 24},
+              "Multiple experiments": {"type": "experiments", "value_labels": ["MathJax", "Optimization"], "value": [24, 25], "allow_multi_values": true},
+              "Single resource": {"type": "items", "value": 23},
+              "Multiple resources": {"type": "items", "value_labels": ["Antibody", "Plasmid"], "value": [21, 22], "allow_multi_values": true},
+              "Single user": {"type": "users", "value": 1},
+              "Multiple users": {"type": "users", "value_labels": ["Toto", "Titi"], "value": [1, 2], "allow_multi_values": true},
+              "Single compound": {"type": "compounds", "value": 1},
+              "Multiple compounds": {"type": "compounds", "value_labels": ["Caffeine", "Aspirin"], "value": [1, 2], "allow_multi_values": true}
+            }
+          }
+        experiments_links:
+          - 24
+          - 25
+        items_links:
+          - 23
+          - 21
+          - 22
+        compounds_links:
+          - 1
+          - 2
 
     user_groups:
       - name: Super secret project

@@ -313,7 +313,7 @@ on('toggle-modal', async (el: HTMLElement) => {
       preview.innerText = await response.text();
     }
     if (!controller.signal.aborted) {
-      plainTextContentDiv.replaceChildren(...preview.childNodes);
+      plainTextContentDiv.replaceChildren(...Array.from(preview.childNodes));
     }
   } catch (error) {
     if (!controller.signal.aborted) notify.error('error-fetch-request', { error });

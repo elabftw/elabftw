@@ -41,6 +41,7 @@
 @include meta.load-css('autocomplete');
 @include meta.load-css('buttons');
 @include meta.load-css('charts');
+@include meta.load-css('doodle');
 @include meta.load-css('footer');
 @include meta.load-css('header');
 @include meta.load-css('star-rating');
@@ -683,35 +684,6 @@ tr:first-child td {
 
 .margin-1px {
   margin: 1px;
-}
-
-/* image editor canvas in edit.html, with its resize handle in the bottom right corner, see doodle.ts */
-.doodle-canvas-frame {
-  display: inline-block;
-  line-height: 0;
-  position: relative;
-}
-
-.doodle-resize-handle {
-  background: linear-gradient(135deg, transparent 0 50%, var(--secondlevel) 50% 60%, transparent 60% 72%, var(--secondlevel) 72% 82%, transparent 82%);
-  border: 0;
-  bottom: 0;
-  cursor: nwse-resize;
-  height: 18px;
-  padding: 0;
-  position: absolute;
-  right: 0;
-  touch-action: none;
-  width: 18px;
-
-  &:focus-visible {
-    outline: 2px solid var(--primary);
-  }
-}
-
-/* image editor toolbar in edit.html: keep space between the rows when it wraps */
-.doodle-toolbar {
-  row-gap: 0.5rem;
 }
 
 .vertical-separator {
@@ -2057,11 +2029,6 @@ input:user-invalid {
     border-radius: 4px;
     padding: 4px 8px;
   }
-}
-
-// disable touch action for doodle canvas
-#doodleCanvas {
-  touch-action: none;
 }
 
 // on sysconfig page

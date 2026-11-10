@@ -25,7 +25,11 @@ describe('Attachment preview request ordering', () => {
   }
 
   function closePreview() {
+    cy.window().its('jQuery').then(($: JQueryStatic) => {
+      $('#plainTextModal').one('hidden.bs.modal', cy.stub().as('previewHidden'));
+    });
     cy.get('#plainTextModal .modal-footer [data-dismiss="modal"]').click();
+    cy.get('@previewHidden').should('have.been.calledOnce');
     cy.get('#plainTextModal').should('not.be.visible');
   }
 

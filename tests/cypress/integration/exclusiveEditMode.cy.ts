@@ -21,8 +21,13 @@ describe('Exclusive edit mode', () => {
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('[title="Select who can edit this entry"]').click();
     cy.get('#canwrite_select_base').should('be.visible').select('Only members of the team');
+    cy.intercept('PATCH', '**/api/v2/experiments/*', request => {
+      if (Object.hasOwn(request.body, 'canwrite_base')) {
+        request.alias = 'saveWritePermissions';
+      }
+    });
     cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').click();
-    cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
+    cy.wait('@saveWritePermissions').its('response.statusCode').should('eq', 200);
     // Navigate away so the editor cannot finish a reload after the next login.
     // The onbeforeunload override above still preserves the exclusive edit lock.
     cy.visit('/app/logout.php');

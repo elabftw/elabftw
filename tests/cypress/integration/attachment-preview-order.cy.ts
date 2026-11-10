@@ -13,7 +13,7 @@ describe('Attachment preview request ordering', () => {
       storage: '1', path: `synthetic-${name}`,
     });
     button.textContent = name;
-    win.document.body.appendChild(button);
+    win.document.getElementById('container').prepend(button);
   }
 
   function openPreview(name: string) {

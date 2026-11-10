@@ -441,6 +441,69 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($extraFields['resource']['value_labels'] ?? null);
     }
 
+    public function testResolveMetadataReferencesIgnoresUnknownField(): void
+    {
+        $Users = new Users(1, 1);
+        $Import = $this->getElnForReflection(null);
+        $Entity = new Experiments($Users);
+        $Entity->setId($Entity->create());
+        $metadata = json_encode(array(
+            'extra_fields' => array(
+                'known' => array('type' => 'text', 'value' => 'untouched'),
+            ),
+        ), JSON_THROW_ON_ERROR);
+        $Entity->update(new EntityParams('metadata', $metadata));
+
+        new ReflectionProperty(Eln::class, 'metadataReferencesToResolve')->setValue($Import, array(
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'absent', 'type' => ExtraFieldReference::Users, 'targets' => array(0 => ''), 'is_multiple' => false),
+        ));
+        new ReflectionMethod(Eln::class, 'resolveMetadataReferences')->invoke($Import);
+
+        $Entity = new Experiments($Users, $Entity->id);
+        $this->assertJsonStringEqualsJsonString($metadata, $Entity->entityData['metadata']);
+    }
+
+    public function testResolveMetadataReferenceToItselfIsCleared(): void
+    {
+        $Users = new Users(1, 1);
+        $Import = $this->getElnForReflection(null);
+        $Entity = new Experiments($Users);
+        $Entity->setId($Entity->create());
+        $Entity->update(new EntityParams('metadata', json_encode(array(
+            'extra_fields' => array(
+                'self' => array('type' => 'experiments', 'value' => 999999999),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        new ReflectionProperty(Eln::class, 'insertedEntities')->setValue($Import, array(
+            array('item_@id' => './self/', 'id' => $Entity->id, 'entity_type' => EntityType::Experiments, 'users' => $Users),
+        ));
+        // an entry cannot link to itself: the source id must not stay in the field
+        new ReflectionProperty(Eln::class, 'metadataReferencesToResolve')->setValue($Import, array(
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'self', 'type' => ExtraFieldReference::Experiments, 'targets' => array(0 => './self/'), 'is_multiple' => false),
+        ));
+        new ReflectionMethod(Eln::class, 'resolveMetadataReferences')->invoke($Import);
+
+        $Entity = new Experiments($Users, $Entity->id);
+        $extraFields = json_decode($Entity->entityData['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+        $this->assertSame('', $extraFields['self']['value']);
+    }
+
+    public function testMetadataReferencesOnlyForRecentArchives(): void
+    {
+        $Import = $this->getElnForReflection(null);
+        $Version = new ReflectionProperty(Eln::class, 'internalElnVersion');
+        $HasMetadataReferences = new ReflectionMethod(Eln::class, 'hasMetadataReferences');
+        // archives from other software have no version
+        $Version->setValue($Import, -1);
+        $this->assertFalse($HasMetadataReferences->invoke($Import));
+        // older eLabFTW archives hold database ids
+        $Version->setValue($Import, 108);
+        $this->assertFalse($HasMetadataReferences->invoke($Import));
+        $Version->setValue($Import, 109);
+        $this->assertTrue($HasMetadataReferences->invoke($Import));
+    }
+
     public function testImportExperimentsMulti(): void
     {
         $uploadedFile = new UploadedFile(

@@ -60,6 +60,7 @@ use function json_encode;
 use function random_bytes;
 use function sprintf;
 use function strtr;
+use function array_intersect;
 use function array_map;
 use function array_values;
 use function is_array;
@@ -71,6 +72,10 @@ use function is_scalar;
 class MakeEln extends AbstractMakeEln
 {
     use TwigTrait;
+
+    private ?array $entityArrSlugs = null;
+
+    private ?array $requesterTeams = null;
 
     public function __construct(
         protected LoggerInterface $logger,
@@ -617,12 +622,16 @@ class MakeEln extends AbstractMakeEln
         } catch (ResourceNotFoundException) {
             $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: not found', $type->value, $sourceId));
             return null;
+        } catch (ForbiddenException $e) {
+            // only skip the reference: letting it through would drop the whole entry from the export
+            $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: %s', $type->value, $sourceId, $e->getMessage()));
+            return null;
         }
     }
 
     private function processMetadataUser(int $userId): ?array
     {
-        if (!$this->requester->isAdminOf($userId)) {
+        if (!$this->canExportUser($userId)) {
             $this->logger->warning(sprintf(
                 'Skipping metadata reference users: %d during ELN export: insufficient permissions',
                 $userId
@@ -632,8 +641,30 @@ class MakeEln extends AbstractMakeEln
         return array('@id' => $this->getAuthorId(new Users($userId)));
     }
 
+    /**
+     * Admins can export any of their users. Other users can export their teammates:
+     * they already appear as Person nodes when they authored or commented an exported entry.
+     */
+    private function canExportUser(int $userId): bool
+    {
+        if ($this->requester->isAdminOf($userId)) {
+            return true;
+        }
+        $this->requesterTeams ??= new UsersHelper($this->requester->getUserid())->getTeamsIdFromUserid();
+        return array_intersect($this->requesterTeams, new UsersHelper($userId)->getTeamsIdFromUserid()) !== array();
+    }
+
     private function processMetadataEntity(int $entityId, EntityType $entityType): ?array
     {
+        // without linked entities, only point to entries that are part of the export anyway
+        if (!$this->includeLinkedEntities && !$this->isInEntityArr($entityType, $entityId)) {
+            $this->logger->notice(sprintf(
+                'Skipping metadata reference %s: %d during ELN export: linked entities are not included',
+                $entityType->value,
+                $entityId,
+            ));
+            return null;
+        }
         try {
             $Entity = $entityType->toInstance(
                 $this->requester,
@@ -654,6 +685,12 @@ class MakeEln extends AbstractMakeEln
             ));
             return null;
         }
+    }
+
+    private function isInEntityArr(EntityType $entityType, int $entityId): bool
+    {
+        $this->entityArrSlugs ??= array_map(self::toSlug(...), $this->entityArr);
+        return in_array(sprintf('%s:%d', $entityType->value, $entityId), $this->entityArrSlugs, true);
     }
 
     private function processMetadataCompounds(int $compoundId): array

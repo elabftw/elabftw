@@ -89,6 +89,9 @@ class Eln extends AbstractZip
     // userid 0 never exists
     protected const int UNKNOWN_USERID = 0;
 
+    // from this internal ELN version, reference extra fields point to nodes of the crate instead of database ids
+    private const int METADATA_REFERENCES_ELN_VERSION = 109;
+
     // archive directory containing ro-crate-metadata.json
     private string $root;
 
@@ -434,22 +437,39 @@ class Eln extends AbstractZip
                 $targetIds[$index] = $targetId;
             }
             $entity = $ref['entity_type']->toInstance($ref['users'], $ref['id'], true, true);
+            // the PropertyValue can name a field that is absent from the imported metadata (edited crate, other software)
+            if (!array_key_exists($ref['field'], new Metadata($entity->entityData['metadata'] ?? null)->getExtraFields())) {
+                $this->logger->warning(sprintf('Ignoring metadata reference for unknown field %s.', $ref['field']));
+                continue;
+            }
             if ($targetIds === array()) {
                 // nothing could be resolved: do not keep ids pointing to unrelated entries of this instance
+                $fieldValue = array('value' => $ref['is_multiple'] ? array() : '', 'value_labels' => null);
+            } else {
+                $values = array_values($targetIds);
+                // update values and labels together, so a label never ends up on another value
+                $fieldValue = array(
+                    'value' => $ref['is_multiple'] ? $values : $values[0],
+                    'value_labels' => $this->getResolvedValueLabels($entity, $ref['field'], $targetIds),
+                );
+            }
+            // a value the field refuses (e.g. a link to the entry itself) must not abort an import where all entries already exist
+            try {
+                $entity->patch(Action::UpdateMetadataField, array($ref['field'] => $fieldValue));
+            } catch (ImproperActionException $e) {
+                $this->logger->warning(sprintf('Could not update metadata field %s: %s', $ref['field'], $e->getMessage()));
+                // the field still holds the source ids, which point to unrelated entries of this instance
                 $entity->patch(Action::UpdateMetadataField, array(
                     $ref['field'] => array('value' => $ref['is_multiple'] ? array() : '', 'value_labels' => null),
                 ));
-                continue;
             }
-            $values = array_values($targetIds);
-            // update values and labels together, so a label never ends up on another value
-            $entity->patch(Action::UpdateMetadataField, array(
-                $ref['field'] => array(
-                    'value' => $ref['is_multiple'] ? $values : $values[0],
-                    'value_labels' => $this->getResolvedValueLabels($entity, $ref['field'], $targetIds),
-                ),
-            ));
         }
+    }
+
+    // older archives hold database ids in reference extra fields: they are kept as they are
+    private function hasMetadataReferences(): bool
+    {
+        return $this->internalElnVersion >= self::METADATA_REFERENCES_ELN_VERSION;
     }
 
     /**
@@ -619,7 +639,9 @@ class Eln extends AbstractZip
                 }
             }
         }
-        $this->collectMetadataTargetTypes();
+        if ($this->hasMetadataReferences()) {
+            $this->collectMetadataTargetTypes();
+        }
         return count($this->crateNodeHasPart);
     }
 
@@ -758,7 +780,9 @@ class Eln extends AbstractZip
                                 $this->Entity->update(new EntityParams('metadata', $node['value']));
                                 continue;
                             }
-                            $this->queueMetadataReference($node);
+                            if ($this->hasMetadataReferences()) {
+                                $this->queueMetadataReference($node);
+                            }
                         }
                     }
                     break;

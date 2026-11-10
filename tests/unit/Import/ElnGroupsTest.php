@@ -22,6 +22,7 @@ use Elabftw\Models\Uploads;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
+use Elabftw\Services\UsersHelper;
 use Elabftw\Storage\Cache\ElabCache;
 use Elabftw\Traits\TestsUtilsTrait;
 use League\Flysystem\FilesystemOperator;
@@ -34,6 +35,7 @@ use ZipStream\ZipStream;
 
 use function array_column;
 use function array_filter;
+use function array_intersect;
 use function array_map;
 use function array_merge;
 use function array_reverse;
@@ -74,7 +76,7 @@ final class ElnGroupsTest extends TestCase
             $collections = array_values(array_filter($nodes, static fn(array $node): bool => $node['@type'] === 'Collection'));
             $this->assertCount(3, $sections);
             $this->assertCount(3, $collections);
-            $this->assertSame('108', $nodes['./']['version']);
+            $this->assertSame('109', $nodes['./']['version']);
             $this->assertSame(array('Analysis', 'Preparation & µ', 'Empty steps'), array_column($sections, 'name'));
             $this->assertSame(array('Processed data', 'Raw data', 'Empty uploads'), array_column($collections, 'name'));
             $this->assertSame(array(), $sections[2]['itemListElement']);
@@ -236,7 +238,8 @@ final class ElnGroupsTest extends TestCase
             ),
         ), JSON_THROW_ON_ERROR)));
 
-        [$path] = $this->export(array($exportedExp));
+        // referenced entries are only exported along with linked entities
+        [$path] = $this->export(array($exportedExp), includeLinkedEntities: true);
 
         try {
             $imported = array();
@@ -264,12 +267,83 @@ final class ElnGroupsTest extends TestCase
         }
     }
 
+    public function testMetadataReferencesWithoutLinkedEntities(): void
+    {
+        $Referenced = $this->createEntity(EntityType::Experiments);
+        $First = $this->createEntity(EntityType::Experiments);
+        $Second = $this->createEntity(EntityType::Experiments);
+        $First->patch(Action::Update, array('title' => 'First'));
+        $Second->patch(Action::Update, array('title' => 'Second'));
+        $First->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'Not exported' => array('type' => 'experiments', 'value' => $Referenced->id),
+                // exported too, but processed after the entry referencing it
+                'Exported' => array('type' => 'experiments', 'value' => $Second->id),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        [$path, , $crate] = $this->export(array($First, $Second));
+
+        try {
+            $datasets = array_values(array_filter(
+                $crate['@graph'],
+                static fn(array $node): bool => ($node['@type'] ?? null) === 'Dataset' && $node['@id'] !== './',
+            ));
+            $this->assertCount(2, $datasets);
+            $imported = array();
+            foreach ($this->import($path) as $entity) {
+                $imported[$entity->readOne()['title']] = $entity;
+            }
+            $this->assertCount(2, $imported);
+            $fields = json_decode($imported['First']->readOne()['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+            $this->assertSame('', $fields['Not exported']['value']);
+            $this->assertSame($imported['Second']->id, $fields['Exported']['value']);
+        } finally {
+            unlink($path);
+        }
+    }
+
+    public function testMetadataUserReferenceToTeammate(): void
+    {
+        $requester = $this->getRandomUserInTeam(1);
+        $teammate = new Users(1, 1);
+        $this->assertFalse($requester->isAdminOf($teammate->getUserid()));
+        $Exported = EntityType::Experiments->toInstance($requester);
+        $Exported->setId($Exported->create());
+        $Exported->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'User' => array('type' => 'users', 'value' => $teammate->getUserid()),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        [$path, , $crate] = $this->export(array($Exported), $requester);
+
+        try {
+            $userField = array_values(array_filter(
+                $crate['@graph'],
+                static fn(array $node): bool => ($node['propertyID'] ?? null) === 'User',
+            ))[0];
+            $person = array_values(array_filter(
+                $crate['@graph'],
+                static fn(array $node): bool => $node['@id'] === ($userField['value']['@id'] ?? null),
+            ))[0] ?? array();
+            $this->assertSame($teammate->userData['email'], $person['email'] ?? null);
+        } finally {
+            unlink($path);
+        }
+    }
+
     public function testMetadataUserReferenceDoesNotExposeUnauthorizedUser(): void
     {
-        $requester = new Users(2, 1);
+        // userid 1 is only in team 1
+        $requester = $this->getRandomUserInTeam(2);
         $referencedUser = new Users(1, 1);
         $this->assertFalse($requester->isSysadmin());
         $this->assertFalse($requester->isAdminOf($referencedUser->getUserid()));
+        $this->assertSame(array(), array_intersect(
+            new UsersHelper($requester->getUserid())->getTeamsIdFromUserid(),
+            new UsersHelper($referencedUser->getUserid())->getTeamsIdFromUserid(),
+        ));
         $Exported = EntityType::Experiments->toInstance($requester);
         $Exported->setId($Exported->create());
         $Exported->patch(Action::Update, array('metadata' => json_encode(array(
@@ -334,7 +408,7 @@ final class ElnGroupsTest extends TestCase
         )));
     }
 
-    private function export(array $entities, ?Users $Users = null): array
+    private function export(array $entities, ?Users $Users = null, bool $includeLinkedEntities = false): array
     {
         foreach ($entities as $Entity) {
             $Entity->readOne();
@@ -342,7 +416,7 @@ final class ElnGroupsTest extends TestCase
         if ($Users === null) {
             $Users = new Users(1, 1);
         }
-        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors($Users->getTeam()), new Users2Rors($Users->getUserid()), CompoundsFactory::getCompounds($Users), includeLinkedEntities: false);
+        $Make = new MakeEln($this->logger, $this->createStub(ZipStream::class), $Users, $entities, new Instance2Rors(), new Teams2Rors($Users->getTeam()), new Users2Rors($Users->getUserid()), CompoundsFactory::getCompounds($Users), includeLinkedEntities: $includeLinkedEntities);
         $path = tempnam(sys_get_temp_dir(), 'elabftw-eln-groups-');
         $this->assertIsString($path);
         $Make->writeToFile($path);

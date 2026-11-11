@@ -10,13 +10,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\FingerprintTable;
+use Elabftw\Models\Users\Users;
 use Elabftw\Params\ReactionParams;
 use PDO;
 use PDOStatement;
@@ -26,6 +29,7 @@ use function _;
 use function addcslashes;
 use function array_keys;
 use function array_push;
+use function array_sum;
 use function count;
 use function filter_var;
 use function implode;
@@ -84,11 +88,17 @@ final class ReactionSearch
 
     private array $binds = array();
 
+    /** The criteria on the reaction itself (key, text), for the candidates of a SMARTS search too */
+    private string $reactionSql = '';
+
     public function __construct(
         private EntityType $entityType,
         InputBag $query,
         private FingerprinterInterface $fingerprinter = new OpenBabelFingerprinter(),
         private SmartsMatcherInterface $smartsMatcher = new OpenBabelSmartsMatcher(),
+        // what the listing shows: the candidates of a SMARTS search are only taken from these entries, see getSmartsSql()
+        private ?Users $requester = null,
+        private string $entityScopeSql = '',
     ) {
         $this->text = trim($query->getString('reaction_q'));
         if (mb_strlen($this->text) > self::MAX_TEXT_LENGTH) {
@@ -160,11 +170,11 @@ final class ReactionSearch
             $this->entityType->value,
         );
         if ($this->key !== null) {
-            $sql .= ' AND r.reaction_key = :rs_key';
+            $this->reactionSql .= ' AND r.reaction_key = :rs_key';
             $this->binds[':rs_key'] = array($this->key, PDO::PARAM_STR);
         }
         if ($this->text !== '') {
-            $sql .= ' AND (r.title LIKE :rs_text_title OR r.conditions_notes LIKE :rs_text_notes OR r.atmosphere LIKE :rs_text_atmosphere
+            $this->reactionSql .= ' AND (r.title LIKE :rs_text_title OR r.conditions_notes LIKE :rs_text_notes OR r.atmosphere LIKE :rs_text_atmosphere
                 OR EXISTS (SELECT 1 FROM reaction_components AS tc WHERE tc.reaction_id = r.id
                     AND (tc.name LIKE :rs_text_name OR tc.molecular_formula LIKE :rs_text_formula)))';
             $like = '%' . addcslashes($this->text, '%_\\') . '%';
@@ -172,6 +182,7 @@ final class ReactionSearch
                 $this->binds[':rs_text_' . $field] = array($like, PDO::PARAM_STR);
             }
         }
+        $sql .= $this->reactionSql;
         if ($this->hasComponentCriteria()) {
             $sql .= $this->getComponentSql();
         }
@@ -201,7 +212,7 @@ final class ReactionSearch
             $this->binds[':rs_item'] = array($this->item, PDO::PARAM_INT);
         }
         if ($this->structure !== '' && $this->smarts) {
-            $where .= $this->getSmartsSql($where);
+            $where .= $this->getSmartsSql($where, $this->structure);
         } elseif ($this->structure !== '') {
             if (preg_match(self::INCHIKEY_REGEX, strtoupper($this->structure)) === 1) {
                 $inchiKey = strtoupper($this->structure);
@@ -214,8 +225,18 @@ final class ReactionSearch
                     $this->binds[':rs_inchi_key'] = array(substr($inchiKey, 0, 14) . '-%', PDO::PARAM_STR);
                 }
             } else {
-                $join = ' INNER JOIN reaction_component_fingerprints AS f ON (f.component_id = c.id)';
-                $where .= $this->getFingerprintSql();
+                $smiles = ReactionIdentity::normalizeSmiles($this->structure);
+                $fingerprint = new ReactionFingerprinter($this->fingerprinter)->queryFingerprint($smiles);
+                if ($fingerprint === null) {
+                    throw new ImproperActionException(_('Could not read this structure: enter a SMILES or an InChIKey.'));
+                }
+                if (array_sum($fingerprint) === 0) {
+                    // an empty fingerprint (water, ammonia…) screens nothing: match the structure itself, a SMILES is also a SMARTS
+                    $where .= $this->getSmartsSql($where, $smiles, $this->exact);
+                } else {
+                    $join = ' INNER JOIN reaction_component_fingerprints AS f ON (f.component_id = c.id)';
+                    $where .= $this->getFingerprintSql($fingerprint);
+                }
             }
         }
         return ' AND EXISTS (SELECT 1 FROM reaction_components AS c' . $join . ' WHERE c.reaction_id = r.id' . $where . ')';
@@ -225,62 +246,80 @@ final class ReactionSearch
      * Fingerprint screening, like the compounds search: a component containing the query structure
      * has at least all its bits. It can return false positives, never false negatives.
      */
-    private function getFingerprintSql(): string
+    private function getFingerprintSql(array $fingerprint): string
     {
-        $fingerprint = new ReactionFingerprinter($this->fingerprinter)->fingerprint(ReactionIdentity::normalizeSmiles($this->structure));
-        if ($fingerprint === null) {
-            throw new ImproperActionException(_('Could not read this structure: enter a SMILES or an InChIKey.'));
-        }
         return $this->exact
             ? FingerprintTable::equalsSql($fingerprint, 'f')
             : FingerprintTable::containsSql($fingerprint, 'f');
     }
 
     /**
-     * SMARTS cannot be screened with fingerprints: the candidate components (with the other component criteria) are read,
-     * and Open Babel tells which ones match. Each distinct structure is tested once, and the matching components are
-     * given by id, so this does not depend on how many there are.
+     * SMARTS cannot be screened with fingerprints: the candidate components are read, and Open Babel tells which ones match.
+     * The candidates already satisfy everything else the listing can check in SQL (permissions, scope, owner, state…, and the
+     * other reaction and component criteria), so the limit is reached because of what is searched, not because of other entries.
+     * Each distinct structure is tested once, and the limit bounds that work. The matching structures are given by their hash:
+     * a SMILES can be long, the hash is safe to inline.
      *
      * @param string $where the other component criteria, with their binds already in $this->binds
      */
-    private function getSmartsSql(string $where): string
+    private function getSmartsSql(string $where, string $pattern, bool $exact = false): string
     {
+        $entityJoin = '';
+        $entityScope = '';
+        if ($this->requester !== null) {
+            $entityJoin = sprintf(' INNER JOIN %s AS entity ON (entity.id = links.entity_id)', $this->entityType->value);
+            // a superset of what the listing shows, which applies its own permissions and filters on the result
+            $entityScope = $this->entityScopeSql . sprintf(
+                ' AND (%s OR entity.userid = :userid)',
+                new CanSqlBuilder($this->requester, AccessType::Read)->getCanCondition(),
+            );
+        }
         $sql = sprintf(
-            "SELECT c.id, c.smiles FROM reaction_components AS c
+            "SELECT SHA2(c.smiles, 256) AS smiles_hash, ANY_VALUE(c.smiles) AS smiles FROM reaction_components AS c
             INNER JOIN reactions AS r ON (r.id = c.reaction_id AND r.state = :rs_state)
-            INNER JOIN reactions2%s AS links ON (links.reaction_id = r.id)
-            WHERE c.smiles != ''%s LIMIT %d",
+            INNER JOIN reactions2%s AS links ON (links.reaction_id = r.id)%s
+            WHERE c.smiles != ''%s%s%s
+            GROUP BY smiles_hash LIMIT %d",
             $this->entityType->value,
+            $entityJoin,
             $where,
+            $this->reactionSql,
+            $entityScope,
             self::MAX_SMARTS_CANDIDATES + 1,
         );
         $Db = Db::getConnection();
         $req = $Db->prepare($sql);
-        // the binds also hold the ones of the text and key criteria, which are not in this query
+        // only the binds of this query: the ones of the other criteria can be absent from it
         foreach ($this->binds as $name => $bind) {
             if (preg_match('/' . $name . '\b/', $sql) === 1) {
                 $req->bindValue($name, $bind[0], $bind[1]);
             }
+        }
+        if ($this->requester !== null) {
+            $req->bindValue(':userid', $this->requester->userid, PDO::PARAM_INT);
         }
         $Db->execute($req);
         $rows = $req->fetchAll();
         if (count($rows) > self::MAX_SMARTS_CANDIDATES) {
             throw new ImproperActionException(_('Too many structures to search with a SMARTS pattern: select a role or add other criteria.'));
         }
-        $idsBySmiles = array();
+        // different stored texts can be the same SMILES once normalized
+        $hashesBySmiles = array();
         foreach ($rows as $row) {
             $smiles = ReactionIdentity::normalizeSmiles((string) $row['smiles']);
-            if ($smiles !== '') {
-                $idsBySmiles[$smiles][] = (int) $row['id'];
+            if ($smiles !== '' && preg_match('/^[0-9a-f]{64}$/', (string) $row['smiles_hash']) === 1) {
+                $hashesBySmiles[$smiles][] = $row['smiles_hash'];
             }
         }
-        $ids = array();
-        $structures = array_keys($idsBySmiles);
-        foreach ($this->smartsMatcher->matches($this->structure, $structures) as $index) {
-            array_push($ids, ...$idsBySmiles[$structures[$index]]);
+        $structures = array_keys($hashesBySmiles);
+        $hashes = array();
+        foreach ($this->smartsMatcher->matches($pattern, $structures, $exact) as $index) {
+            array_push($hashes, ...$hashesBySmiles[$structures[$index]]);
         }
-        // ids are integers read from the database: safe to inline, with no limit on the number of placeholders
-        return $ids === array() ? ' AND 0 = 1' : ' AND c.id IN (' . implode(',', $ids) . ')';
+        if ($hashes === array()) {
+            return ' AND 0 = 1';
+        }
+        return sprintf(" AND SHA2(c.smiles, 256) IN ('%s')", implode("', '", $hashes));
     }
 
     private function getId(InputBag $query, string $name): ?int

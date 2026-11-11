@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Enums\Action;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\DomCrawler\Crawler;
@@ -60,6 +62,30 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
             // confirm that the section can search exactly all visible teams.
             self::assertSame($expected, $actual);
         }
+    }
+
+    public function testViewWithTheAccessKeyHasTheReactionPreviewsInline(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $entity = $this->getFreshExperimentWithGivenUser($user);
+        // 1x1 pixel
+        $png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+        $reactionId = new Reactions($entity)->postAction(Action::Create, array('title' => 'Shared reaction', 'preview_png' => $png));
+        $App = new App(
+            Request::create(sprintf('/experiments.php?mode=view&id=%d', $entity->id)),
+            new Session(new MockArraySessionStorage()),
+            Config::getConfig(),
+            App::getDefaultLogger(),
+            $user,
+        );
+        $App->boot();
+        $image = static fn(Experiments $Entity): string => (string) new Crawler((string) new ExperimentsController($App, $Entity)->getResponse()->getContent())
+            ->filter('#reactionsList img')->attr('src');
+
+        // a normal view loads the preview from the api
+        self::assertSame(sprintf('/api/v2/experiments/%d/reactions/%d?format=binary', $entity->id, $reactionId), $image(new Experiments($user, $entity->id)));
+        // opened with the access key, the api would not authorize it: it is in the page
+        self::assertSame('data:image/png;base64,' . $png, $image(new Experiments($user, $entity->id, bypassReadPermission: true)));
     }
 
     public function testShowRendersTheBatchContainerModalWithoutReadingStorage(): void

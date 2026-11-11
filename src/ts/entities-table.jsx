@@ -23,7 +23,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
@@ -266,17 +266,32 @@ const EntitiesTable = ({
     return params;
   }, [order, sort, related, relatedOrigin]);
 
+  // only the last request shows its results: an older one can finish after it
+  const requestSeq = useRef(0);
+
   // all the entries are loaded in the table, which does client side pagination
+  // like the list (EntityList.svelte), tell the forms that changed the filters if they were rejected, see initReactionSearch() in show.ts
   const fetchData = useCallback(async event => {
     const params = getResolvedEntityFilterParams(event);
     const queryString = params.toString();
+    const seq = ++requestSeq.current;
 
     try {
       const endpoint = getEntityTypeFromPage(window.location);
       const url = queryString ? `${endpoint}?${queryString}` : endpoint;
       const entities = await ApiC.getJson(url, {notifOnError: 0});
+      if (seq !== requestSeq.current) {
+        return;
+      }
       setRowData(entities);
+      window.dispatchEvent(new CustomEvent('entity-list-loaded'));
     } catch (error) {
+      if (seq !== requestSeq.current) {
+        return;
+      }
+      // the rows of the previous query are not the results of this one
+      setRowData([]);
+      window.dispatchEvent(new CustomEvent('entity-list-rejected', { detail: error instanceof Error ? error.message : String(error) }));
       console.error(`Could not load entities: ${error}`);
     }
   }, [getResolvedEntityFilterParams]);

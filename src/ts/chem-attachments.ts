@@ -14,16 +14,16 @@ import { BusyState, showFormError } from './form-state';
 import { errorMessage, reloadUploads } from './misc';
 import { showTab } from './tabbed-sections';
 import { notify } from './notify';
-import { on } from './handlers';
 
 type AttachmentLoader = (uploadId: string, name: string) => Promise<void>;
 let resolveLoader: (load: AttachmentLoader) => void;
 const loaderReady = new Promise<AttachmentLoader>(resolve => { resolveLoader = resolve; });
-// An attachment can be clicked before Ketcher has finished initializing.
-on('chem-load-file', async el => {
+
+// from the attachments list, see chem-loader.ts: an attachment can be clicked before Ketcher has finished initializing
+export async function loadAttachmentFromList(uploadId: string, name: string): Promise<void> {
   const load = await loaderReady;
-  await load(el.dataset.uploadid, el.dataset.name);
-});
+  await load(uploadId, name);
+}
 
 const saveModalSelector = '#chemSaveAttachmentModal';
 const loadModalSelector = '#chemLoadAttachmentModal';

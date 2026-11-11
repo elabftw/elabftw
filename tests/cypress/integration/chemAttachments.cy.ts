@@ -37,8 +37,9 @@ describe('Chemical editor attachments', () => {
         entityId = id;
         cy.visit(`/experiments.php?mode=edit&id=${id}`);
       });
-    cy.get('[data-cy="chem-save-attachment"]', { timeout: 60000 }).should('be.enabled');
+    // the chemical editor is only loaded when its tab is shown
     cy.get('[data-cy="body-tab-chem"]').click();
+    cy.get('[data-cy="chem-save-attachment"]', { timeout: 60000 }).should('be.enabled');
   });
 
   it('remembers the selected body tab when opening another entry', () => {

@@ -28,6 +28,7 @@ use PDOStatement;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function explode;
+use function str_starts_with;
 use function sprintf;
 use function trim;
 use function implode;
@@ -55,6 +56,9 @@ final class DisplayParams extends BaseQueryParams
 
     protected string $orderIsPinnedSql = 'is_pinned DESC,';
 
+    // the filters only on the columns of the entry table: what a query without the joins of the listing can apply, see getReactionSearch()
+    private string $entityFilterSql = '';
+
     private ?ReactionSearch $ReactionSearch = null;
 
     public function __construct(
@@ -75,7 +79,11 @@ final class DisplayParams extends BaseQueryParams
 
     public function appendFilterSql(FilterableColumn $column, int $value): void
     {
-        $this->filterSql .= sprintf(' AND %s = %d', $column->value, $value);
+        $sql = sprintf(' AND %s = %d', $column->value, $value);
+        $this->filterSql .= $sql;
+        if (str_starts_with($column->value, 'entity.')) {
+            $this->entityFilterSql .= $sql;
+        }
     }
 
     #[Override]
@@ -194,6 +202,7 @@ final class DisplayParams extends BaseQueryParams
             $tags = $query->all('tags');
             $Tags2Entity = new Tags2Entity($this->requester, $this->entityType);
             $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags, $scope));
+            $this->entityFilterSql = $this->filterSql;
         }
 
         // RELATED FILTER
@@ -206,30 +215,30 @@ final class DisplayParams extends BaseQueryParams
         // use the compounds link table so only entries actually linked to the compound are returned,
         // and not entries where a compound property happens to match a text search
         if (Check::id($query->getInt('compound')) !== false) {
-            $this->filterSql .= sprintf(
+            $this->addEntityFilterSql(sprintf(
                 ' AND entity.id IN (SELECT c2e_filter.entity_id FROM compounds2%s AS c2e_filter WHERE c2e_filter.compound_id = %d)',
                 $this->entityType->value,
                 $query->getInt('compound'),
-            );
+            ));
         }
 
         // Note: we use getString() and not getInt() because values can be string separated (1,5)
         // CATEGORY FILTER
         // cat is for backward compatibility
-        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
-        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('category'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.category', $query->getString('cat')));
+        $this->addEntityFilterSql($this->getSqlIn('entity.category', $query->getString('category')));
         // BOOKABLE
-        $this->filterSql .= $this->getSqlIn('entity.is_bookable', $query->getString('bookable'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.is_bookable', $query->getString('bookable')));
         // STATUS FILTER
-        $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.status', $query->getString('status')));
         // OWNER (USERID) FILTER
-        $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.userid', $query->getString('owner')));
         // LOCK FILTER: 0 or 1, use getInt()
-        $this->filterSql .= $this->getSqlIn('entity.locked', $query->getString('locked'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.locked', $query->getString('locked')));
         // TIMESTAMPED FILTER, same as lock
-        $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.timestamped', $query->getString('timestamped')));
         // RATING FILTER
-        $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.rating', $query->getString('rating')));
     }
 
     /**
@@ -238,7 +247,18 @@ final class DisplayParams extends BaseQueryParams
      */
     private function getReactionSearch(): ReactionSearch
     {
-        return $this->ReactionSearch ??= new ReactionSearch($this->entityType, $this->getQuery());
+        return $this->ReactionSearch ??= new ReactionSearch(
+            $this->entityType,
+            $this->getQuery(),
+            requester: $this->requester,
+            entityScopeSql: $this->entityFilterSql . $this->getStatesSql('entity'),
+        );
+    }
+
+    private function addEntityFilterSql(string $sql): void
+    {
+        $this->filterSql .= $sql;
+        $this->entityFilterSql .= $sql;
     }
 
     /**

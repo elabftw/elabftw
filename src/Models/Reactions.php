@@ -125,6 +125,27 @@ final class Reactions extends AbstractRest
         );
     }
 
+    /**
+     * Give the summaries of readSummaries() their preview inline (base64 PNG), for a page that cannot load them from the API:
+     * opened with the access key of the entry, the request has no session the API would accept. Like readSummaries(),
+     * it is for callers that already checked Read access on the entity.
+     */
+    public function addPreviews(array $summaries): array
+    {
+        $req = $this->Db->prepare('SELECT r.id, r.preview_png FROM reactions r JOIN ' . $this->linkTable() . " l ON l.reaction_id = r.id
+            WHERE l.entity_id = :entity_id AND r.state = :state AND r.preview_png != ''");
+        $req->bindValue(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindValue(':state', State::Normal->value, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $previews = array_column($req->fetchAll(), 'preview_png', 'id');
+        return array_map(static function (array $summary) use ($previews): array {
+            if (isset($previews[$summary['id']])) {
+                $summary['preview_png'] = $previews[$summary['id']];
+            }
+            return $summary;
+        }, $summaries);
+    }
+
     #[Override]
     public function readOne(): array
     {

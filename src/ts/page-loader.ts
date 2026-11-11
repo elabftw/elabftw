@@ -11,12 +11,10 @@
  */
 const mode = new URLSearchParams(window.location.search).get('mode');
 import { core } from './core';
+import { initChemistryLoader } from './chem-loader';
 
 if (document.getElementById('ketcher-root')) {
-  void import(
-    /* webpackChunkName: 'chem-editor' */
-    './chem-editor'
-  );
+  initChemistryLoader();
 }
 
 if (document.getElementById('syc-root')) {

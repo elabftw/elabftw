@@ -54,9 +54,23 @@ final class ReactionFingerprinter
     }
 
     /**
+     * The fingerprint to store for a component: an empty one constrains nothing, so it is not stored
+     *
      * @return ?list<int>
      */
     public function fingerprint(string $smiles): ?array
+    {
+        $fingerprint = $this->queryFingerprint($smiles);
+        return $fingerprint === null || array_sum($fingerprint) === 0 ? null : $fingerprint;
+    }
+
+    /**
+     * The fingerprint of a structure to search, null if it cannot be read. It can be empty for a valid structure:
+     * FP2 has no bits for the fragments of a single C, N or O atom, so water (O) or ammonia (N) have none.
+     *
+     * @return ?list<int>
+     */
+    public function queryFingerprint(string $smiles): ?array
     {
         try {
             $fp = $this->fingerprinter->calculate('smi', $smiles);
@@ -64,7 +78,7 @@ final class ReactionFingerprinter
             return null;
         }
         $data = $fp['data'] ?? null;
-        if (!is_array($data) || count($data) !== FingerprintTable::WORDS || array_sum($data) === 0) {
+        if (!is_array($data) || count($data) !== FingerprintTable::WORDS) {
             return null;
         }
         $ints = array();

@@ -49,7 +49,7 @@ final class OpenBabelSmartsMatcher implements SmartsMatcherInterface
     public function __construct(private int $timeout = 30) {}
 
     #[Override]
-    public function matches(string $smarts, array $smiles): array
+    public function matches(string $smarts, array $smiles, bool $exact = false): array
     {
         self::validate($smarts);
         $keys = array_keys($smiles);
@@ -65,7 +65,8 @@ final class OpenBabelSmartsMatcher implements SmartsMatcherInterface
             throw new ImproperActionException('Could not prepare the SMARTS search.');
         }
         try {
-            $process = new Process(array('/usr/local/bin/obabel', '-ismi', '-osmi', '-s', $smarts), $cwd);
+            // "pattern exact" is the option of -s for a SMILES matching the whole molecule, see OpNewS in Open Babel
+            $process = new Process(array('/usr/local/bin/obabel', '-ismi', '-osmi', '-s', $exact ? $smarts . ' exact' : $smarts), $cwd);
             $process->setInput($input);
             $process->setTimeout($this->timeout);
             $process->run();

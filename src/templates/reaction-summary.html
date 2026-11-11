@@ -1,6 +1,7 @@
 {# searchLinks: link to the reaction search of experiments, not wanted in a PDF #}
 {% set searchLinks = searchLinks|default(false) %}
-{# a PDF gets the preview inline (see MakePdf), a page loads it from the API: the entry only has reaction summaries #}
+{# a PDF, or a page opened with the access key of the entry, gets the preview inline (see MakePdf and AbstractEntityController::view()), #}
+{# another page loads it from the API: the entry only has reaction summaries #}
 {% if reaction.preview_png|default('') %}
   <img class='img-fluid mb-2' src='data:image/png;base64,{{ reaction.preview_png }}' alt='{{ 'Reaction scheme'|trans }}'>
 {% elseif reaction.has_preview|default(false) %}

@@ -30,6 +30,15 @@ final class OpenBabelSmartsMatcherTest extends TestCase
         $this->assertSame(array(), $Matcher->matches('c', array()));
     }
 
+    public function testExact(): void
+    {
+        $Matcher = new OpenBabelSmartsMatcher();
+        $structures = array('water' => 'O', 'ethanol' => 'CCO', 'ammonia' => 'N');
+        $this->assertSame(array('water', 'ethanol'), $Matcher->matches('O', $structures));
+        // as many heavy atoms as the pattern: the molecule itself
+        $this->assertSame(array('water'), $Matcher->matches('O', $structures, exact: true));
+    }
+
     public function testInvalidPatterns(): void
     {
         $Matcher = new OpenBabelSmartsMatcher();

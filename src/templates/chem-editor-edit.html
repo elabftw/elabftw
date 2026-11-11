@@ -23,7 +23,8 @@
   <h3 class='mb-2'>{{ 'Compounds substructure search results'|trans }}</h3>
   <input type='hidden' id='substructureSearchInput' />
   <ul id='searchFpSmiList' class='list-group'></ul>
-  <div id='compounds-table'></div>
+  {# compounds-table until the first search, see search-from-editor in chem-editor.ts: mounted, the table reads the compounds #}
+  <div id='chemCompoundsTable'></div>
 </div>
   </div>
 </section>

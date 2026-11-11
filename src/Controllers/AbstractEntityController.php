@@ -31,6 +31,7 @@ use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
@@ -189,6 +190,11 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
+        // opened with its access key (the page bypasses the read permission for it): the reaction previews cannot be loaded
+        // from the API, which needs a session and checks the usual permissions, so they come with the page, see reaction-summary.html
+        if ($this->Entity->bypassReadPermission && !empty($this->Entity->entityData['reactions'])) {
+            $this->Entity->entityData['reactions'] = new Reactions($this->Entity)->addPreviews($this->Entity->entityData['reactions']);
+        }
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
         // the mode parameter is for the uploads tpl
         $renderArr = array(

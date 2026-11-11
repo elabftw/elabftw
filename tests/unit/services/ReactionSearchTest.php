@@ -6,6 +6,7 @@ namespace Elabftw\Tests\Services;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\SmartsMatcherInterface;
@@ -25,6 +26,7 @@ use function array_filter;
 use function array_keys;
 use function array_map;
 use function intval;
+use function random_int;
 use function str_contains;
 use function str_repeat;
 use function uniqid;
@@ -111,6 +113,62 @@ final class ReactionSearchTest extends TestCase
         $this->assertNotFound(array('reaction_structure' => 'CCCCCCCCCC'));
     }
 
+    public function testStructuresWithoutFingerprintBits(): void
+    {
+        // FP2 has no bits for water or ammonia: they are matched as structures
+        $water = $this->getFreshExperiment();
+        new Reactions($water)->postAction(Action::Create, array(
+            'title' => 'In water ' . $this->suffix,
+            'components' => array(
+                array('role' => 'reactant', 'name' => 'Phenol', 'smiles' => 'Oc1ccccc1', 'inchi_key' => self::PHENOL),
+                array('role' => 'solvent', 'name' => 'Water', 'smiles' => 'O', 'inchi_key' => 'XLYOFNOQVPJJNP-UHFFFAOYSA-N'),
+            ),
+        ));
+        // an oxygen atom: in phenol and dimethyl sulfate too
+        $this->assertFound(array('reaction_structure' => 'O'));
+        $this->assertContains($water->id, $this->search(array('reaction_structure' => 'O', 'reaction_role' => 'solvent')));
+        // the molecule itself
+        $this->assertNotFound(array('reaction_structure' => 'O', 'reaction_exact' => '1'));
+        $this->assertContains($water->id, $this->search(array('reaction_structure' => 'O', 'reaction_exact' => '1')));
+        $this->assertNotFound(array('reaction_structure' => 'N'));
+    }
+
+    public function testSmartsCandidatesAreTheEntriesOfTheListing(): void
+    {
+        // a deleted entry and an entry the requester cannot read
+        $deleted = $this->getFreshExperiment();
+        $deletedSmiles = 'C' . str_repeat('C', random_int(30, 60)) . 'O';
+        new Reactions($deleted)->postAction(Action::Create, array('title' => 'Deleted', 'components' => array(array('smiles' => $deletedSmiles))));
+        $deleted->destroy();
+        $owner = $this->getUserInTeam(2);
+        $this->assertNotSame($this->Entity->Users->userid, $owner->userid);
+        $private = $this->getFreshExperimentWithGivenUser($owner);
+        $private->patch(Action::Update, array('canread_base' => BasePermissions::UserOnly->value));
+        $privateSmiles = 'N' . str_repeat('C', random_int(30, 60));
+        new Reactions($private)->postAction(Action::Create, array('title' => 'Private', 'components' => array(array('smiles' => $privateSmiles))));
+
+        $matcher = new class implements SmartsMatcherInterface {
+            public array $seen = array();
+
+            public function matches(string $smarts, array $smiles, bool $exact = false): array
+            {
+                $this->seen = $smiles;
+                return array();
+            }
+        };
+        $ReactionSearch = new ReactionSearch(
+            EntityType::Experiments,
+            new InputBag(array('reaction_structure' => 'C', 'reaction_structure_type' => 'smarts')),
+            smartsMatcher: $matcher,
+            requester: $this->Entity->Users,
+            entityScopeSql: ' AND entity.state IN (1)',
+        );
+        $ReactionSearch->getFilterSql();
+        $this->assertContains('COc1ccccc1', $matcher->seen);
+        $this->assertNotContains($deletedSmiles, $matcher->seen);
+        $this->assertNotContains($privateSmiles, $matcher->seen);
+    }
+
     public function testSameTransformationAndDeletedReactions(): void
     {
         $key = new Reactions($this->Entity, $this->reactionId)->readOne()['reaction_key'];
@@ -167,7 +225,7 @@ final class ReactionSearchTest extends TestCase
         $matcher = new class implements SmartsMatcherInterface {
             public array $seen = array();
 
-            public function matches(string $smarts, array $smiles): array
+            public function matches(string $smarts, array $smiles, bool $exact = false): array
             {
                 $this->seen = $smiles;
                 return array_keys(array_filter($smiles, static fn(string $structure): bool => str_contains($structure, $smarts)));

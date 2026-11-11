@@ -16,7 +16,8 @@ interface SmartsMatcherInterface
 {
     /**
      * @param array<array-key, string> $smiles structures to test, by any key
+     * @param bool $exact only the structures with as many heavy atoms as the pattern, which must then be a SMILES: the same molecule
      * @return list<array-key> the keys of the structures containing the SMARTS pattern
      */
-    public function matches(string $smarts, array $smiles): array;
+    public function matches(string $smarts, array $smiles, bool $exact = false): array;
 }

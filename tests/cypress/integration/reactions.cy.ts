@@ -8,8 +8,9 @@ describe('Structured reactions', () => {
     cy.request('POST', '/api/v2/experiments', { title: 'Reaction foundation test' })
       .then(response => cy.extractIdFromLocation(response))
       .then(id => { entityId = id; cy.visit(`/experiments.php?mode=edit&id=${id}`); });
-    cy.get('[data-cy="chem-create-reaction"]', { timeout: 60000 }).should('be.enabled');
+    // the chemical editor is only loaded when its tab is shown
     cy.get('[data-cy="body-tab-chem"]').click();
+    cy.get('[data-cy="chem-create-reaction"]', { timeout: 60000 }).should('be.enabled');
   });
 
   it('creates a reaction from the drawing, calculates a yield and preserves it on reload', () => {

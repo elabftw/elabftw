@@ -186,6 +186,16 @@ final class ReactionsTest extends TestCase
         $this->assertSame(array('Second', 'Third'), array_column(new Reactions($entity)->readAll(), 'title'));
     }
 
+    public function testPreviewsCanComeWithTheSummaries(): void
+    {
+        $entity = $this->getFreshExperiment();
+        $withPreview = new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('preview_png' => self::PNG)));
+        $without = new Reactions($entity)->postAction(Action::Create, $this->data());
+        $summaries = array_column(new Reactions($entity)->addPreviews($entity->readOne()['reactions']), null, 'id');
+        $this->assertSame(self::PNG, $summaries[$withPreview]['preview_png']);
+        $this->assertArrayNotHasKey('preview_png', $summaries[$without]);
+    }
+
     public function testEntryReadsSummariesAndTheApiServesThePreview(): void
     {
         $entity = $this->getFreshExperiment();

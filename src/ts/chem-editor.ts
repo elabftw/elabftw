@@ -19,6 +19,11 @@ declare global {
   }
 }
 
+export { loadAttachmentFromList } from './chem-attachments';
+
+// the results table is mounted on the first search only: mounted, it reads the compounds at once
+let compoundsTable: Promise<unknown> | null = null;
+
 on('search-from-editor', () => {
   window.ketcher.getSmiles().then(s => {
     if (!s) {
@@ -29,8 +34,17 @@ on('search-from-editor', () => {
     smilesInput.value = s;
     const resultsParentDiv = document.getElementById('searchFpResultsDiv');
     resultsParentDiv.removeAttribute('hidden');
-    // reload the table
-    document.dispatchEvent(new CustomEvent('dataReload'));
+    if (compoundsTable) {
+      // reload the table
+      document.dispatchEvent(new CustomEvent('dataReload'));
+      return;
+    }
+    // compounds-table.jsx mounts in this element, and searches with the structure set above
+    document.getElementById('chemCompoundsTable').id = 'compounds-table';
+    compoundsTable = import(
+      /* webpackChunkName: 'compounds-table' */
+      './compounds-table'
+    );
   });
 });
 on('create-compound-from-editor', async () => {
@@ -50,4 +64,3 @@ on('create-compound-from-editor', async () => {
     console.error('Ketcher error:', error);
   }
 });
-document.getElementById('loading-spinner')?.remove();

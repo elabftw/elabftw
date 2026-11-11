@@ -218,6 +218,8 @@ Click the `Plus` icon to view, add, or remove permissions. A modal window will o
 
 Select a base permission to extend or restrict the current settings, and optionally, add permissions to entire teams, teamgroups, or individual users.
 
+Select **Hide archived users from search results** to exclude accounts with no active team membership from user suggestions. This only filters suggestions: users already selected keep their access unless you explicitly remove them. Uncheck the option to search archived accounts again.
+
 :::warning
 The permissions are **additive** on the base permission. Make sure to set a restrictive base permission if you do not wish to share an entry, and then **add** teams, teamgroups or users accordingly.
 :::

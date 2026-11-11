@@ -519,8 +519,8 @@ function configTomSelect(select: HTMLSelectElement) {
 }
 
 // fetch users and return in an id - username (email) format
-async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`users/?q=${encodeURIComponent(query)}`);
+async function fetchUsers(query: string, onlyActive = false) {
+  const users = await ApiC.getJson(`users/?q=${encodeURIComponent(query)}&onlyActive=${onlyActive ? '1' : '0'}`);
   return users.map((u) => ({
     value: `user:${u.userid}`,
     text: `${u.fullname} (${u.email})`,
@@ -530,10 +530,33 @@ async function fetchUsers(query: string) {
 function addUsersConfig(select: HTMLSelectElement, config): void {
   // for users, we return a formatted response with id - user (email)
   if (select.id.endsWith('_select_users')) {
+    const filter = document.getElementById(`${select.id}_only_active`) as HTMLInputElement | null;
+    let filterVersion = 0;
+    let queryBeforeBlur = '';
+    // TomSelect clears its textbox on blur, before the checkbox change event.
+    // Capture the query first so mouse and keyboard toggles can repeat it.
+    if (filter) {
+      const input = config['controlInput'] as HTMLInputElement;
+      input.addEventListener('blur', () => { queryBeforeBlur = input.value; }, true);
+    }
     config['load'] = (query: string, callback) => {
       if (!query.length) return callback();
-      fetchUsers(query).then(callback).catch(() => callback());
+      const version = filterVersion;
+      fetchUsers(query, filter?.checked ?? false)
+        .then(users => callback(version === filterVersion ? users : []))
+        .catch(() => callback());
     };
+    filter?.addEventListener('change', () => {
+      filterVersion++;
+      const ts = (select as HTMLSelectElement & { tomselect?: TomSelect }).tomselect;
+      if (!ts) return;
+      const query = ts.inputValue() || queryBeforeBlur;
+      // clearOptions retains selected users while invalidating cached searches.
+      ts.clearOptions();
+      ts.setTextboxValue(query);
+      ts.refreshOptions(false);
+      if (query.length) ts.load(query);
+    });
   }
 }
 

@@ -117,6 +117,10 @@
           {# USERS #}
           <label for='{{ identifier }}_select_users' class='mt-2'><strong><i class='fas fa-user mt-2 mr-2' aria-hidden='true'></i>+ {{ 'Users'|trans }}</strong></label>
           <p class='smallgray'>{{ 'You can select specific users to give access to.'|trans }}</p>
+          <div class='custom-control custom-checkbox mb-2'>
+            <input type='checkbox' class='custom-control-input' id='{{ identifier }}_select_users_only_active' autocomplete='off'>
+            <label class='custom-control-label' for='{{ identifier }}_select_users_only_active'>{{ 'Hide archived users from search results'|trans }}</label>
+          </div>
           <div class='ts-wrapper'>
             {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
             <select id='{{ identifier }}_select_users' multiple class='form-control' autocomplete='off' aria-label='{{ 'Search for users'|trans }}' data-tom-select='1'>

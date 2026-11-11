@@ -349,17 +349,19 @@ class Users extends AbstractRest
                               AND u2t_filter.teams_id = :team';
         }
 
+        // A scoped search must test the selected membership, not another team.
+        $membershipAlias = $teamId > 0 ? 'u2t_filter' : 'u2t_all';
         $archived = '';
         if ($onlyArchived) {
-            $archived = 'AND u2t_all.is_archived = 1';
+            $archived = 'AND ' . $membershipAlias . '.is_archived = 1';
         }
         if ($onlyActive) {
-            $archived = 'AND u2t_all.is_archived = 0';
+            $archived = 'AND ' . $membershipAlias . '.is_archived = 0';
         }
 
         $admins = '';
         if ($onlyAdmins) {
-            $admins = 'AND u2t_all.is_admin = 1';
+            $admins = 'AND ' . $membershipAlias . '.is_admin = 1';
         }
 
         $sql = "SELECT
@@ -510,6 +512,7 @@ class Users extends AbstractRest
             $team,
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
+            $Request->query->getBoolean('onlyActive'),
         );
         $isSysadmin = $this->requester->isSysadmin();
         $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');

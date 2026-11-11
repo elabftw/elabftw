@@ -7109,9 +7109,15 @@ paths:
     get:
       tags: ['Users']
       summary: Read users from instance.
-      description: Get a list of users with an active account on the instance.
+      description: Search users on the instance, including archived memberships unless filtered.
       operationId: read-users
       parameters:
+        - name: q
+          in: query
+          description: Search first name, last name or email.
+          required: false
+          schema:
+            type: string
         - name: team
           in: query
           description: Add a filter on the team
@@ -7136,6 +7142,13 @@ paths:
         - name: onlyArchived
           in: query
           description: Return only archived users.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: onlyActive
+          in: query
+          description: Return users with an active membership in the selected team, or in any team when no team is selected. Use instead of onlyArchived.
           required: false
           schema:
             type: boolean

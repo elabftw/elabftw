@@ -92,6 +92,21 @@ final class FingerprintTable
         return $sql;
     }
 
+    /**
+     * Tanimoto similarity of the rows with the fingerprint: bits set in both, out of the bits set in either, from 0 to 1.
+     * For a structure containing the query, it is higher the less the structure has around the query.
+     */
+    public static function similaritySql(array $fingerprint, string $alias = ''): string
+    {
+        $common = array();
+        $either = array();
+        foreach ($fingerprint as $index => $value) {
+            $common[] = sprintf('BIT_COUNT(%sfp%d & %d)', self::prefix($alias), $index, $value);
+            $either[] = sprintf('BIT_COUNT(%sfp%d | %d)', self::prefix($alias), $index, $value);
+        }
+        return sprintf('((%s) / NULLIF(%s, 0))', implode(' + ', $common), implode(' + ', $either));
+    }
+
     /** fp0 to fp31, for queries that copy fingerprints */
     public static function wordColumns(string $alias = ''): string
     {

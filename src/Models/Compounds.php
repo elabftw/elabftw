@@ -177,6 +177,7 @@ final class Compounds extends AbstractRest
         $query = $queryParams->getQuery();
         $text = $query->getString('q');
         $where = new CanSqlBuilder($this->requester, AccessType::Read)->getCanFilter();
+        $similarity = '';
         if ($text !== '') {
             $where .= self::TEXT_SEARCH_SQL;
         }
@@ -190,12 +191,13 @@ final class Compounds extends AbstractRest
             $where .= $query->getBoolean('exact')
                 ? FingerprintTable::equalsSql($fp['data'], 'compounds_fingerprints', ignoreEmptyWords: true)
                 : FingerprintTable::containsSql($fp['data'], 'compounds_fingerprints');
+            $similarity = FingerprintTable::similaritySql($fp['data'], 'compounds_fingerprints');
         }
         if (!empty($query->get('search_smarts'))) {
             // the states are in getSql() for the listing, the candidates need them too
             $where .= $this->getSmartsSql(trim($query->getString('search_smarts')), $where . $queryParams->getStatesSql('entity'), $text);
         }
-        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1' . $where . $queryParams->getSql();
+        $sql = $this->getSelectBeforeWhere($similarity) . ' WHERE 1=1' . $where . $this->getOrderSql($queryParams, $similarity !== '');
         $req = $this->Db->prepare($sql);
         $this->bindSearchValues($req, $text);
         $this->Db->execute($req);
@@ -727,9 +729,28 @@ final class Compounds extends AbstractRest
         return $this->Db->fetch($req);
     }
 
-    private function getSelectBeforeWhere(): string
+    /**
+     * The states, order and limit of readAll(): a fingerprint search lists the most similar compounds first,
+     * unless the request asks for another order
+     */
+    private function getOrderSql(QueryParamsInterface $queryParams, bool $hasSimilarity): string
     {
-        return 'SELECT entity.*,
+        if (!$hasSimilarity || $queryParams->getQuery()->has('order')) {
+            return $queryParams->getSql();
+        }
+        $sql = $queryParams->getStatesSql('entity') . ' ORDER BY similarity_score DESC, entity.id DESC';
+        if ($queryParams->getLimit() > 0) {
+            $sql .= sprintf(' LIMIT %d OFFSET %d', $queryParams->getLimit(), $queryParams->getOffset());
+        }
+        return $sql;
+    }
+
+    /**
+     * @param string $similarity the similarity with the searched structure, see FingerprintTable::similaritySql()
+     */
+    private function getSelectBeforeWhere(string $similarity = ''): string
+    {
+        return 'SELECT entity.*,' . ($similarity === '' ? '' : sprintf(' %s AS similarity_score,', $similarity)) . '
             CONCAT(
                 TO_BASE64(fp0), TO_BASE64(fp1), TO_BASE64(fp2), TO_BASE64(fp3),
                 TO_BASE64(fp4), TO_BASE64(fp5), TO_BASE64(fp6), TO_BASE64(fp7),

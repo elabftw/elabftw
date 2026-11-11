@@ -383,7 +383,7 @@ final class StorageUnits extends AbstractRest
             containers2experiments AS c2e
         LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
         LEFT JOIN experiments ON c2e.item_id = experiments.id
-        LEFT JOIN compounds2experiments ON experiments.id = c2e.item_id
+        LEFT JOIN compounds2experiments ON compounds2experiments.entity_id = experiments.id
         LEFT JOIN compounds ON compounds2experiments.compound_id = compounds.id;';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
@@ -1079,7 +1079,7 @@ final class StorageUnits extends AbstractRest
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 LEFT JOIN
-                    teams ON (entity.userid = teams.id)
+                    teams ON (entity.team = teams.id)
                 LEFT JOIN
                     users AS u ON (u.userid = entity.userid)
                 WHERE

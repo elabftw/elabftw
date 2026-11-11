@@ -668,6 +668,37 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $OwnerStorageUnits->readAll($OwnerStorageUnits->getQueryParams(new InputBag(array('q' => $name)))));
     }
 
+    public function testReadEverythingJoinsTheCompoundsOfEachExperiment(): void
+    {
+        $storageId = $this->StorageUnits->create('Everything report room');
+        $Compounds = new Compounds(new HttpGetter(new Client()), new Users(1, 1), new NullFingerprinter(), false);
+        $withCompound = $this->getFreshExperiment();
+        new Compounds2ExperimentsLinks($withCompound, $Compounds->create(name: 'Everything report compound', pubchemCid: random_int(900000000, 999999999)))->create();
+        new Containers2ExperimentsLinks($withCompound, $storageId)->createWithQuantity(1.0, 'g');
+        $withoutCompound = $this->getFreshExperiment();
+        new Containers2ExperimentsLinks($withoutCompound, $storageId)->createWithQuantity(2.0, 'g');
+
+        $rows = array_values(array_filter(
+            $this->StorageUnits->readEverythingWithNoLimit(),
+            static fn(array $row): bool => $row['storage_id'] === $storageId,
+        ));
+        // one row per container: the experiment without compound is not given the compounds of the others
+        $this->assertCount(2, $rows);
+        $byEntity = array_column($rows, 'pubchem_cid', 'entity_id');
+        $this->assertNotNull($byEntity[$withCompound->id]);
+        $this->assertNull($byEntity[$withoutCompound->id]);
+    }
+
+    public function testContainersShowTheTeamOfTheirResource(): void
+    {
+        $storageId = $this->StorageUnits->create('Team of the resource room');
+        $owner = $this->getUserInTeam(2);
+        new Containers2ItemsLinks($this->getFreshItemWithGivenUser($owner), $storageId)->createWithQuantity(1.0, 'g');
+        $rows = new StorageUnits($owner, false)->readAllFromStorage($storageId);
+        $this->assertCount(1, $rows);
+        $this->assertSame(2, $rows[0]['team_id']);
+    }
+
     public function testReadHazards(): void
     {
         $roomId = $this->StorageUnits->create('Hazards room');

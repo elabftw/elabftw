@@ -321,6 +321,37 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testFingerprintSearchIsOrderedBySimilarity(): void
+    {
+        $suffix = bin2hex(random_bytes(6));
+        // bit 30 is free in the query, the larger compound has it set in every word
+        $query = array_map(static fn(): int => random_int(1, 0x3FFFFFFF), array_fill(0, 32, 0));
+        $largerFp = array_map(static fn(int $word): int => $word | 0x40000000, $query);
+        $fingerprinter = new class implements FingerprinterInterface {
+            public array $next = array();
+
+            public function calculate(string $fmt, string $data): array
+            {
+                return array('data' => $this->next);
+            }
+        };
+        $Compounds = new Compounds($this->httpGetter, new Users(1, 1), $fingerprinter, false);
+        // the same structure is created first: the id alone would list it last
+        $fingerprinter->next = $query;
+        $same = $Compounds->create(name: 'Similarity same ' . $suffix, smiles: 'CCO');
+        $fingerprinter->next = $largerFp;
+        $larger = $Compounds->create(name: 'Similarity larger ' . $suffix, smiles: 'CCCO');
+
+        $fingerprinter->next = $query;
+        $results = $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_fp_smi' => 'CCO', 'q' => $suffix))));
+        $this->assertSame(array($same, $larger), array_column($results, 'id'));
+        $this->assertEqualsWithDelta(1.0, (float) $results[0]['similarity_score'], 0.0001);
+        $this->assertLessThan(1.0, (float) $results[1]['similarity_score']);
+        // another order can still be asked
+        $byId = $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_fp_smi' => 'CCO', 'q' => $suffix, 'order' => 'id', 'sort' => 'desc'))));
+        $this->assertSame(array($larger, $same), array_column($byId, 'id'));
+    }
+
     public function testOwnerListsCompoundsOfAnotherTeam(): void
     {
         // visible to the team only, and its owner is now in another team

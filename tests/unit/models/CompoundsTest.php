@@ -12,12 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\Links\Compounds2ExperimentsLinks;
 use Elabftw\Models\Users\AnonymousUser;
@@ -29,16 +31,20 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
+use function array_fill;
 use function array_filter;
 use function array_keys;
+use function array_map;
 use function array_search;
 use function bin2hex;
 use function json_decode;
 use function random_bytes;
+use function random_int;
 use function sprintf;
 use function str_repeat;
 use function strtoupper;
@@ -275,6 +281,62 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
 
         $this->expectException(ImproperActionException::class);
         $this->Compounds->postAction(Action::Create, array('name' => 'Invalid', 'canread' => '{"teams": "all"}'));
+    }
+
+    public function testSearchCombinesTextAndStructureBeforeTheLimit(): void
+    {
+        $suffix = bin2hex(random_bytes(6));
+        $smiles = 'O' . str_repeat('C', 30);
+        // the same fingerprint for both compounds and the query, found in no other compound
+        $fingerprinter = new class implements FingerprinterInterface {
+            public array $fp;
+
+            public function __construct()
+            {
+                $this->fp = array_map(static fn(): int => random_int(1, 0x7FFFFFFF), array_fill(0, 32, 0));
+            }
+
+            public function calculate(string $fmt, string $data): array
+            {
+                return array('data' => $this->fp);
+            }
+        };
+        // every structure matches the pattern
+        $matcher = new class implements SmartsMatcherInterface {
+            public function matches(string $smarts, array $smiles, bool $exact = false): array
+            {
+                return array_keys($smiles);
+            }
+        };
+        $Compounds = new Compounds($this->httpGetter, new Users(1, 1), $fingerprinter, false, smartsMatcher: $matcher);
+        $first = $Compounds->create(name: 'Combined search first ' . $suffix, smiles: $smiles);
+        $second = $Compounds->create(name: 'Combined search second ' . $suffix, smiles: $smiles);
+        $search = fn(array $params): array => array_column($Compounds->readAll($Compounds->getQueryParams(new InputBag($params))), 'id');
+
+        $this->assertEqualsCanonicalizing(array($first, $second), $search(array('search_fp_smi' => $smiles, 'q' => $suffix)));
+        // the text applies before the limit: the other compound matching the structure does not take the only place
+        foreach (array(array('search_fp_smi' => $smiles), array('search_smarts' => '[OX2]C')) as $structure) {
+            $this->assertEquals(array($first), $search($structure + array('q' => 'Combined search first ' . $suffix, 'limit' => 1)));
+            $this->assertEquals(array($second), $search($structure + array('q' => 'Combined search second ' . $suffix, 'limit' => 1)));
+        }
+    }
+
+    public function testOwnerListsCompoundsOfAnotherTeam(): void
+    {
+        // visible to the team only, and its owner is now in another team
+        $id = $this->Compounds->create(name: 'Owned in another team', canreadBase: BasePermissions::Team);
+        $req = Db::getConnection()->prepare('UPDATE compounds SET team = 2 WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        // it can be opened, see Permissions::getCan(), so it is listed too
+        $this->Compounds->setId($id);
+        $this->assertSame($id, $this->Compounds->readOne()['id']);
+        $this->assertContains($id, array_column($this->Compounds->readAll($this->Compounds->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
+        // and not by the other members of its old team
+        $other = $this->getUserInTeam(1);
+        $this->assertNotSame(1, $other->userid);
+        $Other = new Compounds($this->httpGetter, $other, new NullFingerprinter(), false);
+        $this->assertNotContains($id, array_column($Other->readAll($Other->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
     }
 
     public function testGetApiPath(): void

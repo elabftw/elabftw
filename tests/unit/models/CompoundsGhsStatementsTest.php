@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -112,6 +113,8 @@ class CompoundsGhsStatementsTest extends \PHPUnit\Framework\TestCase
     public function testWriteAccess(): void
     {
         $this->Statements->postAction(Action::Create, array('code' => 'H225'));
+        // readable by the other teams: a new compound is only visible to its team
+        $this->Compounds->patch(Action::Update, array('canread_base' => BasePermissions::Organization->value));
         // a user without can_manage_compounds can read but not modify when edition is restricted
         $Compounds = new Compounds($this->httpGetter, $this->getRandomUserInTeam(2), new NullFingerprinter(), true, $this->Compounds->id);
         $Statements = new CompoundsGhsStatements($Compounds);

@@ -14,7 +14,6 @@ import {
   CellStyleModule,
   ColumnApiModule,
   ColumnAutoSizeModule,
-  ExternalFilterModule,
   ModuleRegistry,
   PaginationModule,
   QuickFilterModule,
@@ -24,12 +23,11 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
 import i18next from './i18n';
-import { notify } from './notify';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
 
@@ -41,7 +39,6 @@ ModuleRegistry.registerModules([
   CellStyleModule,
   ColumnApiModule,
   ColumnAutoSizeModule,
-  ExternalFilterModule,
   RowSelectionModule,
   PaginationModule,
   TextFilterModule,
@@ -147,9 +144,7 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelp
     const [gridApi, setGridApi] = useState(null);
     const [query, setQuery] = useState(() => getInitialQuery(syncUrl));
     const search = useMemo(() => parseSearch(query), [query]);
-    // ids of the compounds found by the structure search, null without one
-    const structureMatches = useRef(null);
-    const [structurePending, setStructurePending] = useState(false);
+    const [pending, setPending] = useState(false);
     const [structureError, setStructureError] = useState('');
     const onGridReady = (event) => {
       const columnState = getStoredColumnState();
@@ -218,22 +213,42 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelp
   const [showDeleted, setShowDeleted] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
 
-  // Load data on component mount and refresh on showDeleted change
+  // The rows are all the compounds, or with a structure term, the compounds matching it: searched by the server, once the
+  // typing pauses, the latest search wins. Without a limit, so that the text filtering these rows in the browser cannot miss
+  // a compound matching both, and a structure search (the chemical editor) does not download the whole database.
+  const structureKey = search.structure ? `${search.structure.type}:${search.structure.value}` : '';
   useEffect(() => {
-      fetchData();
-  }, [showDeleted]);
-
-  // all the compounds are loaded in the table, which does client side pagination and filtering
-  const fetchData = async () => {
-    // adding deleted flag to query
-    const deletedParam = showDeleted ? '&state=3' : '';
-    try {
-      const compounds = await ApiC.getJson(`compounds?limit=999999${deletedParam}`);
-      setRowData(compounds);
-    } catch (error) {
-      notify.error(error);
+    const structure = search.structure;
+    const params = { limit: 999999 };
+    if (showDeleted) {
+      params.state = 3;
     }
-  };
+    if (structure) {
+      // an incomplete structure is expected while typing: show why it is not searched next to the bar, not as a notification
+      Object.assign(params, structureSearchParams(structure), { notifOnError: 0 });
+    }
+    let cancelled = false;
+    setStructureError('');
+    setPending(true);
+    const timer = setTimeout(() => {
+      ApiC.getJson('compounds', params)
+        .then(compounds => {
+          if (!cancelled) setRowData(compounds);
+        })
+        .catch(error => {
+          if (cancelled || !structure) return;
+          setRowData([]);
+          setStructureError(error.message);
+        })
+        .finally(() => {
+          if (!cancelled) setPending(false);
+        });
+    }, structure ? STRUCTURE_SEARCH_DELAY_MS : 0);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [showDeleted, structureKey]);
 
   // the text filters the table at once
   useEffect(() => {
@@ -245,45 +260,6 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelp
       storeQueryInUrl(query);
     }
   }, [query]);
-
-  // the structure is searched on the server once the typing pauses, the latest search wins
-  const structureKey = search.structure ? `${search.structure.type}:${search.structure.value}` : '';
-  useEffect(() => {
-    setStructureError('');
-    if (!search.structure) {
-      structureMatches.current = null;
-      setStructurePending(false);
-      gridApi?.onFilterChanged();
-      return;
-    }
-    let cancelled = false;
-    setStructurePending(true);
-    const timer = setTimeout(() => {
-      // an incomplete structure is expected while typing: show why it is not searched next to the bar, not as a notification
-      ApiC.getJson('compounds', { ...structureSearchParams(search.structure), notifOnError: 0 })
-        .then(compounds => {
-          if (cancelled) return;
-          structureMatches.current = new Set(compounds.map(compound => compound.id));
-        })
-        .catch(error => {
-          if (cancelled) return;
-          structureMatches.current = new Set();
-          setStructureError(error.message);
-        })
-        .finally(() => {
-          if (cancelled) return;
-          setStructurePending(false);
-          gridApi?.onFilterChanged();
-        });
-    }, STRUCTURE_SEARCH_DELAY_MS);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [gridApi, structureKey]);
-
-  const isExternalFilterPresent = () => structureMatches.current !== null;
-  const doesExternalFilterPass = node => structureMatches.current?.has(node.data.id) ?? true;
 
     const defaultColDef = useMemo(() => {
         return {
@@ -319,14 +295,14 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelp
       <div className='input-group mb-2'>
         <div className='input-group-prepend'>
           <span className='input-group-text' aria-hidden='true'>
-            <i className={`fas fa-fw ${structurePending ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'}`}></i>
+            <i className={`fas fa-fw ${pending ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'}`}></i>
           </span>
         </div>
         <input
           type='search'
           aria-label={i18next.t('search')}
           aria-describedby={searchHelpId || undefined}
-          aria-busy={structurePending}
+          aria-busy={pending}
           placeholder={searchPlaceholder || i18next.t('search')}
           value={query}
           onChange={e => setQuery(e.target.value)}
@@ -355,8 +331,6 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelp
         onSortChanged={columnStateChanged}
         rowSelection={rowSelection}
         includeHiddenColumnsInQuickFilter={true}
-        isExternalFilterPresent={isExternalFilterPresent}
-        doesExternalFilterPass={doesExternalFilterPass}
         onCellDoubleClicked={cellDoubleClicked}
         onGridReady={onGridReady}
         onSelectionChanged={selectionChanged}

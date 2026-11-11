@@ -5,7 +5,7 @@ title: Compounds
 
 # Compounds
 
-A chemical compounds database is available to all users in all teams, it is a common database for the instance, storing references of all existing compounds. Note that the visibility cannot be changed. Compounds are always visible to everyone with access to the instance. You can access it from the Tools menu.
+A chemical compounds database is available to all users in all teams, it is a common database for the instance, storing references of all existing compounds. Each compound has its own read and write permissions, see [Permissions of a compound](#permissions-of-a-compound): by default, a new compound is visible to the members of your team only. You can access it from the Tools menu.
 
 <figure>
   <img src="/img/compounds-db.png" alt="compounds-db" />

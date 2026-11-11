@@ -44,6 +44,7 @@ final class CanSqlBuilder
         $sql = sprintf(
             '(%s)',
             implode(' OR ', array(
+                $this->canOwner(),
                 $this->canBasePubOrg(),
                 $this->canBaseTeam(),
                 $this->canBaseUser(),
@@ -69,6 +70,14 @@ final class CanSqlBuilder
             $this->alias,
             BasePermissions::Full->value,
         );
+    }
+
+    /**
+     * The owner can always, whatever the base and the team: like Permissions::getCan(), so what can be opened is also listed
+     */
+    protected function canOwner(): string
+    {
+        return sprintf('%s.userid = :userid', $this->alias);
     }
 
     /**

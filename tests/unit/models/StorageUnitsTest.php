@@ -35,10 +35,13 @@ use function array_column;
 use function array_fill;
 use function array_filter;
 use function array_merge;
+use function array_values;
+use function bin2hex;
 use function json_encode;
+use function random_bytes;
+use function random_int;
 use function sprintf;
 use function str_repeat;
-use function array_values;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
@@ -638,6 +641,33 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
     }
 
+    public function testCompoundsTheRequesterCannotReadAreHidden(): void
+    {
+        $storageId = $this->StorageUnits->create('Compound permissions room');
+        // a resource everyone can read, with a compound only its owner can read
+        $owner = $this->getUserInTeam(2);
+        $item = $this->getFreshItemWithGivenUser($owner);
+        $item->patch(Action::Update, array('canread_base' => BasePermissions::Organization->value));
+        $name = 'Hidden inventory compound ' . bin2hex(random_bytes(6));
+        $cid = random_int(900000000, 999999999);
+        $compoundId = new Compounds(new HttpGetter(new Client()), $owner, new NullFingerprinter(), false)
+            ->create(name: $name, pubchemCid: $cid, canreadBase: BasePermissions::UserOnly);
+        new Compounds2ItemsLinks($item, $compoundId)->create();
+        new Containers2ItemsLinks($item, $storageId)->createWithQuantity(1.0, 'g');
+
+        // the container is listed, without its compound
+        $rows = $this->StorageUnits->readAllFromStorage($storageId);
+        $this->assertCount(1, $rows);
+        $this->assertNull($rows[0]['pubchem_cid']);
+        // and the search does not find it by the name of the compound
+        $this->assertSame(array(), $this->StorageUnits->readAll($this->StorageUnits->getQueryParams(new InputBag(array('q' => $name)))));
+
+        // its owner sees both
+        $OwnerStorageUnits = new StorageUnits($owner, false);
+        $this->assertSame($cid, $OwnerStorageUnits->readAllFromStorage($storageId)[0]['pubchem_cid']);
+        $this->assertCount(1, $OwnerStorageUnits->readAll($OwnerStorageUnits->getQueryParams(new InputBag(array('q' => $name)))));
+    }
+
     public function testReadHazards(): void
     {
         $roomId = $this->StorageUnits->create('Hazards room');
@@ -645,11 +675,12 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $outsideId = $this->StorageUnits->create('Hazards outside');
         $Compounds = new Compounds(new HttpGetter(new Client()), new Users(1, 1), new NullFingerprinter(), false);
 
-        // in the shelf: a resource that the requester cannot read, its hazards are still listed
+        // in the shelf: a resource and a compound that the requester cannot read, their hazards are still listed
         $owner = $this->getUserInTeam(2);
         $private = $this->getFreshItemWithGivenUser($owner);
         $private->patch(Action::Update, array('canread_base' => BasePermissions::UserOnly->value));
-        $flammable = $Compounds->create(name: 'hazards flammable', isFlammable: true, ghsSignalWord: GhsSignalWord::Warning, ghsStatements: array('H225'));
+        $flammable = new Compounds(new HttpGetter(new Client()), $owner, new NullFingerprinter(), false)
+            ->create(name: 'hazards flammable', isFlammable: true, ghsSignalWord: GhsSignalWord::Warning, ghsStatements: array('H225'), canreadBase: BasePermissions::UserOnly);
         new Compounds2ItemsLinks($private, $flammable)->create();
         new Containers2ItemsLinks($private, $shelfId)->createWithQuantity(1.0, 'L');
 

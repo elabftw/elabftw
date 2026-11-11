@@ -982,6 +982,9 @@ final class StorageUnits extends AbstractRest
     ): string {
         $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
+        // a compound has its own permissions: reading the entry is not enough to read the compounds linked to it.
+        // In the join, so the container is still listed, without the compound (and the search cannot match it)
+        $compoundCan = new CanSqlBuilder($this->requester, AccessType::Read, 'compounds')->getCanCondition();
         $fullPathLength = self::FULL_PATH_LENGTH;
         $selectedStorageHierarchy = $includeStorageDescendants
             ? ', selected_storage_hierarchy AS (
@@ -1072,7 +1075,7 @@ final class StorageUnits extends AbstractRest
                 LEFT JOIN
                     compounds2items ON entity.id = compounds2items.entity_id
                 LEFT JOIN
-                    compounds ON compounds2items.compound_id = compounds.id
+                    compounds ON (compounds2items.compound_id = compounds.id AND %s)
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 LEFT JOIN
@@ -1137,7 +1140,7 @@ final class StorageUnits extends AbstractRest
                 LEFT JOIN
                     compounds2experiments ON compounds2experiments.entity_id = c2e.item_id
                 LEFT JOIN
-                    compounds ON compounds2experiments.compound_id = compounds.id
+                    compounds ON (compounds2experiments.compound_id = compounds.id AND %s)
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 LEFT JOIN
@@ -1148,10 +1151,12 @@ final class StorageUnits extends AbstractRest
                     -- can sql AND query or storage_id
                     1=1 AND entity.state IN (1,2) AND %s %s",
             $selectedStorageHierarchy,
+            $compoundCan,
             $userid,
             $team,
             $discriminator,
             $canFilter,
+            $compoundCan,
             $userid,
             $team,
             $discriminator,

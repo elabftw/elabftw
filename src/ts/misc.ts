@@ -742,9 +742,13 @@ function initPermissionsSearchSelect(select: TomSelectElement): void {
   const list = document.getElementById(select.dataset.list);
   if (!section || !list) return;
   const wrapper = select.closest<HTMLElement>('.ts-wrapper');
+  // the typings of tom-select only take a selector for the dropdown parent
+  if (wrapper && !wrapper.id) {
+    wrapper.id = `${select.id}-wrapper`;
+  }
 
   const ts = new TomSelect(select, {
-    dropdownParent: wrapper,
+    dropdownParent: wrapper ? `#${wrapper.id}` : null,
     controlInput: wrapper?.querySelector<HTMLInputElement>('input'),
     // display many things or users will be confused what they search is not displayed right away.
     maxOptions: 2222,

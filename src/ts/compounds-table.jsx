@@ -14,6 +14,7 @@ import {
   CellStyleModule,
   ColumnApiModule,
   ColumnAutoSizeModule,
+  ExternalFilterModule,
   ModuleRegistry,
   PaginationModule,
   QuickFilterModule,
@@ -23,7 +24,7 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
@@ -40,11 +41,80 @@ ModuleRegistry.registerModules([
   CellStyleModule,
   ColumnApiModule,
   ColumnAutoSizeModule,
+  ExternalFilterModule,
   RowSelectionModule,
   PaginationModule,
   TextFilterModule,
   QuickFilterModule,
 ]);
+
+// SINGLE SEARCH BAR
+// The text is a quick filter of the table, in the browser: every column, as it is typed.
+// A term with one of these prefixes is a structure search, done by the server:
+// smiles:CCO for the compounds containing this substructure, exact:CCO for this structure, smarts:[OX2H]c for a SMARTS pattern
+const STRUCTURE_TERM = /^(smiles|exact|smarts):(\S+)$/i;
+// the first block of an InChIKey encodes the connectivity: searching it also finds stereoisomers and other protonation states
+const INCHIKEY = /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/i;
+// a structure search runs Open Babel: wait for a pause in the typing
+const STRUCTURE_SEARCH_DELAY_MS = 400;
+
+const parseSearch = query => {
+  let structure = null;
+  const text = [];
+  query.trim().split(/\s+/).filter(Boolean).forEach(term => {
+    // a prefix alone is a structure being typed: it does not filter the text
+    if (/^(smiles|exact|smarts):$/i.test(term)) {
+      return;
+    }
+    const match = term.match(STRUCTURE_TERM);
+    if (match) {
+      // only one structure is searched: the last one typed
+      structure = { type: match[1].toLowerCase(), value: match[2] };
+      return;
+    }
+    text.push(INCHIKEY.test(term) ? `${term.slice(0, 14)}-` : term);
+  });
+  return { text: text.join(' '), structure };
+};
+
+const structureSearchParams = structure => {
+  if (structure.type === 'smarts') {
+    return { search_smarts: structure.value };
+  }
+  return { search_fp_smi: structure.value, exact: structure.type === 'exact' ? '1' : '0' };
+};
+
+// the table is also mounted by the chemical editor, which searches with the drawn structure: see search-from-editor in chem-editor.ts
+// on the compounds page, the search is in the url, so it can be shared and survives a reload of the table
+const getInitialQuery = syncUrl => {
+  const editorInput = document.getElementById('substructureSearchInput');
+  if (editorInput?.value) {
+    const exact = document.getElementById('search-fp-exact')?.checked;
+    return `${exact ? 'exact' : 'smiles'}:${editorInput.value}`;
+  }
+  if (!syncUrl) {
+    return '';
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  // search_fp_smi: older links to a substructure search
+  if (urlParams.get('search_fp_smi')) {
+    const exact = ['1', 'on', 'true'].includes(urlParams.get('exact') ?? '');
+    return `${exact ? 'exact' : 'smiles'}:${urlParams.get('search_fp_smi')}`;
+  }
+  return urlParams.get('q') ?? '';
+};
+
+const storeQueryInUrl = query => {
+  const url = new URL(window.location.href);
+  url.searchParams.delete('search_fp_smi');
+  url.searchParams.delete('exact');
+  if (query.trim()) {
+    url.searchParams.set('q', query);
+  } else {
+    url.searchParams.delete('q');
+  }
+  window.history.replaceState(window.history.state, '', url);
+};
 
 const rowSelection = {
     mode: 'multiRow',
@@ -72,9 +142,15 @@ const storeColumnState = api => {
   }
 };
 
-const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
+const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelpId, searchPlaceholder, syncUrl }) => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
+    const [query, setQuery] = useState(() => getInitialQuery(syncUrl));
+    const search = useMemo(() => parseSearch(query), [query]);
+    // ids of the compounds found by the structure search, null without one
+    const structureMatches = useRef(null);
+    const [structurePending, setStructurePending] = useState(false);
+    const [structureError, setStructureError] = useState('');
     const onGridReady = (event) => {
       const columnState = getStoredColumnState();
       if (Array.isArray(columnState)) {
@@ -147,26 +223,67 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
       fetchData();
   }, [showDeleted]);
 
-  // all the compounds are loaded in the table, which does client side pagination
+  // all the compounds are loaded in the table, which does client side pagination and filtering
   const fetchData = async () => {
-    let searchString = '';
-    if (document.getElementById('substructureSearchInput')) {
-      const subInput = document.getElementById('substructureSearchInput');
-      const urlParams = new URLSearchParams(window.location.search);
-      const exact = (document.getElementById('search-fp-exact').checked || Boolean(urlParams.get('exact'))) ? '&exact=1' : '';
-      if (subInput.value) {
-        searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}${exact}`;
-      }
-    }
     // adding deleted flag to query
     const deletedParam = showDeleted ? '&state=3' : '';
     try {
-      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
+      const compounds = await ApiC.getJson(`compounds?limit=999999${deletedParam}`);
       setRowData(compounds);
     } catch (error) {
       notify.error(error);
     }
   };
+
+  // the text filters the table at once
+  useEffect(() => {
+    gridApi?.setGridOption('quickFilterText', search.text);
+  }, [gridApi, search.text]);
+
+  useEffect(() => {
+    if (syncUrl) {
+      storeQueryInUrl(query);
+    }
+  }, [query]);
+
+  // the structure is searched on the server once the typing pauses, the latest search wins
+  const structureKey = search.structure ? `${search.structure.type}:${search.structure.value}` : '';
+  useEffect(() => {
+    setStructureError('');
+    if (!search.structure) {
+      structureMatches.current = null;
+      setStructurePending(false);
+      gridApi?.onFilterChanged();
+      return;
+    }
+    let cancelled = false;
+    setStructurePending(true);
+    const timer = setTimeout(() => {
+      // an incomplete structure is expected while typing: show why it is not searched next to the bar, not as a notification
+      ApiC.getJson('compounds', { ...structureSearchParams(search.structure), notifOnError: 0 })
+        .then(compounds => {
+          if (cancelled) return;
+          structureMatches.current = new Set(compounds.map(compound => compound.id));
+        })
+        .catch(error => {
+          if (cancelled) return;
+          structureMatches.current = new Set();
+          setStructureError(error.message);
+        })
+        .finally(() => {
+          if (cancelled) return;
+          setStructurePending(false);
+          gridApi?.onFilterChanged();
+        });
+    }, STRUCTURE_SEARCH_DELAY_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [gridApi, structureKey]);
+
+  const isExternalFilterPresent = () => structureMatches.current !== null;
+  const doesExternalFilterPass = node => structureMatches.current?.has(node.data.id) ?? true;
 
     const defaultColDef = useMemo(() => {
         return {
@@ -196,19 +313,33 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
       toggleEditCompound(json);
     });
   };
-  const onQuickFilterChange = (e) => {
-    gridApi.setGridOption('quickFilterText', e.target.value);
-  };
 
   return (
     <>
-      <input
-        type="text"
-        aria-label={i18next.t('search')}
-        placeholder={i18next.t('search')}
-        onChange={onQuickFilterChange}
-        className={'form-control mb-2'}
-      />
+      <div className='input-group mb-2'>
+        <div className='input-group-prepend'>
+          <span className='input-group-text' aria-hidden='true'>
+            <i className={`fas fa-fw ${structurePending ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'}`}></i>
+          </span>
+        </div>
+        <input
+          type='search'
+          aria-label={i18next.t('search')}
+          aria-describedby={searchHelpId || undefined}
+          aria-busy={structurePending}
+          placeholder={searchPlaceholder || i18next.t('search')}
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className='form-control'
+          spellCheck='false'
+          autoComplete='off'
+          autoCapitalize='off'
+          data-cy='compounds-search'
+        />
+      </div>
+      {structureError && (
+        <p className='text-danger small mb-2' role='alert'>{structureError}</p>
+      )}
       <div
         className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`}
         style={{ height: 650 }}
@@ -223,6 +354,9 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
         onColumnPinned={columnStateChanged}
         onSortChanged={columnStateChanged}
         rowSelection={rowSelection}
+        includeHiddenColumnsInQuickFilter={true}
+        isExternalFilterPresent={isExternalFilterPresent}
+        doesExternalFilterPass={doesExternalFilterPass}
         onCellDoubleClicked={cellDoubleClicked}
         onGridReady={onGridReady}
         onSelectionChanged={selectionChanged}
@@ -292,5 +426,8 @@ root.render(
     canManageCompounds={tableElement.dataset.canManageCompounds === '1'}
     deleteLabel={tableElement.dataset.deleteLabel}
     restoreLabel={tableElement.dataset.restoreLabel}
+    searchHelpId={tableElement.dataset.searchHelpId}
+    searchPlaceholder={tableElement.dataset.searchPlaceholder}
+    syncUrl={tableElement.dataset.syncUrl === '1'}
   />
 );

@@ -54,7 +54,8 @@ export class BusyState {
     if (value) {
       this.disabledByRun = [
         ...this.buttons,
-        ...form.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement>('input, button, select, textarea'),
+        // no spread of the NodeList: the dom.iterable lib is not in tsconfig
+        ...Array.from(form.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement>('input, button, select, textarea')),
       ].filter(control => !control.disabled);
       this.disabledByRun.forEach(control => control.disabled = true);
       return;

@@ -22,7 +22,11 @@ describe('Chemistry on the edit page', () => {
     // a structure search does, with the structure
     cy.window().its('ketcher').then((ketcher: Ketcher) => ketcher.setMolecule('c1ccccc1'));
     cy.get('[data-action="search-from-editor"]').click();
-    cy.wait('@compounds').its('request.url').should('include', 'search_fp_smi=');
+    // the table reads all the compounds, and searches the structure in another request
+    cy.get('[data-cy="compounds-search"]').should('have.value', 'smiles:c1ccccc1');
+    cy.get('@compounds.all').should(calls => {
+      expect(calls.some(call => call.request.url.includes('search_fp_smi='))).to.equal(true);
+    });
     cy.get('#searchFpResultsDiv').should('be.visible');
   });
 });

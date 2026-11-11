@@ -18,6 +18,7 @@ use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\Links\Compounds2ExperimentsLinks;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
@@ -32,11 +33,14 @@ use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
+use function array_filter;
+use function array_keys;
 use function array_search;
 use function bin2hex;
 use function json_decode;
 use function random_bytes;
 use function sprintf;
+use function str_repeat;
 use function strtoupper;
 use function substr;
 
@@ -315,6 +319,31 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $req = new Request($queryParams);
         $q = $Compounds->getQueryParams($req->query);
         $this->assertIsArray($Compounds->readAll($q));
+    }
+
+    public function testSearchSmarts(): void
+    {
+        $smiles = 'N' . str_repeat('C', 40) . bin2hex(random_bytes(2));
+        $compoundId = $this->Compounds->create(name: 'smarts search', smiles: $smiles);
+        // only the structure of this compound matches, whatever the pattern
+        $matcher = new class ($smiles) implements SmartsMatcherInterface {
+            public string $pattern = '';
+
+            public function __construct(private string $match) {}
+
+            public function matches(string $smarts, array $smiles, bool $exact = false): array
+            {
+                $this->pattern = $smarts;
+                return array_keys(array_filter($smiles, fn(string $structure): bool => $structure === $this->match));
+            }
+        };
+        $Compounds = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter(), false, smartsMatcher: $matcher);
+        $results = $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_smarts' => ' [NX3]C '))));
+        $this->assertSame('[NX3]C', $matcher->pattern);
+        $this->assertEquals(array($compoundId), array_column($results, 'id'));
+
+        $this->expectException(ImproperActionException::class);
+        $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_smarts' => str_repeat('C', 2049)))));
     }
 
     private function assertForbidden(callable $action): void

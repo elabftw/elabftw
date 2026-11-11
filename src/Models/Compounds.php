@@ -30,12 +30,14 @@ use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
+use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\CompoundParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\OpenBabelSmartsMatcher;
 use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
 use Override;
@@ -43,17 +45,20 @@ use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
+use function array_column;
 use function array_filter;
 use function array_flip;
 use function array_intersect_key;
 use function array_keys;
 use function array_map;
 use function array_sum;
+use function count;
 use function implode;
 use function is_array;
 use function is_string;
 use function rtrim;
 use function sprintf;
+use function strlen;
 use function trim;
 
 /**
@@ -93,8 +98,20 @@ final class Compounds extends AbstractRest
 
     private const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
 
-    public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights = false, ?int $id = null)
-    {
+    // the pattern goes to Open Babel: keep it to the size of a drawn molecule
+    private const int MAX_SMARTS_LENGTH = 2048;
+
+    // every candidate structure goes through Open Babel on each search: above this, it would take too long
+    private const int MAX_SMARTS_CANDIDATES = 20000;
+
+    public function __construct(
+        protected HttpGetter $httpGetter,
+        public Users $requester,
+        protected FingerprinterInterface $fingerprinter,
+        private bool $requireEditRights = false,
+        ?int $id = null,
+        private SmartsMatcherInterface $smartsMatcher = new OpenBabelSmartsMatcher(),
+    ) {
         parent::__construct();
         $this->setId($id);
     }
@@ -123,6 +140,9 @@ final class Compounds extends AbstractRest
             $q = $queryParams->getQuery();
             $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
             return $this->searchFingerprint($fp, $q->getBoolean('exact'));
+        }
+        if (!empty($queryParams->getQuery()->get('search_smarts'))) {
+            return $this->searchSmarts(trim($queryParams->getQuery()->getString('search_smarts')));
         }
         $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1' . new CanSqlBuilder($this->requester, AccessType::Read)->getCanFilter();
         if ($queryParams->getQuery()->get('q')) {
@@ -757,6 +777,33 @@ final class Compounds extends AbstractRest
         $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    /**
+     * SMARTS cannot be screened with fingerprints: the readable structures are read, and Open Babel tells which ones match.
+     * Same columns and states as searchFingerprint().
+     */
+    private function searchSmarts(string $pattern): array
+    {
+        if (strlen($pattern) > self::MAX_SMARTS_LENGTH) {
+            throw new ImproperActionException(sprintf(_('The SMARTS pattern is limited to %d characters.'), self::MAX_SMARTS_LENGTH));
+        }
+        $sql = "SELECT c.id, c.name, c.cas_number, c.smiles, c.inchi, c.inchi_key, c.iupac_name, c.molecular_formula, c.pubchem_cid
+            FROM compounds AS c
+            WHERE c.smiles IS NOT NULL AND c.smiles != '' AND c.state IN (:state_normal, :state_archived)";
+        $sql .= new CanSqlBuilder($this->requester, AccessType::Read, 'c')->getCanFilter();
+        $sql .= sprintf(' ORDER BY c.id DESC LIMIT %d', self::MAX_SMARTS_CANDIDATES + 1);
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
+        $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $rows = $req->fetchAll();
+        if (count($rows) > self::MAX_SMARTS_CANDIDATES) {
+            throw new ImproperActionException(_('Too many compounds to search with a SMARTS pattern.'));
+        }
+        $matches = $this->smartsMatcher->matches($pattern, array_column($rows, 'smiles'));
+        return array_map(static fn(int|string $index): array => $rows[$index], $matches);
     }
 
     private function searchPubChem(int $cid): Compound

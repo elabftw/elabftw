@@ -22,7 +22,7 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
-    public function testShowProvidesVisibleTeamsToSelectedPermissionsModals(): void
+    public function testShowProvidesVisibleTeamsToSelectedPermissionsModal(): void
     {
         $user = $this->getRandomUserInTeam(1);
         // create the application using an experiments-page request
@@ -49,14 +49,15 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
             $App->Teams->readAllVisible(),
         );
 
-        // check both the read-permission and write-permission modals
+        // the show page has the permissions modal for the selected entries, with a view and an edit section
+        self::assertCount(1, $Crawler->filter('#permissionsModal[data-permissions-mode="manual"]'));
         foreach (array('canread', 'canwrite') as $permission) {
-            // find every team option inside the current permission modal.
+            // find every team option inside the search of the current section: nothing is selected yet, so all teams are there
             $actual = $Crawler
-                ->filter(sprintf('#%sSelected_select_teams option', $permission))
+                ->filter(sprintf('#permissionsModal #%s_permissions_search option[value^="team:"]', $permission))
                 // extract the value attribute from every matching option.
                 ->each(static fn(Crawler $option): string => (string) $option->attr('value'));
-            // confirm that the modal contains exactly all visible teams.
+            // confirm that the section can search exactly all visible teams.
             self::assertSame($expected, $actual);
         }
     }

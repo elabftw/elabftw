@@ -141,8 +141,6 @@ abstract class AbstractEntityController implements ControllerInterface
             'pageTitle' => $this->getPageTitle(),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
             'allTeamgroupsArr' => $this->readAllTeamgroups(),
-            // for the user groups filter
-            'scopedTeamgroupsArr' => new TeamGroups($this->Entity->Users)->readScopedTeamgroups(),
             'teamsArr' => $this->App->Teams->readAllVisible(),
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
@@ -279,7 +277,7 @@ abstract class AbstractEntityController implements ControllerInterface
         return $Response;
     }
 
-    // the permissions modal searches in every user group the user can see, whatever their scope_teamgroups setting
+    // the permissions modal and the user groups filter list every user group the user can see
     protected function readAllTeamgroups(): array
     {
         return new TeamGroups($this->Entity->Users)->readAllEverything();

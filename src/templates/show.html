@@ -182,7 +182,7 @@
             <label class='font-weight-bold mb-1'>{{ 'Filter group'|trans }}</label>
             <select aria-label='{{ 'Filter group'|trans }}' name='group' class='form-control filterHelper' data-filter='group'>
               <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
-              {% for group in scopedTeamgroupsArr %}
+              {% for group in allTeamgroupsArr %}
                 <option value="{{ group.name|e('html_attr') }}" {{ ('group:' ~ group.name) in (App.Request.query.get('q')|default('')) ? 'selected' : '' }}>{{ group.name }}</option>
               {% endfor %}
             </select>

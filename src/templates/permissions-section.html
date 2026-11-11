@@ -88,15 +88,14 @@
       {% set chips = chips|merge([{value: 'teamgroup:' ~ group.id, text: group.team_name ~ ' - ' ~ group.name}]) %}
     {% endfor %}
     {% for user in can.users %}
-      {% set chips = chips|merge([{value: 'user:' ~ user.userid, text: user.fullname ~ ' (' ~ user.email ~ ')'}]) %}
+      {% set chips = chips|merge([{value: 'user:' ~ user.userid, text: user.fullname}]) %}
     {% endfor %}
-    {% set kindIcons = {team: 'users', teamgroup: 'user-group', user: 'user'} %}
     {% set kindLabels = {team: 'Team'|trans, teamgroup: 'User group'|trans, user: 'User'|trans} %}
     <ul class='list-unstyled d-flex flex-wrap mb-0' id='{{ idPrefix }}{{ rw }}PermissionsList' aria-label='{{ perm.text(rw, 'label') }}'>
       {% for chip in chips %}
         {% set kind = chip.value|split(':')|first %}
         <li class='permissions-chip' data-value='{{ chip.value }}' data-text='{{ chip.text }}'>
-          <i class='fas fa-{{ kindIcons[kind] }}' aria-hidden='true'></i><span class='sr-only'>{{ kindLabels[kind] }}:</span>{{ chip.text }}
+          <span class='badge permissions-kind permissions-kind-{{ kind }} mr-2'>{{ kindLabels[kind] }}</span>{{ chip.text }}
           <button type='button' class='permissions-chip-remove' data-remove-permission='1' title='{{ 'Remove'|trans }}' aria-label='{{ 'Remove'|trans }} {{ chip.text }}'><i class='fas fa-xmark' aria-hidden='true'></i></button>
         </li>
       {% endfor %}

@@ -533,6 +533,8 @@ async function fetchUsers(query: string) {
   return users.map((u) => ({
     value: `user:${u.userid}`,
     text: `${u.fullname} (${u.email})`,
+    // the permissions chips show the name only
+    fullname: u.fullname,
   }));
 }
 
@@ -586,12 +588,6 @@ function renderPermissionEntry(select: HTMLSelectElement, data: { [key: string]:
   return `<div><span class='badge permissions-kind permissions-kind-${kind} mr-2'>${escape(permissionKindLabel(select, kind))}</span>${escape(String(data.text))}</div>`;
 }
 
-const PERMISSION_KIND_ICONS: Record<PermissionKind, string> = {
-  team: 'fa-users',
-  teamgroup: 'fa-user-group',
-  user: 'fa-user',
-};
-
 // same markup as the chips rendered in permissions-section.html
 function makePermissionChip(select: HTMLSelectElement, value: string, text: string): HTMLLIElement {
   const kind = permissionKind(value);
@@ -599,12 +595,10 @@ function makePermissionChip(select: HTMLSelectElement, value: string, text: stri
   li.classList.add('permissions-chip');
   li.dataset.value = value;
   li.dataset.text = text;
-  const icon = document.createElement('i');
-  icon.classList.add('fas', PERMISSION_KIND_ICONS[kind]);
-  icon.setAttribute('aria-hidden', 'true');
-  const srLabel = document.createElement('span');
-  srLabel.classList.add('sr-only');
-  srLabel.textContent = `${permissionKindLabel(select, kind)}:`;
+  // same kind tag as in the search, see renderPermissionEntry
+  const kindLabel = document.createElement('span');
+  kindLabel.classList.add('badge', 'permissions-kind', `permissions-kind-${kind}`, 'mr-2');
+  kindLabel.textContent = permissionKindLabel(select, kind);
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
   removeBtn.classList.add('permissions-chip-remove');
@@ -615,7 +609,7 @@ function makePermissionChip(select: HTMLSelectElement, value: string, text: stri
   removeIcon.classList.add('fas', 'fa-xmark');
   removeIcon.setAttribute('aria-hidden', 'true');
   removeBtn.append(removeIcon);
-  li.append(icon, srLabel, document.createTextNode(text), removeBtn);
+  li.append(kindLabel, document.createTextNode(text), removeBtn);
   return li;
 }
 
@@ -707,7 +701,7 @@ export function loadPermissionsModal(
     const chips: Array<[string, string]> = [
       ...value.can.teams.map((team): [string, string] => [`team:${team.id}`, team.name]),
       ...value.can.teamgroups.map((group): [string, string] => [`teamgroup:${group.id}`, `${group.team_name} - ${group.name}`]),
-      ...value.can.users.map((user): [string, string] => [`user:${user.userid}`, `${user.fullname} (${user.email})`]),
+      ...value.can.users.map((user): [string, string] => [`user:${user.userid}`, user.fullname]),
     ];
     chips.forEach(([chipValue, text]) => {
       select.tomselect?.removeOption(chipValue);
@@ -765,7 +759,8 @@ function initPermissionsSearchSelect(select: TomSelectElement): void {
       option: (data, escape) => renderPermissionEntry(select, data, escape),
     },
     onItemAdd: (value: string) => {
-      const text = String(ts.options[value]?.text ?? value);
+      // users are shown by their name only, without the email
+      const text = String(ts.options[value]?.fullname ?? ts.options[value]?.text ?? value);
       // nothing stays selected in the search itself, and an entry already given access is not suggested again
       ts.clear(true);
       ts.removeOption(value);

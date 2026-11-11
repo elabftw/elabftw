@@ -8,6 +8,7 @@ use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Reactions;
@@ -20,8 +21,11 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_filter;
+use function array_keys;
 use function array_map;
 use function intval;
+use function str_contains;
 use function str_repeat;
 use function uniqid;
 
@@ -157,6 +161,28 @@ final class ReactionSearchTest extends TestCase
         $this->assertSame(array(), $this->Entity->readAll(new DisplayParams($this->Entity->Users, EntityType::Experiments, $query)));
     }
 
+    public function testSmarts(): void
+    {
+        // the matcher sees each distinct structure of the candidates once, after the other component criteria
+        $matcher = new class implements SmartsMatcherInterface {
+            public array $seen = array();
+
+            public function matches(string $smarts, array $smiles): array
+            {
+                $this->seen = $smiles;
+                return array_keys(array_filter($smiles, static fn(string $structure): bool => str_contains($structure, $smarts)));
+            }
+        };
+        $this->assertFound(array('reaction_structure' => 'Oc1', 'reaction_structure_type' => 'smarts'), $matcher);
+        $this->assertContains('COc1ccccc1', $matcher->seen);
+        $this->assertNotFound(array('reaction_structure' => 'Oc1', 'reaction_structure_type' => 'smarts', 'reaction_role' => 'reagent'), $matcher);
+        $this->assertContains('COS(=O)(=O)OC', $matcher->seen);
+        $this->assertFound(array('reaction_structure' => 'Oc1', 'reaction_structure_type' => 'smarts', 'reaction_role' => 'product'), $matcher);
+        // exact does not apply to a pattern
+        $this->assertFound(array('reaction_structure' => 'Oc1', 'reaction_structure_type' => 'smarts', 'reaction_exact' => '1'), $matcher);
+        $this->assertNotFound(array('reaction_structure' => 'Xx', 'reaction_structure_type' => 'smarts'), $matcher);
+    }
+
     public function testInvalidQueriesAreRejectedOnlyWhenSearching(): void
     {
         $params = new DisplayParams($this->Entity->Users, EntityType::Experiments, new InputBag(array('reaction_role' => 'enzyme')));
@@ -170,7 +196,8 @@ final class ReactionSearchTest extends TestCase
         $this->assertFalse($inactive->isActive());
         $this->assertSame('', $inactive->getFilterSql());
         $tooLong = array('reaction_structure' => str_repeat('C', 2049));
-        foreach (array(array('reaction_key' => 'abc'), array('reaction_compound' => 'x'), array('reaction_structure' => 'not a structure'), $tooLong) as $query) {
+        $unknownType = array('reaction_structure' => 'CCO', 'reaction_structure_type' => 'smiles');
+        foreach (array(array('reaction_key' => 'abc'), array('reaction_compound' => 'x'), array('reaction_structure' => 'not a structure'), $tooLong, $unknownType) as $query) {
             try {
                 $this->search($query);
                 $this->fail('Accepted an invalid reaction search');
@@ -180,20 +207,22 @@ final class ReactionSearchTest extends TestCase
         }
     }
 
-    private function assertFound(array $query): void
+    private function assertFound(array $query, ?SmartsMatcherInterface $matcher = null): void
     {
-        $this->assertContains($this->Entity->id, $this->search($query));
+        $this->assertContains($this->Entity->id, $this->search($query, $matcher));
     }
 
-    private function assertNotFound(array $query): void
+    private function assertNotFound(array $query, ?SmartsMatcherInterface $matcher = null): void
     {
-        $this->assertNotContains($this->Entity->id, $this->search($query));
+        $this->assertNotContains($this->Entity->id, $this->search($query, $matcher));
     }
 
     /** Ids of all the experiments the filter keeps, without the permissions of a listing */
-    private function search(array $query): array
+    private function search(array $query, ?SmartsMatcherInterface $matcher = null): array
     {
-        $ReactionSearch = new ReactionSearch(EntityType::Experiments, new InputBag($query));
+        $ReactionSearch = $matcher === null
+            ? new ReactionSearch(EntityType::Experiments, new InputBag($query))
+            : new ReactionSearch(EntityType::Experiments, new InputBag($query), smartsMatcher: $matcher);
         $Db = Db::getConnection();
         $req = $Db->prepare('SELECT entity.id FROM experiments AS entity WHERE 1=1' . $ReactionSearch->getFilterSql());
         $ReactionSearch->bindValues($req);

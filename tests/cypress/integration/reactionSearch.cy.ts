@@ -58,6 +58,19 @@ describe('Reaction search', () => {
     cy.get('[data-cy="reactionSearchSubmit"]').click();
     cy.get('#reactionSearchError').should('be.visible');
 
+    // a SMARTS pattern: a methoxy group on an aromatic ring, only in anisole
+    cy.get('[data-cy="reactionSearchStructureType"]').select('smarts');
+    cy.get('#reactionSearchExact').should('be.disabled');
+    cy.get('[data-cy="reactionSearchStructure"]').clear().type('[CH3][OX2]c');
+    cy.get('[data-cy="reactionSearchSubmit"]').click();
+    cy.location('search').should('contain', 'reaction_structure_type=smarts');
+    cy.get('#reactionSearchError').should('not.be.visible');
+    cy.get('#entityList').should('contain.text', title).and('not.contain.text', otherTitle);
+
+    cy.get('[data-cy="reactionSearchStructure"]').clear().type('[C');
+    cy.get('[data-cy="reactionSearchSubmit"]').click();
+    cy.get('#reactionSearchError').should('be.visible');
+
     cy.get('#reactionSearchForm [data-reaction-search-clear="all"]').click();
     cy.location('search').should('not.contain', 'reaction_');
   });

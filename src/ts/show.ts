@@ -92,12 +92,26 @@ function initReactionSearch(): void {
   }
   const errorEl = document.getElementById('reactionSearchError');
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
-  const readForm = (): Record<string, string> => ({
-    reaction_q: field('reaction_q').value.trim(),
-    reaction_structure: field('reaction_structure').value.trim(),
-    reaction_role: field('reaction_role').value,
-    reaction_exact: (field('reaction_exact') as HTMLInputElement).checked ? '1' : '',
-  });
+  const structureType = field('reaction_structure_type') as HTMLSelectElement;
+  const structure = field('reaction_structure') as HTMLInputElement;
+  const exact = field('reaction_exact') as HTMLInputElement;
+  const readForm = (): Record<string, string> => {
+    const isSmarts = structureType.value === 'smarts';
+    return {
+      reaction_q: field('reaction_q').value.trim(),
+      reaction_structure: structure.value.trim(),
+      reaction_structure_type: structureType.value,
+      reaction_role: field('reaction_role').value,
+      // exact does not apply to a SMARTS pattern: do not keep it in the url either
+      reaction_exact: exact.checked && !isSmarts ? '1' : '',
+    };
+  };
+  const showStructureType = (): void => {
+    const isSmarts = structureType.value === 'smarts';
+    exact.disabled = isSmarts;
+    structure.placeholder = (isSmarts ? structure.dataset.placeholderSmarts : structure.dataset.placeholderDefault) ?? '';
+  };
+  structureType.addEventListener('change', showStructureType);
 
   // The entries list hides rejected queries: show why the search was rejected next to its fields.
   // Only for the request that follows a submit, so an incomplete query typed in the search bar is not reported here.
@@ -136,6 +150,7 @@ function initReactionSearch(): void {
           input.value = '';
         }
       });
+      showStructureType();
       form.querySelectorAll('#reactionSearchLinks [data-reaction-search-clear]').forEach(el => el.remove());
       setEntityFilterParams(Object.fromEntries(REACTION_SEARCH_PARAMS.map(name => [name, ''])));
       return;

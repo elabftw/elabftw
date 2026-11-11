@@ -241,7 +241,7 @@ components:
         Only entries with a reaction component matching this structure, given as a SMILES or an InChIKey.
         A SMILES finds components containing it as a substructure (fingerprint screening, it can return false positives).
         An InChIKey finds components with the same connectivity (first block of the key).
-        Use reaction_exact to require the same structure.
+        Use reaction_exact to require the same structure, or reaction_structure_type to give a SMARTS pattern instead.
       examples:
         smiles:
           summary: Components containing a benzene ring.
@@ -249,6 +249,21 @@ components:
         inchikey:
           summary: Ethanol.
           value: LFQSCWFLJHTTHZ-UHFFFAOYSA-N
+
+    ReactionStructureType:
+      name: reaction_structure_type
+      in: query
+      schema:
+        type: string
+        enum: [smarts]
+      description: |
+        With smarts, reaction_structure is a SMARTS pattern: only entries with a reaction component matching it.
+        reaction_exact does not apply. The candidate components are limited to 20000: narrow them with reaction_role,
+        reaction_compound or reaction_item if needed.
+      examples:
+        phenol:
+          summary: Components with a hydroxyl group on an aromatic ring.
+          value: smarts
 
     ReactionExact:
       name: reaction_exact
@@ -3118,6 +3133,7 @@ x-parameterGroups:
     - $ref: '#/components/parameters/Full'
     - $ref: '#/components/parameters/ReactionQ'
     - $ref: '#/components/parameters/ReactionStructure'
+    - $ref: '#/components/parameters/ReactionStructureType'
     - $ref: '#/components/parameters/ReactionExact'
     - $ref: '#/components/parameters/ReactionRole'
     - $ref: '#/components/parameters/ReactionCompound'

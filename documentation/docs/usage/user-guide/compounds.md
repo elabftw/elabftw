@@ -150,6 +150,10 @@ tags, scope…). Deleted reactions are not searched.
   search, so a few results can contain a similar structure only. An InChIKey
   finds the same molecule, including its other stereoisomers or protonation
   states. Check **Exact structure** to find only the identical structure.
+  Select **SMARTS** in front of the field to enter a SMARTS pattern instead,
+  for instance `[OX2H]c` for the components with a phenol group. The pattern
+  is matched exactly, without fingerprint screening. When too many components
+  are candidates, the search asks you to select a role or add other criteria.
 - **Role**: only look for the structure among the reactants, products, reagents,
   catalysts or solvents.
 
@@ -190,7 +194,8 @@ A reaction also has two read-only fields: `reaction_smiles` and `reaction_key`
 
 To search entries by reaction, add these query parameters to
 `GET api/v2/{entity_type}`: `reaction_q` (text), `reaction_structure` (SMILES or
-InChIKey), `reaction_exact` (`1` for identical structures only), `reaction_role`,
+InChIKey), `reaction_structure_type` (`smarts` to give `reaction_structure` as a
+SMARTS pattern), `reaction_exact` (`1` for identical structures only), `reaction_role`,
 `reaction_compound` (linked compound id), `reaction_item` (linked resource id)
 and `reaction_key`. The role applies to the structure, compound and resource
 criteria, which must all match the same component.

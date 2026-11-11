@@ -231,7 +231,16 @@
       </div>
       <div class='col-md-4 mb-2'>
         <label for='reactionSearchStructure' class='font-weight-bold mb-1'>{{ 'Structure'|trans }}</label>
-        <input id='reactionSearchStructure' name='reaction_structure' type='search' class='form-control' maxlength='2048' spellcheck='false' autocomplete='off' placeholder='{{ 'SMILES or InChIKey'|trans }}' value='{{ rquery.get('reaction_structure')|e('html_attr') }}' data-cy='reactionSearchStructure' />
+        {% set isSmarts = rquery.get('reaction_structure_type') == 'smarts' %}
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <select id='reactionSearchStructureType' name='reaction_structure_type' class='form-control' aria-label='{{ 'Structure notation'|trans }}' data-cy='reactionSearchStructureType'>
+              <option value=''>{{ 'SMILES or InChIKey'|trans }}</option>
+              <option value='smarts' {{- isSmarts ? ' selected' }}>SMARTS</option>
+            </select>
+          </div>
+          <input id='reactionSearchStructure' name='reaction_structure' type='search' class='form-control' maxlength='2048' spellcheck='false' autocomplete='off' placeholder='{{ isSmarts ? 'SMARTS pattern'|trans : 'SMILES or InChIKey'|trans }}' data-placeholder-smarts='{{ 'SMARTS pattern'|trans }}' data-placeholder-default='{{ 'SMILES or InChIKey'|trans }}' value='{{ rquery.get('reaction_structure')|e('html_attr') }}' data-cy='reactionSearchStructure' />
+        </div>
       </div>
       <div class='col-md-2 mb-2'>
         <label for='reactionSearchRole' class='font-weight-bold mb-1'>{{ 'Role'|trans }}</label>
@@ -244,7 +253,8 @@
       </div>
       <div class='col-md-2 mb-2'>
         <div class='form-check mb-2'>
-          <input id='reactionSearchExact' name='reaction_exact' type='checkbox' value='1' class='form-check-input' {{- rquery.get('reaction_exact') ? ' checked' }} />
+          {# a SMARTS pattern describes a family of structures: there is no exact match of it #}
+          <input id='reactionSearchExact' name='reaction_exact' type='checkbox' value='1' class='form-check-input' {{- rquery.get('reaction_exact') ? ' checked' }} {{- isSmarts ? ' disabled' }} />
           <label for='reactionSearchExact' class='form-check-label'>{{ 'Exact structure'|trans }}</label>
         </div>
       </div>
@@ -263,7 +273,7 @@
       <div class='col-12 mb-2'>
         <button type='submit' class='btn btn-primary' data-cy='reactionSearchSubmit'>{{ 'Search'|trans }}</button>
         <button type='button' class='btn btn-ghost' data-reaction-search-clear='all'>{{ 'Clear'|trans }}</button>
-        <small class='text-muted ml-2'>{{ 'A SMILES finds components containing this substructure, an InChIKey finds the same molecule including its stereoisomers. Check "Exact structure" to only find the same structure. The role applies to the structure and to linked compounds or resources.'|trans }}</small>
+        <small class='text-muted ml-2'>{{ 'A SMILES finds components containing this substructure, an InChIKey finds the same molecule including its stereoisomers. Check "Exact structure" to only find the same structure. A SMARTS pattern finds the components matching it, for instance [OX2H]c for a phenol. The role applies to the structure and to linked compounds or resources.'|trans }}</small>
       </div>
       <p id='reactionSearchError' class='col-12 alert alert-danger' role='alert' hidden></p>
     </form>

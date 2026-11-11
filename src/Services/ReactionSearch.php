@@ -10,10 +10,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\FingerprinterInterface;
+use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\FingerprintTable;
 use Elabftw\Params\ReactionParams;
 use PDO;
@@ -22,7 +24,11 @@ use Symfony\Component\HttpFoundation\InputBag;
 
 use function _;
 use function addcslashes;
+use function array_keys;
+use function array_push;
+use function count;
 use function filter_var;
+use function implode;
 use function in_array;
 use function mb_strlen;
 use function preg_match;
@@ -39,13 +45,14 @@ use function trim;
  *
  * - reaction_q: text in the title, conditions or atmosphere of the reaction, or the name or formula of a component
  * - reaction_structure: SMILES or InChIKey of a component; reaction_exact switches from related to identical structures
+ * - reaction_structure_type: smarts to read reaction_structure as a SMARTS pattern instead (reaction_exact does not apply)
  * - reaction_compound, reaction_item: a component linked to this compound or resource
  * - reaction_role: restricts the three component criteria above to components with that role
  * - reaction_key: the same transformation (reactants and products), see ReactionIdentity::key()
  */
 final class ReactionSearch
 {
-    public const array PARAMS = array('reaction_q', 'reaction_structure', 'reaction_exact', 'reaction_role', 'reaction_compound', 'reaction_item', 'reaction_key');
+    public const array PARAMS = array('reaction_q', 'reaction_structure', 'reaction_structure_type', 'reaction_exact', 'reaction_role', 'reaction_compound', 'reaction_item', 'reaction_key');
 
     private const string INCHIKEY_REGEX = '/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/';
 
@@ -53,11 +60,16 @@ final class ReactionSearch
 
     private const int MAX_STRUCTURE_LENGTH = 2048;
 
+    // every candidate structure goes through Open Babel on each listing request: above this, ask for narrower criteria
+    private const int MAX_SMARTS_CANDIDATES = 20000;
+
     private string $text;
 
     private string $structure;
 
     private bool $exact;
+
+    private bool $smarts = false;
 
     private ?string $role = null;
 
@@ -76,6 +88,7 @@ final class ReactionSearch
         private EntityType $entityType,
         InputBag $query,
         private FingerprinterInterface $fingerprinter = new OpenBabelFingerprinter(),
+        private SmartsMatcherInterface $smartsMatcher = new OpenBabelSmartsMatcher(),
     ) {
         $this->text = trim($query->getString('reaction_q'));
         if (mb_strlen($this->text) > self::MAX_TEXT_LENGTH) {
@@ -85,6 +98,13 @@ final class ReactionSearch
         // the structure goes to Open Babel on every listing request: keep it to the size of a drawn molecule
         if (strlen($this->structure) > self::MAX_STRUCTURE_LENGTH) {
             throw new ImproperActionException(sprintf(_('The reaction search structure is limited to %d characters.'), self::MAX_STRUCTURE_LENGTH));
+        }
+        $structureType = $query->getString('reaction_structure_type');
+        if ($structureType !== '') {
+            if ($structureType !== 'smarts') {
+                throw new ImproperActionException('Invalid reaction structure type.');
+            }
+            $this->smarts = true;
         }
         $this->exact = filter_var($query->getString('reaction_exact'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false;
         $role = $query->getString('reaction_role');
@@ -180,7 +200,9 @@ final class ReactionSearch
             $where .= ' AND c.item_id = :rs_item';
             $this->binds[':rs_item'] = array($this->item, PDO::PARAM_INT);
         }
-        if ($this->structure !== '') {
+        if ($this->structure !== '' && $this->smarts) {
+            $where .= $this->getSmartsSql($where);
+        } elseif ($this->structure !== '') {
             if (preg_match(self::INCHIKEY_REGEX, strtoupper($this->structure)) === 1) {
                 $inchiKey = strtoupper($this->structure);
                 if ($this->exact) {
@@ -212,6 +234,53 @@ final class ReactionSearch
         return $this->exact
             ? FingerprintTable::equalsSql($fingerprint, 'f')
             : FingerprintTable::containsSql($fingerprint, 'f');
+    }
+
+    /**
+     * SMARTS cannot be screened with fingerprints: the candidate components (with the other component criteria) are read,
+     * and Open Babel tells which ones match. Each distinct structure is tested once, and the matching components are
+     * given by id, so this does not depend on how many there are.
+     *
+     * @param string $where the other component criteria, with their binds already in $this->binds
+     */
+    private function getSmartsSql(string $where): string
+    {
+        $sql = sprintf(
+            "SELECT c.id, c.smiles FROM reaction_components AS c
+            INNER JOIN reactions AS r ON (r.id = c.reaction_id AND r.state = :rs_state)
+            INNER JOIN reactions2%s AS links ON (links.reaction_id = r.id)
+            WHERE c.smiles != ''%s LIMIT %d",
+            $this->entityType->value,
+            $where,
+            self::MAX_SMARTS_CANDIDATES + 1,
+        );
+        $Db = Db::getConnection();
+        $req = $Db->prepare($sql);
+        // the binds also hold the ones of the text and key criteria, which are not in this query
+        foreach ($this->binds as $name => $bind) {
+            if (preg_match('/' . $name . '\b/', $sql) === 1) {
+                $req->bindValue($name, $bind[0], $bind[1]);
+            }
+        }
+        $Db->execute($req);
+        $rows = $req->fetchAll();
+        if (count($rows) > self::MAX_SMARTS_CANDIDATES) {
+            throw new ImproperActionException(_('Too many structures to search with a SMARTS pattern: select a role or add other criteria.'));
+        }
+        $idsBySmiles = array();
+        foreach ($rows as $row) {
+            $smiles = ReactionIdentity::normalizeSmiles((string) $row['smiles']);
+            if ($smiles !== '') {
+                $idsBySmiles[$smiles][] = (int) $row['id'];
+            }
+        }
+        $ids = array();
+        $structures = array_keys($idsBySmiles);
+        foreach ($this->smartsMatcher->matches($this->structure, $structures) as $index) {
+            array_push($ids, ...$idsBySmiles[$structures[$index]]);
+        }
+        // ids are integers read from the database: safe to inline, with no limit on the number of placeholders
+        return $ids === array() ? ' AND 0 = 1' : ' AND c.id IN (' . implode(',', $ids) . ')';
     }
 
     private function getId(InputBag $query, string $name): ?int

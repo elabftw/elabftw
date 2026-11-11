@@ -180,10 +180,36 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
             'content' => '1',
         );
         $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params, 3));
+        // switching the owner flag off again must really clear it in the
+        // database: the return value alone is 0 even when the stored value
+        // stays 1, so assert the stored value too (see #7781)
+        $sysadmin = new Users(1, 1);
+        $targetUserid = $sysadmin->createOne('owner-toggle@example.com', array(1), new NullLocalPassword(), automaticValidationEnabled: true);
+        try {
+            $this->assertSame(0, $this->getIsOwner($targetUserid, 1));
+            $this->assertEquals(1, $this->Users2Teams->patchUser2Team($params, $targetUserid));
+            $this->assertSame(1, $this->getIsOwner($targetUserid, 1));
+            $params['content'] = '0';
+            $this->assertEquals(0, $this->Users2Teams->patchUser2Team($params, $targetUserid));
+            $this->assertSame(0, $this->getIsOwner($targetUserid, 1));
+        } finally {
+            (new Users($targetUserid, 1, $sysadmin))->destroy();
+        }
         // now do it with a non sysadmin user
+        $params['content'] = '1';
         $this->expectException(ForbiddenException::class);
         $Users2Teams = new Users2Teams(new Users(2, 1));
         $Users2Teams->patchUser2Team($params, 2);
+    }
+
+    private function getIsOwner(int $userid, int $teamid): int
+    {
+        foreach ((new UsersHelper($userid))->getTeamsFromUserid() as $team) {
+            if ((int) $team['id'] === $teamid) {
+                return (int) $team['is_owner'];
+            }
+        }
+        $this->fail(sprintf('User %d is not in team %d.', $userid, $teamid));
     }
 
     public function testCreateIdempotent(): void

@@ -910,10 +910,22 @@ on('apply-permissions-selected', async (el: HTMLElement) => {
   if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
     return;
   }
-  await Promise.allSettled(checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0})));
-  notify.success();
+  const results = await Promise.allSettled(checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0, notifOnError: 0})));
+  const failedIds = checked.filter((_id, index) => results[index].status === 'rejected');
   hideModal('#permissionsModal');
-  reloadEntitiesShow();
+  // render the modal again, empty: the changes of this batch must not be applied again to the next selection
+  await reloadElements(['permissionsDiv']).catch(error => notify.error(error));
+  if (failedIds.length === 0) {
+    notify.success();
+    reloadEntitiesShow();
+    return;
+  }
+  // no reload of the list here: it would remove the marks on the entries that could not be modified
+  failedIds.forEach(id => {
+    const elem = document.querySelector<HTMLElement>(`[data-entity-id="${id}"]`);
+    if (elem) elem.style.backgroundColor = 'var(--lightred)';
+  });
+  notify.warning('entity-patch-multi-warning', {count: checked.length - failedIds.length, failed: failedIds.length});
 });
 
 on('select-lang', () => {

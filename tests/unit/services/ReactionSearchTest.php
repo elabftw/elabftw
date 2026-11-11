@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 use function array_column;
 use function array_map;
 use function intval;
+use function str_repeat;
 use function uniqid;
 
 final class ReactionSearchTest extends TestCase
@@ -168,7 +169,8 @@ final class ReactionSearchTest extends TestCase
         $inactive = new ReactionSearch(EntityType::Experiments, new InputBag(array('reaction_role' => 'product', 'reaction_exact' => '1')));
         $this->assertFalse($inactive->isActive());
         $this->assertSame('', $inactive->getFilterSql());
-        foreach (array(array('reaction_key' => 'abc'), array('reaction_compound' => 'x'), array('reaction_structure' => 'not a structure')) as $query) {
+        $tooLong = array('reaction_structure' => str_repeat('C', 2049));
+        foreach (array(array('reaction_key' => 'abc'), array('reaction_compound' => 'x'), array('reaction_structure' => 'not a structure'), $tooLong) as $query) {
             try {
                 $this->search($query);
                 $this->fail('Accepted an invalid reaction search');

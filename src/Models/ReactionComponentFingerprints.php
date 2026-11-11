@@ -13,6 +13,9 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use PDO;
 
+use function array_map;
+use function implode;
+use function intval;
 use function sprintf;
 
 /**
@@ -44,6 +47,32 @@ final class ReactionComponentFingerprints
         $req = $this->Db->prepare($sql . ' ORDER BY c.id');
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    /**
+     * @param list<int> $componentIds
+     * @return array<int, list<int>> the fingerprints of the components that have one, by component id
+     */
+    public function readMany(array $componentIds): array
+    {
+        if ($componentIds === array()) {
+            return array();
+        }
+        $req = $this->Db->prepare(sprintf(
+            'SELECT component_id, %s FROM reaction_component_fingerprints WHERE component_id IN (%s)',
+            FingerprintTable::wordColumns(),
+            implode(', ', array_map(intval(...), $componentIds)),
+        ));
+        $this->Db->execute($req);
+        $fingerprints = array();
+        foreach ($req->fetchAll() as $row) {
+            $words = array();
+            for ($i = 0; $i < FingerprintTable::WORDS; $i++) {
+                $words[] = (int) $row['fp' . $i];
+            }
+            $fingerprints[(int) $row['component_id']] = $words;
+        }
+        return $fingerprints;
     }
 
     public function upsert(int $componentId, array $fingerprint): void

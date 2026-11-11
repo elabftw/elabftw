@@ -12,6 +12,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
@@ -24,6 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use function array_column;
 use function array_diff_key;
+use function array_fill;
 use function array_flip;
 use function array_map;
 use function base64_decode;
@@ -242,6 +244,45 @@ final class ReactionsTest extends TestCase
         $this->assertNotSame($history[1]['scheme'], $history[2]['scheme']);
         $this->assertArrayNotHasKey('preview_png', $history[0]);
         $this->assertArrayHasKey('actual', $history[1]['components'][0]);
+    }
+
+    public function testUnchangedStructuresAreNotFingerprintedAgain(): void
+    {
+        $fingerprinter = new class implements FingerprinterInterface {
+            public int $calls = 0;
+
+            public function calculate(string $fmt, string $data): array
+            {
+                $this->calls++;
+                return array('data' => array_fill(0, 32, 1));
+            }
+        };
+        $entity = $this->getFreshExperiment();
+        $data = $this->data();
+        $data['components'][0]['smiles'] = 'CC=C';
+        $data['components'][1]['smiles'] = 'CCC';
+        $id = new Reactions($entity, null, $fingerprinter)->postAction(Action::Create, $data);
+        $this->assertSame(2, $fingerprinter->calls);
+
+        $model = new Reactions($entity, $id, $fingerprinter);
+        $model->patch(Action::Update, array('version' => 1, 'title' => 'Renamed'));
+        $this->assertSame(2, $fingerprinter->calls);
+        $this->assertSame(2, $this->countFingerprints($id));
+
+        $components = $model->readOne()['components'];
+        $components[1]['smiles'] = 'CCCC';
+        $model->patch(Action::Update, array('version' => 2, 'components' => $components));
+        $this->assertSame(3, $fingerprinter->calls);
+        $this->assertSame(2, $this->countFingerprints($id));
+    }
+
+    private function countFingerprints(int $reactionId): int
+    {
+        $req = Db::getConnection()->prepare('SELECT COUNT(*) FROM reaction_component_fingerprints AS f
+            INNER JOIN reaction_components AS c ON (c.id = f.component_id) WHERE c.reaction_id = :id');
+        $req->bindValue(':id', $reactionId, PDO::PARAM_INT);
+        $req->execute();
+        return (int) $req->fetchColumn();
     }
 
     private function data(): array

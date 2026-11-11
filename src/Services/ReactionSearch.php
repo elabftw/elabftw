@@ -27,6 +27,7 @@ use function in_array;
 use function mb_strlen;
 use function preg_match;
 use function sprintf;
+use function strlen;
 use function strtoupper;
 use function substr;
 use function trim;
@@ -49,6 +50,8 @@ final class ReactionSearch
     private const string INCHIKEY_REGEX = '/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/';
 
     private const int MAX_TEXT_LENGTH = 255;
+
+    private const int MAX_STRUCTURE_LENGTH = 2048;
 
     private string $text;
 
@@ -79,6 +82,10 @@ final class ReactionSearch
             throw new ImproperActionException(sprintf(_('The reaction search text is limited to %d characters.'), self::MAX_TEXT_LENGTH));
         }
         $this->structure = trim($query->getString('reaction_structure'));
+        // the structure goes to Open Babel on every listing request: keep it to the size of a drawn molecule
+        if (strlen($this->structure) > self::MAX_STRUCTURE_LENGTH) {
+            throw new ImproperActionException(sprintf(_('The reaction search structure is limited to %d characters.'), self::MAX_STRUCTURE_LENGTH));
+        }
         $this->exact = filter_var($query->getString('reaction_exact'), FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE) ?? false;
         $role = $query->getString('reaction_role');
         if ($role !== '') {

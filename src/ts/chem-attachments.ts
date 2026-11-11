@@ -11,7 +11,7 @@ import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
 import { hideModal, isModalShown, onModalEvent, showModal } from './common';
 import { BusyState, showFormError } from './form-state';
-import { adjustHiddenState, errorMessage, reloadElements } from './misc';
+import { errorMessage, reloadUploads } from './misc';
 import { showTab } from './tabbed-sections';
 import { notify } from './notify';
 import { on } from './handlers';
@@ -102,7 +102,7 @@ export function initChemAttachments(ketcher: Ketcher): void {
     if (!saved) return;
     hideModal(saveModalSelector);
     // The file is already saved, even if refreshing the attachment list fails.
-    await reloadElements(['uploadsDiv']).then(() => adjustHiddenState()).catch(error => notify.error(error));
+    await reloadUploads().catch(error => notify.error(error));
   };
 
   loadButton.onclick = async () => {

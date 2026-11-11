@@ -638,6 +638,9 @@ export function permissionsSectionParams(section: HTMLElement, changes: Permissi
   return params;
 }
 
+// the saves of each permissions modal, one at a time: see savePermissionsChange
+const permissionsSaves = new WeakMap<HTMLElement, Promise<void>>();
+
 // entity and user defaults are saved right away, for the selected entries we only remember what changed: see apply-permissions-selected
 export function savePermissionsChange(section: HTMLElement, change: PermissionsChange): void {
   const modal = section.closest<HTMLElement>('[data-permissions-endpoint]');
@@ -646,7 +649,20 @@ export function savePermissionsChange(section: HTMLElement, change: PermissionsC
     section.dataset[change === 'list' ? 'listChanged' : 'baseChanged'] = '1';
     return;
   }
-  ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
+  // Each save sends the whole list: concurrent requests could finish in any order and an older list would win.
+  // The params are read when the request is sent, so a queued save always sends what the modal shows then.
+  const previous = permissionsSaves.get(modal) ?? Promise.resolve();
+  const save = previous.then(async () => {
+    // a failed save reloaded the modal: what this section showed is gone, and so is its change
+    if (!section.isConnected) return;
+    try {
+      await ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
+    } catch {
+      // the api already reported the error: show the permissions as they are saved, not as they were edited
+      await reloadElements(['permissionsDiv']).catch(() => {});
+    }
+  });
+  permissionsSaves.set(modal, save);
 }
 
 // the select is only a search: what is given access is the list of chips under it

@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 use function array_diff;
+use function array_filter;
 use function array_key_exists;
 use function array_keys;
 use function array_map;
@@ -251,7 +252,11 @@ final class Reactions extends AbstractRest
         // fingerprinting runs external processes: do it before taking the entry lock,
         // but only for someone allowed to write (lockOwner() checks again under the lock)
         $this->Entity->canOrExplode(AccessType::Write);
-        $fingerprints = new ReactionFingerprinter($this->fingerprinter)->calculate($params->components);
+        // an unchanged structure keeps its fingerprint: editing a title or a quantity must not run Open Babel again
+        $fingerprints = $this->reusableFingerprints($params->components, $existingComponents);
+        $fingerprints += new ReactionFingerprinter($this->fingerprinter)->calculate(
+            array_filter($params->components, static fn(array $component): bool => !isset($fingerprints[$component['component_key']])),
+        );
         $this->Db->beginTransaction();
         try {
             $this->lockOwner();
@@ -297,6 +302,32 @@ final class Reactions extends AbstractRest
             $this->Db->rollBack();
             throw $e;
         }
+    }
+
+    /**
+     * Fingerprints of the saved components that keep their key and structure, by component key.
+     * The existing components were read before the lock, but save() rejects them if the version changed since.
+     *
+     * @return array<string, list<int>>
+     */
+    private function reusableFingerprints(array $components, array $existingComponents): array
+    {
+        $existing = array();
+        foreach ($existingComponents as $component) {
+            $existing[$component['component_key']] = $component;
+        }
+        $ids = array();
+        foreach ($components as $component) {
+            $previous = $existing[$component['component_key']] ?? null;
+            if ($previous !== null && ReactionIdentity::normalizeSmiles((string) $previous['smiles']) === ReactionIdentity::normalizeSmiles($component['smiles'])) {
+                $ids[(int) $previous['id']] = $component['component_key'];
+            }
+        }
+        $fingerprints = array();
+        foreach (new ReactionComponentFingerprints()->readMany(array_keys($ids)) as $componentId => $fingerprint) {
+            $fingerprints[$ids[$componentId]] = $fingerprint;
+        }
+        return $fingerprints;
     }
 
     private function lockOwner(): void

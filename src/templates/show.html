@@ -231,7 +231,7 @@
       </div>
       <div class='col-md-4 mb-2'>
         <label for='reactionSearchStructure' class='font-weight-bold mb-1'>{{ 'Structure'|trans }}</label>
-        <input id='reactionSearchStructure' name='reaction_structure' type='search' class='form-control' spellcheck='false' autocomplete='off' placeholder='{{ 'SMILES or InChIKey'|trans }}' value='{{ rquery.get('reaction_structure')|e('html_attr') }}' data-cy='reactionSearchStructure' />
+        <input id='reactionSearchStructure' name='reaction_structure' type='search' class='form-control' maxlength='2048' spellcheck='false' autocomplete='off' placeholder='{{ 'SMILES or InChIKey'|trans }}' value='{{ rquery.get('reaction_structure')|e('html_attr') }}' data-cy='reactionSearchStructure' />
       </div>
       <div class='col-md-2 mb-2'>
         <label for='reactionSearchRole' class='font-weight-bold mb-1'>{{ 'Role'|trans }}</label>

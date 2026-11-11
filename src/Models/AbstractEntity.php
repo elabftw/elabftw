@@ -168,8 +168,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
         $this->Uploads = new Uploads($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
-        // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
+        // readOne() also sets isReadOnly if another user has the entry in exclusive edit mode
         $this->setId($id);
     }
 
@@ -762,6 +761,10 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        // reuse the row we just read instead of querying it again with isActive()
+        if ($this->ExclusiveEditMode->isActiveFromData($exclusiveEditMode)) {
+            $this->isReadOnly = true;
+        }
         $this->entityData['created_from_type_human'] = EntityType::fromInt($this->entityData['created_from_type'])?->toGenre();
         $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
         $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();

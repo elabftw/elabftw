@@ -43,6 +43,7 @@ use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Params\UserParams;
@@ -93,15 +94,18 @@ class Users extends AbstractRest
      */
     public ?int $apiKeyId = null;
 
+    // ids of the team groups of the user, read once per request, see getTeamGroupIds()
+    private ?array $teamGroupIds = null;
+
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
         parent::__construct();
-        if ($team !== null && $userid !== null) {
-            $TeamsHelper = new TeamsHelper($this->team ?? 0);
-            $this->isAdmin = $TeamsHelper->isAdmin($userid);
-        }
         if ($userid !== null) {
             $this->readOneFull();
+            if ($team !== null) {
+                // the memberships come with the user data, so no need for another query like TeamsHelper::isAdmin()
+                $this->isAdmin = $this->isActiveAdminInTeam($team);
+            }
         }
         $this->requester = $requester === null ? $this : $requester;
     }
@@ -928,6 +932,8 @@ class Users extends AbstractRest
         $this->Db->execute($req);
 
         $this->userData = $this->Db->fetch($req);
+        // fresh user data: the team groups are read again too
+        $this->teamGroupIds = null;
         $this->userData['team'] = $this->team;
         $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
         $this->userData['default_read_base_human'] = BasePermissions::from($this->userData['default_read_base'])->toHuman();
@@ -981,6 +987,18 @@ class Users extends AbstractRest
         if ($this->isSelf() === false) {
             throw new ForbiddenException();
         }
+    }
+
+    /**
+     * Ids of the team groups the user is in. The permission checks and the can filters of every query
+     * need them, so they are read once and kept, like the teams of the user in userData
+     */
+    public function getTeamGroupIds(): array
+    {
+        if ($this->teamGroupIds === null) {
+            $this->teamGroupIds = array_map('intval', array_column(new TeamGroups($this)->readGroupsFromUser(), 'id'));
+        }
+        return $this->teamGroupIds;
     }
 
     // Return IDs of teams where the user has an active membership
@@ -1179,5 +1197,16 @@ class Users extends AbstractRest
             default => $localPart[0] . '***' . substr($localPart, -1),
         };
         return sprintf('%s@%s', $maskedLocalPart, $domain);
+    }
+
+    // same as TeamsHelper::isAdmin(), but from the teams of userData
+    private function isActiveAdminInTeam(int $teamId): bool
+    {
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['id'] === $teamId) {
+                return (int) $team['is_admin'] === 1 && (int) $team['is_archived'] === 0;
+            }
+        }
+        return false;
     }
 }

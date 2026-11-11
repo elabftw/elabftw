@@ -62,10 +62,6 @@ abstract class AbstractEntityController implements ControllerInterface
     // is the main category of current entity type, can be experimentsCategoryArr or itemsCategoryArr
     protected array $categoryArr = array();
 
-    protected array $experimentsStatusArr = array();
-
-    protected array $itemsStatusArr = array();
-
     protected array $statusArr = array();
 
     protected array $visibilityArr = array();
@@ -86,10 +82,6 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->currencyArr = Currency::getAssociativeArray();
-        $ExperimentsStatus = new ExperimentsStatus($App->Teams);
-        $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
-        $ItemsStatus = new ItemsStatus($this->App->Teams);
-        $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
     }
 
     #[Override]
@@ -281,6 +273,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('edit.html', $renderArr));
         return $Response;
+    }
+
+    // only the statuses of the entity type of the page are needed, see the child controllers
+    protected function readAllStatus(ExperimentsStatus | ItemsStatus $Status): array
+    {
+        return $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
     }
 
     // the permissions modal and the user groups filter list every user group the user can see

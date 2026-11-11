@@ -68,7 +68,12 @@ final class ExclusiveEditMode
      */
     public function isActive(): bool
     {
-        $data = $this->readOne();
+        return $this->isActiveFromData($this->readOne());
+    }
+
+    // same as isActive() but from the output of readOne(), when it was already read
+    public function isActiveFromData(array $data): bool
+    {
         if (empty($data)
             || $data['locked_by'] === $this->Entity->Users->userData['userid']
             || $data['is_stale']
@@ -100,14 +105,15 @@ final class ExclusiveEditMode
     public function activate(): bool
     {
         $this->Entity->canOrExplode(AccessType::Write);
-        // destroy any leftover first: prevents inserting with same primary id (entity_id)
-        $this->destroy();
+        // replace any leftover lock in the same query: entity_id is the primary key
         $sql = sprintf(
-            'INSERT INTO %s_edit_mode (locked_by, entity_id) VALUES (:userid, :entity_id)',
+            'INSERT INTO %s_edit_mode (locked_by, entity_id) VALUES (:userid, :entity_id)
+                ON DUPLICATE KEY UPDATE locked_by = :userid_update, locked_at = CURRENT_TIMESTAMP',
             $this->Entity->entityType->value,
         );
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':userid_update', $this->Entity->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         return $this->Db->execute($req);
     }

@@ -14,11 +14,9 @@ namespace Elabftw\Elabftw;
 
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
-use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 
-use function array_column;
 use function implode;
 use function sprintf;
 
@@ -167,9 +165,7 @@ final class CanSqlBuilder
      */
     protected function canTeamGroups(): string
     {
-        // TODO include the teamgroups in Users->readOneFull
-        $TeamGroups = new TeamGroups($this->requester);
-        $teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
+        $teamgroupsOfUser = $this->requester->getTeamGroupIds();
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)

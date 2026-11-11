@@ -29,8 +29,11 @@ use PDO;
 use Throwable;
 
 use function _;
+use function array_filter;
 use function array_key_exists;
 use function array_map;
+use function array_unique;
+use function array_values;
 use function count;
 use function filter_var;
 use function implode;
@@ -145,6 +148,57 @@ final class StorageUnits extends AbstractRest
         $this->Db->execute($req);
 
         return $this->Db->fetch($req);
+    }
+
+    /**
+     * The full_path of several storage units in one query, as readOne() would give it for each of them
+     * Returns an array of full_path indexed by storage unit id
+     */
+    public function readFullPaths(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn(int $id): bool => $id > 0)));
+        if (empty($ids)) {
+            return array();
+        }
+        $fullPathLength = self::FULL_PATH_LENGTH;
+        $sql = sprintf("
+            WITH RECURSIVE storage_hierarchy AS (
+                SELECT
+                    id AS original_id,
+                    parent_id,
+                    CAST(name AS CHAR({$fullPathLength})) AS full_path,
+                    0 AS level_depth
+                FROM
+                    storage_units
+                WHERE
+                    id IN (%s)
+
+                UNION
+
+                SELECT
+                    child.original_id,
+                    parent.parent_id,
+                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR({$fullPathLength})) AS full_path,
+                    child.level_depth + 1
+                FROM
+                    storage_units AS parent
+                INNER JOIN
+                    storage_hierarchy AS child ON parent.id = child.parent_id
+            )
+            -- like readOne(): keep the deepest row of each unit, it has the path from the root
+            SELECT original_id, full_path FROM (
+                SELECT
+                    original_id,
+                    full_path,
+                    ROW_NUMBER() OVER (PARTITION BY original_id ORDER BY level_depth DESC) AS row_num
+                FROM storage_hierarchy
+            ) AS paths
+            WHERE row_num = 1", implode(', ', $ids));
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+
+        return $req->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 
     public function readCount(): array

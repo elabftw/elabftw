@@ -63,6 +63,21 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->StorageUnits->postAction(Action::Create, array());
     }
 
+    public function testReadFullPaths(): void
+    {
+        $roomId = $this->StorageUnits->create('Full paths room');
+        $shelfId = $this->StorageUnits->create('Full paths shelf', $roomId);
+        $boxId = $this->StorageUnits->create('Full paths box', $shelfId);
+        $paths = $this->StorageUnits->readFullPaths(array($boxId, $roomId, $boxId, 0));
+        $this->assertCount(2, $paths);
+        foreach (array($roomId, $boxId) as $id) {
+            $this->StorageUnits->setId($id);
+            $this->assertSame($this->StorageUnits->readOne()['full_path'], $paths[$id]);
+        }
+        $this->assertSame('Full paths room > Full paths shelf > Full paths box', $paths[$boxId]);
+        $this->assertSame(array(), $this->StorageUnits->readFullPaths(array()));
+    }
+
     public function testReadOne(): void
     {
         $parentId = $this->StorageUnits->create('Test room');

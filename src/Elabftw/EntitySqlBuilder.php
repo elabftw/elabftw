@@ -22,7 +22,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\AnonymousUser;
 use Override;
 
@@ -38,9 +37,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected array $joinsSql = array();
 
     private string $searchJoinSql = '';
-
-    // ids of the team groups of the user, only fetched once even if several access types are checked
-    private ?array $teamgroupsOfUser = null;
 
     public function __construct(private AbstractEntity $entity) {}
 
@@ -460,7 +456,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeamGroups(string $can): string
     {
-        $teamgroupsOfUser = $this->getTeamgroupsOfUser();
+        $teamgroupsOfUser = $this->entity->Users->getTeamGroupIds();
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
@@ -496,15 +492,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             $this->canTeamGroups($can),
             $this->canUsers($can),
         ));
-    }
-
-    private function getTeamgroupsOfUser(): array
-    {
-        if ($this->teamgroupsOfUser === null) {
-            $TeamGroups = new TeamGroups($this->entity->Users);
-            $this->teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
-        }
-        return $this->teamgroupsOfUser;
     }
 
     /**

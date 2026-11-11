@@ -26,7 +26,7 @@
     {% if isEditable %}
       {# GENERAL ACCESS (base permission): same dropdown look as the scope buttons #}
       <div class='btn-group' id='{{ idPrefix }}permissionsBase-{{ rw }}'>
-        <button class='btn btn-transparent dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'General access'|trans }}' data-cy='permissions-base-{{ rw }}'>
+        <button class='btn btn-transparent dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'General access'|trans }}' data-cy='{{ idPrefix }}permissions-base-{{ rw }}'>
           <i class='fas fa-user-shield fa-fw mr-1' aria-hidden='true'></i><span class='sr-only'>{{ 'General access'|trans }}:</span>
           <span data-base-label>
             {%- if baseValue is null -%}
@@ -64,7 +64,7 @@
         data-label-teamgroup='{{ 'User group'|trans }}'
         data-label-user='{{ 'User'|trans }}'
         data-list='{{ idPrefix }}{{ rw }}PermissionsList'
-        data-cy='permissions-search-{{ rw }}'>
+        data-cy='{{ idPrefix }}permissions-search-{{ rw }}'>
         {# users are searched through the api #}
         {% for team in teamsArr|default([]) %}
           {% if team.id not in selectedTeams %}

@@ -622,10 +622,8 @@
                   <option value='{{ status.id }}'>{{ status.title }}</option>
               {% endfor %}
             </select>
-            {# CANREAD #}
-            <button data-action='toggle-modal' data-target='permModal-canreadSelected' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Change read permissions'|trans }}'>{{ 'Change read permissions'|trans }}</button>
-            {# CANWRITE #}
-            <button data-action='toggle-modal' data-target='permModal-canwriteSelected' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Change write permissions'|trans }}'>{{ 'Change write permissions'|trans }}</button>
+            {# PERMISSIONS #}
+            <button data-action='toggle-modal' data-target='permissionsModal' type='button' class='btn btn-primary mr-1 mb-2'><i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Change permissions'|trans }}</button>
               {% if pageName == 'database' %}
               {# CANBOOK #}
               <select aria-label='{{ 'Change book permissions'|trans }}' name='is_bookable' autocomplete='off' class='mr-1 mb-2 form-control'>
@@ -756,8 +754,7 @@
   </div>
 </div>
 {% if not App.isAnonymous() %}
-{% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canread'} %}
-{% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canwrite'} %}
+{% include 'permissions-modal.html' with {context: 'selected'} %}
 {% include 'add-container-modal.html' with {'withSelected': true} %}
 {% endif %}
 {% endblock body %}

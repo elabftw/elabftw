@@ -1,17 +1,17 @@
-{# texts and icon of a permission, shared by its overview section and its edit modal #}
-{# rw: canread, canwrite, canbook, canread_target or canwrite_target. key: icon, label, modalTitle or lockdownLabel (only for read and write) #}
+{# texts and icon of a permission, see permissions-section.html #}
+{# rw: canread, canwrite, canbook, canread_target or canwrite_target. key: icon, label or lockdownLabel (only for read and write) #}
 {% macro text(rw, key) -%}
   {%- set texts = {
-    canread: {icon: 'eye', label: 'Who can view'|trans, modalTitle: 'Select who can see this entry'|trans, lockdownLabel: 'Lock down read permissions'|trans},
-    canwrite: {icon: 'user-pen', label: 'Who can edit'|trans, modalTitle: 'Select who can edit this entry'|trans, lockdownLabel: 'Lock down write permissions'|trans},
-    canbook: {icon: 'calendar-plus', label: 'Who can book'|trans, modalTitle: 'Select who can book this entry'|trans},
+    canread: {icon: 'eye', label: 'Who can view'|trans, lockdownLabel: 'Lock down read permissions'|trans},
+    canwrite: {icon: 'user-pen', label: 'Who can edit'|trans, lockdownLabel: 'Lock down write permissions'|trans},
+    canbook: {icon: 'calendar-plus', label: 'Who can book'|trans},
   } -%}
   {#- the derived entry permissions of a template read like the entry ones -#}
   {{- texts[rw|replace({'_target': ''})][key]|default('') -}}
 {%- endmacro %}
 
 {# what a permission gives access to: its base and the teams, user groups and users added to it #}
-{# required: can (from canToHuman filter), can_base (human readable base), id: reloaded after saving, see save-permissions in common.ts #}
+{# required: can (from canToHuman filter), can_base (human readable base), id #}
 {% macro details(id, can, can_base, class='') %}
   <div id='{{ id }}' {%- if class %} class='{{ class }}'{% endif %}>
     <div class='permissions-base'><i class='fas fa-fw fa-user-shield mr-1 smallgray' aria-hidden='true'></i>{{ can_base }}</div>

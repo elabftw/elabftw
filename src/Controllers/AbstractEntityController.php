@@ -77,18 +77,14 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $currencyArr = array();
 
-    protected array $scopedTeamgroupsArr = array();
-
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
-        $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->classificationArr = Classification::getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->currencyArr = Currency::getAssociativeArray();
-        $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
         $ExperimentsStatus = new ExperimentsStatus($App->Teams);
         $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
         $ItemsStatus = new ItemsStatus($this->App->Teams);
@@ -144,7 +140,9 @@ abstract class AbstractEntityController implements ControllerInterface
             'favTagsArr' => $favTagsArr,
             'pageTitle' => $this->getPageTitle(),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
-            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'allTeamgroupsArr' => $this->readAllTeamgroups(),
+            // for the user groups filter
+            'scopedTeamgroupsArr' => new TeamGroups($this->Entity->Users)->readScopedTeamgroups(),
             'teamsArr' => $this->App->Teams->readAllVisible(),
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
@@ -206,7 +204,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'view',
             'hideTitle' => true,
             'teamsArr' => $this->App->Teams->readAllVisible(),
-            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
@@ -265,7 +263,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'statusArr' => $this->statusArr,
             'teamsArr' => $this->App->Teams->readAllVisible(),
             'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
-            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
             'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
@@ -279,6 +277,12 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('edit.html', $renderArr));
         return $Response;
+    }
+
+    // the permissions modal searches in every user group the user can see, whatever their scope_teamgroups setting
+    protected function readAllTeamgroups(): array
+    {
+        return new TeamGroups($this->Entity->Users)->readAllEverything();
     }
 
     protected function changelog(): Response

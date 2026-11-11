@@ -1,0 +1,135 @@
+{# one section of the permissions modal, see permissions-modal.html #}
+{# required vars: #}
+{#  - rw: canread, canwrite, canbook, canread_target or canwrite_target: for the texts and icon #}
+{#  - param and baseParam: the names of the json and base columns that are saved #}
+{#  - baseValue: current base, null when it is not known (selected entries) #}
+{#  - can: from canToHuman filter, can_base: human readable base #}
+{# optional vars: #}
+{#  - endpointIsEntity, isReadOnly, isLocked, withAnonymousLink: only for the permissions of Entity #}
+{#  - lockdown: name of the column to lock down the target permissions, only for templates #}
+{# twigcs use-var can #}
+{# see https://github.com/friendsoftwig/twigcs/issues/121 #}
+{% import 'permissions.macro.html' as perm %}
+{% set endpointIsEntity = endpointIsEntity|default(false) %}
+{% set isReadOnly = isReadOnly|default(false) %}
+{% set isLocked = isLocked|default(false) %}
+{% set isEditable = not isReadOnly and not isLocked %}
+
+<section class='permissions-section' aria-labelledby='permissionsTitle-{{ rw }}' data-param='{{ param }}' data-base-param='{{ baseParam }}'>
+  <div class='d-flex justify-content-between align-items-center flex-wrap'>
+    <h6 class='permissions-section-title' id='permissionsTitle-{{ rw }}'><i class='fas fa-fw fa-{{ perm.text(rw, 'icon') }} mr-2' aria-hidden='true'></i>{{ perm.text(rw, 'label') }}</h6>
+    {% if isEditable %}
+      {# GENERAL ACCESS (base permission): same dropdown look as the scope buttons #}
+      <div class='btn-group' id='permissionsBase-{{ rw }}'>
+        <button class='btn btn-transparent dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'General access'|trans }}' data-cy='permissions-base-{{ rw }}'>
+          <i class='fas fa-user-shield fa-fw mr-1' aria-hidden='true'></i><span class='sr-only'>{{ 'General access'|trans }}:</span>
+          <span data-base-label>
+            {%- if baseValue is null -%}
+              {{ 'Unchanged'|trans }}
+            {%- else -%}
+              {{ visibilityArr[baseValue] is defined ? visibilityArr[baseValue]|trans : can_base }}
+            {%- endif -%}
+          </span>
+        </button>
+        <div class='dropdown-menu dropdown-menu-right'>
+          <h6 class='dropdown-header'>{{ 'General access'|trans }}</h6>
+          {% for key, value in visibilityArr %}
+            <button type='button' class='btn btn-dropdown-item dropdown-item {{ baseValue is not null and baseValue == key ? 'active' }}' data-action='set-permission-base' data-value='{{ key }}'>{{ value|trans }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    {% elseif not isReadOnly %}
+      <button type='button' class='btn btn-sm btn-ghost' disabled aria-describedby='permissionsLocked-{{ rw }}'>
+        <i class='fas fa-fw fa-lock mr-1' aria-hidden='true'></i>{{ 'Locked'|trans }}
+      </button>
+    {% endif %}
+  </div>
+
+  {% if isEditable %}
+    <p class='smallgray mb-1'>{{ 'Give access to more teams, user groups or users:'|trans }}</p>
+    {# a single search for teams, user groups and users: see initPermissionsSearch in misc.ts #}
+    {% set selectedTeams = can.teams|column('id') %}
+    {% set selectedTeamgroups = can.teamgroups|column('id') %}
+    <div class='ts-wrapper'>
+      {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
+      <select id='{{ rw }}_permissions_search' multiple class='form-control' autocomplete='off'
+        aria-label='{{ 'Search for teams, user groups or users'|trans }}'
+        data-permissions-search='1'
+        data-label-team='{{ 'Team'|trans }}'
+        data-label-teamgroup='{{ 'User group'|trans }}'
+        data-label-user='{{ 'User'|trans }}'
+        data-list='{{ rw }}PermissionsList'
+        data-cy='permissions-search-{{ rw }}'>
+        {# users are searched through the api #}
+        {% for team in teamsArr|default([]) %}
+          {% if team.id not in selectedTeams %}
+            <option value='team:{{ team.id }}'>{{ team.name }}</option>
+          {% endif %}
+        {% endfor %}
+        {% for group in allTeamgroupsArr|default([]) %}
+          {% if group.id not in selectedTeamgroups %}
+            <option value='teamgroup:{{ group.id }}'>{{ group.team_name }} - {{ group.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <input type='text' class='form-control' id='{{ rw }}-permissions-search-input' placeholder='{{ 'Search for teams, user groups or users'|trans }}' aria-label='{{ 'Search for teams, user groups or users'|trans }}'>
+    </div>
+    {# what is added on top of the general access, the chips are added and removed by initPermissionsSearch #}
+    {% set chips = [] %}
+    {% for team in can.teams %}
+      {% set chips = chips|merge([{value: 'team:' ~ team.id, text: team.name}]) %}
+    {% endfor %}
+    {% for group in can.teamgroups %}
+      {% set chips = chips|merge([{value: 'teamgroup:' ~ group.id, text: group.team_name ~ ' - ' ~ group.name}]) %}
+    {% endfor %}
+    {% for user in can.users %}
+      {% set chips = chips|merge([{value: 'user:' ~ user.userid, text: user.fullname ~ ' (' ~ user.email ~ ')'}]) %}
+    {% endfor %}
+    {% set kindIcons = {team: 'users', teamgroup: 'user-group', user: 'user'} %}
+    {% set kindLabels = {team: 'Team'|trans, teamgroup: 'User group'|trans, user: 'User'|trans} %}
+    <ul class='list-unstyled d-flex flex-wrap mb-0' id='{{ rw }}PermissionsList' aria-label='{{ perm.text(rw, 'label') }}'>
+      {% for chip in chips %}
+        {% set kind = chip.value|split(':')|first %}
+        <li class='permissions-chip' data-value='{{ chip.value }}' data-text='{{ chip.text }}'>
+          <i class='fas fa-{{ kindIcons[kind] }}' aria-hidden='true'></i><span class='sr-only'>{{ kindLabels[kind] }}:</span>{{ chip.text }}
+          <button type='button' class='permissions-chip-remove' data-remove-permission='1' title='{{ 'Remove'|trans }}' aria-label='{{ 'Remove'|trans }} {{ chip.text }}'><i class='fas fa-xmark' aria-hidden='true'></i></button>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    {{ perm.details(rw ~ 'Div', can, can_base, 'mt-2') }}
+  {% endif %}
+
+  {% if isLocked %}
+    <p class='smallgray mt-2 mb-0' id='permissionsLocked-{{ rw }}'><i class='fas fa-fw fa-lock mr-1' aria-hidden='true'></i>{{ 'Locked down by the template: only an Admin can change it.'|trans }}</p>
+  {% endif %}
+
+  {# ANONYMOUS SHARING LINK #}
+  {% if endpointIsEntity and withAnonymousLink|default(false) and isEditable and App.Config.configArr.anon_users %}
+    <div class='mt-3'>
+      <div class='custom-control custom-checkbox'>
+        <input type='checkbox' class='custom-control-input' id='readAccessCheckbox' data-action='toggle-anonymous-access' autocomplete='off' {{ Entity.entityData.access_key ? 'checked' }}>
+        <label class='custom-control-label' for='readAccessCheckbox'>{{ 'Allow read access for anonymous users'|trans }}</label>
+      </div>
+      <div {{ not Entity.entityData.access_key ? 'hidden' }} id='anonymousAccessUrlDiv' class='mt-2'>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <button title='{{ 'Copy to clipboard'|trans }}' aria-label='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone' aria-hidden='true'></i></button>
+          </div>
+          <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}' aria-label='{{ 'Anonymous access link'|trans }}'>
+        </div>
+        <p class='smallgray mb-0'>{{ 'Anyone following this link can access this entry.'|trans }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if endpointIsEntity and lockdown is defined %}
+    <div class='d-flex align-items-center mt-2'>
+      <label class='switch ucp-align mb-0'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='{{ lockdown }}' {{ Entity.entityData[lockdown] ? 'checked="checked"' }} id='{{ lockdown }}'>
+        <span class='slider'></span>
+      </label>
+      <label for='{{ lockdown }}' class='col-form-label ml-2 smallgray'>{{ perm.text(rw, 'lockdownLabel') }}</label>
+    </div>
+  {% endif %}
+</section>

@@ -29,7 +29,6 @@ import {
   makeSortableGreatAgain,
   mkSpin,
   mkSpinStop,
-  permissionsToJson,
   relativeMoment,
   reloadElements,
   replaceWithTitle,
@@ -39,11 +38,13 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
-  makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
+  makeMalleableColumnsGreatAgain,
   mountRors,
   delayConfirmation,
   initPermissionsTomSelects,
-  PERMISSION_SELECT_IDS,
+  initPermissionsSearch,
+  permissionsSectionParams,
+  savePermissionsChange,
   reloadEntitiesShow,
 } from './misc';
 import i18next from './i18n';
@@ -466,52 +467,7 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 makeMalleableColumnsGreatAgain();
 
 initPermissionsTomSelects();
-
-on('team-scope-change', async (el: HTMLElement) => {
-  const scope = Number(el.dataset.value);
-  const identifier = el.dataset.identifier;
-  if (!identifier) return;
-  // custom scope button for team select
-  const menu = el.parentElement;
-  if (menu) {
-    menu.querySelectorAll('.dropdown-item').forEach((item) => {
-      item.classList.remove('active');
-    });
-  }
-  el.classList.add('active');
-
-  const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
-  if (btn) {
-    // clear existing content
-    btn.replaceChildren();
-    const icon = document.createElement('i');
-    icon.classList.add('fas', 'fa-fw', scope === 1 ? 'fa-user' : 'fa-globe', 'mx-1');
-    const text = document.createTextNode(scope === 1 ? i18next.t('my-teams') : i18next.t('all-teams'));
-    btn.append(text, icon);
-  }
-  let teams;
-
-  if (scope === 1) {
-    const user = await ApiC.getJson(`${Model.User}/me`);
-    teams = user.teams;
-  } else {
-    const allTeams = await ApiC.getJson('teams');
-    teams = allTeams.filter((t) => t.visible !== 0);
-  }
-  const select = document.querySelector(`#${identifier}_select_teams`) as HTMLSelectElement;
-  if (!select) return;
-  rebuildTomSelectOptions(select, {
-    options: teams.map(team => ({
-      value: `team:${team.id}`,
-      text: team.name,
-    })),
-  });
-});
-
-document.addEventListener('scope-changed', () => {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
-  permissionSelects.forEach(select => rebuildTomSelectOptions(select));
-});
+initPermissionsSearch();
 
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
@@ -917,90 +873,47 @@ on('clear-form', (el: HTMLElement) => {
   inputs.forEach(input => input.value = '');
 });
 
-// open the edit modal above the permissions overview: hiding the overview first makes the backdrop flash
-// bootstrap 4 has no stacking support, so the z-index of the second modal and its backdrop must be raised
-on('edit-permission', (el: HTMLElement) => {
-  const editorSelector = `#${el.dataset.target}`;
-  const editor = document.querySelector<HTMLElement>(editorSelector);
-  if (!editor) return;
-  // closing the edit modal also resets the scrollbar compensation added by the overview, which shifts the page behind
-  const padded = Array.from(document.querySelectorAll<HTMLElement>('body, .fixed-top, .fixed-bottom, .is-fixed, .sticky-top'));
-  const paddings = padded.map(elem => elem.style.paddingRight);
-  // bootstrap defaults are 1040 for the backdrop and 1050 for the modal
-  editor.style.zIndex = '1070';
-  // jquery is kept here: bootstrap 4 fires its modal events through it only, and this cleanup must run once per opening
-  $(editor).one('hidden.bs.modal', () => {
-    editor.style.zIndex = '';
-    // the edit modal removed it while closing, but the overview is still open and the page must not scroll
-    document.body.classList.add('modal-open');
-    padded.forEach((elem, index) => { elem.style.paddingRight = paddings[index]; });
-    // back to where the keyboard user was in the overview
-    el.focus();
-  });
-  showModal(editorSelector);
-  // the backdrop of the modal we just opened is added synchronously at the end of the body
-  const backdrops = document.querySelectorAll<HTMLElement>('.modal-backdrop');
-  backdrops[backdrops.length - 1].style.zIndex = '1060';
+// general access (base permission) dropdown of the permissions modal
+on('set-permission-base', (el: HTMLElement) => {
+  const section = el.closest<HTMLElement>('.permissions-section');
+  if (!section) return;
+  section.dataset.baseValue = el.dataset.value;
+  el.closest('.dropdown-menu')?.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+  el.classList.add('active');
+  const label = el.closest('.btn-group')?.querySelector('[data-base-label]');
+  if (label) {
+    label.textContent = el.textContent.trim();
+  }
+  savePermissionsChange(section, 'base');
 });
 
-on('save-permissions', (el: HTMLElement) => {
+// permissions modal of the show page: what changed is applied to all the selected entries
+on('apply-permissions-selected', async (el: HTMLElement) => {
+  const modal = el.closest<HTMLElement>('[data-permissions-endpoint]');
+  if (!modal) return;
   const params = {};
-  params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
-  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
-  params[baseSelect.name] = baseSelect.value;
-
-  if (el.dataset.withSelected) {
-    const checked = getFromSvelte(selectedEntities);
-    if (checked.length === 0) {
-      notify.error('nothing-selected');
-      return;
-    }
-    if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
-      return;
-    }
-    const requests = checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0}));
-    Promise.allSettled(requests).then(() => {
-      notify.success();
-      reloadEntitiesShow();
-    });
+  modal.querySelectorAll<HTMLElement>('.permissions-section').forEach(section => {
+    const changes: ('list' | 'base')[] = [];
+    if (section.dataset.listChanged) changes.push('list');
+    if (section.dataset.baseChanged) changes.push('base');
+    Object.assign(params, permissionsSectionParams(section, changes));
+  });
+  if (Object.keys(params).length === 0) {
+    hideModal('#permissionsModal');
     return;
   }
-
-  const divId = el.dataset.identifier + 'Div';
-  // if we're editing the default read/write permissions for experiments, this data attribute will be set
-  if (el.dataset.isUserDefault) {
-    // we need to replace canread/canwrite with default_read/default_write for user attribute
-    let paramKey = 'default_read';
-    if (el.dataset.rw === 'canwrite') {
-      paramKey = 'default_write';
-    }
-    // create a new key and delete the old one
-    params[paramKey] = params[el.dataset.rw];
-    delete params[el.dataset.rw];
-    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([divId]));
-  } else {
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([divId]));
-  }
-});
-
-function collectPermissionsFromModal(identifier: string): string {
-  const teams = ($('#' + identifier + '_select_teams').val() as string[] | null) ?? [];
-  const teamgroups = ($('#' + identifier + '_select_teamgroups').val() as string[] | null) ?? [];
-  const users = ($('#' + identifier + '_select_users').val() as string[] | null) ?? [];
-  return permissionsToJson(
-    teams.concat(teamgroups).concat(users),
-  );
-}
-
-// change both read & write permissions in one go
-on('save-permissions-both', (el: HTMLElement) => {
-  if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
+  const checked = getFromSvelte(selectedEntities);
+  if (checked.length === 0) {
+    notify.error('nothing-selected');
     return;
   }
-  const permissions = collectPermissionsFromModal(el.dataset.identifier);
-  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
-  const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
+  if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+    return;
+  }
+  await Promise.allSettled(checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0})));
+  notify.success();
+  hideModal('#permissionsModal');
+  reloadEntitiesShow();
 });
 
 on('select-lang', () => {
@@ -2200,7 +2113,6 @@ on('scope-change', async (el: HTMLElement) => {
   userParams[el.dataset.target] = el.dataset.value;
   await ApiC.patch('users/me', userParams);
   await handleReloads(el.dataset.reload);
-  document.dispatchEvent(new Event('scope-changed'));
 });
 
 /**

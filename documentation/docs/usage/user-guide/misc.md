@@ -84,7 +84,7 @@ It is possible to allow Anonymous access to an eLabFTW installation, but this fu
   <figcaption>Registration and authentication configuration (Sysadmin panel).</figcaption>
 </figure>
 
-Then, Users will have the possibility to generate a link with an access key in its URL, from the Visibility permissions window of an entry, near the bottom:
+Then, Users will have the possibility to generate a link with an access key in its URL, from the **Who can view** section of the **Permissions** window of an entry:
 
 <figure>
   <img src="/img/user-anonymous-link.png" alt="user-anonymous-link" />
@@ -103,29 +103,11 @@ You might want to share some entries with a specific user, group, or team presen
   <figcaption>Display permissions for an entry.</figcaption>
 </figure>
 
-Click the "Edit" button to edit a permission. From there you can for instance select a Team to add to the base permissions:
+Each permission (**Who can view**, **Who can edit**...) has a **General access** setting in its top right corner, and a search input below it. Type the name of a Team, a User group or a user in the search input: each suggestion is tagged with its kind. Selecting one gives it access at once, and it appears below the input. Click the cross next to an entry to remove its access.
 
+Adding a Team gives access to all the members of that Team. If you want to be more precise, you can select a User group, or a single user.
 
-<figure>
-  <img src="/img/user-permission-view-team.png" alt="user-permission-view-team" />
-  <figcaption>Adding a full team.</figcaption>
-</figure>
-
-This will add all the members of that Team. If you want to be more precise, you can select a Group, or a single user by typing their name in the section at the bottom:
-
-<figure>
-  <img src="/img/user-permission-view-user1.png" alt="user-permission-view-user1" />
-  <figcaption>Start typing the name of the collaborator.</figcaption>
-</figure>
-
-Select the autocompleted user and click "Add".
-
-<figure>
-  <img src="/img/user-permission-view-user2.png" alt="user-permission-view-user2" />
-  <figcaption>Collaborator is now selected.</figcaption>
-</figure>
-
-You can also do something similar for edition permissions.
+The changes are saved as soon as they are made.
 
 ## Search tips and quirks
 

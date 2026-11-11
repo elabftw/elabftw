@@ -56,7 +56,6 @@ final class i18n4Js
             'add-team' => _('Add team'),
             'add-to-team' => _('Add selected users to team'),
             'add-user-error' => _('Use the autocompletion menu to add users.'),
-            'all-teams' => _('All teams'),
             'approve' => _('Approve'),
             'archive-user' => _('Archive user'),
             'archive-user-description' => _('Archiving a user means their account will be disabled. This action is reversible.'),
@@ -127,7 +126,6 @@ final class i18n4Js
             'encryption' => _('Encryption'),
             'entity-default-title' => _('Untitled'),
             'entity-delete-warning' => _('The selected item(s) and all associated data will be permanently deleted. This cannot be undone. Are you sure?'),
-            'entity-apply-both-permissions-warning' => _('This will apply these permissions to both read and write permissions. Continue?'),
             'entity-patch-multi-warning' => _('Modified {{count, number}} entries, but {{failed, number}} entries could not be modified. They have been marked in red.'),
             'entries-processed' => _('{{num, number}} entries processed'),
             'error' => _('Error'),
@@ -183,7 +181,6 @@ final class i18n4Js
             'modified-at' => _('Modified at'),
             // https://www.i18next.com/translation-function/formatting
             'multi-changes-confirm' => _('Apply to {{num, number}} entries?'),
-            'my-teams' => _('My teams'),
             'name' => _('Name'),
             'new-spreadsheet' => _('New spreadsheet'),
             'new-version' => _('A new version is available!'),

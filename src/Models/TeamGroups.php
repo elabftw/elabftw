@@ -187,7 +187,7 @@ final class TeamGroups extends AbstractRest
         if (empty($onlyIds)) {
             return array();
         }
-        $sql = 'SELECT team_groups.name FROM team_groups
+        $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name FROM team_groups
             LEFT JOIN teams ON (team_groups.team = teams.id)
             WHERE team_groups.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . '
             ORDER BY team_groups.name ASC';

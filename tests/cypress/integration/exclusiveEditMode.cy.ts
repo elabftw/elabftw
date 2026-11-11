@@ -20,9 +20,8 @@ describe('Exclusive edit mode', () => {
     cy.get('#date_input').type('2024-04-20').blur();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     cy.get('[data-cy="permissions-button"]').click();
-    cy.get('#permissionsModal [title="Select who can edit this entry"]').click();
-    cy.get('#canwrite_select_base').should('be.visible').select('Only members of the team');
-    cy.get('[data-identifier="canwrite"][data-action="save-permissions"]').click();
+    cy.get('[data-cy="permissions-base-canwrite"]').should('be.visible').click();
+    cy.get('#permissionsBase-canwrite').contains('.dropdown-item', 'Only members of the team').click();
     cy.get('.overlay').first().should('be.visible').should('contain', 'Saved');
     // log out Toto
     cy.request('/app/logout.php');

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-{% import 'permissions.macro.html' as perm %}
 <ul class='tabbed-menu'>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='1'>{{ 'General'|trans }}</button></li>
   <li><button type='button' class='btn btn-transparent' data-action='switch-tab' data-tabtarget='2'>{{ 'Account'|trans }}</button></li>
@@ -264,29 +263,15 @@
     <hr>
 
     <div class='d-flex justify-content-between align-items-center'>
-      <span class='col-form-label d-inline-block' id='defaultCanreadSetting'>{{ 'Default visibility for new experiments'|trans }}</span>
       <div>
-        {% set rw = 'canread' %}
-        {{ perm.details('canreaddefaultPermissionsDiv', App.Users.userData.default_read|canToHuman(App.Users), App.Users.userData.default_read_base_human) }}
-        {{ include('permissions-edit-modal.html', {ucpPage: true, can_base: App.Users.userData.default_read_base}) }}
-        <button type='button' aria-labelledby='defaultCanreadSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
-          <i class='fas fa-square-plus fa-2x'></i>
-        </button>
+        <span class='col-form-label d-inline-block' id='defaultPermissionsSetting'>{{ 'Default sharing permissions for experiments'|trans }}</span>
+        <p class='smallgray mb-0' id='defaultPermissionsHelp'>{{ 'These permissions apply on experiments started without a template.'|trans }}</p>
       </div>
+      <button type='button' aria-describedby='defaultPermissionsSetting defaultPermissionsHelp' data-action='toggle-modal' data-target='permissionsModal' class='btn btn-primary' data-cy='default-permissions-button'>
+        <i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Share'|trans }}
+      </button>
     </div>
-    <hr>
-
-    <div class='d-flex justify-content-between align-items-center'>
-      <span class='col-form-label d-inline-block' id='defaultCanwriteSetting'>{{ 'Default write permission for new experiments'|trans }}</span>
-      <div>
-        {% set rw = 'canwrite' %}
-        {{ perm.details('canwritedefaultPermissionsDiv', App.Users.userData.default_write|canToHuman(App.Users), App.Users.userData.default_write_base_human) }}
-        {{ include('permissions-edit-modal.html', {ucpPage: true, can_base: App.Users.userData.default_write_base}) }}
-        <button type='button' aria-labelledby='defaultCanwriteSetting' data-action='toggle-modal' data-target='permModal-{{ rw }}defaultPermissions' class='btn p-0 m-0 lh-normal border-0'>
-          <i class='fas fa-square-plus fa-2x'></i>
-        </button>
-      </div>
-    </div>
+    {% include 'permissions-modal.html' with {context: 'userDefaults'} %}
     <hr>
 
     <div class='d-flex justify-content-between'>

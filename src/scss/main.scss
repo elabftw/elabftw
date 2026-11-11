@@ -1316,6 +1316,47 @@ tr.upload-group-drop-target td {
   }
 }
 
+// remove button of an editable permissions chip
+.permissions-chip-remove {
+  background: none;
+  border: 0;
+  color: inherit;
+  line-height: 1;
+  margin-left: 0.4rem;
+  padding: 0;
+
+  i {
+    margin-right: 0;
+  }
+
+  &:hover i,
+  &:focus i {
+    opacity: 1;
+  }
+}
+
+// kind of an entry in the permissions search: team, user group or user
+.permissions-kind {
+  font-size: 75%;
+  font-weight: normal;
+  min-width: 4.5rem;
+}
+
+.permissions-kind-team {
+  background-color: var(--lightblue);
+  color: var(--darkblue);
+}
+
+.permissions-kind-teamgroup {
+  background-color: var(--lightgold);
+  color: var(--darkgold);
+}
+
+.permissions-kind-user {
+  background-color: var(--superlight);
+  color: var(--mediumstrong);
+}
+
 /* TAGS */
 .tag {
   background-color: var(--firstlevel);

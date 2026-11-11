@@ -546,8 +546,8 @@ function addUsersConfig(select: HTMLSelectElement, config): void {
   }
 }
 
-// selector for all {permission}_select (canread, canwrite, canbook)
-export const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
+// selects of the admin mass permissions change and the booking approvers
+const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
 
 function initTomSelect(select: HTMLSelectElement): void {
   const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
@@ -561,6 +561,145 @@ function initTomSelect(select: HTMLSelectElement): void {
 export function initPermissionsTomSelects(container: ParentNode = document): void {
   container.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS)
     .forEach((select) => initTomSelect(select));
+}
+
+// PERMISSIONS SEARCH: one input to add teams, user groups and users to a permission of an entry
+// the values are kind:id (team:1, teamgroup:2, user:3), the kind is shown as a tag in front of the name
+type PermissionKind = 'team' | 'teamgroup' | 'user';
+
+function permissionKind(value: string): PermissionKind {
+  return value.split(':')[0] as PermissionKind;
+}
+
+// the translated kinds are given by the template, see permissions-section.html
+function permissionKindLabel(select: HTMLSelectElement, kind: PermissionKind): string {
+  const labels: Record<PermissionKind, string | undefined> = {
+    team: select.dataset.labelTeam,
+    teamgroup: select.dataset.labelTeamgroup,
+    user: select.dataset.labelUser,
+  };
+  return labels[kind] ?? kind;
+}
+
+function renderPermissionEntry(select: HTMLSelectElement, data: { [key: string]: unknown }, escape: (s: string) => string): string {
+  const kind = permissionKind(String(data.value));
+  return `<div><span class='badge permissions-kind permissions-kind-${kind} mr-2'>${escape(permissionKindLabel(select, kind))}</span>${escape(String(data.text))}</div>`;
+}
+
+const PERMISSION_KIND_ICONS: Record<PermissionKind, string> = {
+  team: 'fa-users',
+  teamgroup: 'fa-user-group',
+  user: 'fa-user',
+};
+
+// same markup as the chips rendered in permissions-section.html
+function makePermissionChip(select: HTMLSelectElement, value: string, text: string): HTMLLIElement {
+  const kind = permissionKind(value);
+  const li = document.createElement('li');
+  li.classList.add('permissions-chip');
+  li.dataset.value = value;
+  li.dataset.text = text;
+  const icon = document.createElement('i');
+  icon.classList.add('fas', PERMISSION_KIND_ICONS[kind]);
+  icon.setAttribute('aria-hidden', 'true');
+  const srLabel = document.createElement('span');
+  srLabel.classList.add('sr-only');
+  srLabel.textContent = `${permissionKindLabel(select, kind)}:`;
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.classList.add('permissions-chip-remove');
+  removeBtn.dataset.removePermission = '1';
+  removeBtn.title = i18next.t('remove');
+  removeBtn.setAttribute('aria-label', `${i18next.t('remove')} ${text}`);
+  const removeIcon = document.createElement('i');
+  removeIcon.classList.add('fas', 'fa-xmark');
+  removeIcon.setAttribute('aria-hidden', 'true');
+  removeBtn.append(removeIcon);
+  li.append(icon, srLabel, document.createTextNode(text), removeBtn);
+  return li;
+}
+
+type PermissionsChange = 'list' | 'base';
+
+// the entries given access in a section of the permissions modal
+function getPermissionsChips(section: HTMLElement): string[] {
+  return Array.from(section.querySelectorAll<HTMLElement>('.permissions-chip[data-value]')).map(li => li.dataset.value);
+}
+
+// the request parameters for what changed in a section of the permissions modal
+export function permissionsSectionParams(section: HTMLElement, changes: PermissionsChange[]): Record<string, string> {
+  const params: Record<string, string> = {};
+  if (changes.includes('list')) {
+    params[section.dataset.param] = permissionsToJson(getPermissionsChips(section));
+  }
+  if (changes.includes('base')) {
+    params[section.dataset.baseParam] = section.dataset.baseValue;
+  }
+  return params;
+}
+
+// entity and user defaults are saved right away, for the selected entries we only remember what changed: see apply-permissions-selected
+export function savePermissionsChange(section: HTMLElement, change: PermissionsChange): void {
+  const modal = section.closest<HTMLElement>('[data-permissions-endpoint]');
+  if (!modal) return;
+  if (modal.dataset.permissionsMode === 'manual') {
+    section.dataset[change === 'list' ? 'listChanged' : 'baseChanged'] = '1';
+    return;
+  }
+  ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
+}
+
+// the select is only a search: what is given access is the list of chips under it
+function initPermissionsSearchSelect(select: TomSelectElement): void {
+  if (select.tomselect) return;
+  const section = select.closest<HTMLElement>('.permissions-section');
+  const list = document.getElementById(select.dataset.list);
+  if (!section || !list) return;
+  const wrapper = select.closest<HTMLElement>('.ts-wrapper');
+
+  const ts = new TomSelect(select, {
+    dropdownParent: wrapper,
+    controlInput: wrapper?.querySelector<HTMLInputElement>('input'),
+    // display many things or users will be confused what they search is not displayed right away.
+    maxOptions: 2222,
+    // teams and user groups are in the options already, users are fetched while typing
+    load: (query: string, callback) => {
+      if (!query.length) return callback();
+      fetchUsers(query)
+        .then(users => callback(users.filter(user => !getPermissionsChips(section).includes(user.value))))
+        .catch(() => callback());
+    },
+    render: {
+      option: (data, escape) => renderPermissionEntry(select, data, escape),
+    },
+    onItemAdd: (value: string) => {
+      const text = String(ts.options[value]?.text ?? value);
+      // nothing stays selected in the search itself, and an entry already given access is not suggested again
+      ts.clear(true);
+      ts.removeOption(value);
+      ts.setTextboxValue('');
+      ts.close();
+      if (getPermissionsChips(section).includes(value)) return;
+      list.append(makePermissionChip(select, value, text));
+      savePermissionsChange(section, 'list');
+    },
+  });
+  ts.control.style.display = 'none';
+
+  list.addEventListener('click', (event: MouseEvent) => {
+    const btn = (event.target as HTMLElement).closest<HTMLElement>('[data-remove-permission]');
+    if (!btn) return;
+    const li = btn.closest<HTMLElement>('[data-value]');
+    // make it findable again
+    ts.addOption({ value: li.dataset.value, text: li.dataset.text });
+    li.remove();
+    savePermissionsChange(section, 'list');
+  });
+}
+
+export function initPermissionsSearch(container: ParentNode = document): void {
+  container.querySelectorAll<HTMLSelectElement>('select[data-permissions-search="1"]')
+    .forEach(select => initPermissionsSearchSelect(select));
 }
 
 function reloadTomSelects(ts: Element): void {
@@ -602,6 +741,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
     }
     currentElement.innerHTML = newElement.innerHTML;
     currentElement.querySelectorAll('[data-tom-select="1"]').forEach(ts => reloadTomSelects(ts));
+    initPermissionsSearch(currentElement);
     listenTrigger(elementId);
   });
   (new TableSorting()).init();

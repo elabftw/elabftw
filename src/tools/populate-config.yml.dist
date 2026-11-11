@@ -1753,6 +1753,8 @@ compounds:
     molecular_weight: "194.19"
     pubchem_cid: 2519
     smiles: "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    ghs_signal_word: "Warning"
+    ghs_statements: "H302, P264, P270, P301+P312, P330, P501"
 
   - name: "Aspirin"
     molecular_formula: "C9H8O4"
@@ -1773,6 +1775,8 @@ compounds:
     molecular_weight: "162.23"
     pubchem_cid: 89594
     smiles: "CN1CCCC1C2=CN=CC=C2"
+    ghs_signal_word: "Danger"
+    ghs_statements: "H300, H310, H330, H411, P262, P264, P270, P273, P280, P301+P310, P302+P352"
 
   - name: "Ibuprofen"
     molecular_formula: "C13H18O2"

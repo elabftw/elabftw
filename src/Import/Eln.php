@@ -22,6 +22,7 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -56,6 +57,7 @@ use function array_filter;
 use function array_find;
 use function array_intersect_key;
 use function array_is_list;
+use function array_merge;
 use function array_values;
 use function basename;
 use function is_array;
@@ -563,6 +565,7 @@ class Eln extends AbstractZip
                 }
             }
         }
+        [$ghsSignalWord, $ghsStatements] = $this->ghsFromPropertyValues($node);
         $str = static fn(mixed $value): ?string => is_string($value) && $value !== '' ? $value : null;
         return new Compound(
             cas: $str($casNumber),
@@ -574,7 +577,32 @@ class Eln extends AbstractZip
             smiles: $str($node['smiles'] ?? null),
             molecularFormula: $str($node['molecularFormula'] ?? null),
             molecularWeight: is_numeric($node['molecularWeight'] ?? null) ? (float) $node['molecularWeight'] : null,
+            ghsSignalWord: $ghsSignalWord,
+            ghsStatements: $ghsStatements,
         );
+    }
+
+    /**
+     * Only the codes are read: the texts come from the reference list of this instance
+     *
+     * @return array{0: ?GhsSignalWord, 1: string[]}
+     */
+    private function ghsFromPropertyValues(array $node): array
+    {
+        $signalWord = null;
+        $codes = array();
+        $properties = is_array($node['additionalProperty'] ?? null) ? $node['additionalProperty'] : array();
+        foreach ($properties as $property) {
+            if (!is_array($property) || !is_string($property['value'] ?? null)) {
+                continue;
+            }
+            match ($property['propertyID'] ?? null) {
+                Compound::ELN_GHS_SIGNAL_WORD => $signalWord = GhsSignalWord::tryFrom($property['value']),
+                Compound::ELN_GHS_HAZARD_STATEMENT, Compound::ELN_GHS_PRECAUTIONARY_STATEMENT => $codes = array_merge($codes, Compound::extractGhsCodes($property['value'])),
+                default => null,
+            };
+        }
+        return array($signalWord, $codes);
     }
 
     private function getChangelogLinkReplacements(): array

@@ -54,6 +54,29 @@
         {% endfor %}
 {% endmacro %}
 
+{# hazard (H and EUH) then precautionary (P) statements, with their full text #}
+{% macro ghsStatementsList(compound) %}
+  {% set hazards = compound.ghs_statements|default([])|filter(s => s.kind != 'P') %}
+  {% set precautions = compound.ghs_statements|default([])|filter(s => s.kind == 'P') %}
+  {% if compound.ghs_signal_word or hazards is not empty or precautions is not empty %}
+    <li class='list-group-item' data-cy='compound-ghs-statements'>
+      {% if compound.ghs_signal_word %}
+        <p class='mb-2'><strong>{{ 'GHS signal word'|trans }}:</strong> {{ compound.ghs_signal_word|trans }}</p>
+      {% endif %}
+      {% for title, statements in {('Hazard statements'|trans): hazards, ('Precautionary statements'|trans): precautions} %}
+        {% if statements is not empty %}
+          <p class='mb-1'><strong>{{ title }}</strong></p>
+          <ul class='list-unstyled mb-2'>
+            {% for statement in statements %}
+              <li><strong>{{ statement.code }}</strong> {{ statement.statement }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endfor %}
+    </li>
+  {% endif %}
+{% endmacro %}
+
 {# COMPOUNDS #}
 <h4 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='ml-3 d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Compounds'|trans }} (<span id='compoundsCount'>{{ Entity.entityData.compounds_links|length }}</span>)</h4>
 <div data-save-hidden='compoundDiv' data-count-for='compoundsCount' class='ml-4'>
@@ -64,6 +87,9 @@
         <details>
           <summary>
             <h5 class='d-inline togglable-section-title'>{{ fp.name|default('Name unset'|trans) }} {{ _self.compoundPicto(fp) }}</h5>
+            {% if fp.ghs_signal_word %}
+              <span class='badge {{ fp.ghs_signal_word == 'Danger' ? 'badge-danger' : 'badge-warning' }} align-middle'>{{ fp.ghs_signal_word|trans }}</span>
+            {% endif %}
           </summary>
           <ul class='mt-2 list-group'>
           {{ _self.fpList('cas_' ~ fp.id, 'CAS', fp.cas_number) }}
@@ -73,6 +99,7 @@
           {{ _self.fpList('inchi_' ~ fp.id, 'InChI', fp.inchi) }}
           {{ _self.fpList('inchi_key_' ~ fp.id, 'InChIKey', fp.inchi_key) }}
           {{ _self.fpList('smiles_' ~ fp.id, 'SMILES', fp.smiles) }}
+          {{ _self.ghsStatementsList(fp) }}
           <li class='list-group-item'>
             <div class='d-flex justify-content-between'>
               {% if fp.smiles %}

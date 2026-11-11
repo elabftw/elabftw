@@ -172,6 +172,16 @@
         {% if compound.cas_number %}<span style='font-size: 9pt;'>CAS: {{ compound.cas_number }}</span><br>{% endif %}
         {% if compound.molecular_formula %}<span style='font-size: 9pt;'>{{ 'Molecular formula'|trans }}: {{ compound.molecular_formula }}</span><br>{% endif %}
         {% if compound.molecular_weight %}<span style='font-size: 9pt;'>{{ 'Molecular weight'|trans }}: {{ compound.molecular_weight }} g/mol</span><br>{% endif %}
+        {% if compound.ghs_signal_word %}<span style='font-size: 9pt;'>{{ 'GHS signal word'|trans }}: <strong>{{ compound.ghs_signal_word|trans }}</strong></span><br>{% endif %}
+        {# hazard (H and EUH) then precautionary (P) statements, with their full text #}
+        {% for title, statements in {('Hazard statements'|trans): compound.ghs_statements|default([])|filter(s => s.kind != 'P'), ('Precautionary statements'|trans): compound.ghs_statements|default([])|filter(s => s.kind == 'P')} %}
+          {% if statements is not empty %}
+            <span style='font-size: 9pt;'>{{ title }}:</span><br>
+            {% for statement in statements %}
+              <span style='font-size: 8pt;'><strong>{{ statement.code }}</strong> {{ statement.statement }}</span><br>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
       </div>
     {% endfor %}
   </section>

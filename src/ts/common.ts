@@ -50,8 +50,9 @@ import {
   setPermissionsReloader,
   setPermissionsSectionBase,
   reloadEntitiesShow,
+  renderCompoundGhsStatements,
 } from './misc';
-import type { PermissionsSectionValue } from './misc';
+import type { GhsStatement, PermissionsSectionValue } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
@@ -1886,6 +1887,38 @@ on('create-resource-from-compound', (el: HTMLElement) => {
         window.location.href = `/database.php?mode=edit&id=${id}`;
       });
     });
+  });
+});
+
+// GHS STATEMENTS OF A COMPOUND: saved right away, like tags
+function reloadCompoundGhsStatements(compoundId: string): void {
+  ApiC.getJson<GhsStatement[]>(`${Model.Compounds}/${compoundId}/${Model.GhsStatements}`).then(statements => {
+    renderCompoundGhsStatements(statements, true);
+    // the codes are shown in the compounds table
+    document.dispatchEvent(new CustomEvent('dataReload'));
+  });
+}
+
+on('add-compound-ghs-statement', () => {
+  const input = getSafeElementById('compoundGhsInput') as HTMLInputElement;
+  const typed = input.value.trim();
+  if (!typed) {
+    return;
+  }
+  // codes are case-sensitive (H360FD is not H360Fd): use the exact code when only the case differs
+  const codes = Array.from(document.querySelectorAll<HTMLOptionElement>('#ghsStatementsList option')).map(option => option.value);
+  const code = codes.find(c => c === typed) ?? codes.find(c => c.toLowerCase() === typed.toLowerCase()) ?? typed;
+  const compoundId = getSafeElementById('editCompoundModalSaveBtn').dataset.compoundId;
+  ApiC.post(`${Model.Compounds}/${compoundId}/${Model.GhsStatements}`, { code }).then(() => {
+    input.value = '';
+    reloadCompoundGhsStatements(compoundId);
+  });
+});
+
+on('remove-compound-ghs-statement', (el: HTMLElement) => {
+  const compoundId = getSafeElementById('editCompoundModalSaveBtn').dataset.compoundId;
+  ApiC.delete(`${Model.Compounds}/${compoundId}/${Model.GhsStatements}/${el.dataset.id}`).then(() => {
+    reloadCompoundGhsStatements(compoundId);
   });
 });
 

@@ -42,6 +42,16 @@ The safety section allows you to define health hazards associated with that comp
   <figcaption>Editing safety information for a compound.</figcaption>
 </figure>
 
+### Hazard and precautionary statements
+
+The safety section also holds the GHS signal word ("Danger" or "Warning") and the hazard (H and EUH) and precautionary (P) statements of the compound. Type a code or a few words in the field below the lists to add a statement: it is saved right away. Click the cross next to a statement to remove it.
+
+When a compound is imported from PubChem, its signal word and statements are imported too. PubChem gathers the classifications reported by several sources, such as the notifications to the ECHA C&L Inventory, so the list can contain statements that do not apply to the product you have. Check them against the safety data sheet of your supplier, and remove what does not apply. Importing the compound again adds the statements of PubChem back, but never removes any.
+
+The texts of the statements are the English ones of the EU CLP regulation, and of the UN GHS for the codes that are not part of CLP. Withdrawn statements are kept on compounds that already have them, but cannot be added by hand anymore.
+
+The signal word and the full text of the statements are shown with the compound on the Experiments and Resources linked to it, and in their PDF exports.
+
 Now that your compound is correctly created, you can click the "Create resource from compound" button on top of this modal window to create a Resource linked with that compound. That resource can be seen as an instantiation of this abstract compound that is present in this common, shared compound database.
 
 With a Resource, you can set permissions and also add more information, attach files, define inventory, and link to other Resources or Experiments.

@@ -139,6 +139,7 @@ enum Model {
   Compounds = 'compounds',
   Config = 'config',
   FavTag = 'favtags',
+  GhsStatements = 'ghs_statements',
   Idp = 'idps',
   IdpsSources = 'idps_sources',
   ItemsStatus = 'items_status',

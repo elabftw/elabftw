@@ -22,6 +22,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\GhsStatements;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Params\ContentParams;
@@ -30,6 +31,8 @@ use Override;
 use PDO;
 
 use function _;
+use function array_column;
+use function array_map;
 use function sprintf;
 
 /**
@@ -70,8 +73,14 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
+        $compounds = $req->fetchAll();
 
-        return $req->fetchAll();
+        // shown with the compound on the entry and in exports
+        $statements = new GhsStatements()->readForCompounds(array_column($compounds, 'id'));
+        return array_map(
+            static fn(array $compound): array => $compound + array('ghs_statements' => $statements[$compound['id']] ?? array()),
+            $compounds,
+        );
     }
 
     #[Override]

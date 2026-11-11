@@ -41,12 +41,14 @@ use Elabftw\Models\BodyRevisions;
 use Elabftw\Models\Branding;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
+use Elabftw\Models\CompoundsGhsStatements;
 use Elabftw\Models\Config;
 use Elabftw\Models\Dspace;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
+use Elabftw\Models\GhsStatements;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsCerts;
 use Elabftw\Models\IdpsEndpoints;
@@ -380,6 +382,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
+            ApiEndpoint::GhsStatements => new GhsStatements(),
             ApiEndpoint::Reports => new ReportsHandler($this->requester),
             ApiEndpoint::StorageUnits => new StorageUnits($this->requester, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1', $this->id),
             // Temporary informational endpoint, can be removed in 5.2
@@ -434,6 +437,12 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::UploadGroups => new UploadGroups($this->Model, $this->subId),
                 ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
+            };
+        }
+        if ($this->Model instanceof Compounds) {
+            return match ($submodel) {
+                ApiSubModels::GhsStatements => new CompoundsGhsStatements($this->Model, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Compounds),
             };
         }
         if ($this->Model instanceof Teams) {

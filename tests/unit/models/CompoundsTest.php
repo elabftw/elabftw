@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_column;
+use function array_search;
 use function bin2hex;
 use function json_decode;
 use function random_bytes;
@@ -127,6 +128,12 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
         $this->assertEquals($this->smiles, $compound['smiles']);
         $this->assertEquals(self::FENTANYL_CAS, $compound['cas_number']);
+        // the GHS classification of PubChem
+        $this->assertSame('Danger', $compound['ghs_signal_word']);
+        $codes = array_column($compound['ghs_statements'], 'code');
+        $this->assertContains('H300', $codes);
+        $this->assertContains('P301+P316', $codes);
+        $this->assertSame('IF SWALLOWED: Get emergency medical help immediately.', $compound['ghs_statements'][array_search('P301+P316', $codes, true)]['statement']);
         // test with a user without can_manage_compounds
         $user = $this->getRandomUserInTeam(2);
         $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter(), false);
@@ -136,6 +143,35 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter(), true);
         $this->expectException(ForbiddenException::class);
         $Compounds->postAction(Action::Create, array());
+    }
+
+    public function testCreateWithGhs(): void
+    {
+        $id = $this->Compounds->postAction(Action::Create, array(
+            'name' => 'Flammable compound',
+            'inchi_key' => substr(strtoupper(bin2hex(random_bytes(14))), 0, 27),
+            'ghs_signal_word' => 'Warning',
+            // the unknown code is ignored
+            'ghs_statements' => 'P210, H226 H999',
+        ));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame('Warning', $compound['ghs_signal_word']);
+        $this->assertSame(array('H226', 'P210'), array_column($compound['ghs_statements'], 'code'));
+        // a list of codes works too
+        $id = $this->Compounds->postAction(Action::Create, array(
+            'name' => 'Another flammable compound',
+            'inchi_key' => substr(strtoupper(bin2hex(random_bytes(14))), 0, 27),
+            'ghs_statements' => array('H226', 'P210'),
+        ));
+        $this->Compounds->setId($id);
+        $this->assertSame(array('H226', 'P210'), array_column($this->Compounds->readOne()['ghs_statements'], 'code'));
+        $this->assertNull($this->Compounds->readOne()['ghs_signal_word']);
+        // the signal word can be changed and removed
+        $this->assertSame('Danger', $this->Compounds->patch(Action::Update, array('ghs_signal_word' => 'Danger'))['ghs_signal_word']);
+        $this->assertNull($this->Compounds->patch(Action::Update, array('ghs_signal_word' => ''))['ghs_signal_word']);
+        $this->expectException(ImproperActionException::class);
+        $this->Compounds->patch(Action::Update, array('ghs_signal_word' => 'Maybe'));
     }
 
     public function testPostActionBadParam(): void

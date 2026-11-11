@@ -12,7 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\Compound;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -255,6 +257,8 @@ final class CompoundsCsv extends AbstractCsv
             'is_cmr',
             'is_nano',
             'is_controlled',
+            'ghs_signal_word',
+            'ghs_statements',
         );
     }
 
@@ -325,6 +329,9 @@ final class CompoundsCsv extends AbstractCsv
             isPmt: (bool) ($row['is_pmt'] ?? false),
             isVpvb: (bool) ($row['is_vpvb'] ?? false),
             isVpvm: (bool) ($row['is_vpvm'] ?? false),
+            ghsSignalWord: GhsSignalWord::tryFrom(trim($row['ghs_signal_word'] ?? '')),
+            // codes separated by anything: "H225, H319, P210"
+            ghsStatements: Compound::extractGhsCodes($row['ghs_statements'] ?? ''),
         );
     }
 }

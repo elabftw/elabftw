@@ -118,6 +118,8 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
         { field: 'is_serious_health_hazard', headerName: 'Serious health hazard' },
         { field: 'is_oxidising', headerName: 'Oxidising' },
         { field: 'is_toxic', headerName: 'Toxic' },
+        { field: 'ghs_signal_word', headerName: 'GHS signal word' },
+        { field: 'ghs_codes', headerName: 'GHS statements' },
         { field: 'is_radioactive', headerName: 'Radioactive' },
         { field: 'is_antibiotic', headerName: 'Antibiotic' },
         { field: 'is_antibiotic_precursor', headerName: 'Antibiotic precursor' },

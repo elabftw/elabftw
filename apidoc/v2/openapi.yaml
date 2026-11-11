@@ -858,6 +858,20 @@ components:
           example: "Alpha"
         has_fingerprint:
           type: integer
+        ghs_signal_word:
+          type: string
+          nullable: true
+          enum: ['Danger', 'Warning', null]
+        ghs_codes:
+          type: string
+          nullable: true
+          description: The codes of the GHS statements, separated by a comma.
+          example: 'H225, H319, P210, P233'
+        ghs_statements:
+          type: array
+          description: Only when reading one compound, or the compounds linked to an entry.
+          items:
+            $ref: '#/components/schemas/ghs_statement'
           enum: [0, 1]
     CompoundDuplicateRequest:
       type: object
@@ -978,6 +992,39 @@ components:
         is_toxic:
           type: integer
           enum: [0, 1]
+        ghs_signal_word:
+          type: string
+          enum: ['Danger', 'Warning']
+        ghs_statements:
+          description: Codes of the GHS hazard and precautionary statements, as a list or a text. Unknown codes are ignored.
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: string
+          example: ['H225', 'H319', 'P210']
+
+    # GHS STATEMENT
+    ghs_statement:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+          description: Case-sensitive, as H360FD and H360Fd are different statements.
+          example: 'P301+P316'
+        kind:
+          type: string
+          enum: ['H', 'EUH', 'P']
+          description: Hazard, EU hazard or precautionary statement.
+        statement:
+          type: string
+          example: 'IF SWALLOWED: Get emergency medical help immediately.'
+        is_deprecated:
+          type: integer
+          enum: [0, 1]
+          description: A withdrawn statement is kept when imported, but cannot be added by hand.
 
     # COMMENT
     comment:
@@ -4075,6 +4122,121 @@ paths:
       responses:
         '204':
           description: The compound was soft-deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /compounds/{id}/ghs_statements:
+    summary: The GHS hazard and precautionary statements of a compound
+    parameters:
+      - name: id
+        in: path
+        description: ID of the compound
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Compounds']
+      summary: Read the GHS statements of a compound
+      operationId: get-compound-ghs-statements
+      responses:
+        '200':
+          description: The hazard (H and EUH) then precautionary (P) statements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ghs_statement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: ['Compounds']
+      summary: Add a GHS statement to a compound
+      description: The code must be in the list of `/ghs_statements`, and not withdrawn. Adding a statement twice changes nothing.
+      operationId: post-compound-ghs-statement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['code']
+              properties:
+                code:
+                  type: string
+                  example: 'H225'
+      responses:
+        '201':
+          description: The statement was added
+          headers:
+            location:
+              description: URL of the statement of the compound, with the id of the statement
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /compounds/{id}/ghs_statements/{subid}:
+    summary: A GHS statement of a compound
+    parameters:
+      - name: id
+        in: path
+        description: ID of the compound
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the statement, from `/ghs_statements`
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Compounds']
+      summary: Read a GHS statement of a compound
+      operationId: get-compound-ghs-statement
+      responses:
+        '200':
+          description: The statement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ghs_statement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Compounds']
+      summary: Remove a GHS statement from a compound
+      operationId: delete-compound-ghs-statement
+      responses:
+        '204':
+          description: The statement was removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /ghs_statements:
+    summary: The reference list of the GHS hazard and precautionary statements
+    get:
+      tags: ['Compounds']
+      summary: Read all the GHS statements that can be added to a compound
+      description: English texts of the EU CLP regulation, and of the UN GHS for the codes CLP does not have.
+      operationId: get-ghs-statements
+      responses:
+        '200':
+          description: The statements, hazard (H and EUH) first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ghs_statement'
         '401':
           $ref: '#/components/responses/Unauthorized'
 

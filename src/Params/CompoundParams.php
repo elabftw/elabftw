@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Services\Filter;
 use Override;
@@ -79,12 +80,23 @@ final class CompoundParams extends ContentParams
             'is_vpvm',
             'is_controlled' => Filter::onToBinary((string) $this->content),
             'molecular_weight' => (float) $this->content,
+            'ghs_signal_word' => $this->getGhsSignalWord(),
             'state' => $this->getState(),
             // same permissions as the entries: see the permissions modal
             'canread', 'canwrite' => $this->getCanJson(),
             'canread_base', 'canwrite_base' => $this->getCanBase(),
             default => throw new ImproperActionException('Invalid target for compound update.'),
         };
+    }
+
+    // an empty value removes the signal word
+    private function getGhsSignalWord(): ?string
+    {
+        $content = trim($this->asString());
+        if ($content === '') {
+            return null;
+        }
+        return GhsSignalWord::tryFrom($content)->value ?? throw new ImproperActionException('Invalid GHS signal word: use Danger or Warning.');
     }
 
     private function isValidEcOrExplode(?string $ecNumber): ?string

@@ -1218,7 +1218,99 @@ export function toggleEditCompound(json: object): void {
     moleculeDiv.hidden = true;
   }
   (document.getElementById('compoundLink-pubchem') as HTMLLinkElement).href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json['pubchem_cid']}`;
+  const signalWordSelect = document.getElementById('compoundInput-ghs_signal_word') as HTMLSelectElement | null;
+  if (signalWordSelect) {
+    signalWordSelect.value = json['ghs_signal_word'] ?? '';
+  }
+  renderCompoundGhsStatements(json['ghs_statements'] ?? [], json['has_write_access'] === 1);
   $('#editCompoundModal').modal('toggle');
+}
+
+export interface GhsStatement {
+  id: number;
+  code: string;
+  kind: 'H' | 'EUH' | 'P';
+  statement: string;
+  is_deprecated: number;
+}
+
+// the statements of the compound in the edit modal: hazard (H and EUH) and precautionary (P)
+export function renderCompoundGhsStatements(statements: GhsStatement[], canWrite: boolean): void {
+  const div = document.getElementById('compoundGhsDiv');
+  if (!div) {
+    return;
+  }
+  const hazardList = document.getElementById('compoundGhsList-hazard');
+  const precautionaryList = document.getElementById('compoundGhsList-precautionary');
+  hazardList.replaceChildren();
+  precautionaryList.replaceChildren();
+  statements.forEach(statement => {
+    const li = document.createElement('li');
+    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+    const text = document.createElement('span');
+    const code = document.createElement('strong');
+    code.textContent = statement.code;
+    text.append(code, ` ${statement.statement}`);
+    li.appendChild(text);
+    if (canWrite) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.classList.add('btn', 'btn-danger-ghost', 'btn-sm');
+      btn.dataset.action = 'remove-compound-ghs-statement';
+      btn.dataset.id = String(statement.id);
+      btn.title = div.dataset.removeLabel;
+      btn.setAttribute('aria-label', `${div.dataset.removeLabel} ${statement.code}`);
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-xmark');
+      btn.appendChild(icon);
+      li.appendChild(btn);
+    }
+    (statement.kind === 'P' ? precautionaryList : hazardList).appendChild(li);
+  });
+  [hazardList, precautionaryList].forEach(list => {
+    if (list.childElementCount === 0) {
+      const li = document.createElement('li');
+      li.classList.add('list-group-item', 'smallgray');
+      li.textContent = div.dataset.emptyLabel;
+      list.appendChild(li);
+    }
+  });
+
+  const input = document.getElementById('compoundGhsInput') as HTMLInputElement;
+  const addBtn = div.querySelector<HTMLButtonElement>('[data-action="add-compound-ghs-statement"]');
+  input.disabled = !canWrite;
+  addBtn.disabled = !canWrite;
+  // Enter would submit the compound form
+  if (input.dataset.enterBound !== '1') {
+    input.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addBtn.click();
+      }
+    });
+    input.dataset.enterBound = '1';
+  }
+  loadGhsStatementsDatalist();
+}
+
+// the known statements for the autocomplete: the list is small and does not change, so it is loaded once
+function loadGhsStatementsDatalist(): void {
+  const datalist = document.getElementById('ghsStatementsList');
+  if (!datalist || datalist.dataset.loaded === '1') {
+    return;
+  }
+  datalist.dataset.loaded = '1';
+  ApiC.getJson<GhsStatement[]>(Model.GhsStatements).then(statements => {
+    statements.filter(statement => statement.is_deprecated !== 1).forEach(statement => {
+      const option = document.createElement('option');
+      option.value = statement.code;
+      option.textContent = statement.statement;
+      datalist.appendChild(option);
+    });
+  }).catch(() => {
+    // try again next time
+    delete datalist.dataset.loaded;
+  });
 }
 
 export function mkSpin(el: HTMLElement): string {

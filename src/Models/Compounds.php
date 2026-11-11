@@ -21,6 +21,7 @@ use Elabftw\Elabftw\PermissionsHelper;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\CompoundNotAccessibleException;
@@ -49,6 +50,7 @@ use function array_keys;
 use function array_map;
 use function array_sum;
 use function implode;
+use function is_array;
 use function is_string;
 use function rtrim;
 use function sprintf;
@@ -150,7 +152,12 @@ final class Compounds extends AbstractRest
                 entity.smiles LIKE :query OR
                 entity.unii LIKE :query OR
                 entity.wikidata LIKE :query OR
-                entity.wikipedia LIKE :query
+                entity.wikipedia LIKE :query OR
+                EXISTS (
+                    SELECT 1 FROM compounds2ghs_statements AS c2gs_q
+                    INNER JOIN ghs_statements AS gs_q ON (gs_q.id = c2gs_q.statement_id)
+                    WHERE c2gs_q.compound_id = entity.id AND CONVERT(gs_q.code USING utf8mb4) LIKE :query
+                )
             )';
         }
         $sql .= $queryParams->getSql();
@@ -188,14 +195,14 @@ final class Compounds extends AbstractRest
             $compound[$can . '_human'] = $PermissionsHelper->translate($this->requester, $compound[$can]);
         }
         $compound['has_write_access'] = (int) ($permissions->write && $this->canWrite());
+        $compound['ghs_statements'] = new GhsStatements()->readForCompounds(array($compound['id']))[$compound['id']] ?? array();
         return $compound;
     }
 
     #[Override]
     public function patch(Action $action, array $params): array
     {
-        $this->canWriteOrExplode();
-        new CompoundPermissions($this->requester)->canOrExplode($this->readRow(), AccessType::Write);
+        $this->canWriteCompoundOrExplode();
         foreach ($params as $target => $content) {
             $this->update(new CompoundParams($target, $content));
         }
@@ -244,6 +251,8 @@ final class Compounds extends AbstractRest
                 isHazardous2health: (bool) ($reqBody['is_hazardous2health'] ?? false),
                 isOxidising: (bool) ($reqBody['is_oxidising'] ?? false),
                 isToxic: (bool) ($reqBody['is_toxic'] ?? false),
+                ghsSignalWord: GhsSignalWord::tryFrom((string) ($reqBody['ghs_signal_word'] ?? '')),
+                ghsStatements: $this->getGhsCodes($reqBody['ghs_statements'] ?? ''),
             ),
         };
     }
@@ -251,8 +260,7 @@ final class Compounds extends AbstractRest
     #[Override]
     public function destroy(bool $recursive = false): bool
     {
-        $this->canWriteOrExplode();
-        new CompoundPermissions($this->requester)->canOrExplode($this->readRow(), AccessType::Write);
+        $this->canWriteCompoundOrExplode();
         // check if the compound is linked somewhere first
         $sql = 'SELECT
           CASE
@@ -324,6 +332,8 @@ final class Compounds extends AbstractRest
         bool $isPmt = false,
         bool $isVpvb = false,
         bool $isVpvm = false,
+        ?GhsSignalWord $ghsSignalWord = null,
+        array $ghsStatements = array(),
         BasePermissions $canreadBase = self::DEFAULT_CANREAD_BASE,
         BasePermissions $canwriteBase = self::DEFAULT_CANWRITE_BASE,
         string $canread = self::EMPTY_CAN_JSON,
@@ -382,6 +392,7 @@ final class Compounds extends AbstractRest
             'is_pmt' => $isPmt,
             'is_vpvb' => $isVpvb,
             'is_vpvm' => $isVpvm,
+            'ghs_signal_word' => $ghsSignalWord?->value,
         );
 
         $sql = 'INSERT INTO compounds (
@@ -390,14 +401,14 @@ final class Compounds extends AbstractRest
             smiles, molecular_formula, molecular_weight, metabolomics_wb_id, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, rxcui, unii, wikidata, wikipedia, is_radioactive, is_antibiotic, is_antibiotic_precursor, is_drug, is_drug_precursor, is_explosive_precursor, is_cmr, is_nano, is_controlled,
             cas_number, ec_number, iupac_name, pubchem_cid, userid, team, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, hmdb_id, kegg_id,
             is_corrosive, is_serious_health_hazard, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic,
-            is_ed2health, is_ed2env, is_pbt, is_vpvb, is_pmt, is_vpvm,
+            is_ed2health, is_ed2env, is_pbt, is_vpvb, is_pmt, is_vpvm, ghs_signal_word,
             canread_base, canwrite_base, canread, canwrite
             ) VALUES (
             :requester, :requester, :name,
             :inchi, :inchi_key,
             :smiles, :molecular_formula, :molecular_weight, :metabolomics_wb_id, :nci_code, :nikkaji_number, :pharmgkb_id, :pharos_ligand_id, :rxcui, :unii, :wikidata, :wikipedia, :is_radioactive, :is_antibiotic, :is_antibiotic_precursor, :is_drug, :is_drug_precursor, :is_explosive_precursor, :is_cmr, :is_nano, :is_controlled,
             :cas_number, :ec_number, :iupac_name, :pubchem_cid, :requester, :team, :chebi_id, :chembl_id, :dea_number, :drugbank_id, :dsstox_id, :hmdb_id, :kegg_id,
-            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic, :is_ed2health, :is_ed2env, :is_pbt, :is_pmt, :is_vpvb, :is_vpvm,
+            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic, :is_ed2health, :is_ed2env, :is_pbt, :is_pmt, :is_vpvb, :is_vpvm, :ghs_signal_word,
             :canread_base, :canwrite_base, :canread, :canwrite)';
 
         $req = $this->Db->prepare($sql);
@@ -453,6 +464,7 @@ final class Compounds extends AbstractRest
         $req->bindParam(':is_pmt', $isPmt, PDO::PARAM_INT);
         $req->bindParam(':is_vpvb', $isVpvb, PDO::PARAM_INT);
         $req->bindParam(':is_vpvm', $isVpvm, PDO::PARAM_INT);
+        $req->bindValue(':ghs_signal_word', $ghsSignalWord?->value);
         $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
         $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
         $req->bindValue(':canread', $canread);
@@ -472,12 +484,13 @@ final class Compounds extends AbstractRest
                 if ($existingId === null) {
                     throw new ImproperActionException('Duplicate entry but no existing compound found.');
                 }
-                return $this->useExistingCompound($existingId, $compoundData);
+                return $this->useExistingCompound($existingId, $compoundData, $ghsStatements);
             }
             throw new ImproperActionException(sprintf('Error importing compound: %s', $e->getMessage()));
         }
 
         $compoundId = $this->Db->lastInsertId();
+        new GhsStatements()->linkToCompound($compoundId, $ghsStatements);
 
         if (!empty($smiles)) {
             $fp = $this->fingerprinter->calculate('smi', $smiles);
@@ -549,7 +562,18 @@ final class Compounds extends AbstractRest
             isSeriousHealthHazard: $compound->isSeriousHealthHazard,
             isOxidising: $compound->isOxidising,
             isToxic: $compound->isToxic,
+            ghsSignalWord: $compound->ghsSignalWord,
+            ghsStatements: $compound->ghsStatements,
         );
+    }
+
+    /**
+     * The instance setting and the permissions of this compound both let the requester modify it
+     */
+    public function canWriteCompoundOrExplode(): void
+    {
+        $this->canWriteOrExplode();
+        new CompoundPermissions($this->requester)->canOrExplode($this->readRow(), AccessType::Write);
     }
 
     /**
@@ -637,17 +661,30 @@ final class Compounds extends AbstractRest
      * it is updated with the new data only by someone allowed to write to it, and used as is by someone who can read it.
      * Someone who cannot read it is told it exists: the identifier is all they learn about it.
      */
-    private function useExistingCompound(int $id, array $compoundData): int
+    private function useExistingCompound(int $id, array $compoundData, array $ghsStatements = array()): int
     {
         $this->setId($id);
         $permissions = new CompoundPermissions($this->requester)->forCompound($this->readRow());
         if ($permissions->write) {
+            // an import adds the statements of its source and never removes any: one removed by hand comes back if the source still has it
+            new GhsStatements()->linkToCompound($id, $ghsStatements);
             return $this->upsertCompound($id, $compoundData);
         }
         if ($permissions->read) {
             return $id;
         }
         throw new CompoundNotAccessibleException();
+    }
+
+    /**
+     * GHS statements sent at creation: a list of codes, or a text with codes
+     *
+     * @return string[]
+     */
+    private function getGhsCodes(mixed $statements): array
+    {
+        $text = is_array($statements) ? implode(' ', array_filter($statements, is_string(...))) : (string) $statements;
+        return Compound::extractGhsCodes($text);
     }
 
     /** The compound with its permission columns, without checking them */
@@ -675,7 +712,11 @@ final class Compounds extends AbstractRest
             ) AS fp2_base64,
             CONCAT(users.firstname, " ", users.lastname) AS userid_human,
             teams.name AS team_name,
-            CASE WHEN compounds_fingerprints.id IS NOT NULL THEN 1 ELSE 0 END AS has_fingerprint
+            CASE WHEN compounds_fingerprints.id IS NOT NULL THEN 1 ELSE 0 END AS has_fingerprint,
+            (SELECT GROUP_CONCAT(gs.code ORDER BY gs.kind, gs.code SEPARATOR ", ")
+                FROM compounds2ghs_statements AS c2gs
+                INNER JOIN ghs_statements AS gs ON (gs.id = c2gs.statement_id)
+                WHERE c2gs.compound_id = entity.id) AS ghs_codes
             FROM compounds AS entity
             LEFT JOIN compounds_fingerprints ON (compounds_fingerprints.id = entity.id)
             LEFT JOIN teams ON (entity.team = teams.id)

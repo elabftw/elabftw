@@ -109,6 +109,29 @@
               {{ _self.binaryParam('is_pmt', 'Persistent, mobile and toxic', '', 'skull', compoundsDisabled) }}
               {{ _self.binaryParam('is_vpvb', 'Very persistent and very bioaccumulative', '', 'skull', compoundsDisabled) }}
               {{ _self.binaryParam('is_vpvm', 'Very persistent and very mobile', '', 'skull', compoundsDisabled) }}
+
+              {# GHS STATEMENTS: added and removed right away, see renderCompoundGhsStatements() #}
+              <div class='mt-3' id='compoundGhsDiv' data-remove-label='{{ 'Remove'|trans|e('html_attr') }}' data-empty-label='{{ 'None'|trans|e('html_attr') }}'>
+                <label for='compoundInput-ghs_signal_word'>{{ 'GHS signal word'|trans }}</label>
+                <select name='ghs_signal_word' data-allow-empty='1' {{ compoundsDisabled ? 'disabled' }} class='form-control mb-2' id='compoundInput-ghs_signal_word'>
+                  <option value=''>{{ 'None'|trans }}</option>
+                  <option value='Danger'>{{ 'Danger'|trans }}</option>
+                  <option value='Warning'>{{ 'Warning'|trans }}</option>
+                </select>
+                <h6 class='mt-3'>{{ 'Hazard statements'|trans }}</h6>
+                <ul class='list-group mb-2' id='compoundGhsList-hazard' data-cy='compound-ghs-hazard'></ul>
+                <h6 class='mt-3'>{{ 'Precautionary statements'|trans }}</h6>
+                <ul class='list-group mb-2' id='compoundGhsList-precautionary' data-cy='compound-ghs-precautionary'></ul>
+                {# no name attribute: the form does not send it with the compound #}
+                <div class='input-group'>
+                  <input type='text' list='ghsStatementsList' id='compoundGhsInput' class='form-control' autocomplete='off' placeholder='H225, P210…' aria-label='{{ 'Add a hazard or precautionary statement'|trans }}' {{ compoundsDisabled ? 'disabled' }} />
+                  <div class='input-group-append'>
+                    <button type='button' class='btn btn-primary' data-action='add-compound-ghs-statement' {{ compoundsDisabled ? 'disabled' }}>{{ 'Add'|trans }}</button>
+                  </div>
+                </div>
+                <datalist id='ghsStatementsList'></datalist>
+                <p class='smallgray mt-1'>{{ 'Statements imported from PubChem gather the classifications reported by various sources: check them against the safety data sheet of your supplier.'|trans }}</p>
+              </div>
             </details>
 
             <hr>

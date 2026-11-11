@@ -8,7 +8,6 @@
 import {
   clearForm,
   collectForm,
-  errorMessage,
   mkSpin,
   mkSpinStop,
   reloadEntitiesShow,
@@ -100,30 +99,26 @@ function initReactionSearch(): void {
     reaction_exact: (field('reaction_exact') as HTMLInputElement).checked ? '1' : '',
   });
 
-  form.addEventListener('submit', async event => {
+  // The entries list hides rejected queries: show why the search was rejected next to its fields.
+  // Only for the request that follows a submit, so an incomplete query typed in the search bar is not reported here.
+  let awaitingResult = false;
+  window.addEventListener('entity-list-rejected', (event: CustomEvent<string>) => {
+    if (!awaitingResult) {
+      return;
+    }
+    awaitingResult = false;
+    errorEl.textContent = event.detail;
+    errorEl.hidden = false;
+  });
+  window.addEventListener('entity-list-loaded', () => {
+    awaitingResult = false;
+  });
+
+  form.addEventListener('submit', event => {
     event.preventDefault();
     errorEl.hidden = true;
-    const values = readForm();
-    // the entries list hides failed queries, so check a structure first to tell what is wrong with it
-    if (values.reaction_structure !== '') {
-      const params: Record<string, string | number> = { limit: 1, notifOnError: 0 };
-      // the criteria without a field of their own come from the url
-      const urlParams = new URLSearchParams(window.location.search);
-      for (const param of REACTION_SEARCH_PARAMS) {
-        const value = values[param] ?? urlParams.get(param) ?? '';
-        if (value !== '') {
-          params[param] = value;
-        }
-      }
-      try {
-        await ApiC.getJson(entity.type, params);
-      } catch (error) {
-        errorEl.textContent = errorMessage(error);
-        errorEl.hidden = false;
-        return;
-      }
-    }
-    setEntityFilterParams(values);
+    awaitingResult = true;
+    setEntityFilterParams(readForm());
   });
 
   form.addEventListener('click', event => {

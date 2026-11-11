@@ -513,6 +513,7 @@
       }
 
       hasMore = nextEntities.length === currentLimit;
+      window.dispatchEvent(new CustomEvent('entity-list-loaded'));
     } catch (err) {
       if (seq !== requestSeq) {
         return;
@@ -523,6 +524,8 @@
 
       if (apiError.status === 400) {
         error = '';
+        // a form that sent the request can still explain what is wrong, see initReactionSearch() in show.ts
+        window.dispatchEvent(new CustomEvent<string>('entity-list-rejected', { detail: apiError.message }));
         return;
       }
 

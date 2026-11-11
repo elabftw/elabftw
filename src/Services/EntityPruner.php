@@ -86,6 +86,25 @@ final class EntityPruner implements CleanerInterface
             }
             $this->Db->execute($reactionsReq);
 
+            // a reaction deleted from an entry that is kept is only marked as deleted, with its drawing, preview and revisions:
+            // remove it too, for the entries in the scope of the filters, whatever their state
+            $scopeWhere = ' WHERE 1=1';
+            $scopeBinds = array();
+            $this->applyFilters($scopeWhere, $scopeBinds);
+            $deletedReactionsSql = 'DELETE reactions FROM reactions
+                JOIN reactions2' . $entityTable . ' AS links ON links.reaction_id = reactions.id
+                WHERE reactions.state = :reaction_state
+                AND links.entity_id IN (SELECT id FROM ' . $entityTable . $scopeWhere . ')';
+            $deletedReactionsReq = $this->Db->prepare($deletedReactionsSql);
+            $deletedReactionsReq->bindValue(':reaction_state', State::Deleted->value, PDO::PARAM_INT);
+            foreach ($scopeBinds as $key => $bindData) {
+                $deletedReactionsReq->bindValue($key, $bindData[0], $bindData[1]);
+            }
+            if ($this->since !== null) {
+                $deletedReactionsReq->bindValue(':since', $this->parseSince($this->since));
+            }
+            $this->Db->execute($deletedReactionsReq);
+
             // delete the entity rows (same WHERE, so restored entities are skipped)
             $entitySql = 'DELETE FROM ' . $entityTable . $baseWhere;
             $entityReq = $this->Db->prepare($entitySql);

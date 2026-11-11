@@ -20,6 +20,9 @@ export function showFormError(element: HTMLElement, error: unknown): void {
 export class BusyState {
   private running = false;
 
+  // what this state disabled, so it only enables these again: a control can also be disabled on purpose (e.g. nothing to submit)
+  private disabledByRun: (HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement)[] = [];
+
   constructor(private readonly buttons: HTMLButtonElement[] = []) {}
 
   get busy(): boolean {
@@ -48,8 +51,15 @@ export class BusyState {
 
   private set(form: HTMLFormElement, value: boolean): void {
     this.running = value;
-    this.buttons.forEach(button => button.disabled = value);
-    form.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement>('input, button, select, textarea')
-      .forEach(control => control.disabled = value);
+    if (value) {
+      this.disabledByRun = [
+        ...this.buttons,
+        ...form.querySelectorAll<HTMLInputElement | HTMLButtonElement | HTMLSelectElement | HTMLTextAreaElement>('input, button, select, textarea'),
+      ].filter(control => !control.disabled);
+      this.disabledByRun.forEach(control => control.disabled = true);
+      return;
+    }
+    this.disabledByRun.forEach(control => control.disabled = false);
+    this.disabledByRun = [];
   }
 }

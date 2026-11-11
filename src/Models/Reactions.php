@@ -10,7 +10,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Permissions;
 use Elabftw\Enums\AccessType;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ForbiddenException;
@@ -375,6 +377,7 @@ final class Reactions extends AbstractRest
     private function checkLinks(array $components, array $existingComponents): void
     {
         $existingItems = array_column($existingComponents, 'item_id', 'component_key');
+        $checkedItems = array();
         foreach ($components as $component) {
             if ($component['compound_id'] !== null) {
                 $req = $this->Db->prepare('SELECT inchi_key FROM compounds WHERE id = :id AND state IN (1, 2)');
@@ -385,9 +388,27 @@ final class Reactions extends AbstractRest
                     throw new ImproperActionException('The linked compound does not match this reaction component.');
                 }
             }
-            if ($component['item_id'] !== null && $component['item_id'] !== ($existingItems[$component['component_key']] ?? null)) {
-                new Items($this->Entity->Users, $component['item_id'])->readOne();
+            $itemId = $component['item_id'];
+            if ($itemId !== null && $itemId !== ($existingItems[$component['component_key']] ?? null) && !isset($checkedItems[$itemId])) {
+                $this->canReadItemOrExplode($itemId);
+                $checkedItems[$itemId] = true;
             }
+        }
+    }
+
+    /**
+     * Same answer as Items::readOne() for the read permission, from the item row alone:
+     * a full read would also load the steps, links, uploads, comments and reactions of the item, for nothing.
+     */
+    private function canReadItemOrExplode(int $itemId): void
+    {
+        $req = $this->Db->prepare('SELECT team, userid, canread, canread_base, canwrite, canwrite_base FROM items WHERE id = :id');
+        $req->bindValue(':id', $itemId, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        $item = $this->Db->fetch($req);
+        $canread = json_decode($item['canread'], true, 512, JSON_THROW_ON_ERROR);
+        if (!new Permissions($this->Entity->Users, $item)->getCan(BasePermissions::from($item['canread_base']), $canread)) {
+            throw new ForbiddenException();
         }
     }
 

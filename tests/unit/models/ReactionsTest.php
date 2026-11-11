@@ -246,6 +246,20 @@ final class ReactionsTest extends TestCase
         $this->assertArrayHasKey('actual', $history[1]['components'][0]);
     }
 
+    public function testLinkedResourceMustExistAndBeReadable(): void
+    {
+        $entity = $this->getFreshExperiment();
+        $item = $this->getFreshItemWithGivenUser($entity->Users);
+        $data = $this->data();
+        $data['components'][0]['item_id'] = $item->id;
+        $id = new Reactions($entity)->postAction(Action::Create, $data);
+        $this->assertSame($item->id, new Reactions($entity, $id)->readOne()['components'][0]['item_id']);
+
+        $data['components'][0]['item_id'] = 4294967295;
+        $this->expectException(ResourceNotFoundException::class);
+        new Reactions($entity)->postAction(Action::Create, $data);
+    }
+
     public function testUnchangedStructuresAreNotFingerprintedAgain(): void
     {
         $fingerprinter = new class implements FingerprinterInterface {

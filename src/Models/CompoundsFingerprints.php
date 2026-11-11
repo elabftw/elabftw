@@ -19,9 +19,9 @@ use PDO;
 use function array_sum;
 
 /**
- * Fingerprints for compounds
+ * Fingerprints of the compounds, see ReactionComponentFingerprints for the ones of reaction components
  */
-final class Fingerprints
+final class CompoundsFingerprints
 {
     protected Db $Db;
 

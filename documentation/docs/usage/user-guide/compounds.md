@@ -62,7 +62,7 @@ When you add a compound where the SMILES representation is defined, and if the i
 
 ## Chemical structure editor
 
-Since version 5.2, a chemical structure editor is present in the Tools menu. It allows one to draw molecules and perform operation on them such as searching the compounds database for similar molecules, via a substructure search. This feature requires the compounds present in the common database to be associated with a fingerprint, which is the case if the fingerprinting service is active, and the compounds have a SMILES representation defined.
+A chemical structure editor is available while editing experiments, resources and their templates, in the **Reactions** tab of the **Main** section (it was in the Tools menu before). It allows one to draw molecules and perform operation on them such as searching the compounds database for similar molecules, via a substructure search, or adding a structure to the compounds database. The substructure search requires the compounds present in the common database to be associated with a fingerprint, which is the case if the fingerprinting service is active, and the compounds have a SMILES representation defined.
 
 <figure>
   <img src="/img/compounds-editor.png" alt="compounds-editor" />
@@ -78,13 +78,16 @@ For detailed instructions, click the (?) icon at the top of the editor.
 
 ## Recording reactions in an entry
 
-The chemical editor is also available while editing experiments, resources and
-their templates. It shares its place with the main text: use the tabs above the
-main text to switch to **Chemical editor and reactions**. The selected tab is
+The chemical editor shares its place with the main text: use the tabs above the
+main text to switch to **Reactions**. The selected tab is
 remembered, so other entries open on the same view. Draw or load a reaction with
 one arrow, then click **Create reaction**. Review the detected reactants, products and reagents, enter a title,
 and save the reaction. Saving an editor attachment alone does not create a
 structured reaction record.
+
+In view mode, the reactions are in the **Reactions** tab of the **Main**
+section, next to the main text. On the Experiments and Resources pages, opening
+an entry of the list also shows its reactions under its main text.
 
 The reaction table stores the chemical structures and properties locally in the
 entry. Known structures are matched to existing Compounds using their InChIKey.

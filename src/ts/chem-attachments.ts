@@ -30,7 +30,7 @@ const loadModalSelector = '#chemLoadAttachmentModal';
 
 export function initChemAttachments(ketcher: Ketcher): void {
   const saveForm = document.getElementById('chemSaveAttachmentForm') as HTMLFormElement;
-  // The standalone editor has no entry to attach files to.
+  // only an entry in edit mode has attachments to save to or load from
   if (!saveForm) return;
 
   const loadForm = document.getElementById('chemLoadAttachmentForm') as HTMLFormElement;

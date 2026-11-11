@@ -37,6 +37,16 @@ if (doodleCanvas) {
 
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
 
+  // draw with the primary color of the user (or of the theme) by default
+  // a color input only takes #rrggbb: let a canvas convert whatever the css variable holds
+  const probe = document.createElement('canvas').getContext('2d');
+  probe.fillStyle = 'rgba(0, 0, 0, 0)';
+  probe.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+  // an invalid or transparent color leaves the rgba() value: keep the default of the input then
+  if (/^#[0-9a-f]{6}$/i.test(probe.fillStyle)) {
+    getInput('doodleStrokeStyle').value = probe.fillStyle;
+  }
+
   const wrapper = document.getElementById('doodleCanvasWrapper');
   const sizeLabel = document.getElementById('doodleCanvasSize');
   // once the user resized the canvas, it no longer follows the width of the editor

@@ -15,6 +15,7 @@ import FavTag from './FavTag.class';
 import Heartbeat from './Heartbeat.class';
 import ScrollButtons from './ScrollButtons.class';
 import { clearLocalStorage, rememberLastSelected, selectLastSelected, writeStorage } from './localStorage';
+import { renderReactionSummaries } from './reaction-summary';
 import {
   adjustHiddenState,
   clearForm,
@@ -2041,6 +2042,10 @@ on('toggle-body', (el: HTMLElement) => {
     }
     // add html content
     contentDiv.innerHTML = json.body_html;
+    // the reactions are not part of the main text, but like it they are what the entry is about (absent from revisions)
+    if (Array.isArray(json.reactions) && json.reactions.length > 0) {
+      contentDiv.append(renderReactionSummaries(json.reactions, el.dataset.type, entityId));
+    }
 
     // adjust the width of the children
     // get the width of the parent. The -30 is to make it smaller than parent even with the margins

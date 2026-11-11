@@ -152,6 +152,10 @@
 
 {% include 'steps-edit.html' %}
 
+{% include 'links.html' %}
+
+{% include 'storage-view-edit.html' %}
+
 {# EDITORS #}
 {# spreadsheet, image and json editors share this spot: tabs switch between them, see tabbed-sections.ts #}
 {# collapsed by default like they were as separate sections, the remembered state is restored in js #}
@@ -217,11 +221,6 @@
     </div>
   </div>
 </section>
-<hr>
-
-{% include 'links.html' %}
-
-{% include 'storage-view-edit.html' %}
 
 {# modals live outside of the tab panes, as they cannot be displayed from a hidden parent #}
 {% include 'chem-editor-edit-modals.html' %}

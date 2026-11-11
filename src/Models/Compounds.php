@@ -446,7 +446,7 @@ final class Compounds extends AbstractRest
 
         if (!empty($smiles)) {
             $fp = $this->fingerprinter->calculate('smi', $smiles);
-            $Fingerprints = new Fingerprints($compoundId);
+            $Fingerprints = new CompoundsFingerprints($compoundId);
             $Fingerprints->create($fp['data']);
         }
         return $compoundId;

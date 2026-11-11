@@ -33,6 +33,7 @@ use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
+use Elabftw\Make\MakeStorageHazardsPdf;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\AuditLogs;
@@ -89,6 +90,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\Email;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\OpenBabelFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
@@ -301,6 +303,13 @@ final class Apiv2Controller extends AbstractApiController
                     throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding/reactions endpoints.');
                 }
             )(),
+            // the hazards sheet of a location, for firefighters
+            ExportFormat::Pdf => $this->Model instanceof StorageUnits
+                ? new MakeStorageHazardsPdf(
+                    new MpdfProvider($this->requester->userData['fullname'], $this->requester->userData['pdf_format']),
+                    $this->Model,
+                )->getResponse()
+                : (new MakeController($this->requester, $this->Request))->getResponse(),
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::ElnHtml,
@@ -308,7 +317,6 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
             ExportFormat::QrSvg,
-            ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,
             ExportFormat::Zip => (new MakeController($this->requester, $this->Request))->getResponse(),

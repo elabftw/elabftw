@@ -15,18 +15,27 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Links\Compounds2ExperimentsLinks;
+use Elabftw\Models\Links\Compounds2ItemsLinks;
+use Elabftw\Models\Links\Containers2ExperimentsLinks;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use Elabftw\Traits\TestsUtilsTrait;
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
 use function array_fill;
 use function array_filter;
 use function array_merge;
+use function json_encode;
 use function sprintf;
 use function str_repeat;
 use function array_values;
@@ -627,6 +636,61 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $history);
         $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
+
+    public function testReadHazards(): void
+    {
+        $roomId = $this->StorageUnits->create('Hazards room');
+        $shelfId = $this->StorageUnits->create('Hazards shelf', $roomId);
+        $outsideId = $this->StorageUnits->create('Hazards outside');
+        $Compounds = new Compounds(new HttpGetter(new Client()), new Users(1, 1), new NullFingerprinter(), false);
+
+        // in the shelf: a resource that the requester cannot read, its hazards are still listed
+        $owner = $this->getUserInTeam(2);
+        $private = $this->getFreshItemWithGivenUser($owner);
+        $private->patch(Action::Update, array('canread_base' => BasePermissions::UserOnly->value));
+        $flammable = $Compounds->create(name: 'hazards flammable', isFlammable: true, ghsSignalWord: GhsSignalWord::Warning, ghsStatements: array('H225'));
+        new Compounds2ItemsLinks($private, $flammable)->create();
+        new Containers2ItemsLinks($private, $shelfId)->createWithQuantity(1.0, 'L');
+
+        // in the room: an experiment with a toxic compound, and a resource without compound
+        $experiment = $this->getFreshExperiment();
+        $toxic = $Compounds->create(name: 'hazards toxic', isToxic: true, ghsSignalWord: GhsSignalWord::Danger, ghsStatements: array('H301', 'P264'));
+        new Compounds2ExperimentsLinks($experiment, $toxic)->create();
+        new Containers2ExperimentsLinks($experiment, $roomId)->createWithQuantity(1.0, 'g');
+        new Containers2ItemsLinks($this->getFreshItem(), $roomId)->createWithQuantity(1.0, 'g');
+
+        // not counted: a deleted resource in the room, and a resource stored elsewhere
+        $explosive = $Compounds->create(name: 'hazards explosive', isExplosive: true, ghsStatements: array('H200'));
+        $deleted = $this->getFreshItem();
+        new Compounds2ItemsLinks($deleted, $explosive)->create();
+        new Containers2ItemsLinks($deleted, $roomId)->createWithQuantity(1.0, 'g');
+        $deleted->destroy();
+        $elsewhere = $this->getFreshItem();
+        new Compounds2ItemsLinks($elsewhere, $explosive)->create();
+        new Containers2ItemsLinks($elsewhere, $outsideId)->createWithQuantity(1.0, 'g');
+
+        $this->StorageUnits->setId($roomId);
+        $hazards = $this->StorageUnits->readHazards();
+        $this->assertSame('Hazards room', $hazards['location']['full_path']);
+        $this->assertSame(3, $hazards['containers_count']);
+        $this->assertSame(1, $hazards['containers_without_compound_count']);
+        $this->assertSame(2, $hazards['compounds_count']);
+        $this->assertSame('Danger', $hazards['signal_word']);
+        $this->assertSame(array('is_flammable', 'is_toxic'), $hazards['pictograms']);
+        $this->assertSame(array(), $hazards['other_hazards']);
+        // the precautionary statements are left out
+        $this->assertSame(array('H225', 'H301'), array_column($hazards['statements'], 'code'));
+        // nothing names what is stored
+        $this->assertStringNotContainsString('hazards flammable', (string) json_encode($hazards));
+
+        // only the shelf
+        $this->StorageUnits->setId($shelfId);
+        $this->assertSame('Warning', $this->StorageUnits->readHazards()['signal_word']);
+
+        $StorageUnitsAsAnonymous = new StorageUnits(new AnonymousUser(1), false, $roomId);
+        $this->expectException(ForbiddenException::class);
+        $StorageUnitsAsAnonymous->readHazards();
     }
 
     /**

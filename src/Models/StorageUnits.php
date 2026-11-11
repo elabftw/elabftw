@@ -15,6 +15,8 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\GhsSignalWord;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -31,7 +33,9 @@ use Throwable;
 use function _;
 use function array_filter;
 use function array_key_exists;
+use function array_keys;
 use function array_map;
+use function array_merge;
 use function array_unique;
 use function array_values;
 use function count;
@@ -53,6 +57,40 @@ final class StorageUnits extends AbstractRest
 
     // upper bound of the INT UNSIGNED capacity column
     public const int MAX_CAPACITY = 4294967295;
+
+    /**
+     * The hazard flags of a compound, for readHazards(): the GHS pictograms first, then the other labels.
+     * They are the columns of the compounds table.
+     */
+    public const array GHS_PICTOGRAM_FLAGS = array(
+        'is_explosive',
+        'is_flammable',
+        'is_oxidising',
+        'is_gas_under_pressure',
+        'is_corrosive',
+        'is_toxic',
+        'is_hazardous2health',
+        'is_serious_health_hazard',
+        'is_hazardous2env',
+    );
+
+    public const array OTHER_HAZARD_FLAGS = array(
+        'is_radioactive',
+        'is_explosive_precursor',
+        'is_cmr',
+        'is_nano',
+        'is_controlled',
+        'is_drug',
+        'is_drug_precursor',
+        'is_antibiotic',
+        'is_antibiotic_precursor',
+        'is_ed2health',
+        'is_ed2env',
+        'is_pbt',
+        'is_pmt',
+        'is_vpvb',
+        'is_vpvm',
+    );
 
     /**
      * Tables holding real containers: a row in one of them occupies a slot. The template
@@ -350,6 +388,83 @@ final class StorageUnits extends AbstractRest
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    /**
+     * The hazards of what is stored in this location and in the locations under it, for the people who must enter it
+     * in an emergency (firefighters): the pictograms and hazard statements of the compounds of the containers.
+     * Nothing names a compound or an entry, so the read permissions of the entries do not apply: everyone can see
+     * what is dangerous in a room, whoever stored it there.
+     */
+    public function readHazards(): array
+    {
+        if ($this->requester instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
+        if ($this->id === null) {
+            throw new ImproperActionException('Missing id of the storage unit.');
+        }
+        $location = $this->readOne();
+
+        // one row per container and compound of its entry, or per container alone when its entry has no compound
+        $flags = implode(', ', array_map(
+            static fn(string $flag): string => 'compounds.' . $flag,
+            array_merge(self::GHS_PICTOGRAM_FLAGS, self::OTHER_HAZARD_FLAGS),
+        ));
+        $parts = array();
+        foreach (array('items', 'experiments') as $entityTable) {
+            $parts[] = sprintf(
+                "SELECT '%1\$s' AS entity_table, containers.id AS container_id, compounds.id AS compound_id, compounds.ghs_signal_word, %2\$s
+                FROM containers2%1\$s AS containers
+                INNER JOIN location ON (location.id = containers.storage_id)
+                INNER JOIN %1\$s AS entity ON (entity.id = containers.item_id AND entity.state != %3\$d)
+                LEFT JOIN compounds2%1\$s AS links ON (links.entity_id = entity.id)
+                LEFT JOIN compounds ON (compounds.id = links.compound_id AND compounds.state != %3\$d)",
+                $entityTable,
+                $flags,
+                State::Deleted->value,
+            );
+        }
+        $sql = 'WITH RECURSIVE location AS (
+                SELECT id FROM storage_units WHERE id = :id
+                UNION ALL
+                SELECT child.id FROM storage_units AS child INNER JOIN location ON (child.parent_id = location.id)
+            ) ' . implode(' UNION ALL ', $parts);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $containers = array();
+        $containersWithCompound = array();
+        $compoundIds = array();
+        $hazards = array();
+        $signalWord = null;
+        foreach ($req->fetchAll() as $row) {
+            $container = $row['entity_table'] . ':' . $row['container_id'];
+            $containers[$container] = true;
+            if ($row['compound_id'] === null) {
+                continue;
+            }
+            $containersWithCompound[$container] = true;
+            $compoundIds[(int) $row['compound_id']] = true;
+            foreach (array_merge(self::GHS_PICTOGRAM_FLAGS, self::OTHER_HAZARD_FLAGS) as $flag) {
+                if ((int) $row[$flag] === 1) {
+                    $hazards[$flag] = true;
+                }
+            }
+            $signalWord = GhsSignalWord::mostSevere($signalWord, GhsSignalWord::tryFrom((string) $row['ghs_signal_word']));
+        }
+
+        return array(
+            'location' => $location,
+            'containers_count' => count($containers),
+            'containers_without_compound_count' => count($containers) - count($containersWithCompound),
+            'compounds_count' => count($compoundIds),
+            'signal_word' => $signalWord?->value,
+            'pictograms' => array_values(array_filter(self::GHS_PICTOGRAM_FLAGS, static fn(string $flag): bool => isset($hazards[$flag]))),
+            'other_hazards' => array_values(array_filter(self::OTHER_HAZARD_FLAGS, static fn(string $flag): bool => isset($hazards[$flag]))),
+            'statements' => $this->readHazardStatements(array_keys($compoundIds)),
+        );
     }
 
     public function readAllRecursive(): array
@@ -778,6 +893,30 @@ final class StorageUnits extends AbstractRest
             storage_hierarchy
         ORDER BY
             storage_hierarchy.name, parent_id";
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    /**
+     * The hazard statements (H and EUH, not the precautionary ones) of these compounds, each once
+     *
+     * @param list<int> $compoundIds
+     */
+    private function readHazardStatements(array $compoundIds): array
+    {
+        if (empty($compoundIds)) {
+            return array();
+        }
+        // the ids are ints from the database: safe to inline, and there can be many
+        $sql = sprintf(
+            "SELECT DISTINCT gs.code, gs.kind, gs.statement
+            FROM compounds2ghs_statements AS c2gs
+            INNER JOIN ghs_statements AS gs ON (gs.id = c2gs.statement_id)
+            WHERE c2gs.compound_id IN (%s) AND gs.kind != 'P'
+            ORDER BY gs.kind, gs.code",
+            implode(', ', array_map('intval', $compoundIds)),
+        );
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();

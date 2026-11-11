@@ -3824,15 +3824,31 @@ paths:
     get:
       tags: ['Storage units']
       summary: Read a storage unit.
-      description: Get details of a specific storage unit including its full hierarchical path.
+      description: |
+        Get details of a specific storage unit including its full hierarchical path.
+        With `format=pdf`, get instead a sheet of the hazards stored in this unit and in the units it contains, for firefighters:
+        the GHS pictograms, signal word and hazard statements of the compounds of the containers. The compounds and entries
+        are not named, so this sheet lists the hazards of every container, readable or not.
       operationId: read-storage-unit
+      parameters:
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ['pdf']
+          description: Get the hazards sheet of this storage unit as a PDF.
       responses:
         '200':
-          description: A storage unit.
+          description: A storage unit, or its hazards sheet with `format=pdf`.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/storage_unit'
+            application/pdf:
+              schema:
+                type: string
+                format: binary
         '401':
            $ref: '#/components/responses/Unauthorized'
         '404':

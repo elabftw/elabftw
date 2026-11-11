@@ -22,6 +22,10 @@
         </div>
 
         <div class='modal-footer'>
+          {# PERMISSIONS: chosen before the compound is added, sent with it #}
+          <button type='button' title='{{ 'Permissions'|trans }}' aria-label='{{ 'Permissions'|trans }}' class='btn btn-ghost mr-auto' data-action='compound-permissions' data-from='createCompoundModal' data-cy='compound-permissions-create'>
+            <i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Permissions'|trans }}
+          </button>
           <button type='button' class='btn btn-ghost' data-action='clear-form' data-target='createCompoundInputs' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
           <button type='submit' class='btn btn-primary' id='createCompoundModalSaveBtn' data-action='save-compound'>{{ 'Continue'|trans }}</button>
         </div>

@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
+use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -1784,12 +1785,14 @@ abstract class AbstractEntity extends AbstractRest
             FROM compounds2%2$s AS c2e_search
             INNER JOIN compounds AS cmp_search
                 ON cmp_search.id = c2e_search.compound_id
-            WHERE %3$s
+            WHERE (%3$s)%4$s
         ) AS search_ids
             ON search_ids.id = entity.id',
             $this->getEntitySimpleQuerySql($query, $this->entityType->value),
             $this->entityType->value,
             $this->getCompoundsSimpleQuerySql($query),
+            // only find an entry from the compounds the requester can read
+            new CanSqlBuilder($this->Users, AccessType::Read, 'cmp_search')->getCanFilter(),
         );
     }
 

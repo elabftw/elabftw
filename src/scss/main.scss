@@ -1285,6 +1285,14 @@ tr.upload-group-drop-target td {
   }
 }
 
+/* a permissions modal loaded for a target the user cannot write to (compounds): what it shares, without the means to change it */
+.permissions-readonly {
+  .permissions-edit-only,
+  .permissions-chip-remove {
+    display: none;
+  }
+}
+
 .permissions-section {
   border: 1px solid var(--firstlevel);
   border-radius: 5px;

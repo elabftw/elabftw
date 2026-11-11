@@ -641,10 +641,85 @@ export function permissionsSectionParams(section: HTMLElement, changes: Permissi
 // the saves of each permissions modal, one at a time: see savePermissionsChange
 const permissionsSaves = new WeakMap<HTMLElement, Promise<void>>();
 
+// how to show again what is saved, for a modal whose content is not the one the server rendered (compounds)
+const permissionsReloaders = new WeakMap<HTMLElement, () => Promise<void>>();
+
+export function setPermissionsReloader(modal: HTMLElement, reload: () => Promise<void>): void {
+  permissionsReloaders.set(modal, reload);
+}
+
+// the teams, user groups and users of a permission, as PermissionsHelper::translate() gives them
+export interface PermissionsCanHuman {
+  teams: Array<{ id: number; name: string }>;
+  teamgroups: Array<{ id: number; name: string; team_name: string }>;
+  users: Array<{ userid: number; fullname: string; email: string }>;
+}
+
+export interface PermissionsSectionValue {
+  base: number;
+  // shown when the base is not offered in the menu, for instance not allowed anymore by the instance
+  baseLabel?: string;
+  can: PermissionsCanHuman;
+}
+
+// select a base in the general access menu of a section: it does not save it
+export function setPermissionsSectionBase(section: HTMLElement, base: number, fallbackLabel = ''): void {
+  section.dataset.baseValue = String(base);
+  let label = fallbackLabel;
+  section.querySelectorAll<HTMLElement>('.dropdown-item[data-value]').forEach(item => {
+    const isSelected = item.dataset.value === String(base);
+    item.classList.toggle('active', isSelected);
+    if (isSelected) {
+      label = item.textContent.trim();
+    }
+  });
+  const labelEl = section.querySelector('[data-base-label]');
+  if (labelEl) {
+    labelEl.textContent = label;
+  }
+}
+
+/**
+ * Show the permissions of another target in a permissions modal rendered empty (compounds): the base and the chips of each section,
+ * by the name of their column. With readOnly, they are shown without the means to change them.
+ */
+export function loadPermissionsModal(
+  modal: HTMLElement,
+  options: { endpoint: string; mode: 'auto' | 'manual'; readOnly?: boolean; values: Record<string, PermissionsSectionValue> },
+): void {
+  modal.dataset.permissionsEndpoint = options.endpoint;
+  modal.dataset.permissionsMode = options.mode;
+  modal.classList.toggle('permissions-readonly', options.readOnly ?? false);
+  modal.querySelectorAll<HTMLElement>('.permissions-section').forEach(section => {
+    const value = options.values[section.dataset.param];
+    if (!value) return;
+    delete section.dataset.listChanged;
+    delete section.dataset.baseChanged;
+    setPermissionsSectionBase(section, value.base, value.baseLabel);
+    section.querySelectorAll<HTMLButtonElement>('.dropdown-toggle').forEach(button => button.disabled = options.readOnly ?? false);
+    const select = section.querySelector<TomSelectElement>('select[data-permissions-search]');
+    const list = document.getElementById(select.dataset.list);
+    // the previous chips can be found again in the search
+    list.querySelectorAll<HTMLElement>('.permissions-chip[data-value]').forEach(li => {
+      select.tomselect?.addOption({ value: li.dataset.value, text: li.dataset.text });
+      li.remove();
+    });
+    const chips: Array<[string, string]> = [
+      ...value.can.teams.map((team): [string, string] => [`team:${team.id}`, team.name]),
+      ...value.can.teamgroups.map((group): [string, string] => [`teamgroup:${group.id}`, `${group.team_name} - ${group.name}`]),
+      ...value.can.users.map((user): [string, string] => [`user:${user.userid}`, `${user.fullname} (${user.email})`]),
+    ];
+    chips.forEach(([chipValue, text]) => {
+      select.tomselect?.removeOption(chipValue);
+      list.append(makePermissionChip(select, chipValue, text));
+    });
+  });
+}
+
 // entity and user defaults are saved right away, for the selected entries we only remember what changed: see apply-permissions-selected
 export function savePermissionsChange(section: HTMLElement, change: PermissionsChange): void {
   const modal = section.closest<HTMLElement>('[data-permissions-endpoint]');
-  if (!modal) return;
+  if (!modal || modal.classList.contains('permissions-readonly')) return;
   if (modal.dataset.permissionsMode === 'manual') {
     section.dataset[change === 'list' ? 'listChanged' : 'baseChanged'] = '1';
     return;
@@ -659,7 +734,8 @@ export function savePermissionsChange(section: HTMLElement, change: PermissionsC
       await ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
     } catch {
       // the api already reported the error: show the permissions as they are saved, not as they were edited
-      await reloadElements(['permissionsDiv']).catch(() => {});
+      const reload = permissionsReloaders.get(modal) ?? (() => reloadElements([modal.querySelector('.modal-body').id]));
+      await reload().catch(() => {});
     }
   });
   permissionsSaves.set(modal, save);
@@ -1124,7 +1200,12 @@ export function toggleEditCompound(json: object): void {
     const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);
     input.checked = json[param] === 1;
   });
-  document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  const saveBtn = document.getElementById('editCompoundModalSaveBtn') as HTMLButtonElement;
+  saveBtn.dataset.compoundId = json['id'];
+  // the compound can be readable only, see Compounds::readOne()
+  if ('has_write_access' in json) {
+    saveBtn.disabled = json['has_write_access'] !== 1;
+  }
   // don't show the molecule of a previously opened compound
   const moleculeDiv = document.getElementById('compoundMoleculeDiv');
   if (moleculeDiv) {

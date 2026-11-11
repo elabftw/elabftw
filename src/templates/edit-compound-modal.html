@@ -128,6 +128,10 @@
         </div>
 
         <div class='modal-footer'>
+          {# PERMISSIONS: same button as in the toolbar of an entry #}
+          <button type='button' title='{{ 'Permissions'|trans }}' aria-label='{{ 'Permissions'|trans }}' class='btn btn-ghost mr-auto' data-action='compound-permissions' data-from='editCompoundModal' data-cy='compound-permissions-edit'>
+            <i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Permissions'|trans }}
+          </button>
           <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
           <button type='submit' {{ compoundsDisabled ? 'disabled' }} class='btn btn-primary' id='editCompoundModalSaveBtn' data-action='save-compound'>{{ 'Save'|trans }}</button>
         </div>

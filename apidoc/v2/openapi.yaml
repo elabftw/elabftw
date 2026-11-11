@@ -642,6 +642,34 @@ components:
     compound:
       type: object
       properties:
+        has_write_access:
+          type: integer
+          enum: [0, 1]
+          description: Only when reading one compound. 1 if the requester can modify it.
+        canread_base:
+          type: integer
+          description: |
+            Base permission for read access, like for an entry (30 when not given at creation):
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone with an account (anonymous users never see compounds)
+          enum: [10, 20, 30, 40, 50]
+          example: 30
+        canwrite_base:
+          type: integer
+          description: Base permission for write access, same values as canread_base. 20 when not given at creation.
+          enum: [10, 20, 30, 40, 50]
+          example: 20
+        canread:
+          type: string
+          description: JSON permissions for reading the compound, on top of its base.
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+        canwrite:
+          type: string
+          description: JSON permissions for writing to the compound, on top of its base.
+          example: '{"teams": [], "users": [42], "teamgroups": []}'
         id:
           type: integer
           example: 14
@@ -836,6 +864,30 @@ components:
       required:
         - action
       properties:
+        canread_base:
+          type: integer
+          description: |
+            Base permission for read access, like for an entry (30 when not given at creation):
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone with an account (anonymous users never see compounds)
+          enum: [10, 20, 30, 40, 50]
+          example: 30
+        canwrite_base:
+          type: integer
+          description: Base permission for write access, same values as canread_base. 20 when not given at creation.
+          enum: [10, 20, 30, 40, 50]
+          example: 20
+        canread:
+          type: string
+          description: JSON permissions for reading the compound, on top of its base.
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+        canwrite:
+          type: string
+          description: JSON permissions for writing to the compound, on top of its base.
+          example: '{"teams": [], "users": [42], "teamgroups": []}'
         action:
           type: string
           enum:
@@ -852,6 +904,30 @@ components:
     CompoundCreateRequest:
       type: object
       properties:
+        canread_base:
+          type: integer
+          description: |
+            Base permission for read access, like for an entry (30 when not given at creation):
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone with an account (anonymous users never see compounds)
+          enum: [10, 20, 30, 40, 50]
+          example: 30
+        canwrite_base:
+          type: integer
+          description: Base permission for write access, same values as canread_base. 20 when not given at creation.
+          enum: [10, 20, 30, 40, 50]
+          example: 20
+        canread:
+          type: string
+          description: JSON permissions for reading the compound, on top of its base.
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+        canwrite:
+          type: string
+          description: JSON permissions for writing to the compound, on top of its base.
+          example: '{"teams": [], "users": [42], "teamgroups": []}'
         action:
           type: string
           description: |
@@ -3913,7 +3989,7 @@ paths:
     get:
       tags: ['Compounds']
       summary: Read compounds
-      description: Get the list of all compounds
+      description: Get the list of the compounds the requester can read
       operationId: get-compounds
       responses:
         '200':
@@ -3933,6 +4009,8 @@ paths:
         - If `action=duplicate`, import (or match) a compound from PubChem using `cid` or `cas`. If both parameters are present, only the `cid` is used.
         - Otherwise, create a compound directly from the provided fields.
         - If a compound with the same unique identifier already exists (e.g `cas_number`, `pubchem_cid`), the API will return the existing compound instead of creating a new one.
+          It is updated with the new data only if the requester can write to it. If the requester cannot read it, the request fails.
+        - The permissions of the new compound can be given with `canread_base`, `canwrite_base`, `canread` and `canwrite`, like for an entry.
       operationId: post-compounds
       requestBody:
         required: true

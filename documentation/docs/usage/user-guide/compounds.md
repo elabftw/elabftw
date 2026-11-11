@@ -50,7 +50,15 @@ A Resource (or an Experiment) can be linked to one or several existing Compound,
 
 ## Creating a compound manually
 
-Maybe you've just created an never-seen before chemical compound, which means you cannot import it from PubChem. In this case, click the "Add compound" button to manually add a compound. Be aware, as mentioned above, the new compound will be visible by all users of the instance. In case you want to keep it confidential, do not add it.
+Maybe you've just created an never-seen before chemical compound, which means you cannot import it from PubChem. In this case, click the "Add compound" button to manually add a compound. Before adding it, you can choose who can see and modify it, see below.
+
+## Permissions of a compound
+
+Like an entry, each compound has read and write permissions: a base (team members, owner and admins…) on top of which teams, user groups or users can be added. Click the **Permissions** button of the compound window to change them, or of the "Add compound" and "Import from PubChem" windows to choose them before the compound is added. By default, a new compound is visible to the members of your team, and can be modified by you and the Admins of your team. The compounds added before this feature are visible to and modifiable by everyone with an account.
+
+A compound you cannot read is not listed in the compounds database, nor in the compounds linked to an entry, and you cannot link it to an entry. The identifiers of a compound (CAS number, InChIKey, PubChem CID…) are unique on the instance: adding a compound that already exists gives you the existing one if you can read it, and is refused otherwise.
+
+When the instance restricts the edition of compounds to some users, these permissions apply on top of that restriction.
 
 ## Importing compounds manually
 

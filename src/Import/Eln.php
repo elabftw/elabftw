@@ -23,6 +23,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
@@ -531,7 +532,13 @@ class Eln extends AbstractZip
         if (($node['@type'] ?? null) !== 'MolecularEntity') {
             return null;
         }
-        $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
+        try {
+            $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
+        } catch (CompoundNotAccessibleException $e) {
+            // the compound exists already and the importer cannot read it: import the entry without the link
+            $this->logger->warning($e->getMessage());
+            return null;
+        }
         $this->insertedCompounds[$id] = $compoundId;
         return $compoundId;
     }

@@ -80,6 +80,9 @@ final class CompoundParams extends ContentParams
             'is_controlled' => Filter::onToBinary((string) $this->content),
             'molecular_weight' => (float) $this->content,
             'state' => $this->getState(),
+            // same permissions as the entries: see the permissions modal
+            'canread', 'canwrite' => $this->getCanJson(),
+            'canread_base', 'canwrite_base' => $this->getCanBase(),
             default => throw new ImproperActionException('Invalid target for compound update.'),
         };
     }

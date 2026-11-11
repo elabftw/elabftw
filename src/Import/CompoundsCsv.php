@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Compounds;
@@ -28,6 +29,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_filter;
 use function sprintf;
 use function strcasecmp;
 use function trim;
@@ -101,7 +103,7 @@ final class CompoundsCsv extends AbstractCsv
                                 $this->emitLog(sprintf('Could not find CID from CAS: %s', $casValue), LogLevel::WARNING);
                                 $this->emitLog($e->getMessage(), LogLevel::WARNING);
                                 $this->emitLog(sprintf('Importing compound %s without PubChem data', $casValue), LogLevel::NOTICE);
-                                $ids[] = $this->createCompound($casKey, $row);
+                                $ids[] = $this->skipIfNotAccessible(fn(): int => $this->createCompound($casKey, $row));
                             }
                         }
                     }
@@ -109,11 +111,13 @@ final class CompoundsCsv extends AbstractCsv
                     foreach ($cids as $cid) {
                         $this->emitLog(sprintf('Importing compound with CID %d', $cid));
                         $compound = $this->PubChemImporter->fromPugView($cid);
-                        $ids[] = $this->Compounds->createFromCompound($compound);
+                        $ids[] = $this->skipIfNotAccessible(fn(): int => $this->Compounds->createFromCompound($compound));
                     }
                 } else {
-                    $ids[] = $this->createCompound($casKey, $row);
+                    $ids[] = $this->skipIfNotAccessible(fn(): int => $this->createCompound($casKey, $row));
                 }
+                // the compounds the importer cannot read are not linked
+                $ids = array_filter($ids, static fn(?int $id): bool => $id !== null);
 
                 // optionally create Resource
                 if ($this->resourceTemplate !== null) {
@@ -252,6 +256,20 @@ final class CompoundsCsv extends AbstractCsv
             'is_nano',
             'is_controlled',
         );
+    }
+
+    /**
+     * A compound of the file can exist already with permissions that hide it from the importer: skip it with a warning,
+     * and import the rest of the row (other compounds, the resource) anyway
+     */
+    private function skipIfNotAccessible(callable $create): ?int
+    {
+        try {
+            return $create();
+        } catch (CompoundNotAccessibleException $e) {
+            $this->emitLog(sprintf('Skipping compound: %s', $e->getMessage()), LogLevel::WARNING);
+            return null;
+        }
     }
 
     private function createCompound(?string $casKey, array $row): int

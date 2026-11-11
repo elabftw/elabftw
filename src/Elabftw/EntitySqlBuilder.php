@@ -282,8 +282,10 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function compounds(): void
     {
+        // a compound the requester cannot read is not joined: an entry cannot be found from what it hides
         $this->joinsSql[] = 'LEFT JOIN compounds2%1$s AS compoundslinks ON compoundslinks.entity_id = entity.id
-            LEFT JOIN compounds ON compoundslinks.compound_id = compounds.id';
+            LEFT JOIN compounds ON (compoundslinks.compound_id = compounds.id AND '
+            . new CanSqlBuilder($this->entity->Users, AccessType::Read, 'compounds')->getCanCondition() . ')';
     }
 
     protected function uploads(): void

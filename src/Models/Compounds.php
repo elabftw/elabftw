@@ -12,12 +12,18 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Compound;
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
+use Elabftw\Elabftw\PermissionsHelper;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Orderby;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\DatabaseErrorException;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
@@ -27,6 +33,7 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
 use Elabftw\Params\CompoundParams;
+use Elabftw\Services\Check;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\PubChemImporter;
 use Elabftw\Traits\SetIdTrait;
@@ -45,7 +52,6 @@ use function implode;
 use function is_string;
 use function rtrim;
 use function sprintf;
-use function str_contains;
 use function trim;
 
 /**
@@ -54,6 +60,10 @@ use function trim;
 final class Compounds extends AbstractRest
 {
     use SetIdTrait;
+
+    public const BasePermissions DEFAULT_CANREAD_BASE = BasePermissions::Organization;
+
+    public const BasePermissions DEFAULT_CANWRITE_BASE = BasePermissions::Organization;
 
     // columns with the UNIQUE constraint: identifiers of a compound
     private const array UNIQUE_KEYS = array(
@@ -78,6 +88,8 @@ final class Compounds extends AbstractRest
         'wikidata',
         'wikipedia',
     );
+
+    private const string EMPTY_CAN_JSON = '{"teams": [], "teamgroups": [], "users": []}';
 
     public function __construct(protected HttpGetter $httpGetter, public Users $requester, protected FingerprinterInterface $fingerprinter, private bool $requireEditRights = false, ?int $id = null)
     {
@@ -110,7 +122,7 @@ final class Compounds extends AbstractRest
             $fp = $this->fingerprinter->calculate('smi', $q->getString('search_fp_smi'));
             return $this->searchFingerprint($fp, $q->getBoolean('exact'));
         }
-        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1';
+        $sql = $this->getSelectBeforeWhere() . ' WHERE 1=1' . new CanSqlBuilder($this->requester, AccessType::Read)->getCanFilter();
         if ($queryParams->getQuery()->get('q')) {
             $sql .= ' AND (
                 entity.cas_number LIKE :query OR
@@ -143,10 +155,8 @@ final class Compounds extends AbstractRest
         }
         $sql .= $queryParams->getSql();
         $req = $this->Db->prepare($sql);
-        // FIXME: dumb but working fix: user throws error, admin/sysadmin doesn't because sql query might have :userid or not
-        if (str_contains($sql, ':userid')) {
-            $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
-        }
+        // the permissions filter always has :userid
+        $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         if ($queryParams->getQuery()->get('q')) {
             $req->bindValue(':query', '%' . $queryParams->getQuery()->getString('q') . '%');
         }
@@ -166,17 +176,26 @@ final class Compounds extends AbstractRest
     public function readOne(): array
     {
         $this->canReadOrExplode();
-        $sql = $this->getSelectBeforeWhere() . ' WHERE entity.id = :id';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->fetch($req);
+        $compound = $this->readRow();
+        $permissions = new CompoundPermissions($this->requester)->forCompound($compound);
+        if (!$permissions->read) {
+            throw new ForbiddenException();
+        }
+        // what the permissions modal shows, like for an entry
+        $PermissionsHelper = new PermissionsHelper();
+        foreach (array('canread', 'canwrite') as $can) {
+            $compound[$can . '_base_human'] = BasePermissions::from($compound[$can . '_base'])->toHuman();
+            $compound[$can . '_human'] = $PermissionsHelper->translate($this->requester, $compound[$can]);
+        }
+        $compound['has_write_access'] = (int) ($permissions->write && $this->canWrite());
+        return $compound;
     }
 
     #[Override]
     public function patch(Action $action, array $params): array
     {
         $this->canWriteOrExplode();
+        new CompoundPermissions($this->requester)->canOrExplode($this->readRow(), AccessType::Write);
         foreach ($params as $target => $content) {
             $this->update(new CompoundParams($target, $content));
         }
@@ -200,9 +219,14 @@ final class Compounds extends AbstractRest
         $this->canWriteOrExplode();
         // TODO add action fromCid or fromSmiles
         // and use fingerprinter
+        $permissions = $this->getCreatePermissions($reqBody);
         return match ($action) {
-            Action::Duplicate => $this->createCompoundFromIdentifier($reqBody),
+            Action::Duplicate => $this->createCompoundFromIdentifier($reqBody, $permissions),
             default => $this->create(
+                canreadBase: $permissions['canread_base'],
+                canwriteBase: $permissions['canwrite_base'],
+                canread: $permissions['canread'],
+                canwrite: $permissions['canwrite'],
                 name: $reqBody['name'] ?? null,
                 inchi: $reqBody['inchi'] ?? null,
                 inchiKey: $reqBody['inchi_key'] ?? null,
@@ -228,6 +252,7 @@ final class Compounds extends AbstractRest
     public function destroy(bool $recursive = false): bool
     {
         $this->canWriteOrExplode();
+        new CompoundPermissions($this->requester)->canOrExplode($this->readRow(), AccessType::Write);
         // check if the compound is linked somewhere first
         $sql = 'SELECT
           CASE
@@ -299,6 +324,10 @@ final class Compounds extends AbstractRest
         bool $isPmt = false,
         bool $isVpvb = false,
         bool $isVpvm = false,
+        BasePermissions $canreadBase = self::DEFAULT_CANREAD_BASE,
+        BasePermissions $canwriteBase = self::DEFAULT_CANWRITE_BASE,
+        string $canread = self::EMPTY_CAN_JSON,
+        string $canwrite = self::EMPTY_CAN_JSON,
     ): int {
         // the column cannot be null: a compound without a known weight gets the column default
         $molecularWeight ??= 0.00;
@@ -361,13 +390,15 @@ final class Compounds extends AbstractRest
             smiles, molecular_formula, molecular_weight, metabolomics_wb_id, nci_code, nikkaji_number, pharmgkb_id, pharos_ligand_id, rxcui, unii, wikidata, wikipedia, is_radioactive, is_antibiotic, is_antibiotic_precursor, is_drug, is_drug_precursor, is_explosive_precursor, is_cmr, is_nano, is_controlled,
             cas_number, ec_number, iupac_name, pubchem_cid, userid, team, chebi_id, chembl_id, dea_number, drugbank_id, dsstox_id, hmdb_id, kegg_id,
             is_corrosive, is_serious_health_hazard, is_explosive, is_flammable, is_gas_under_pressure, is_hazardous2env, is_hazardous2health, is_oxidising, is_toxic,
-            is_ed2health, is_ed2env, is_pbt, is_vpvb, is_pmt, is_vpvm
+            is_ed2health, is_ed2env, is_pbt, is_vpvb, is_pmt, is_vpvm,
+            canread_base, canwrite_base, canread, canwrite
             ) VALUES (
             :requester, :requester, :name,
             :inchi, :inchi_key,
             :smiles, :molecular_formula, :molecular_weight, :metabolomics_wb_id, :nci_code, :nikkaji_number, :pharmgkb_id, :pharos_ligand_id, :rxcui, :unii, :wikidata, :wikipedia, :is_radioactive, :is_antibiotic, :is_antibiotic_precursor, :is_drug, :is_drug_precursor, :is_explosive_precursor, :is_cmr, :is_nano, :is_controlled,
             :cas_number, :ec_number, :iupac_name, :pubchem_cid, :requester, :team, :chebi_id, :chembl_id, :dea_number, :drugbank_id, :dsstox_id, :hmdb_id, :kegg_id,
-            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic, :is_ed2health, :is_ed2env, :is_pbt, :is_pmt, :is_vpvb, :is_vpvm)';
+            :is_corrosive, :is_serious_health_hazard, :is_explosive, :is_flammable, :is_gas_under_pressure, :is_hazardous2env, :is_hazardous2health, :is_oxidising, :is_toxic, :is_ed2health, :is_ed2env, :is_pbt, :is_pmt, :is_vpvb, :is_vpvm,
+            :canread_base, :canwrite_base, :canread, :canwrite)';
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':requester', $this->requester->userid, PDO::PARAM_INT);
@@ -422,6 +453,10 @@ final class Compounds extends AbstractRest
         $req->bindParam(':is_pmt', $isPmt, PDO::PARAM_INT);
         $req->bindParam(':is_vpvb', $isVpvb, PDO::PARAM_INT);
         $req->bindParam(':is_vpvm', $isVpvm, PDO::PARAM_INT);
+        $req->bindValue(':canread_base', $canreadBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canwrite_base', $canwriteBase->value, PDO::PARAM_INT);
+        $req->bindValue(':canread', $canread);
+        $req->bindValue(':canwrite', $canwrite);
 
         try {
             $this->Db->execute($req);
@@ -437,7 +472,7 @@ final class Compounds extends AbstractRest
                 if ($existingId === null) {
                     throw new ImproperActionException('Duplicate entry but no existing compound found.');
                 }
-                return $this->upsertCompound($existingId, $compoundData);
+                return $this->useExistingCompound($existingId, $compoundData);
             }
             throw new ImproperActionException(sprintf('Error importing compound: %s', $e->getMessage()));
         }
@@ -488,9 +523,14 @@ final class Compounds extends AbstractRest
         return $id;
     }
 
-    public function createFromCompound(Compound $compound): int
+    public function createFromCompound(Compound $compound, ?array $permissions = null): int
     {
+        $permissions ??= $this->getCreatePermissions(array());
         return $this->create(
+            canreadBase: $permissions['canread_base'],
+            canwriteBase: $permissions['canwrite_base'],
+            canread: $permissions['canread'],
+            canwrite: $permissions['canwrite'],
             casNumber: $compound->cas,
             name: $compound->name,
             inchi: $compound->inChI,
@@ -512,8 +552,14 @@ final class Compounds extends AbstractRest
         );
     }
 
+    /**
+     * The instance setting to restrict who can add and edit compounds: the permissions of a compound apply on top of it
+     */
     protected function canWrite(): bool
     {
+        if ($this->requester instanceof AnonymousUser) {
+            return false;
+        }
         return $this->requester->userData['can_manage_compounds'] === 1 || $this->requireEditRights === false;
     }
 
@@ -562,13 +608,56 @@ final class Compounds extends AbstractRest
         }
     }
 
-    private function createCompoundFromIdentifier(array $reqBody): int
+    private function createCompoundFromIdentifier(array $reqBody, array $permissions): int
     {
         if (!empty($reqBody['cid'])) {
-            return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']));
+            return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']), $permissions);
         }
         $cas = $reqBody['cas'] ?? throw new ImproperActionException('Missing pubchem_cid or cas_number');
-        return $this->createFromCompound($this->searchPubChemCas($cas)[0]);
+        return $this->createFromCompound($this->searchPubChemCas($cas)[0], $permissions);
+    }
+
+    /**
+     * The permissions of a new compound, validated like the ones of an entry, with the defaults for what is not given
+     *
+     * @return array{canread_base: BasePermissions, canwrite_base: BasePermissions, canread: string, canwrite: string}
+     */
+    private function getCreatePermissions(array $reqBody): array
+    {
+        return array(
+            'canread_base' => isset($reqBody['canread_base']) ? Check::basePermission((int) $reqBody['canread_base']) : self::DEFAULT_CANREAD_BASE,
+            'canwrite_base' => isset($reqBody['canwrite_base']) ? Check::basePermission((int) $reqBody['canwrite_base']) : self::DEFAULT_CANWRITE_BASE,
+            'canread' => isset($reqBody['canread']) ? Check::visibility((string) $reqBody['canread']) : self::EMPTY_CAN_JSON,
+            'canwrite' => isset($reqBody['canwrite']) ? Check::visibility((string) $reqBody['canwrite']) : self::EMPTY_CAN_JSON,
+        );
+    }
+
+    /**
+     * Identifiers are unique on the instance, so a new compound can already exist, maybe with other permissions:
+     * it is updated with the new data only by someone allowed to write to it, and used as is by someone who can read it.
+     * Someone who cannot read it is told it exists: the identifier is all they learn about it.
+     */
+    private function useExistingCompound(int $id, array $compoundData): int
+    {
+        $this->setId($id);
+        $permissions = new CompoundPermissions($this->requester)->forCompound($this->readRow());
+        if ($permissions->write) {
+            return $this->upsertCompound($id, $compoundData);
+        }
+        if ($permissions->read) {
+            return $id;
+        }
+        throw new CompoundNotAccessibleException();
+    }
+
+    /** The compound with its permission columns, without checking them */
+    private function readRow(): array
+    {
+        $sql = $this->getSelectBeforeWhere() . ' WHERE entity.id = :id';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
     }
 
     private function getSelectBeforeWhere(): string
@@ -614,6 +703,7 @@ final class Compounds extends AbstractRest
         $sql .= 'FROM compounds_fingerprints AS cf
             LEFT JOIN compounds AS c ON cf.id = c.id';
         $sql .= ' WHERE 1=1 AND c.state IN (:state_normal, :state_archived)';
+        $sql .= new CanSqlBuilder($this->requester, AccessType::Read, 'c')->getCanFilter();
         // without $exact, this is an approximate substructure search
         $sql .= $exact
             ? FingerprintTable::equalsSql($fp['data'], 'cf', ignoreEmptyWords: true)
@@ -623,6 +713,7 @@ final class Compounds extends AbstractRest
         $req = $this->Db->prepare($sql);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->requester->userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
     }

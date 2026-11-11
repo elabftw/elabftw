@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\Permissions;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
@@ -44,6 +45,7 @@ use function array_replace;
 use function base64_decode;
 use function filter_var;
 use function implode;
+use function in_array;
 use function is_array;
 use function json_decode;
 use function json_encode;
@@ -377,13 +379,17 @@ final class Reactions extends AbstractRest
     private function checkLinks(array $components, array $existingComponents): void
     {
         $existingItems = array_column($existingComponents, 'item_id', 'component_key');
+        $existingCompounds = array_column($existingComponents, 'compound_id', 'component_key');
         $checkedItems = array();
         foreach ($components as $component) {
             if ($component['compound_id'] !== null) {
-                $req = $this->Db->prepare('SELECT inchi_key FROM compounds WHERE id = :id AND state IN (1, 2)');
-                $req->bindValue(':id', $component['compound_id'], PDO::PARAM_INT);
-                $this->Db->execute($req);
-                $compound = $this->Db->fetch($req);
+                // like a resource, a compound can only be linked by someone who can read it: a kept link is not checked again
+                $compound = $component['compound_id'] === ($existingCompounds[$component['component_key']] ?? null)
+                    ? $this->readCompound($component['compound_id'])
+                    : new CompoundPermissions($this->Entity->Users)->canOrExplodeFromId($component['compound_id'], AccessType::Read);
+                if (!in_array((int) $compound['state'], array(State::Normal->value, State::Archived->value), true)) {
+                    throw new ResourceNotFoundException();
+                }
                 if ($component['inchi_key'] !== '' && !empty($compound['inchi_key']) && $component['inchi_key'] !== $compound['inchi_key']) {
                     throw new ImproperActionException('The linked compound does not match this reaction component.');
                 }
@@ -394,6 +400,14 @@ final class Reactions extends AbstractRest
                 $checkedItems[$itemId] = true;
             }
         }
+    }
+
+    private function readCompound(int $id): array
+    {
+        $req = $this->Db->prepare('SELECT state, inchi_key FROM compounds WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        return $this->Db->fetch($req);
     }
 
     /**

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
@@ -27,7 +28,16 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+
+use function array_column;
+use function bin2hex;
+use function json_decode;
+use function random_bytes;
+use function sprintf;
+use function strtoupper;
+use function substr;
 
 class CompoundsTest extends \PHPUnit\Framework\TestCase
 {
@@ -168,6 +178,65 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->Compounds->destroy();
     }
 
+    public function testPermissions(): void
+    {
+        // only the owner can read and write it
+        $owner = $this->getUserInTeam(2);
+        // a logged in user, as Organization access is only for them, see Permissions::getCan()
+        $other = $this->getUserInTeam(1);
+        $this->assertNotSame($other->userid, $owner->userid);
+        $OwnerCompounds = new Compounds($this->httpGetter, $owner, new NullFingerprinter(), false);
+        $inchiKey = substr(strtoupper(bin2hex(random_bytes(14))), 0, 27);
+        $id = $OwnerCompounds->create(name: 'Private compound', inchiKey: $inchiKey, canreadBase: BasePermissions::UserOnly, canwriteBase: BasePermissions::UserOnly);
+        $OwnerCompounds->setId($id);
+        $this->assertSame(1, $OwnerCompounds->readOne()['has_write_access']);
+
+        $OtherCompounds = new Compounds($this->httpGetter, $other, new NullFingerprinter(), false, $id);
+        $this->assertNotContains($id, array_column($OtherCompounds->readAll($OtherCompounds->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
+        $this->assertForbidden(fn() => $OtherCompounds->readOne());
+        $this->assertForbidden(fn() => $OtherCompounds->patch(Action::Update, array('name' => 'Renamed')));
+        $this->assertForbidden(fn() => $OtherCompounds->destroy());
+        // the identifiers are unique: the other user cannot add it again nor use it
+        try {
+            $OtherCompounds->create(name: 'Same compound', inchiKey: $inchiKey);
+            $this->fail('Created a compound with the identifier of a compound it cannot read');
+        } catch (ImproperActionException) {
+            $this->addToAssertionCount(1);
+        }
+
+        // shared for reading only
+        $OwnerCompounds->patch(Action::Update, array('canread' => sprintf('{"teams": [], "teamgroups": [], "users": [%d]}', $other->userid)));
+        $compound = $OtherCompounds->readOne();
+        $this->assertSame(0, $compound['has_write_access']);
+        $this->assertSame($other->userid, $compound['canread_human']['users'][0]['userid']);
+        $this->assertContains($id, array_column($OtherCompounds->readAll($OtherCompounds->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
+        $this->assertForbidden(fn() => $OtherCompounds->patch(Action::Update, array('name' => 'Renamed')));
+        // adding it again gives the existing one, unchanged
+        $this->assertSame($id, $OtherCompounds->create(name: 'Renamed', inchiKey: $inchiKey));
+        $this->assertSame('Private compound', $OwnerCompounds->readOne()['name']);
+
+        // and for writing
+        $OwnerCompounds->patch(Action::Update, array('canwrite_base' => BasePermissions::Organization->value));
+        $this->assertSame('Renamed', $OtherCompounds->patch(Action::Update, array('name' => 'Renamed'))['name']);
+    }
+
+    public function testCreateWithPermissions(): void
+    {
+        $id = $this->Compounds->postAction(Action::Create, array(
+            'name' => 'Shared with a team',
+            'canread_base' => BasePermissions::User->value,
+            'canread' => '{"teams": [2], "teamgroups": [], "users": []}',
+        ));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(BasePermissions::User->value, $compound['canread_base']);
+        $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
+        $this->assertSame(array(2), json_decode($compound['canread'], true)['teams']);
+
+        $this->expectException(ImproperActionException::class);
+        $this->Compounds->postAction(Action::Create, array('name' => 'Invalid', 'canread' => '{"teams": "all"}'));
+    }
+
     public function testGetApiPath(): void
     {
         $this->assertEquals('api/v2/compounds/', $this->Compounds->getApiPath());
@@ -210,5 +279,15 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $req = new Request($queryParams);
         $q = $Compounds->getQueryParams($req->query);
         $this->assertIsArray($Compounds->readAll($q));
+    }
+
+    private function assertForbidden(callable $action): void
+    {
+        try {
+            $action();
+            $this->fail('Allowed a forbidden action');
+        } catch (ForbiddenException) {
+            $this->addToAssertionCount(1);
+        }
     }
 }

@@ -44,10 +44,14 @@ import {
   delayConfirmation,
   initPermissionsTomSelects,
   initPermissionsSearch,
+  loadPermissionsModal,
   permissionsSectionParams,
   savePermissionsChange,
+  setPermissionsReloader,
+  setPermissionsSectionBase,
   reloadEntitiesShow,
 } from './misc';
+import type { PermissionsSectionValue } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
@@ -878,15 +882,90 @@ on('clear-form', (el: HTMLElement) => {
 on('set-permission-base', (el: HTMLElement) => {
   const section = el.closest<HTMLElement>('.permissions-section');
   if (!section) return;
-  section.dataset.baseValue = el.dataset.value;
-  el.closest('.dropdown-menu')?.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
-  el.classList.add('active');
-  const label = el.closest('.btn-group')?.querySelector('[data-base-label]');
-  if (label) {
-    label.textContent = el.textContent.trim();
-  }
+  setPermissionsSectionBase(section, Number(el.dataset.value));
   savePermissionsChange(section, 'base');
 });
+
+// PERMISSIONS OF THE COMPOUNDS
+// the modal of a compound modal is shown instead of it, and the compound modal comes back when it is closed
+const compoundPermissionsSelector = '#compoundPermissionsModal';
+
+// the permissions chosen for the next compounds to create or import, sent with them: empty if the modal was not opened for that
+function newCompoundPermissions(): Record<string, string> {
+  const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
+  if (!modal || modal.dataset.forNewCompound !== '1') {
+    return {};
+  }
+  const params = {};
+  modal.querySelectorAll<HTMLElement>('.permissions-section').forEach(section => {
+    Object.assign(params, permissionsSectionParams(section, ['list', 'base']));
+  });
+  return params;
+}
+
+// once a compound is created with them, the next one starts from the defaults again
+function resetNewCompoundPermissions(): void {
+  const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
+  if (modal) {
+    delete modal.dataset.forNewCompound;
+  }
+}
+
+async function loadExistingCompoundPermissions(modal: HTMLElement, compoundId: string): Promise<void> {
+  const compound = await ApiC.getJson(`${Model.Compounds}/${compoundId}`);
+  const value = (can: string): PermissionsSectionValue => ({
+    base: compound[`${can}_base`],
+    baseLabel: compound[`${can}_base_human`],
+    can: compound[`${can}_human`],
+  });
+  loadPermissionsModal(modal, {
+    endpoint: `${Model.Compounds}/${compoundId}`,
+    mode: 'auto',
+    readOnly: compound.has_write_access !== 1,
+    values: { canread: value('canread'), canwrite: value('canwrite') },
+  });
+}
+
+on('compound-permissions', async (el: HTMLElement) => {
+  const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
+  if (!modal) return;
+  const from = `#${el.dataset.from}`;
+  try {
+    if (el.dataset.from === 'editCompoundModal') {
+      const compoundId = getSafeElementById('editCompoundModalSaveBtn').dataset.compoundId;
+      delete modal.dataset.forNewCompound;
+      await loadExistingCompoundPermissions(modal, compoundId);
+      setPermissionsReloader(modal, () => loadExistingCompoundPermissions(modal, compoundId));
+    } else if (modal.dataset.forNewCompound !== '1') {
+      // a new compound starts from the defaults, then keeps what was chosen until it is created
+      const empty = { teams: [], teamgroups: [], users: [] };
+      const defaultValue = (can: string): PermissionsSectionValue => ({
+        base: Number(modal.querySelector<HTMLElement>(`.permissions-section[data-param="${can}"]`)?.dataset.defaultBase),
+        can: empty,
+      });
+      loadPermissionsModal(modal, { endpoint: '', mode: 'manual', values: { canread: defaultValue('canread'), canwrite: defaultValue('canwrite') } });
+      modal.dataset.forNewCompound = '1';
+    }
+  } catch (error) {
+    notify.error(error);
+    return;
+  }
+  // one modal at a time: bootstrap 4 does not stack them
+  modal.dataset.switching = '1';
+  onModalEventOnce(from, 'hidden', () => {
+    delete modal.dataset.switching;
+    onModalEventOnce(compoundPermissionsSelector, 'hidden', () => showModal(from));
+    showModal(compoundPermissionsSelector);
+  });
+  hideModal(from);
+});
+
+// closing the modal of a new compound (not to choose its permissions) forgets them
+['#createCompoundModal', '#importFromPubChemModal'].forEach(selector => onModalEvent(selector, 'hidden', () => {
+  if (document.querySelector<HTMLElement>(compoundPermissionsSelector)?.dataset.switching !== '1') {
+    resetNewCompoundPermissions();
+  }
+}));
 
 // permissions modal of the show page: what changed is applied to all the selected entries
 on('apply-permissions-selected', async (el: HTMLElement) => {
@@ -1631,6 +1710,16 @@ export function onModalEvent(
   $(modal).on(`${event}.bs.modal`, handler);
 }
 
+export function onModalEventOnce(
+  modalSelector: string,
+  event: 'show' | 'shown' | 'hide' | 'hidden',
+  handler: (event: JQuery.TriggeredEvent) => void,
+): void {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).one(`${event}.bs.modal`, handler);
+}
+
 on('update-entity-body', async (el: HTMLElement) => {
   const redirect = el.dataset.redirect === 'view';
   await updateEntityBody(redirect);
@@ -1767,8 +1856,9 @@ on('show-compound-molecule', async (el: HTMLElement) => {
 
 on('import-compound', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
-  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
+  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate, ...newCompoundPermissions()};
   ApiC.post2location('compounds', params).then(() => {
+    // the same permissions apply to the other compounds imported from this search
     document.dispatchEvent(new CustomEvent('dataReload'));
   }).catch(err => {
     console.error(err);
@@ -1812,8 +1902,9 @@ on('save-compound', (el: HTMLElement, event: Event) => {
       });
     } else { // create
       const form = document.getElementById('createCompoundForm') as HTMLFormElement;
-      const params = collectForm(form);
+      const params = { ...collectForm(form), ...newCompoundPermissions() };
       ApiC.post2location('compounds', params).then(id => {
+        resetNewCompoundPermissions();
         ApiC.getJson(`compounds/${id}`).then((json) => {
           setTimeout(() => {
             toggleEditCompound(json);

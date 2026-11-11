@@ -13,6 +13,8 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Enums\AccessType;
 use Elabftw\Models\Compounds;
 use Override;
 use PDO;
@@ -50,7 +52,9 @@ final class MakeCompoundsHistoryReport extends MakeCompoundsReport
               ON ec.experiment_id = e.id
             JOIN compounds AS c
               ON c.id = ec.compound_id
-            WHERE e.userid = :userid
+            WHERE e.userid = :userid'
+            // the experiments are the ones of the requester, but not necessarily the compounds linked to them
+            . new CanSqlBuilder($this->compounds->requester, AccessType::Read, 'c')->getCanFilter() . '
               AND DATE(e.date) >= :start
               AND DATE(e.date) <= :end
             ORDER BY e.date DESC, c.name ASC';

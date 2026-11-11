@@ -39,7 +39,11 @@ try {
             $bypassReadPermission = true;
         }
     }
-    $Response = new DatabaseController($App, new Items($App->Users, $id, bypassReadPermission: $bypassReadPermission))->getResponse();
+    $Entity = new Items($App->Users, bypassReadPermission: $bypassReadPermission);
+    // the changelog grows with every save and only the changelog mode displays it
+    $Entity->withChangelog = $App->Request->query->getAlpha('mode') === 'changelog';
+    $Entity->setId($id);
+    $Response = new DatabaseController($App, $Entity)->getResponse();
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

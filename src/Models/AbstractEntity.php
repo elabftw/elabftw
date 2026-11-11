@@ -152,6 +152,9 @@ abstract class AbstractEntity extends AbstractRest
 
     public bool $isReadOnly = false;
 
+    // set to false before setId() to skip reading the changelog, see the entity pages in web/
+    public bool $withChangelog = true;
+
     // inserted in sql
     public array $extendedValues = array();
 
@@ -721,7 +724,7 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        $this->entityData['changelog'] = new Changelog($this)->readAll();
+        $this->entityData['changelog'] = $this->withChangelog ? new Changelog($this)->readAll() : array();
         $this->entityData['comments'] = new Comments($this)->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);

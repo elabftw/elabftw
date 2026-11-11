@@ -25,6 +25,7 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsStatus;
@@ -203,7 +204,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
+            'storageUnitsArr' => $this->getStorageUnitsArr(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -258,11 +259,14 @@ abstract class AbstractEntityController implements ControllerInterface
             'pageTitle' => $this->getPageTitle(),
             'statusArr' => $this->statusArr,
             'teamsArr' => $this->App->Teams->readAllVisible(),
-            'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
+            'suggestedTagsArr' => $TeamTags->readSuggestions(
+                array_column($this->Entity->entityData['tags_decoded'], 'tag'),
+                $baseQueryParams->getQuery()->getString('q'),
+            ),
             'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
+            'storageUnitsArr' => $this->getStorageUnitsArr(),
             'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
             'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
@@ -273,6 +277,22 @@ abstract class AbstractEntityController implements ControllerInterface
         $Response->prepare($this->App->Request);
         $Response->setContent($this->App->render('edit.html', $renderArr));
         return $Response;
+    }
+
+    /**
+     * The whole storage hierarchy is only rendered for the move container modal, that is reached from
+     * the containers of an entry that can be edited. The add container modal loads it from the api.
+     * When the first container is added, the page is fetched again to reload the tree, so it appears then.
+     */
+    protected function getStorageUnitsArr(): array
+    {
+        if (!$this->Entity instanceof AbstractConcreteEntity
+            || $this->Entity->isReadOnly
+            || empty($this->Entity->entityData['containers'])
+        ) {
+            return array();
+        }
+        return new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive();
     }
 
     // only the statuses of the entity type of the page are needed, see the child controllers

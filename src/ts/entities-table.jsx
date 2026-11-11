@@ -23,7 +23,7 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
@@ -156,6 +156,7 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
+  const requestVersion = useRef(0);
 
   const onGridReady = event => {
     const columnState = getStoredColumnState();
@@ -268,6 +269,7 @@ const EntitiesTable = ({
 
   // all the entries are loaded in the table, which does client side pagination
   const fetchData = useCallback(async event => {
+    const version = ++requestVersion.current;
     const params = getResolvedEntityFilterParams(event);
     const queryString = params.toString();
 
@@ -275,9 +277,13 @@ const EntitiesTable = ({
       const endpoint = getEntityTypeFromPage(window.location);
       const url = queryString ? `${endpoint}?${queryString}` : endpoint;
       const entities = await ApiC.getJson(url, {notifOnError: 0});
-      setRowData(entities);
+      if (version === requestVersion.current) {
+        setRowData(entities);
+      }
     } catch (error) {
-      console.error(`Could not load entities: ${error}`);
+      if (version === requestVersion.current) {
+        console.error(`Could not load entities: ${error}`);
+      }
     }
   }, [getResolvedEntityFilterParams]);
 
@@ -298,6 +304,8 @@ const EntitiesTable = ({
     window.addEventListener('entity-filters-changed', handleEntityFiltersChanged);
 
     return () => {
+      // A pending response must not update an unmounted or superseded table.
+      requestVersion.current++;
       window.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
     };
   }, [fetchData]);

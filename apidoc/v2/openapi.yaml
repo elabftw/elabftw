@@ -649,7 +649,7 @@ components:
         canread_base:
           type: integer
           description: |
-            Base permission for read access, like for an entry (30 when not given at creation):
+            Base permission for read access, like for an entry (when not given at creation: 40 for a compound imported from PubChem, 30 otherwise):
               - 10: Owner only
               - 20: Owner + Admins
               - 30: Team members
@@ -659,7 +659,7 @@ components:
           example: 30
         canwrite_base:
           type: integer
-          description: Base permission for write access, same values as canread_base. 20 when not given at creation.
+          description: Base permission for write access, same values as canread_base. Defaults to 40 for a compound imported from PubChem, and to 20 otherwise.
           enum: [10, 20, 30, 40, 50]
           example: 20
         canread:
@@ -881,19 +881,19 @@ components:
         canread_base:
           type: integer
           description: |
-            Base permission for read access, like for an entry (30 when not given at creation):
+            Base permission for read access, like for an entry (40 when not given: a compound from PubChem is public data):
               - 10: Owner only
               - 20: Owner + Admins
               - 30: Team members
               - 40: Everyone with an account
               - 50: Everyone with an account (anonymous users never see compounds)
           enum: [10, 20, 30, 40, 50]
-          example: 30
+          example: 40
         canwrite_base:
           type: integer
-          description: Base permission for write access, same values as canread_base. 20 when not given at creation.
+          description: Base permission for write access, same values as canread_base. 40 when not given.
           enum: [10, 20, 30, 40, 50]
-          example: 20
+          example: 40
         canread:
           type: string
           description: JSON permissions for reading the compound, on top of its base.

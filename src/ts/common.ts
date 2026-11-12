@@ -891,10 +891,14 @@ on('set-permission-base', (el: HTMLElement) => {
 // the modal of a compound modal is shown instead of it, and the compound modal comes back when it is closed
 const compoundPermissionsSelector = '#compoundPermissionsModal';
 
-// the permissions chosen for the next compounds to create or import, sent with them: empty if the modal was not opened for that
-function newCompoundPermissions(): Record<string, string> {
+// where a new compound comes from: they have different default permissions, see Compounds::PUBCHEM_CANREAD_BASE
+type NewCompoundOrigin = 'manual' | 'pubchem';
+
+// the permissions chosen for the next compounds to create or import, sent with them:
+// empty if the modal was not opened for that, and the server applies the defaults of the origin
+function newCompoundPermissions(origin: NewCompoundOrigin): Record<string, string> {
   const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
-  if (!modal || modal.dataset.forNewCompound !== '1') {
+  if (!modal || modal.dataset.forNewCompound !== origin) {
     return {};
   }
   const params = {};
@@ -937,15 +941,25 @@ on('compound-permissions', async (el: HTMLElement) => {
       delete modal.dataset.forNewCompound;
       await loadExistingCompoundPermissions(modal, compoundId);
       setPermissionsReloader(modal, () => loadExistingCompoundPermissions(modal, compoundId));
-    } else if (modal.dataset.forNewCompound !== '1') {
-      // a new compound starts from the defaults, then keeps what was chosen until it is created
-      const empty = { teams: [], teamgroups: [], users: [] };
-      const defaultValue = (can: string): PermissionsSectionValue => ({
-        base: Number(modal.querySelector<HTMLElement>(`.permissions-section[data-param="${can}"]`)?.dataset.defaultBase),
-        can: empty,
-      });
-      loadPermissionsModal(modal, { endpoint: '', mode: 'manual', values: { canread: defaultValue('canread'), canwrite: defaultValue('canwrite') } });
-      modal.dataset.forNewCompound = '1';
+    } else {
+      const origin: NewCompoundOrigin = el.dataset.from === 'importFromPubChemModal' ? 'pubchem' : 'manual';
+      if (modal.dataset.forNewCompound !== origin) {
+        // a new compound starts from the defaults of its origin, then keeps what was chosen until it is created:
+        // public for a compound from PubChem, restricted for one added manually
+        const empty = { teams: [], teamgroups: [], users: [] };
+        const defaultValue = (can: 'canread' | 'canwrite'): PermissionsSectionValue => {
+          if (origin === 'pubchem') {
+            const key = can === 'canread' ? 'pubchemCanreadBase' : 'pubchemCanwriteBase';
+            return { base: Number(modal.dataset[key]), baseLabel: modal.dataset[`${key}Human`], can: empty };
+          }
+          return {
+            base: Number(modal.querySelector<HTMLElement>(`.permissions-section[data-param="${can}"]`)?.dataset.defaultBase),
+            can: empty,
+          };
+        };
+        loadPermissionsModal(modal, { endpoint: '', mode: 'manual', values: { canread: defaultValue('canread'), canwrite: defaultValue('canwrite') } });
+        modal.dataset.forNewCompound = origin;
+      }
     }
   } catch (error) {
     notify.error(error);
@@ -1857,7 +1871,7 @@ on('show-compound-molecule', async (el: HTMLElement) => {
 
 on('import-compound', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
-  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate, ...newCompoundPermissions()};
+  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate, ...newCompoundPermissions('pubchem')};
   ApiC.post2location('compounds', params).then(() => {
     // the same permissions apply to the other compounds imported from this search
     document.dispatchEvent(new CustomEvent('dataReload'));
@@ -1935,7 +1949,7 @@ on('save-compound', (el: HTMLElement, event: Event) => {
       });
     } else { // create
       const form = document.getElementById('createCompoundForm') as HTMLFormElement;
-      const params = { ...collectForm(form), ...newCompoundPermissions() };
+      const params = { ...collectForm(form), ...newCompoundPermissions('manual') };
       ApiC.post2location('compounds', params).then(id => {
         resetNewCompoundPermissions();
         ApiC.getJson(`compounds/${id}`).then((json) => {

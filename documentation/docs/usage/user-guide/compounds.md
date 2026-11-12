@@ -64,7 +64,7 @@ Maybe you've just created an never-seen before chemical compound, which means yo
 
 ## Permissions of a compound
 
-Like an entry, each compound has read and write permissions: a base (team members, owner and admins…) on top of which teams, user groups or users can be added. Click the **Permissions** button of the compound window to change them, or of the "Add compound" and "Import from PubChem" windows to choose them before the compound is added. By default, a new compound is visible to the members of your team, and can be modified by you and the Admins of your team. The compounds added before this feature are visible to and modifiable by everyone with an account.
+Like an entry, each compound has read and write permissions: a base (team members, owner and admins…) on top of which teams, user groups or users can be added. Click the **Permissions** button of the compound window to change them, or of the "Add compound" and "Import from PubChem" windows to choose them before the compound is added. By default, a compound imported from PubChem is visible to and modifiable by everyone with an account: it is public data, and a compound can only be added once on the instance. A compound added manually is often sensitive: by default it is visible to the members of your team, and can be modified by you and the Admins of your team, like an experiment. The compounds added before this feature are visible to and modifiable by everyone with an account.
 
 A compound you cannot read is not listed in the compounds database, nor in the compounds linked to an entry, and you cannot link it to an entry. The identifiers of a compound (CAS number, InChIKey, PubChem CID…) are unique on the instance: adding a compound that already exists gives you the existing one if you can read it, and is refused otherwise.
 
@@ -190,45 +190,6 @@ fingerprinted is still saved, but a substructure search cannot find it; a
 Sysadmin can compute the missing fingerprints with
 `bin/console reactions:fingerprint`. The transformation key is only computed
 when every reactant and product has an InChIKey.
-
-### Reaction API
-
-Use `api/v2/{entity_type}/{id}/reactions`, where `entity_type` is `experiments`,
-`items`, `experiments_templates`, or `items_types`.
-
-- `GET`: read current reactions and their components.
-- `POST`: create a reaction, supplying a `components` array with local chemical
-  properties and quantities. A component has a stable `component_key` UUID.
-- `GET /{reaction_id}`: read one reaction scoped to its owning entry.
-- `PATCH /{reaction_id}`: update a reaction. Supply the last read `version` to
-  avoid overwriting a concurrent edit. Omitted fields are retained; a supplied
-  `components` array replaces the component list.
-- `DELETE /{reaction_id}`: delete the reaction while preserving its history.
-- `GET ?history_of={reaction_id}`: read immutable revision snapshots, including
-  those of deleted reactions. Read access to the owning entry is required, and
-  anonymous users cannot read it.
-- `PATCH` on the collection with `action: "calculate"`: validate quantities and
-  return calculated components without saving anything.
-
-A reaction also has two read-only fields: `reaction_smiles` and `reaction_key`
-(null when a reactant or product has no InChIKey).
-
-To search entries by reaction, add these query parameters to
-`GET api/v2/{entity_type}`: `reaction_q` (text), `reaction_structure` (SMILES or
-InChIKey), `reaction_structure_type` (`smarts` to give `reaction_structure` as a
-SMARTS pattern), `reaction_exact` (`1` for identical structures only), `reaction_role`,
-`reaction_compound` (linked compound id), `reaction_item` (linked resource id)
-and `reaction_key`. The role applies to the structure, compound and resource
-criteria, which must all match the same component.
-
-Each planned or actual quantity has a `*_basis` (`mass`, `volume`, `amount`, or
-planned-only `equivalents`) and a nullable `*_value`. Optional `planned_unit` and `actual_unit` preserve the
-entered unit (`g`, `mg`, `mL`, `uL`, `mol`, `mmol`, or planned-only `eq`); their
-defaults follow the basis. `reference_component_key`
-and `yield_basis_component_key` must identify reactants or reagents in that
-reaction. Calculated values use g, mL, mol, g/mol, g/mL, mol/L, seconds, °C and
-absolute pressure in Pa. Purity is expressed as a percentage. Decimal inputs
-support up to 12 fractional places.
 
 The first implementation supports one transformation per reaction record.
 Multi-stage reactions, screening matrices, analytical yields and automatic stock

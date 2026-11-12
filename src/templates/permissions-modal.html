@@ -25,9 +25,19 @@
   {% set modalTitle = 'Change permissions of the selected entries'|trans %}
 {% endif %}
 
+{# the defaults of a compound imported from PubChem, see Compounds::PUBCHEM_CANREAD_BASE and compound-permissions in common.ts #}
+{% if context == 'compound' %}
+  {% set pubchemReadBase = constant('Elabftw\\Models\\Compounds::PUBCHEM_CANREAD_BASE') %}
+  {% set pubchemWriteBase = constant('Elabftw\\Models\\Compounds::PUBCHEM_CANWRITE_BASE') %}
+{% endif %}
+
 <div class='modal fade' id='{{ modalId }}' tabindex='-1' role='dialog' aria-labelledby='{{ modalId }}Label'
   data-permissions-endpoint='{{ endpoint }}'
-  data-permissions-mode='{{ context in ['selected', 'compound'] ? 'manual' : 'auto' }}'>
+  data-permissions-mode='{{ context in ['selected', 'compound'] ? 'manual' : 'auto' }}'
+  {%- if context == 'compound' %}
+  data-pubchem-canread-base='{{ pubchemReadBase.value }}' data-pubchem-canread-base-human='{{ pubchemReadBase.toHuman() }}'
+  data-pubchem-canwrite-base='{{ pubchemWriteBase.value }}' data-pubchem-canwrite-base-human='{{ pubchemWriteBase.toHuman() }}'
+  {%- endif %}>
   <div class='modal-dialog modal-lg' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -70,7 +80,8 @@
           {% include 'permissions-section.html' with {rw: 'canwrite', param: 'default_write', baseParam: 'default_write_base', baseValue: data.default_write_base, can_base: data.default_write_base_human, can: data.default_write|canToHuman(App.Users)} %}
 
         {% elseif context == 'compound' %}
-          {# the defaults of a new compound, see Compounds::DEFAULT_CANREAD_BASE: the values of an existing one are loaded when the modal opens #}
+          {# the defaults of a compound added manually, see Compounds::DEFAULT_CANREAD_BASE: the ones of a compound from PubChem are on the modal, #}
+          {# and the values of an existing one are loaded when the modal opens #}
           {% set readBase = constant('Elabftw\\Models\\Compounds::DEFAULT_CANREAD_BASE') %}
           {% set writeBase = constant('Elabftw\\Models\\Compounds::DEFAULT_CANWRITE_BASE') %}
           <p class='smallgray'>{{ 'The compound is shared with whoever can read it, and can be modified by whoever can write to it.'|trans }}</p>

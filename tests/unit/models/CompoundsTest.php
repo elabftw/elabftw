@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
@@ -144,6 +145,9 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertContains('H300', $codes);
         $this->assertContains('P301+P316', $codes);
         $this->assertSame('IF SWALLOWED: Get emergency medical help immediately.', $compound['ghs_statements'][array_search('P301+P316', $codes, true)]['statement']);
+        // a compound from PubChem is public by default
+        $this->assertSame(Compounds::PUBCHEM_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::PUBCHEM_CANWRITE_BASE->value, $compound['canwrite_base']);
         // test with a user without can_manage_compounds
         $user = $this->getRandomUserInTeam(2);
         $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter(), false);
@@ -264,6 +268,33 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         // and for writing
         $OwnerCompounds->patch(Action::Update, array('canwrite_base' => BasePermissions::Organization->value));
         $this->assertSame('Renamed', $OtherCompounds->patch(Action::Update, array('name' => 'Renamed'))['name']);
+    }
+
+    public function testDefaultPermissions(): void
+    {
+        $this->assertSame(BasePermissions::Organization, Compounds::PUBCHEM_CANREAD_BASE);
+        $this->assertSame(BasePermissions::Organization, Compounds::PUBCHEM_CANWRITE_BASE);
+        $this->assertSame(BasePermissions::Team, Compounds::DEFAULT_CANREAD_BASE);
+        $this->assertSame(BasePermissions::User, Compounds::DEFAULT_CANWRITE_BASE);
+
+        // added manually: restricted, like an experiment
+        $id = $this->Compounds->postAction(Action::Create, array('name' => 'Sensitive compound'));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
+
+        // with a PubChem CID: public
+        $id = $this->Compounds->createFromCompound(new Compound(cid: random_int(100000000, 999999999), name: 'From PubChem'));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(Compounds::PUBCHEM_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::PUBCHEM_CANWRITE_BASE->value, $compound['canwrite_base']);
+
+        // without one: restricted
+        $id = $this->Compounds->createFromCompound(new Compound(name: 'Not from PubChem', inChIKey: strtoupper(bin2hex(random_bytes(7)))));
+        $this->Compounds->setId($id);
+        $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $this->Compounds->readOne()['canread_base']);
     }
 
     public function testCreateWithPermissions(): void

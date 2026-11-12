@@ -68,11 +68,16 @@ final class Compounds extends AbstractRest
 {
     use SetIdTrait;
 
-    // a new compound is visible to the team, and modifiable by its owner and the Admins of the team:
-    // same as the column defaults in structure.sql, and as the documentation says
+    // a compound added manually is often sensitive: by default it is visible to the team, and modifiable by its owner and the Admins of the team,
+    // like an experiment. Same as the column defaults in structure.sql, and as the documentation says
     public const BasePermissions DEFAULT_CANREAD_BASE = BasePermissions::Team;
 
     public const BasePermissions DEFAULT_CANWRITE_BASE = BasePermissions::User;
+
+    // a compound from PubChem is public data, and can only be added once on the instance: by default everyone with an account can read and modify it
+    public const BasePermissions PUBCHEM_CANREAD_BASE = BasePermissions::Organization;
+
+    public const BasePermissions PUBCHEM_CANWRITE_BASE = BasePermissions::Organization;
 
     // columns with the UNIQUE constraint: identifiers of a compound
     private const array UNIQUE_KEYS = array(
@@ -258,7 +263,8 @@ final class Compounds extends AbstractRest
         $this->canWriteOrExplode();
         // TODO add action fromCid or fromSmiles
         // and use fingerprinter
-        $permissions = $this->getCreatePermissions($reqBody);
+        // Duplicate imports the compound from PubChem
+        $permissions = $this->getCreatePermissions($reqBody, fromPubChem: $action === Action::Duplicate);
         return match ($action) {
             Action::Duplicate => $this->createCompoundFromIdentifier($reqBody, $permissions),
             default => $this->create(
@@ -570,7 +576,8 @@ final class Compounds extends AbstractRest
 
     public function createFromCompound(Compound $compound, ?array $permissions = null): int
     {
-        $permissions ??= $this->getCreatePermissions(array());
+        // a compound with a PubChem CID comes from PubChem: it gets the defaults for PubChem compounds
+        $permissions ??= $this->getCreatePermissions(array(), fromPubChem: $compound->cid !== null);
         return $this->create(
             canreadBase: $permissions['canread_base'],
             canwriteBase: $permissions['canwrite_base'],
@@ -674,15 +681,20 @@ final class Compounds extends AbstractRest
     }
 
     /**
-     * The permissions of a new compound, validated like the ones of an entry, with the defaults for what is not given
+     * The permissions of a new compound, validated like the ones of an entry, with the defaults for what is not given:
+     * the ones of a compound from PubChem, or of a compound added manually
      *
      * @return array{canread_base: BasePermissions, canwrite_base: BasePermissions, canread: string, canwrite: string}
      */
-    private function getCreatePermissions(array $reqBody): array
+    private function getCreatePermissions(array $reqBody, bool $fromPubChem = false): array
     {
         return array(
-            'canread_base' => isset($reqBody['canread_base']) ? Check::basePermission((int) $reqBody['canread_base']) : self::DEFAULT_CANREAD_BASE,
-            'canwrite_base' => isset($reqBody['canwrite_base']) ? Check::basePermission((int) $reqBody['canwrite_base']) : self::DEFAULT_CANWRITE_BASE,
+            'canread_base' => isset($reqBody['canread_base'])
+                ? Check::basePermission((int) $reqBody['canread_base'])
+                : ($fromPubChem ? self::PUBCHEM_CANREAD_BASE : self::DEFAULT_CANREAD_BASE),
+            'canwrite_base' => isset($reqBody['canwrite_base'])
+                ? Check::basePermission((int) $reqBody['canwrite_base'])
+                : ($fromPubChem ? self::PUBCHEM_CANWRITE_BASE : self::DEFAULT_CANWRITE_BASE),
             'canread' => isset($reqBody['canread']) ? Check::visibility((string) $reqBody['canread']) : self::EMPTY_CAN_JSON,
             'canwrite' => isset($reqBody['canwrite']) ? Check::visibility((string) $reqBody['canwrite']) : self::EMPTY_CAN_JSON,
         );

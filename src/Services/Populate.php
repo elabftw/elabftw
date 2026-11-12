@@ -240,6 +240,7 @@ final class Populate
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     metadata: $items_types['metadata'] ?? '{}',
                 );
+                $ItemsTypes->setId($itemTypeId);
                 $this->queueLinks($ItemsTypes, $items_types);
                 $this->output->writeln(sprintf('├ + resource template: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
             }

@@ -56,6 +56,7 @@ final class MakeStorageHazardsPdf extends AbstractMakePdf
         $renderArr = array(
             'css' => $this->getCss(),
             'hazards' => $this->hazards,
+            'url' => $this->getUrl(),
             'ghsImagesPath' => dirname(__DIR__, 2) . '/web/assets/images/ghs',
             'useCjk' => $this->storageUnits->requester->userData['cjk_fonts'],
         );
@@ -65,5 +66,13 @@ final class MakeStorageHazardsPdf extends AbstractMakePdf
         $output = $this->mpdf->OutputBinaryData();
         $this->contentSize = strlen($output);
         return $output;
+    }
+
+    /**
+     * The url of this very sheet, for the qr code in the footer: scanning it gets the up to date hazards
+     */
+    public function getUrl(): string
+    {
+        return sprintf('%s/api/v2/storage_units/%d?format=pdf', Env::asUrl('SITE_URL'), $this->hazards['location']['id']);
     }
 }

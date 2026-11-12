@@ -26,8 +26,19 @@
   <body>
     <htmlpagefooter name='footer'>
       <div class='footer-block footer'>
-        {{ 'Hazards recorded in eLabFTW for this location when this sheet was made: check the inventory for later changes.'|trans }}
-        <p style='font-size:6pt;'>{{ 'File generated on'|trans }} {DATE d-m-Y} {DATE H:i} — {PAGENO} / {nbpg}</p>
+        <table class='noborder' role='presentation' style='width: 100%;'>
+          <tr>
+            <td class='noborder' style='text-align: left; vertical-align: middle;'>
+              {{ 'Hazards recorded in eLabFTW for this location when this sheet was made: check the inventory for later changes.'|trans }}
+              <p>{{ 'Up to date information can be fetched by scanning this QR Code'|trans }}:<br>{{ url }}</p>
+              <p style='font-size:6pt;'>{{ 'File generated on'|trans }} {DATE d-m-Y} {DATE H:i} — {PAGENO} / {nbpg}</p>
+            </td>
+            <td class='noborder' style='width: 25mm; text-align: right; vertical-align: middle;'>
+              {# use raw here as this is an mpdf special tag and the url needs to be passed unmodified #}
+              <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
+            </td>
+          </tr>
+        </table>
       </div>
     </htmlpagefooter>
     <sethtmlpagefooter name='footer' value='on' />

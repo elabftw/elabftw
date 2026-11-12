@@ -23,6 +23,7 @@ use Elabftw\Services\NullFingerprinter;
 use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 
+use function sprintf;
 use function str_starts_with;
 
 class MakeStorageHazardsPdfTest extends \PHPUnit\Framework\TestCase
@@ -44,5 +45,6 @@ class MakeStorageHazardsPdfTest extends \PHPUnit\Framework\TestCase
         $MakePdf = new MakeStorageHazardsPdf(new MpdfProvider('Toto'), $StorageUnits);
         $this->assertTrue(str_starts_with($MakePdf->getFileContent(), '%PDF'));
         $this->assertSame('hazards-Hazards-pdf-room.pdf', $MakePdf->getFileName());
+        $this->assertStringEndsWith(sprintf('/api/v2/storage_units/%d?format=pdf', $roomId), $MakePdf->getUrl());
     }
 }

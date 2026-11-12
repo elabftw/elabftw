@@ -27,6 +27,7 @@ use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
 use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\FavTags;
@@ -184,7 +185,7 @@ abstract class AbstractEntityController implements ControllerInterface
     protected function view(): Response
     {
         // opened with its access key (the page bypasses the read permission for it): the reaction previews cannot be loaded
-        // from the API, which needs a session and checks the usual permissions, so they come with the page, see reaction-summary.html
+        // from the API, which needs a session and checks the usual permissions, so they come with the page, see reaction-summary.ts
         if ($this->Entity->bypassReadPermission && !empty($this->Entity->entityData['reactions'])) {
             $this->Entity->entityData['reactions'] = new Reactions($this->Entity)->addPreviews($this->Entity->entityData['reactions']);
         }
@@ -313,7 +314,8 @@ abstract class AbstractEntityController implements ControllerInterface
         $this->Entity->canOrExplode(AccessType::Read);
 
         $renderArr = array(
-            'changes' => $this->Entity->entityData['changelog'],
+            // the entry pages read the entry without its changelog
+            'changes' => new Changelog($this->Entity)->readAll(),
             'Entity' => $this->Entity,
         );
 

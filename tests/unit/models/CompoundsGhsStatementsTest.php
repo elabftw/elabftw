@@ -86,18 +86,6 @@ class CompoundsGhsStatementsTest extends \PHPUnit\Framework\TestCase
         new CompoundsGhsStatements($this->Compounds, 1)->readOne();
     }
 
-    public function testAddUnknownCode(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Statements->postAction(Action::Create, array('code' => 'H999'));
-    }
-
-    public function testAddWithdrawnCode(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->Statements->postAction(Action::Create, array('code' => 'P281'));
-    }
-
     public function testInvalidAction(): void
     {
         $this->expectException(ImproperActionException::class);

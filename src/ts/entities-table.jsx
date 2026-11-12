@@ -27,7 +27,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
-import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
+import { DEFAULT_AG_GRID_PAGINATION, errorMessage, getEntityTypeFromPage } from './misc';
+import { readStorage, writeStorage } from './localStorage';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
 
@@ -94,24 +95,13 @@ const applyNumberParamFallback = (params, param, fallback) => {
 
 const getStoredColumnState = () => {
   try {
-    return JSON.parse(
-      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
-    );
+    return JSON.parse(readStorage(COLUMN_STATE_STORAGE_KEY) ?? 'null');
   } catch {
     return null;
   }
 };
 
-const storeColumnState = api => {
-  try {
-    localStorage.setItem(
-      COLUMN_STATE_STORAGE_KEY,
-      JSON.stringify(api.getColumnState())
-    );
-  } catch {
-    // localStorage might be unavailable
-  }
-};
+const storeColumnState = api => writeStorage(COLUMN_STATE_STORAGE_KEY, JSON.stringify(api.getColumnState()));
 
 const getEntityFilterParams = event => {
   const detail = event?.detail;
@@ -291,7 +281,7 @@ const EntitiesTable = ({
       }
       // the rows of the previous query are not the results of this one
       setRowData([]);
-      window.dispatchEvent(new CustomEvent('entity-list-rejected', { detail: error instanceof Error ? error.message : String(error) }));
+      window.dispatchEvent(new CustomEvent('entity-list-rejected', { detail: errorMessage(error) }));
       console.error(`Could not load entities: ${error}`);
     }
   }, [getResolvedEntityFilterParams]);

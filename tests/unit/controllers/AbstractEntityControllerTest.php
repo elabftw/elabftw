@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 use function array_map;
+use function json_decode;
 use function sprintf;
 
 class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
@@ -79,13 +80,21 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
             $user,
         );
         $App->boot();
-        $image = static fn(Experiments $Entity): string => (string) new Crawler((string) new ExperimentsController($App, $Entity)->getResponse()->getContent())
-            ->filter('#reactionsList img')->attr('src');
+        // the page gives the reactions to reaction-summary.ts, which renders them
+        $reaction = static fn(Experiments $Entity): array => json_decode(
+            (string) new Crawler((string) new ExperimentsController($App, $Entity)->getResponse()->getContent())->filter('#reactionsList')->attr('data-reactions'),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        )[0];
 
         // a normal view loads the preview from the api
-        self::assertSame(sprintf('/api/v2/experiments/%d/reactions/%d?format=binary', $entity->id, $reactionId), $image(new Experiments($user, $entity->id)));
+        $summary = $reaction(new Experiments($user, $entity->id));
+        self::assertSame($reactionId, $summary['id']);
+        self::assertSame(1, (int) $summary['has_preview']);
+        self::assertArrayNotHasKey('preview_png', $summary);
         // opened with the access key, the api would not authorize it: it is in the page
-        self::assertSame('data:image/png;base64,' . $png, $image(new Experiments($user, $entity->id, bypassReadPermission: true)));
+        self::assertSame($png, $reaction(new Experiments($user, $entity->id, bypassReadPermission: true))['preview_png']);
     }
 
     public function testShowRendersTheBatchContainerModalWithoutReadingStorage(): void

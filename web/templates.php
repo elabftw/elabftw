@@ -39,11 +39,7 @@ try {
             $bypassReadPermission = true;
         }
     }
-    $Entity = new Templates($App->Users, bypassReadPermission: $bypassReadPermission);
-    // the changelog grows with every save and only the changelog mode displays it
-    $Entity->withChangelog = $App->Request->query->getAlpha('mode') === 'changelog';
-    $Entity->setId($id);
-    $Response = new ExperimentsController($App, $Entity)->getResponse();
+    $Response = new ExperimentsController($App, new Templates($App->Users, $id, bypassReadPermission: $bypassReadPermission, withChangelog: false))->getResponse();
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

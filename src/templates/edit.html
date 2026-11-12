@@ -225,7 +225,8 @@
 {# modals live outside of the tab panes, as they cannot be displayed from a hidden parent #}
 {% include 'chem-editor-edit-modals.html' %}
 {% include 'reaction-edit-modal.html' %}
-{% include 'doodle-load-attachment-modal.html' %}
+{# shared by the chemical and image editors #}
+{% include 'load-attachment-modal.html' %}
 
 <div id='info'
     data-page='edit'

@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\Db;
@@ -53,10 +52,14 @@ use function array_intersect_key;
 use function array_keys;
 use function array_map;
 use function array_sum;
+use function array_unique;
+use function array_values;
 use function count;
+use function explode;
 use function implode;
 use function is_array;
 use function is_string;
+use function preg_match;
 use function sprintf;
 use function strlen;
 use function trim;
@@ -110,6 +113,11 @@ final class Compounds extends AbstractRest
 
     // every candidate structure goes through Open Babel on each search: above this, it would take too long
     private const int MAX_SMARTS_CANDIDATES = 20000;
+
+    private const string INCHI_KEY_REGEX = '/^[A-Z]{14}-[A-Z]{10}-[A-Z]$/';
+
+    // the components of a reaction, see ReactionParams
+    private const int MAX_INCHI_KEYS = 128;
 
     // the text search of readAll(), on the identifiers, names, formula and GHS codes
     private const string TEXT_SEARCH_SQL = ' AND (
@@ -181,10 +189,16 @@ final class Compounds extends AbstractRest
         // every criterion is in the same query: they combine with each other, the permissions and the states before the limit
         $query = $queryParams->getQuery();
         $text = $query->getString('q');
-        $where = new CanSqlBuilder($this->requester, AccessType::Read)->getCanFilter();
+        $where = new CompoundPermissions($this->requester)->getCanFilter('entity');
         $similarity = '';
         if ($text !== '') {
             $where .= self::TEXT_SEARCH_SQL;
+        }
+        // exact InChIKeys, comma separated: an index lookup, for the structures drawn in a reaction (see chem-reactions.ts)
+        $inchiKeys = self::getInchiKeys($query->getString('inchi_key'));
+        if ($inchiKeys !== array()) {
+            // validated by getInchiKeys(): safe to inline
+            $where .= sprintf(" AND entity.inchi_key IN ('%s')", implode("', '", $inchiKeys));
         }
         if (!empty($query->get('search_fp_smi'))) {
             $fp = $this->fingerprinter->calculate('smi', $query->getString('search_fp_smi'));
@@ -241,7 +255,12 @@ final class Compounds extends AbstractRest
     {
         $this->canWriteCompoundOrExplode();
         foreach ($params as $target => $content) {
-            $this->update(new CompoundParams($target, $content));
+            $compoundParams = new CompoundParams($target, $content);
+            // deleting through the state goes through the same check as destroy()
+            if ($compoundParams->getColumn() === 'state' && $compoundParams->getContent() === State::Deleted->value) {
+                $this->assertNotLinkedOrExplode();
+            }
+            $this->update($compoundParams);
         }
         return $this->readOne();
     }
@@ -299,23 +318,7 @@ final class Compounds extends AbstractRest
     public function destroy(bool $recursive = false): bool
     {
         $this->canWriteCompoundOrExplode();
-        // check if the compound is linked somewhere first
-        $sql = 'SELECT
-          CASE
-            WHEN EXISTS(SELECT 1 FROM compounds2experiments             WHERE compound_id = :compound_id)
-              OR EXISTS(SELECT 1 FROM reaction_components               WHERE compound_id = :compound_id)
-              OR EXISTS(SELECT 1 FROM compounds2items                   WHERE compound_id = :compound_id)
-              OR EXISTS(SELECT 1 FROM compounds2experiments_templates   WHERE compound_id = :compound_id)
-              OR EXISTS(SELECT 1 FROM compounds2items_types             WHERE compound_id = :compound_id)
-            THEN 1
-            ELSE 0
-          END AS is_present';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':compound_id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        if (((int) $req->fetchColumn()) === 1) {
-            throw new ImproperActionException(_('Cannot delete a linked compound.'));
-        }
+        $this->assertNotLinkedOrExplode();
         return $this->update(new CompoundParams('state', State::Deleted->value));
     }
 
@@ -612,7 +615,7 @@ final class Compounds extends AbstractRest
     public function canWriteCompoundOrExplode(): void
     {
         $this->canWriteOrExplode();
-        new CompoundPermissions($this->requester)->canOrExplode($this->readRow(), AccessType::Write);
+        new CompoundPermissions($this->requester)->canOrExplodeFromId($this->id ?? 0, AccessType::Write);
     }
 
     /**
@@ -731,6 +734,29 @@ final class Compounds extends AbstractRest
         return Compound::extractGhsCodes($text);
     }
 
+    /**
+     * A compound linked to an entry or used in a reaction cannot be deleted: a reaction checks its linked compounds on every save
+     */
+    private function assertNotLinkedOrExplode(): void
+    {
+        $sql = 'SELECT
+          CASE
+            WHEN EXISTS(SELECT 1 FROM compounds2experiments             WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM reaction_components               WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM compounds2items                   WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM compounds2experiments_templates   WHERE compound_id = :compound_id)
+              OR EXISTS(SELECT 1 FROM compounds2items_types             WHERE compound_id = :compound_id)
+            THEN 1
+            ELSE 0
+          END AS is_present';
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':compound_id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+        if (((int) $req->fetchColumn()) === 1) {
+            throw new ImproperActionException(_('Cannot delete a linked compound.'));
+        }
+    }
+
     /** The compound with its permission columns, without checking them */
     private function readRow(): array
     {
@@ -818,6 +844,26 @@ final class Compounds extends AbstractRest
         }
         // ints from the database: safe to inline
         return sprintf(' AND entity.id IN (%s)', implode(', ', array_map(static fn(int|string $index): int => (int) $rows[$index]['id'], $matches)));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function getInchiKeys(string $list): array
+    {
+        if (trim($list) === '') {
+            return array();
+        }
+        $keys = array_values(array_unique(array_map(trim(...), explode(',', $list))));
+        if (count($keys) > self::MAX_INCHI_KEYS) {
+            throw new ImproperActionException(sprintf('At most %d InChIKeys can be searched at once.', self::MAX_INCHI_KEYS));
+        }
+        foreach ($keys as $key) {
+            if (preg_match(self::INCHI_KEY_REGEX, $key) !== 1) {
+                throw new ImproperActionException(sprintf('Invalid InChIKey: %s', $key));
+            }
+        }
+        return $keys;
     }
 
     // the permissions filter always has :userid, the text search has :query

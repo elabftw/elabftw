@@ -6,11 +6,11 @@
  * @package elabftw
  */
 import type { Ketcher } from 'ketcher-core';
-import type { Upload } from './interfaces';
 import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
-import { hideModal, isModalShown, onModalEvent, showModal } from './common';
+import { hideModal, onModalEvent, showModal } from './common';
 import { BusyState, showFormError } from './form-state';
+import { isCompatible, showLoadAttachmentModal } from './load-attachment';
 import { errorMessage, reloadUploads } from './misc';
 import { showTab } from './tabbed-sections';
 import { notify } from './notify';
@@ -26,27 +26,19 @@ export async function loadAttachmentFromList(uploadId: string, name: string): Pr
 }
 
 const saveModalSelector = '#chemSaveAttachmentModal';
-const loadModalSelector = '#chemLoadAttachmentModal';
 
 export function initChemAttachments(ketcher: Ketcher): void {
   const saveForm = document.getElementById('chemSaveAttachmentForm') as HTMLFormElement;
   // only an entry in edit mode has attachments to save to or load from
   if (!saveForm) return;
 
-  const loadForm = document.getElementById('chemLoadAttachmentForm') as HTMLFormElement;
   const saveButton = document.getElementById('chemSaveAttachment') as HTMLButtonElement;
   const loadButton = document.getElementById('chemLoadAttachment') as HTMLButtonElement;
   const filename = saveForm.elements.namedItem('filename') as HTMLInputElement;
   const formatSelect = saveForm.elements.namedItem('format') as HTMLSelectElement;
-  const attachmentSelect = loadForm.elements.namedItem('attachment') as HTMLSelectElement;
-  const loadSubmit = loadForm.querySelector<HTMLButtonElement>('[type="submit"]');
-  const loading = document.getElementById('chemAttachmentsLoading');
-  const empty = document.getElementById('chemAttachmentsEmpty');
   const saveError = document.getElementById('chemSaveAttachmentError');
-  const loadError = document.getElementById('chemLoadAttachmentError');
   const endpoint = saveForm.dataset.endpoint;
   const extensions: string[] = JSON.parse(saveForm.dataset.extensions);
-  const isCompatible = (name: string): boolean => extensions.some(extension => name.toLowerCase().endsWith('.' + extension));
   const state = new BusyState([saveButton, loadButton]);
 
   const formats = [
@@ -61,12 +53,10 @@ export function initChemAttachments(ketcher: Ketcher): void {
   ];
   formatSelect.replaceChildren(...formats.map(format => new Option(format.label, format.value)));
 
-  // Avoid dismissing a modal while its save/load operation is still running.
-  for (const selector of [saveModalSelector, loadModalSelector]) {
-    onModalEvent(selector, 'hide', event => {
-      if (state.busy) event.preventDefault();
-    });
-  }
+  // Avoid dismissing the modal while its save operation is still running.
+  onModalEvent(saveModalSelector, 'hide', event => {
+    if (state.busy) event.preventDefault();
+  });
 
   saveButton.disabled = false;
   loadButton.disabled = false;
@@ -105,52 +95,27 @@ export function initChemAttachments(ketcher: Ketcher): void {
     await reloadUploads().catch(error => notify.error(error));
   };
 
-  loadButton.onclick = async () => {
-    loadError.hidden = true;
-    empty.hidden = true;
-    loading.hidden = false;
-    attachmentSelect.replaceChildren();
-    attachmentSelect.disabled = true;
-    loadSubmit.disabled = true;
-    loadButton.disabled = true;
-    showModal(loadModalSelector);
-    try {
-      const uploads = await ApiC.getJson<Upload[]>(endpoint);
-      const compatible = uploads.filter(upload => isCompatible(upload.real_name));
-      attachmentSelect.replaceChildren(...compatible.map(upload => new Option(upload.real_name, String(upload.id))));
-      empty.hidden = compatible.length > 0;
-    } catch (error) {
-      showFormError(loadError, error);
-    } finally {
-      loading.hidden = true;
-      attachmentSelect.disabled = attachmentSelect.options.length === 0;
-      loadSubmit.disabled = attachmentSelect.disabled;
-      loadButton.disabled = false;
+  // replace the drawing with an attachment: false if the user keeps the current drawing
+  const loadDrawing = async (uploadId: string, name: string): Promise<boolean> => {
+    const response = await ApiC.get(`${endpoint}/${uploadId}`, { format: 'binary', notifOnError: 0 });
+    const loaded = await loadChemDrawing(ketcher, await response.text(), { confirm: loadButton.dataset.confirm, error: loadButton.dataset.error });
+    if (loaded) {
+      filename.value = name.replace(/\.[^.]+$/, '');
+      showTab('chem', { scroll: true });
     }
+    return loaded;
   };
 
+  loadButton.onclick = () => {
+    if (state.busy) return;
+    void showLoadAttachmentModal({ extensions, load: upload => loadDrawing(String(upload.id), upload.real_name) });
+  };
+
+  // from the attachments list, without the modal: the save form only serves to mark the editor as busy
   const loadAttachment = async (uploadId: string, name: string): Promise<void> => {
-    if (state.busy || !isCompatible(name)) return;
-    loadError.hidden = true;
-    const loaded = await state.run(loadForm, async () => {
-      const response = await ApiC.get(`${endpoint}/${uploadId}`, { format: 'binary', notifOnError: 0 });
-      const content = await response.text();
-      return loadChemDrawing(ketcher, content, { confirm: loadForm.dataset.confirm, error: loadForm.dataset.error });
-    }, error => {
-      showFormError(loadError, error);
-      // Loading from the attachments list happens with the modal closed, where the form error is not visible.
-      if (!isModalShown(loadModalSelector)) notify.error(errorMessage(error));
-    });
-    if (!loaded) return;
-    filename.value = name.replace(/\.[^.]+$/, '');
-    hideModal(loadModalSelector);
-    showTab('chem', { scroll: true });
+    if (state.busy || !isCompatible(name, extensions)) return;
+    await state.run(saveForm, () => loadDrawing(uploadId, name), error => notify.error(errorMessage(error)));
   };
 
-  loadForm.onsubmit = event => {
-    event.preventDefault();
-    if (!attachmentSelect.value) return;
-    void loadAttachment(attachmentSelect.value, attachmentSelect.selectedOptions[0].text);
-  };
   resolveLoader(loadAttachment);
 }

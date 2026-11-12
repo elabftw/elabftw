@@ -27,6 +27,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
+import { readStorage, writeStorage } from './localStorage';
 import i18next from './i18n';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
@@ -120,24 +121,13 @@ const rowSelection = {
 
 const getStoredColumnState = () => {
   try {
-    return JSON.parse(
-      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
-    );
+    return JSON.parse(readStorage(COLUMN_STATE_STORAGE_KEY) ?? 'null');
   } catch {
     return null;
   }
 };
 
-const storeColumnState = api => {
-  try {
-    localStorage.setItem(
-      COLUMN_STATE_STORAGE_KEY,
-      JSON.stringify(api.getColumnState())
-    );
-  } catch {
-    // localStorage might be unavailable
-  }
-};
+const storeColumnState = api => writeStorage(COLUMN_STATE_STORAGE_KEY, JSON.stringify(api.getColumnState()));
 
 const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelpId, searchPlaceholder, syncUrl }) => {
     const [rowData, setRowData] = useState([]);

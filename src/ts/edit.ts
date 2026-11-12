@@ -14,6 +14,7 @@ import {
 import { Target, Model, Action } from './interfaces';
 import './doodle';
 import './tabbed-sections';
+import { initReactionsList } from './reaction-summary';
 import { getEditor } from './Editor.class';
 import tinymce from 'tinymce/tinymce';
 import DOMPurify from 'dompurify';
@@ -23,6 +24,8 @@ import { getRecoveryData, removeRecoveryData } from './recovery';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { enableMarkdownImagePaste } from './pasteImage';
+
+initReactionsList();
 
 // the main text tab can be shown without a scroll or resize, so let tinymce update its height and sticky toolbar now
 document.addEventListener('tab-shown', (event: CustomEvent<string>) => {

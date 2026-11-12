@@ -2,23 +2,19 @@
 {% if editReactions or Entity.entityData.reactions %}
 <section id='reactionsSection' class='mt-3' aria-label='{{ 'Reactions'|trans }}'>
   <h3>{{ 'Reactions'|trans }}</h3>
-  <div id='reactionsList'>
-    {% for reaction in Entity.entityData.reactions|default([]) %}
-      <article class='border rounded p-3 mb-3' data-reaction-id='{{ reaction.id }}'>
-        <div class='d-flex align-items-center justify-content-between'>
-          <h4>{{ reaction.title }}</h4>
-          {% if editReactions %}
-            <div class='btn-group'>
-              <button type='button' class='btn btn-sm btn-secondary' data-reaction-action='load'>{{ 'Load in editor'|trans }}</button>
-              <button type='button' class='btn btn-sm btn-primary' data-reaction-action='edit'>{{ 'Edit'|trans }}</button>
-              <button type='button' class='btn btn-sm btn-danger' data-reaction-action='delete' aria-label='{{ 'Delete reaction'|trans }}'><i class='fas fa-trash-alt'></i></button>
-            </div>
-          {% endif %}
-        </div>
-        {% include 'reaction-summary.html' with {'searchLinks': true} %}
-      </article>
-    {% endfor %}
-  </div>
+  {# rendered by reaction-summary.ts, from the summaries of the entry #}
+  <div id='reactionsList'
+    data-reactions='{{ Entity.entityData.reactions|default([])|json_encode }}'
+    data-entity-type='{{ Entity.entityType.value }}'
+    data-entity-id='{{ Entity.id }}'
+    data-label-same-reaction='{{ 'Find experiments with the same reaction'|trans }}'
+    data-label-same-compound='{{ 'Find experiments using this compound'|trans }}'
+    {% if editReactions %}
+    data-label-load='{{ 'Load in editor'|trans }}'
+    data-label-edit='{{ 'Edit'|trans }}'
+    data-label-delete='{{ 'Delete reaction'|trans }}'
+    {% endif %}
+  ></div>
   {% if editReactions %}
     <p class='text-muted'>{{ 'Draw a reaction in the chemical editor, then select Create reaction to register its components and quantities.'|trans }}</p>
   {% endif %}

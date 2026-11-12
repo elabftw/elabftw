@@ -7,7 +7,7 @@
   <div class='my-2'>
     <button type='button' id='chemCreateReaction' class='btn btn-primary mr-2' data-cy='chem-create-reaction' disabled><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Create reaction'|trans }}</button>
     <button type='button' id='chemSaveAttachment' class='btn btn-primary mr-2' data-cy='chem-save-attachment' disabled><i class='fas fa-paperclip fa-fw mr-1'></i>{{ 'Save as...'|trans }}</button>
-    <button type='button' id='chemLoadAttachment' class='btn btn-secondary' data-cy='chem-load-attachment' disabled><i class='fas fa-folder-open fa-fw mr-1'></i>{{ 'Load attachment'|trans }}</button>
+    <button type='button' id='chemLoadAttachment' class='btn btn-secondary' data-cy='chem-load-attachment' data-confirm='{{ 'Replace the current drawing with this attachment?'|trans }}' data-error='{{ 'Could not load this attachment as a chemical structure.'|trans }}' disabled><i class='fas fa-folder-open fa-fw mr-1'></i>{{ 'Load attachment'|trans }}</button>
   </div>
   <div class='input-group my-2'>
     <button type='button' {{ App.Users.userData.can_manage_compounds == 0 and App.Config.configArr.compounds_require_edit_rights == 1 ? 'disabled' }} class='btn btn-primary mr-2' data-action='create-compound-from-editor'>{{ 'Add to compounds database'|trans }}</button>

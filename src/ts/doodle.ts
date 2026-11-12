@@ -8,14 +8,13 @@
 import { getInput, reloadUploads } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
-import type { Upload } from './interfaces';
 import { ApiC } from './api';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { isCompatible, showLoadAttachmentModal } from './load-attachment';
 import { notify } from './notify';
 import { getUploadUrl, uploadFileToEntity } from './pasteImage';
 import { showTab } from './tabbed-sections';
-import { hideModal, showModal } from './common';
 
 const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
 if (doodleCanvas) {
@@ -32,7 +31,6 @@ if (doodleCanvas) {
 
   const doodleDiv = document.getElementById('doodleDiv');
   const extensions: string[] = JSON.parse(doodleDiv.dataset.extensions);
-  const isCompatible = (name: string): boolean => extensions.some(extension => name.toLowerCase().endsWith('.' + extension));
   const confirmReplace = (): boolean => !hasContent || confirm(doodleDiv.dataset.confirmReplace);
 
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
@@ -158,46 +156,15 @@ if (doodleCanvas) {
   });
 
   // pick one of the image attachments of the entry
-  const loadModal = '#doodleLoadAttachmentModal';
-  const loadForm = document.getElementById('doodleLoadAttachmentForm') as HTMLFormElement;
-  const attachmentSelect = document.getElementById('doodleAttachmentSelect') as HTMLSelectElement;
-  const loadSubmit = loadForm.querySelector<HTMLButtonElement>('[type="submit"]');
-  const loading = document.getElementById('doodleAttachmentsLoading');
-  const empty = document.getElementById('doodleAttachmentsEmpty');
-  // the api returns the storage, which the shared Upload interface does not declare
-  type StoredUpload = Upload & { id: number; storage: number };
-  let compatible: StoredUpload[] = [];
-
-  on('doodle-load-attachment', async () => {
-    empty.hidden = true;
-    loading.hidden = false;
-    attachmentSelect.replaceChildren();
-    attachmentSelect.disabled = true;
-    loadSubmit.disabled = true;
-    showModal(loadModal);
-    try {
-      const uploads = await ApiC.getJson<StoredUpload[]>(`${entity.type}/${entity.id}/${Model.Upload}`);
-      compatible = uploads.filter(upload => isCompatible(upload.real_name));
-      attachmentSelect.replaceChildren(...compatible.map(upload => new Option(upload.real_name, String(upload.id))));
-      empty.hidden = compatible.length > 0;
-    } catch (error) {
-      notify.error(error);
-    } finally {
-      loading.hidden = true;
-      attachmentSelect.disabled = attachmentSelect.options.length === 0;
-      loadSubmit.disabled = attachmentSelect.disabled;
-    }
-  });
-
-  loadForm.addEventListener('submit', event => {
-    event.preventDefault();
-    const upload = compatible.find(candidate => String(candidate.id) === attachmentSelect.value);
-    if (!upload || !confirmReplace()) {
-      return;
-    }
-    hideModal(loadModal);
-    void loadImage(getUploadUrl(upload));
-  });
+  on('doodle-load-attachment', () => showLoadAttachmentModal({
+    extensions,
+    load: async upload => {
+      if (!confirmReplace()) {
+        return false;
+      }
+      await loadImage(getUploadUrl(upload));
+    },
+  }));
 
   // upload a new image as attachment and load it right away
   const uploadInput = document.getElementById('doodleUploadInput') as HTMLInputElement;
@@ -209,7 +176,7 @@ if (doodleCanvas) {
     if (!file) {
       return;
     }
-    if (!isCompatible(file.name)) {
+    if (!isCompatible(file.name, extensions)) {
       notify.error(doodleDiv.dataset.error);
       return;
     }

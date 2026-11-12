@@ -26,6 +26,14 @@ export function writeStorage(key: string, value: string): void {
 
 // custom clear function so we keep the persistent keys
 export function clearLocalStorage() {
+  try {
+    clearExceptPersistent();
+  } catch {
+    // nothing stored to clear
+  }
+}
+
+function clearExceptPersistent(): void {
   const prefix = 'persistent_';
   const allKeys: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
@@ -55,7 +63,7 @@ export function clearLocalStorage() {
 // store the value of selected option in localStorage
 export function rememberLastSelected(elementId: string) {
   return function(value: string) {
-    localStorage.setItem(`persistent_${elementId}_last`, value);
+    writeStorage(`persistent_${elementId}_last`, value);
   };
 }
 
@@ -66,7 +74,7 @@ export function selectLastSelected(elementId: string) {
     if (params.get('switch_team') === '1') {
       return;
     }
-    const last = localStorage.getItem(`persistent_${elementId}_last`);
+    const last = readStorage(`persistent_${elementId}_last`);
     if (last) {
       this.setValue(last);
     }

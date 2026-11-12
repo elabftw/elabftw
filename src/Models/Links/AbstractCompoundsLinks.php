@@ -12,7 +12,6 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Links;
 
-use Elabftw\Elabftw\CanSqlBuilder;
 use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AccessType;
@@ -66,7 +65,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN compounds ON compounds.id = main.compound_id
             WHERE main.entity_id = :entity_id AND compounds.state IN (:state_normal, :state_archived)'
-            . new CanSqlBuilder($this->Entity->Users, AccessType::Read, 'compounds')->getCanFilter();
+            . new CompoundPermissions($this->Entity->Users)->getCanFilter('compounds');
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);

@@ -18,9 +18,11 @@ use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use PDO;
 
+use function sprintf;
+
 /**
  * Read and write permissions of a compound, with the same rules as the ones of an entry (see Permissions).
- * For a list of compounds, filter in SQL with CanSqlBuilder instead.
+ * For a list of compounds, filter in SQL with getCanFilter() instead.
  */
 final class CompoundPermissions
 {
@@ -41,6 +43,24 @@ final class CompoundPermissions
             return new AccessPermissions();
         }
         return new Permissions($this->requester, $compound)->forEntity();
+    }
+
+    /**
+     * The condition on the compounds the requester can read, with the same rules as forCompound(), for a query where
+     * the compounds table has this alias: for a JOIN, a WHERE or a CASE. The query must bind :userid.
+     */
+    public function getCanCondition(string $alias): string
+    {
+        // never for anonymous users: the placeholder stays, so the query binds :userid like for anyone else
+        if ($this->requester instanceof AnonymousUser) {
+            return sprintf('(0 = 1 AND %s.userid = :userid)', $alias);
+        }
+        return new CanSqlBuilder($this->requester, AccessType::Read, $alias)->getCanCondition();
+    }
+
+    public function getCanFilter(string $alias): string
+    {
+        return ' AND ' . $this->getCanCondition($alias);
     }
 
     public function canOrExplode(array $compound, AccessType $access): void

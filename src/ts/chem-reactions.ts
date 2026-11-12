@@ -10,10 +10,11 @@ import { ApiC } from './api';
 import { loadChemDrawing } from './chem-drawing';
 import { hideModal, isModalShown, onModalEvent, showModal } from './common';
 import { BusyState, showFormError } from './form-state';
-import { errorMessage, reloadElements } from './misc';
+import { errorMessage } from './misc';
 import { showTab } from './tabbed-sections';
 import { notify } from './notify';
 import { emptyComponent, quantityUnits, reactionFromKetcher, replaceReactionDrawing } from './reaction';
+import { reloadReactionsList } from './reaction-summary';
 import type { Reaction, ReactionComponent } from './reaction';
 
 type Choice = { id: number; name?: string; title?: string; smiles?: string; inchi_key?: string; molecular_formula?: string; molecular_weight?: number; cas_number?: string };
@@ -33,20 +34,24 @@ const notifyError = (error: unknown): void => notify.error(errorMessage(error));
 // toLocaleString() alone keeps at most 3 fraction digits, hiding small-scale quantities.
 const formatQuantity = (value: number | null, unit: string): string => value === null ? '' : value.toLocaleString(undefined, { maximumSignificantDigits: 6 }) + ' ' + unit;
 
+const INCHI_KEY = /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/;
+
 /** Both creating a reaction and replacing its drawing go through this, so new components look the same either way. */
 async function enrichDrawing(drawing: Reaction): Promise<Reaction> {
-  await Promise.all(drawing.components.map(async component => {
-    // Reuse registered chemical identities without publishing novel structures.
-    if (component.inchi_key) {
-      const candidates = await ApiC.getJson<Choice[]>('compounds', { q: component.inchi_key, limit: 5, notifOnError: 0 }).catch((): Choice[] => []);
-      const match = candidates.find(candidate => candidate.inchi_key === component.inchi_key);
-      if (match) {
-        component.compound_id = match.id;
-        component.name = match.name || '';
-      }
+  // Reuse registered chemical identities without publishing novel structures: one exact lookup for all the structures
+  const inchiKeys = [...new Set(drawing.components.map(component => component.inchi_key).filter(key => INCHI_KEY.test(key)))];
+  const compounds = inchiKeys.length === 0
+    ? []
+    : await ApiC.getJson<Choice[]>('compounds', { inchi_key: inchiKeys.join(','), limit: inchiKeys.length, notifOnError: 0 }).catch((): Choice[] => []);
+  const byInchiKey = new Map(compounds.map(compound => [compound.inchi_key, compound]));
+  for (const component of drawing.components) {
+    const match = byInchiKey.get(component.inchi_key);
+    if (match) {
+      component.compound_id = match.id;
+      component.name = match.name || '';
     }
     component.name ||= component.molecular_formula || component.smiles;
-  }));
+  }
   return drawing;
 }
 
@@ -298,7 +303,7 @@ class ReactionEditor {
     });
     if (!saved) return;
     hideModal(modalSelector);
-    await reloadElements(['reactionsList']).catch(notifyError);
+    await reloadReactionsList().catch(notifyError);
   }
 
   private async runAction(button: HTMLButtonElement): Promise<void> {
@@ -310,7 +315,7 @@ class ReactionEditor {
       if (action === 'delete') {
         if (!confirm(this.form.dataset.confirmDelete)) return false;
         await ApiC.delete(`${this.endpoint}/${id}`);
-        await reloadElements(['reactionsList']);
+        await reloadReactionsList();
         return;
       }
       const saved = await ApiC.getJson<Reaction>(`${this.endpoint}/${id}`);

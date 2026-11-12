@@ -41,9 +41,9 @@ describe('Editors section', () => {
     cy.get('#clearCanvas').click();
     cy.get('#doodleCanvas').invoke('attr', 'height', '600');
     cy.get('[data-cy="doodle-load-attachment"]').click();
-    cy.get('[data-cy="doodle-attachment-select"]').should('contain', 'example.png');
-    cy.get('[data-cy="doodle-load-attachment-submit"]').should('be.enabled').click();
-    cy.get('#doodleLoadAttachmentModal').should('not.be.visible');
+    cy.get('[data-cy="load-attachment-select"]').should('contain', 'example.png');
+    cy.get('[data-cy="load-attachment-submit"]').should('be.enabled').click();
+    cy.get('#loadAttachmentModal').should('not.be.visible');
     cy.get('#doodleCanvas').should('have.attr', 'height', '217');
   });
 
@@ -73,7 +73,37 @@ describe('Editors section', () => {
     });
   });
 
-  it('collapses with the keyboard', () => {
+  it('remembers the selected body tab when opening another entry', () => {
+    // the chemical editor loads when its tab is shown, but this does not need it
+    cy.get('[data-cy="body-tab-chem"]').click();
+    cy.get('#chemPane').should('be.visible');
+    cy.get('#mainTextPane').should('not.be.visible');
+    cy.get('#mainTextEllipsis').should('not.be.visible');
+    cy.request('POST', '/api/v2/experiments', { title: 'Body tab test' })
+      .then(response => cy.extractIdFromLocation(response))
+      .then(id => cy.visit(`/experiments.php?mode=edit&id=${id}`));
+    cy.get('[data-cy="body-tab-chem"]').should('have.attr', 'aria-selected', 'true');
+    cy.get('#chemPane').should('be.visible');
+    cy.get('[data-cy="body-tab-main"]').click();
+    cy.get('#mainTextPane').should('be.visible');
+    cy.get('#chemPane').should('not.be.visible');
+    cy.reload();
+    cy.get('[data-cy="body-tab-main"]').should('have.attr', 'aria-selected', 'true');
+    cy.get('#chemPane').should('not.be.visible');
+  });
+
+  it('collapses the sections, with the keyboard too, and remembers it', () => {
+    // the main section
+    cy.get('[data-cy="body-section-toggle"]').click();
+    cy.get('[data-cy="body-section-toggle"]').should('have.attr', 'aria-expanded', 'false');
+    cy.get('#entityBodyDiv').should('not.be.visible');
+    cy.reload();
+    cy.get('#entityBodyDiv').should('not.be.visible');
+    cy.get('[data-cy="body-section-toggle"]').focus().type('{enter}');
+    cy.get('#entityBodyDiv').should('be.visible');
+    cy.get('#mainTextPane').should('be.visible');
+
+    // the editors section
     cy.get('[data-cy="editors-section-toggle"]').focus().type('{enter}');
     cy.get('#editorsDiv').should('be.visible');
     // the page may still be initializing the chem tab (Ketcher, compounds table) and move focus: wait until it is back

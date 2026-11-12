@@ -643,9 +643,7 @@ class Users extends AbstractRest
                     }
                     // need to be admin to "import" a user in a team
                     $team = (int) ($params['team'] ?? $this->requester->userData['team']);
-                    $TeamsHelper = new TeamsHelper($team);
-                    $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
-                    if (!$hasPermission && $isAdmin === false) {
+                    if (!$hasPermission && !$this->requester->isActiveAdminInTeam($team)) {
                         throw new ForbiddenException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
@@ -967,7 +965,7 @@ class Users extends AbstractRest
         if ($team === $this->team) {
             return $this->isAdmin;
         }
-        return new TeamsHelper($team)->isAdminInTeam($this->userData['userid'] ?? 0);
+        return $this->isActiveAdminInTeam($team);
     }
 
     public function isAdminOrExplode(): void
@@ -1199,7 +1197,7 @@ class Users extends AbstractRest
         return sprintf('%s@%s', $maskedLocalPart, $domain);
     }
 
-    // same as TeamsHelper::isAdmin(), but from the teams of userData
+    // same as TeamsHelper::isAdmin(), but from the teams of userData: an archived membership does not count
     private function isActiveAdminInTeam(int $teamId): bool
     {
         foreach ($this->userData['teams'] ?? array() as $team) {

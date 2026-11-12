@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\GhsSignalWord;
@@ -126,117 +127,23 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        // the CTE walks upwards, so occupancy has to be counted for the requested unit
-        // (original_id) rather than for the ancestor the current row happens to be on
-        $occupancy = self::occupancySql('storage_hierarchy.original_id');
-        // Recursive CTE to find the full path of a specific id
-        $fullPathLength = self::FULL_PATH_LENGTH;
-        $sql = "
-            WITH RECURSIVE storage_hierarchy AS (
-                -- Base case: Start with the given id
-                SELECT
-                    id,
-                    id AS original_id,
-                    name,
-                    parent_id,
-                    parent_id AS original_parent_id,
-                    capacity,
-                    CAST(name AS CHAR({$fullPathLength})) AS full_path,
-                    0 AS level_depth
-                FROM
-                    storage_units
-                WHERE
-                    id = :id  -- Use the provided id as the base case
-
-                UNION
-
-                -- Recursive case: Trace the path upwards by finding parent units
-                SELECT
-                    parent.id,
-                    child.original_id,
-                    child.name,
-                    parent.parent_id,
-                    child.original_parent_id,
-                    child.capacity,
-                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR({$fullPathLength})) AS full_path,
-                    child.level_depth + 1
-                FROM
-                    storage_units AS parent
-                INNER JOIN
-                    storage_hierarchy AS child ON parent.id = child.parent_id
-            )
-
-            -- Get the full path from the root to the given id
-            SELECT
-                original_id AS id,
-                name,
-                full_path,
-                original_parent_id AS parent_id,
-                capacity,
-                {$occupancy} AS occupancy,
-                level_depth
-            FROM
-                storage_hierarchy
-            ORDER BY
-                level_depth DESC LIMIT 1;  -- This ensures the path is ordered from root to the given id
-        ";
-
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare(sprintf(
+            'SELECT id, name, parent_id, capacity, %s AS occupancy FROM storage_units WHERE id = :id',
+            self::occupancySql('storage_units.id'),
+        ));
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-
-        return $this->Db->fetch($req);
+        $unit = $this->Db->fetch($req);
+        return array_merge($unit, $this->readPaths(array($unit['id']))[$unit['id']]);
     }
 
     /**
-     * The full_path of several storage units in one query, as readOne() would give it for each of them
+     * The full_path of several storage units in one query, as readOne() gives it
      * Returns an array of full_path indexed by storage unit id
      */
     public function readFullPaths(array $ids): array
     {
-        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn(int $id): bool => $id > 0)));
-        if (empty($ids)) {
-            return array();
-        }
-        $fullPathLength = self::FULL_PATH_LENGTH;
-        $sql = sprintf("
-            WITH RECURSIVE storage_hierarchy AS (
-                SELECT
-                    id AS original_id,
-                    parent_id,
-                    CAST(name AS CHAR({$fullPathLength})) AS full_path,
-                    0 AS level_depth
-                FROM
-                    storage_units
-                WHERE
-                    id IN (%s)
-
-                UNION
-
-                SELECT
-                    child.original_id,
-                    parent.parent_id,
-                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR({$fullPathLength})) AS full_path,
-                    child.level_depth + 1
-                FROM
-                    storage_units AS parent
-                INNER JOIN
-                    storage_hierarchy AS child ON parent.id = child.parent_id
-            )
-            -- like readOne(): keep the deepest row of each unit, it has the path from the root
-            SELECT original_id, full_path FROM (
-                SELECT
-                    original_id,
-                    full_path,
-                    ROW_NUMBER() OVER (PARTITION BY original_id ORDER BY level_depth DESC) AS row_num
-                FROM storage_hierarchy
-            ) AS paths
-            WHERE row_num = 1", implode(', ', $ids));
-
-        $req = $this->Db->prepare($sql);
-        $this->Db->execute($req);
-
-        return $req->fetchAll(PDO::FETCH_KEY_PAIR);
+        return array_map(static fn(array $path): string => $path['full_path'], $this->readPaths($ids));
     }
 
     public function readCount(): array
@@ -695,6 +602,62 @@ final class StorageUnits extends AbstractRest
      * $idExpression. Shared so the occupancy displayed in the tree and the occupancy the
      * capacity guard enforces are the same number by construction, not by coincidence.
      */
+    /**
+     * The path from the root of each storage unit, and its depth: the recursive CTE walks up from each unit,
+     * and the deepest row of a unit has its whole path
+     *
+     * @return array<int, array{full_path: string, level_depth: int}> indexed by storage unit id
+     */
+    private function readPaths(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn(int $id): bool => $id > 0)));
+        if (empty($ids)) {
+            return array();
+        }
+        $fullPathLength = self::FULL_PATH_LENGTH;
+        $sql = sprintf("
+            WITH RECURSIVE storage_hierarchy AS (
+                SELECT
+                    id AS original_id,
+                    parent_id,
+                    CAST(name AS CHAR({$fullPathLength})) AS full_path,
+                    0 AS level_depth
+                FROM
+                    storage_units
+                WHERE
+                    id IN (%s)
+
+                UNION
+
+                SELECT
+                    child.original_id,
+                    parent.parent_id,
+                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR({$fullPathLength})) AS full_path,
+                    child.level_depth + 1
+                FROM
+                    storage_units AS parent
+                INNER JOIN
+                    storage_hierarchy AS child ON parent.id = child.parent_id
+            )
+            SELECT original_id, full_path, level_depth FROM (
+                SELECT
+                    original_id,
+                    full_path,
+                    level_depth,
+                    ROW_NUMBER() OVER (PARTITION BY original_id ORDER BY level_depth DESC) AS row_num
+                FROM storage_hierarchy
+            ) AS paths
+            WHERE row_num = 1", implode(', ', $ids));
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $paths = array();
+        foreach ($req->fetchAll() as $row) {
+            $paths[(int) $row['original_id']] = array('full_path' => $row['full_path'], 'level_depth' => (int) $row['level_depth']);
+        }
+        return $paths;
+    }
+
     private static function occupancySql(string $idExpression): string
     {
         return implode(' + ', array_map(
@@ -984,7 +947,7 @@ final class StorageUnits extends AbstractRest
         $canFilter = $CanSqlBuilder->getCanFilter();
         // a compound has its own permissions: reading the entry is not enough to read the compounds linked to it.
         // In the join, so the container is still listed, without the compound (and the search cannot match it)
-        $compoundCan = new CanSqlBuilder($this->requester, AccessType::Read, 'compounds')->getCanCondition();
+        $compoundCan = new CompoundPermissions($this->requester)->getCanCondition('compounds');
         $fullPathLength = self::FULL_PATH_LENGTH;
         $selectedStorageHierarchy = $includeStorageDescendants
             ? ', selected_storage_hierarchy AS (

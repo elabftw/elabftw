@@ -14,7 +14,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
 use Elabftw\Models\Reactions;
 use Elabftw\Params\DisplayParams;
-use Elabftw\Services\NullFingerprinter;
 use Elabftw\Services\ReactionSearch;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
@@ -58,30 +57,6 @@ final class ReactionSearchTest extends TestCase
                 array('role' => 'product', 'name' => 'Anisole', 'smiles' => 'COc1ccccc1', 'inchi_key' => self::ANISOLE),
             ),
         ));
-    }
-
-    public function testSaveStoresSearchableIdentity(): void
-    {
-        $reaction = new Reactions($this->Entity, $this->reactionId)->readOne();
-        $this->assertSame('Oc1ccccc1>COS(=O)(=O)OC>COc1ccccc1', $reaction['reaction_smiles']);
-        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $reaction['reaction_key']);
-        $this->assertSame(3, $this->countFingerprints());
-        // a full replacement of the components replaces their fingerprints
-        new Reactions($this->Entity, $this->reactionId)->patch(Action::Update, array(
-            'version' => $reaction['version'],
-            'components' => array(array('role' => 'reactant', 'name' => 'Phenol', 'smiles' => 'Oc1ccccc1', 'inchi_key' => self::PHENOL)),
-        ));
-        $this->assertSame(1, $this->countFingerprints());
-        $this->assertNull(new Reactions($this->Entity, $this->reactionId)->readOne()['reaction_key']);
-    }
-
-    public function testStructureIsSavedEvenIfItCannotBeFingerprinted(): void
-    {
-        $id = new Reactions($this->Entity, null, new NullFingerprinter())->postAction(Action::Create, array(
-            'title' => 'Unindexed',
-            'components' => array(array('role' => 'reactant', 'smiles' => 'CCO', 'inchi_key' => 'LFQSCWFLJHTTHZ-UHFFFAOYSA-N')),
-        ));
-        $this->assertSame('CCO>>', new Reactions($this->Entity, $id)->readOne()['reaction_smiles']);
     }
 
     public function testTextMatchesReactionAndComponents(): void
@@ -286,14 +261,5 @@ final class ReactionSearchTest extends TestCase
         $ReactionSearch->bindValues($req);
         $Db->execute($req);
         return array_map(intval(...), $req->fetchAll(PDO::FETCH_COLUMN));
-    }
-
-    private function countFingerprints(): int
-    {
-        $req = Db::getConnection()->prepare('SELECT COUNT(*) FROM reaction_component_fingerprints AS f
-            INNER JOIN reaction_components AS c ON (c.id = f.component_id) WHERE c.reaction_id = :id');
-        $req->bindValue(':id', $this->reactionId);
-        $req->execute();
-        return (int) $req->fetchColumn();
     }
 }

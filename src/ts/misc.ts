@@ -588,7 +588,7 @@ function renderPermissionEntry(select: HTMLSelectElement, data: { [key: string]:
   return `<div><span class='badge permissions-kind permissions-kind-${kind} mr-2'>${escape(permissionKindLabel(select, kind))}</span>${escape(String(data.text))}</div>`;
 }
 
-// same markup as the chips rendered in permissions-section.html
+// a team, user group or user given access, in the list of a section of the permissions modal
 function makePermissionChip(select: HTMLSelectElement, value: string, text: string): HTMLLIElement {
   const kind = permissionKind(value);
   const li = document.createElement('li');
@@ -646,7 +646,16 @@ export function setPermissionsReloader(modal: HTMLElement, reload: () => Promise
 export interface PermissionsCanHuman {
   teams: Array<{ id: number; name: string }>;
   teamgroups: Array<{ id: number; name: string; team_name: string }>;
-  users: Array<{ userid: number; fullname: string; email: string }>;
+  users: Array<{ userid: number; fullname: string; email?: string }>;
+}
+
+// the value and text of the chips of a permission
+function permissionChips(can: PermissionsCanHuman): Array<[string, string]> {
+  return [
+    ...can.teams.map((team): [string, string] => [`team:${team.id}`, team.name]),
+    ...can.teamgroups.map((group): [string, string] => [`teamgroup:${group.id}`, `${group.team_name} - ${group.name}`]),
+    ...can.users.map((user): [string, string] => [`user:${user.userid}`, user.fullname]),
+  ];
 }
 
 export interface PermissionsSectionValue {
@@ -698,12 +707,7 @@ export function loadPermissionsModal(
       select.tomselect?.addOption({ value: li.dataset.value, text: li.dataset.text });
       li.remove();
     });
-    const chips: Array<[string, string]> = [
-      ...value.can.teams.map((team): [string, string] => [`team:${team.id}`, team.name]),
-      ...value.can.teamgroups.map((group): [string, string] => [`teamgroup:${group.id}`, `${group.team_name} - ${group.name}`]),
-      ...value.can.users.map((user): [string, string] => [`user:${user.userid}`, user.fullname]),
-    ];
-    chips.forEach(([chipValue, text]) => {
+    permissionChips(value.can).forEach(([chipValue, text]) => {
       select.tomselect?.removeOption(chipValue);
       list.append(makePermissionChip(select, chipValue, text));
     });
@@ -741,6 +745,10 @@ function initPermissionsSearchSelect(select: TomSelectElement): void {
   const section = select.closest<HTMLElement>('.permissions-section');
   const list = document.getElementById(select.dataset.list);
   if (!section || !list) return;
+  // what the server rendered the modal with, see permissions-section.html
+  if (list.dataset.can) {
+    list.replaceChildren(...permissionChips(JSON.parse(list.dataset.can)).map(([value, text]) => makePermissionChip(select, value, text)));
+  }
   const wrapper = select.closest<HTMLElement>('.ts-wrapper');
   // the typings of tom-select only take a selector for the dropdown parent
   if (wrapper && !wrapper.id) {

@@ -14,7 +14,7 @@ import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import Heartbeat from './Heartbeat.class';
 import ScrollButtons from './ScrollButtons.class';
-import { clearLocalStorage, rememberLastSelected, selectLastSelected, writeStorage } from './localStorage';
+import { clearLocalStorage, readStorage, rememberLastSelected, selectLastSelected, writeStorage } from './localStorage';
 import { renderReactionSummaries } from './reaction-summary';
 import {
   adjustHiddenState,
@@ -397,7 +397,7 @@ if (userPrefs.scDisabled === '0') {
 
 // SIDE PANEL STATE
 // Login and register pages do not render side panels.
-const openedSidePanel = localStorage.getItem('opened-sidepanel');
+const openedSidePanel = readStorage('opened-sidepanel');
 if (openedSidePanel === Model.FavTag && document.getElementById(FavTagC.panelId)) {
   FavTagC.toggle();
 }
@@ -457,7 +457,7 @@ const isSafari = (): boolean => {
   return true;
 };
 
-const isDismissedSafari = localStorage.getItem('dismiss_safari_warning_v1') === '1';
+const isDismissedSafari = readStorage('dismiss_safari_warning_v1') === '1';
 if (isSafari() && !isDismissedSafari) {
   document.getElementById('safariWarning').removeAttribute('hidden');
 }
@@ -465,7 +465,7 @@ if (isSafari() && !isDismissedSafari) {
 
 // generic announcement/admin announcement messages
 document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
-  if (localStorage.getItem(`dismiss_${msg.dataset.dismissKey}`) !== '1') {
+  if (readStorage(`dismiss_${msg.dataset.dismissKey}`) !== '1') {
     msg.parentElement.removeAttribute('hidden');
   }
 });
@@ -739,7 +739,7 @@ on('insert-param-and-reload', async (el: HTMLElement) => {
 // used on displayMessage divs: we save the fact that it was closed
 on('save-dismiss', (el: HTMLElement) => {
   if (el.dataset.dismissKey) {
-    localStorage.setItem(`dismiss_${el.dataset.dismissKey}`, '1');
+    writeStorage(`dismiss_${el.dataset.dismissKey}`, '1');
   }
 });
 
@@ -2001,12 +2001,12 @@ on('toggle-password', (el: HTMLElement) => {
 });
 
 on('logout', () => {
-  localStorage.setItem('logout_msg', '1');
+  writeStorage('logout_msg', '1');
   window.location.href = 'app/logout.php';
 });
 
 const logoutMessageDiv = document.getElementById('logoutMessage');
-if (logoutMessageDiv  && localStorage.getItem('logout_msg')) {
+if (logoutMessageDiv  && readStorage('logout_msg')) {
   logoutMessageDiv.removeAttribute('hidden');
   clearLocalStorage();
 }

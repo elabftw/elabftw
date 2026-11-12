@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Codeception\Attribute\DataProvider;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
@@ -62,22 +63,23 @@ class GhsStatementsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('May damage fertility. Suspected of damaging the unborn child.', $this->GhsStatements->readOneFromCode('H360Fd')['statement']);
     }
 
-    public function testReadOneFromUnknownCode(): void
+    /**
+     * A statement is added by hand from its code, see CompoundsGhsStatements::postAction()
+     */
+    #[DataProvider('provideRejectedCodes')]
+    public function testReadOneFromCodeRejects(string $code): void
     {
         $this->expectException(ImproperActionException::class);
-        $this->GhsStatements->readOneFromCode('H999');
+        $this->GhsStatements->readOneFromCode($code);
     }
 
-    public function testReadOneFromCodeIsCaseSensitive(): void
+    public static function provideRejectedCodes(): array
     {
-        $this->expectException(ImproperActionException::class);
-        $this->GhsStatements->readOneFromCode('h300');
-    }
-
-    public function testReadOneFromWithdrawnCode(): void
-    {
-        $this->expectException(ImproperActionException::class);
-        $this->GhsStatements->readOneFromCode('P281');
+        return array(
+            'unknown' => array('H999'),
+            'case sensitive' => array('h300'),
+            'withdrawn' => array('P281'),
+        );
     }
 
     public function testLinkToCompound(): void

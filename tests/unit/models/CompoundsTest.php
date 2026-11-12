@@ -228,6 +228,28 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->Compounds->destroy();
     }
 
+    public function testCompoundOfAReactionCannotBeDeleted(): void
+    {
+        $compoundId = $this->Compounds->create(name: 'In a reaction', inchiKey: substr(strtoupper(bin2hex(random_bytes(14))), 0, 27));
+        $this->Compounds->setId($compoundId);
+        new Reactions($this->getFreshExperiment())->postAction(Action::Create, array(
+            'title' => 'Uses the compound',
+            'components' => array(array('name' => 'In a reaction', 'compound_id' => $compoundId)),
+        ));
+        // neither from the delete action nor by changing its state: the reaction could not be saved again
+        foreach (array(fn() => $this->Compounds->destroy(), fn() => $this->Compounds->patch(Action::Update, array('state' => State::Deleted->value))) as $delete) {
+            try {
+                $delete();
+                $this->fail('Deleted a compound used in a reaction');
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $this->assertSame(State::Normal->value, $this->Compounds->readOne()['state']);
+        // other states are still allowed
+        $this->assertSame(State::Archived->value, $this->Compounds->patch(Action::Update, array('state' => State::Archived->value))['state']);
+    }
+
     public function testPermissions(): void
     {
         // only the owner can read and write it

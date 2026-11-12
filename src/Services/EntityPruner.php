@@ -20,6 +20,7 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\CleanerInterface;
 use Override;
 use PDO;
+use PDOStatement;
 use Exception;
 
 use function implode;
@@ -53,70 +54,34 @@ final class EntityPruner implements CleanerInterface
         $this->Db->beginTransaction();
         try {
             $baseWhere = ' WHERE state = :state';
-            $binds = array();
+            $binds = array(':state' => array(State::Deleted->value, PDO::PARAM_INT));
             $this->applyFilters($baseWhere, $binds);
             $entityTable = $this->entityType->value;
 
             // delete orphaned tags2entity rows via subquery (no PHP-side ID list)
-            $tagsSql = 'DELETE FROM tags2entity WHERE item_type = :item_type'
-                     . ' AND item_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')';
-            $tagsReq = $this->Db->prepare($tagsSql);
-            $tagsReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-            $tagsReq->bindValue(':item_type', $entityTable, PDO::PARAM_STR);
-            foreach ($binds as $key => $bindData) {
-                $tagsReq->bindValue($key, $bindData[0], $bindData[1]);
-            }
-            if ($this->since !== null) {
-                $tagsReq->bindValue(':since', $this->parseSince($this->since));
-            }
-            $this->Db->execute($tagsReq);
+            $this->run(
+                'DELETE FROM tags2entity WHERE item_type = :item_type AND item_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')',
+                $binds + array(':item_type' => array($entityTable, PDO::PARAM_STR)),
+            );
 
             // reactions are owned by their entry but only the link row cascades on entity deletion:
             // remove the reactions themselves, their components and revisions cascade from them
-            $reactionsSql = 'DELETE reactions FROM reactions
+            $this->run('DELETE reactions FROM reactions
                 JOIN reactions2' . $entityTable . ' AS links ON links.reaction_id = reactions.id
-                WHERE links.entity_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')';
-            $reactionsReq = $this->Db->prepare($reactionsSql);
-            $reactionsReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-            foreach ($binds as $key => $bindData) {
-                $reactionsReq->bindValue($key, $bindData[0], $bindData[1]);
-            }
-            if ($this->since !== null) {
-                $reactionsReq->bindValue(':since', $this->parseSince($this->since));
-            }
-            $this->Db->execute($reactionsReq);
+                WHERE links.entity_id IN (SELECT id FROM ' . $entityTable . $baseWhere . ')', $binds);
 
             // a reaction deleted from an entry that is kept is only marked as deleted, with its drawing, preview and revisions:
             // remove it too, for the entries in the scope of the filters, whatever their state
             $scopeWhere = ' WHERE 1=1';
-            $scopeBinds = array();
+            $scopeBinds = array(':reaction_state' => array(State::Deleted->value, PDO::PARAM_INT));
             $this->applyFilters($scopeWhere, $scopeBinds);
-            $deletedReactionsSql = 'DELETE reactions FROM reactions
+            $this->run('DELETE reactions FROM reactions
                 JOIN reactions2' . $entityTable . ' AS links ON links.reaction_id = reactions.id
                 WHERE reactions.state = :reaction_state
-                AND links.entity_id IN (SELECT id FROM ' . $entityTable . $scopeWhere . ')';
-            $deletedReactionsReq = $this->Db->prepare($deletedReactionsSql);
-            $deletedReactionsReq->bindValue(':reaction_state', State::Deleted->value, PDO::PARAM_INT);
-            foreach ($scopeBinds as $key => $bindData) {
-                $deletedReactionsReq->bindValue($key, $bindData[0], $bindData[1]);
-            }
-            if ($this->since !== null) {
-                $deletedReactionsReq->bindValue(':since', $this->parseSince($this->since));
-            }
-            $this->Db->execute($deletedReactionsReq);
+                AND links.entity_id IN (SELECT id FROM ' . $entityTable . $scopeWhere . ')', $scopeBinds);
 
             // delete the entity rows (same WHERE, so restored entities are skipped)
-            $entitySql = 'DELETE FROM ' . $entityTable . $baseWhere;
-            $entityReq = $this->Db->prepare($entitySql);
-            $entityReq->bindValue(':state', State::Deleted->value, PDO::PARAM_INT);
-            foreach ($binds as $key => $bindData) {
-                $entityReq->bindValue($key, $bindData[0], $bindData[1]);
-            }
-            if ($this->since !== null) {
-                $entityReq->bindValue(':since', $this->parseSince($this->since));
-            }
-            $this->Db->execute($entityReq);
-            $deleted = $entityReq->rowCount();
+            $deleted = $this->run('DELETE FROM ' . $entityTable . $baseWhere, $binds)->rowCount();
 
             $this->Db->commit();
             return $deleted;
@@ -127,7 +92,7 @@ final class EntityPruner implements CleanerInterface
     }
 
     /**
-     * Apply the filters (ids, userids, teams, since) to a SQL query string
+     * Apply the filters (ids, userids, teams, since) to a SQL query string, and add their values to the binds
      */
     private function applyFilters(string &$sql, array &$binds): void
     {
@@ -160,7 +125,21 @@ final class EntityPruner implements CleanerInterface
         }
         if ($this->since !== null) {
             $sql .= ' AND created_at >= :since';
+            $binds[':since'] = array($this->parseSince($this->since), PDO::PARAM_STR);
         }
+    }
+
+    /**
+     * @param array<string, array{0: mixed, 1: int}> $binds the values of the placeholders, with their type
+     */
+    private function run(string $sql, array $binds): PDOStatement
+    {
+        $req = $this->Db->prepare($sql);
+        foreach ($binds as $key => $bindData) {
+            $req->bindValue($key, $bindData[0], $bindData[1]);
+        }
+        $this->Db->execute($req);
+        return $req;
     }
 
     private function parseSince(string $since): string

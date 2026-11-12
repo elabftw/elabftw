@@ -79,27 +79,13 @@
       </select>
       <input type='text' class='form-control' id='{{ idPrefix }}{{ rw }}-permissions-search-input' placeholder='{{ 'Search for teams, user groups or users'|trans }}' aria-label='{{ 'Search for teams, user groups or users'|trans }}'>
     </div>
-    {# what is added on top of the general access, the chips are added and removed by initPermissionsSearch #}
-    {% set chips = [] %}
-    {% for team in can.teams %}
-      {% set chips = chips|merge([{value: 'team:' ~ team.id, text: team.name}]) %}
-    {% endfor %}
-    {% for group in can.teamgroups %}
-      {% set chips = chips|merge([{value: 'teamgroup:' ~ group.id, text: group.team_name ~ ' - ' ~ group.name}]) %}
-    {% endfor %}
-    {% for user in can.users %}
-      {% set chips = chips|merge([{value: 'user:' ~ user.userid, text: user.fullname}]) %}
-    {% endfor %}
-    {% set kindLabels = {team: 'Team'|trans, teamgroup: 'User group'|trans, user: 'User'|trans} %}
-    <ul class='list-unstyled d-flex flex-wrap mb-0' id='{{ idPrefix }}{{ rw }}PermissionsList' aria-label='{{ perm.text(rw, 'label') }}'>
-      {% for chip in chips %}
-        {% set kind = chip.value|split(':')|first %}
-        <li class='permissions-chip' data-value='{{ chip.value }}' data-text='{{ chip.text }}'>
-          <span class='badge permissions-kind permissions-kind-{{ kind }} mr-2'>{{ kindLabels[kind] }}</span>{{ chip.text }}
-          <button type='button' class='permissions-chip-remove' data-remove-permission='1' title='{{ 'Remove'|trans }}' aria-label='{{ 'Remove'|trans }} {{ chip.text }}'><i class='fas fa-xmark' aria-hidden='true'></i></button>
-        </li>
-      {% endfor %}
-    </ul>
+    {# what is added on top of the general access: the chips are rendered, added and removed by initPermissionsSearch #}
+    <ul class='list-unstyled d-flex flex-wrap mb-0' id='{{ idPrefix }}{{ rw }}PermissionsList' aria-label='{{ perm.text(rw, 'label') }}'
+      data-can='{{ {
+        teams: can.teams|map(team => {id: team.id, name: team.name}),
+        teamgroups: can.teamgroups|map(group => {id: group.id, name: group.name, team_name: group.team_name}),
+        users: can.users|map(user => {userid: user.userid, fullname: user.fullname}),
+      }|json_encode }}'></ul>
   {% else %}
     {{ perm.details(idPrefix ~ rw ~ 'Div', can, can_base, 'mt-2') }}
   {% endif %}

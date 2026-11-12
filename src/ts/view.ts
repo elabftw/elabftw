@@ -14,6 +14,9 @@ import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { reloadElements } from './misc';
 import { setSectionCollapsed, showTab } from './tabbed-sections';
+import { initReactionsList } from './reaction-summary';
+
+initReactionsList();
 
 // UPDATE MALLEABLE COMMENT
 const malleableComments = new Malle({

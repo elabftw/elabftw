@@ -15,7 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
-use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -152,9 +152,6 @@ abstract class AbstractEntity extends AbstractRest
 
     public bool $isReadOnly = false;
 
-    // set to false before setId() to skip reading the changelog, see the entity pages in web/
-    public bool $withChangelog = true;
-
     // inserted in sql
     public array $extendedValues = array();
 
@@ -163,8 +160,20 @@ abstract class AbstractEntity extends AbstractRest
 
     private bool $readAfterPatch = true;
 
-    public function __construct(public Users $Users, public ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
-    {
+    // set by readOneFull(): readOne() then gives the reactions with their drawings instead of their summaries
+    private bool $withFullReactions = false;
+
+    /**
+     * @param bool $withChangelog false to skip reading the changelog in readOne(): it grows with every save, and the entry pages
+     * do not display it (the changelog mode reads it on its own)
+     */
+    public function __construct(
+        public Users $Users,
+        public ?int $id = null,
+        public ?bool $bypassReadPermission = false,
+        public ?bool $bypassWritePermission = false,
+        public bool $withChangelog = true,
+    ) {
         parent::__construct();
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
@@ -716,8 +725,9 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['step_groups'] = new StepGroups($this)->readAll();
-        // summaries only: this runs on every read of the entry, including the response to each autosave
-        $this->entityData['reactions'] = new Reactions($this)->readSummaries();
+        // summaries only, unless for readOneFull(): this runs on every read of the entry, including the response to each autosave
+        $Reactions = new Reactions($this);
+        $this->entityData['reactions'] = $this->withFullReactions ? $Reactions->readFull() : $Reactions->readSummaries();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
@@ -784,14 +794,18 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readOneFull(): array
     {
-        $base = $this->readOne();
+        // a full export carries what is needed to draw and edit the reactions again
+        $this->withFullReactions = true;
+        try {
+            $base = $this->readOne();
+        } finally {
+            $this->withFullReactions = false;
+        }
         // anonymous users cannot access revisions, including reaction revisions
         $isAnonymous = $this->Users instanceof AnonymousUser;
         $base['revisions'] = $isAnonymous
             ? array()
             : new BodyRevisions($this)->readAll();
-        // a full export carries what is needed to draw and edit the reactions again
-        $base['reactions'] = new Reactions($this)->readFull();
         $base['reaction_history'] = $isAnonymous
             ? array()
             : new Reactions($this)->readAllHistory();
@@ -1798,7 +1812,7 @@ abstract class AbstractEntity extends AbstractRest
             $this->entityType->value,
             $this->getCompoundsSimpleQuerySql($query),
             // only find an entry from the compounds the requester can read
-            new CanSqlBuilder($this->Users, AccessType::Read, 'cmp_search')->getCanFilter(),
+            new CompoundPermissions($this->Users)->getCanFilter('cmp_search'),
         );
     }
 

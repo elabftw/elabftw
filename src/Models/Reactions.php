@@ -77,6 +77,9 @@ final class Reactions extends AbstractRest
 
     private const array LARGE_COMPONENT_COLUMNS = array('molfile');
 
+    /** What the write permission check of the entry needs, see lockOwner() */
+    private const string OWNER_COLUMNS = 'userid, team, state, locked, lockedby, canread_base, canwrite_base, canread, canwrite';
+
     public function __construct(
         private AbstractEntity $Entity,
         ?int $id = null,
@@ -355,16 +358,18 @@ final class Reactions extends AbstractRest
         return $fingerprints;
     }
 
+    /**
+     * Serialize changes with other reaction saves and entry locking, and check the write access on the entry row as it is now.
+     * Only the columns of the permission check are read again under the lock, not the whole entry (see AbstractEntity::readOne()).
+     */
     private function lockOwner(): void
     {
-        // Serialize changes with other reaction saves and entry locking.
-        $req = $this->Db->prepare('SELECT id FROM ' . $this->Entity->entityType->value . ' WHERE id = :id FOR UPDATE');
+        $req = $this->Db->prepare(sprintf('SELECT %s FROM %s WHERE id = :id FOR UPDATE', self::OWNER_COLUMNS, $this->Entity->entityType->value));
         $req->bindValue(':id', $this->Entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $this->Db->fetch($req);
-        $this->Entity->readOne();
+        $this->Entity->entityData = array_replace($this->Entity->entityData, $this->Db->fetch($req));
         $this->Entity->canOrExplode(AccessType::Write);
-        if ($this->Entity->isReadOnly && !$this->Entity->bypassWritePermission) {
+        if (($this->Entity->isReadOnly || $this->Entity->ExclusiveEditMode->isActive()) && !$this->Entity->bypassWritePermission) {
             throw new ForbiddenException();
         }
     }

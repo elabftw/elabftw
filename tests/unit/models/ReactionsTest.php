@@ -16,6 +16,7 @@ use Elabftw\Interfaces\FingerprinterInterface;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\BaseQueryParams;
+use Elabftw\Services\NullFingerprinter;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +43,7 @@ final class ReactionsTest extends TestCase
     // 1x1 pixel
     private const string PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
-    public function testAllEntryTypesAndIndependentDuplication(): void
+    public function testAllEntryTypes(): void
     {
         foreach (EntityType::cases() as $type) {
             $entity = $type->toInstance(new Users(1, 1));
@@ -53,11 +54,7 @@ final class ReactionsTest extends TestCase
             $this->assertSame('Hydrogenation', $created['title']);
             $this->assertCount(2, $created['components']);
             $this->assertCount(1, $entity->readOne()['reactions']);
-            $copy = $type->toInstance($entity->Users, $entity->duplicate());
-            $copied = new Reactions($copy)->readAll()[0];
-            $this->assertNotSame($id, (int) $copied['id']);
             $source->patch(Action::Update, array('version' => $created['version'], 'title' => 'Changed'));
-            $this->assertSame('Hydrogenation', new Reactions($copy)->readAll()[0]['title']);
             $this->assertTrue($source->destroy());
             $this->assertCount(0, new Reactions($entity)->readAll());
             $this->assertCount(3, new Reactions($entity)->readAll(new BaseQueryParams(query: new InputBag(array('history_of' => $id)))));
@@ -186,29 +183,29 @@ final class ReactionsTest extends TestCase
         $this->assertSame(array('Second', 'Third'), array_column(new Reactions($entity)->readAll(), 'title'));
     }
 
-    public function testPreviewsCanComeWithTheSummaries(): void
-    {
-        $entity = $this->getFreshExperiment();
-        $withPreview = new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('preview_png' => self::PNG)));
-        $without = new Reactions($entity)->postAction(Action::Create, $this->data());
-        $summaries = array_column(new Reactions($entity)->addPreviews($entity->readOne()['reactions']), null, 'id');
-        $this->assertSame(self::PNG, $summaries[$withPreview]['preview_png']);
-        $this->assertArrayNotHasKey('preview_png', $summaries[$without]);
-    }
-
-    public function testEntryReadsSummariesAndTheApiServesThePreview(): void
+    public function testEntryReadsSummariesAndThePreviewsComeApart(): void
     {
         $entity = $this->getFreshExperiment();
         $id = new Reactions($entity)->postAction(Action::Create, array_merge($this->data(), array('preview_png' => self::PNG)));
-        $summary = $entity->readOne()['reactions'][0];
+        $without = new Reactions($entity)->postAction(Action::Create, $this->data());
+        $summaries = array_column($entity->readOne()['reactions'], null, 'id');
+        $summary = $summaries[$id];
         foreach (array('scheme', 'rxn', 'preview_png') as $column) {
             $this->assertArrayNotHasKey($column, $summary);
         }
         $this->assertArrayNotHasKey('molfile', $summary['components'][0]);
         $this->assertSame(1, (int) $summary['has_preview']);
+        $this->assertSame(0, (int) $summaries[$without]['has_preview']);
         // quantities are still calculated, for display
         $this->assertArrayHasKey('actual', $summary['components'][0]);
         $this->assertArrayHasKey('rxn', $entity->readOneFull()['reactions'][0]);
+
+        // inline, for a page opened with the access key
+        $withPreviews = array_column(new Reactions($entity)->addPreviews($entity->readOne()['reactions']), null, 'id');
+        $this->assertSame(self::PNG, $withPreviews[$id]['preview_png']);
+        $this->assertArrayNotHasKey('preview_png', $withPreviews[$without]);
+
+        // or from the api
 
         $uri = sprintf('/api/v2/experiments/%d/reactions/%d?format=binary', $entity->id, $id);
         $response = new Apiv2Controller($entity->Users, Request::create($uri))->getResponse();
@@ -232,6 +229,9 @@ final class ReactionsTest extends TestCase
         $this->assertSame(array_map($stripIds, $source['components']), array_map($stripIds, $copied['components']));
         // the copy has its own history, starting with its creation
         $this->assertCount(1, new Reactions($copy)->readAll(new BaseQueryParams(query: new InputBag(array('history_of' => $copied['id'])))));
+        // and changing the source leaves it as it is
+        new Reactions($entity, $source['id'])->patch(Action::Update, array('version' => $source['version'], 'title' => 'Changed'));
+        $this->assertSame($source['title'], new Reactions($copy)->readFull()[0]['title']);
     }
 
     public function testHistoryStoresTheDrawingOnlyWhenItChanges(): void
@@ -265,12 +265,25 @@ final class ReactionsTest extends TestCase
         $id = new Reactions($entity)->postAction(Action::Create, $data);
         $this->assertSame($item->id, new Reactions($entity, $id)->readOne()['components'][0]['item_id']);
 
+        // a resource of someone else, that only they can read
+        $owner = $this->getUserInTeam(2);
+        $this->assertNotSame($entity->Users->userid, $owner->userid);
+        $private = $this->getFreshItemWithGivenUser($owner);
+        $private->patch(Action::Update, array('canread_base' => BasePermissions::UserOnly->value));
+        $data['components'][0]['item_id'] = $private->id;
+        try {
+            new Reactions($entity)->postAction(Action::Create, $data);
+            $this->fail('Linked a resource the user cannot read');
+        } catch (ForbiddenException) {
+            $this->addToAssertionCount(1);
+        }
+
         $data['components'][0]['item_id'] = 4294967295;
         $this->expectException(ResourceNotFoundException::class);
         new Reactions($entity)->postAction(Action::Create, $data);
     }
 
-    public function testUnchangedStructuresAreNotFingerprintedAgain(): void
+    public function testIdentityAndFingerprintsFollowTheStructures(): void
     {
         $fingerprinter = new class implements FingerprinterInterface {
             public int $calls = 0;
@@ -283,21 +296,44 @@ final class ReactionsTest extends TestCase
         };
         $entity = $this->getFreshExperiment();
         $data = $this->data();
-        $data['components'][0]['smiles'] = 'CC=C';
-        $data['components'][1]['smiles'] = 'CCC';
+        $data['components'][0] += array('smiles' => 'CC=C', 'inchi_key' => 'QQONPFPTGQHPMA-UHFFFAOYSA-N');
+        $data['components'][1] += array('smiles' => 'CCC', 'inchi_key' => 'ATUOYWHBWRKTHZ-UHFFFAOYSA-N');
         $id = new Reactions($entity, null, $fingerprinter)->postAction(Action::Create, $data);
-        $this->assertSame(2, $fingerprinter->calls);
-
         $model = new Reactions($entity, $id, $fingerprinter);
+        // derived on save, for the reaction search
+        $reaction = $model->readOne();
+        $this->assertSame('CC=C>>CCC', $reaction['reaction_smiles']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $reaction['reaction_key']);
+        $this->assertSame(2, $fingerprinter->calls);
+        $this->assertSame(2, $this->countFingerprints($id));
+
+        // an unchanged structure is not fingerprinted again
         $model->patch(Action::Update, array('version' => 1, 'title' => 'Renamed'));
         $this->assertSame(2, $fingerprinter->calls);
         $this->assertSame(2, $this->countFingerprints($id));
 
+        // a changed one is
         $components = $model->readOne()['components'];
         $components[1]['smiles'] = 'CCCC';
         $model->patch(Action::Update, array('version' => 2, 'components' => $components));
         $this->assertSame(3, $fingerprinter->calls);
         $this->assertSame(2, $this->countFingerprints($id));
+
+        // a full replacement of the components replaces their fingerprints, and without a product the transformation is unknown
+        $model->patch(Action::Update, array('version' => 3, 'components' => array($components[0])));
+        $this->assertSame(1, $this->countFingerprints($id));
+        $this->assertNull($model->readOne()['reaction_key']);
+    }
+
+    public function testStructureIsSavedEvenIfItCannotBeFingerprinted(): void
+    {
+        $entity = $this->getFreshExperiment();
+        $id = new Reactions($entity, null, new NullFingerprinter())->postAction(Action::Create, array(
+            'title' => 'Unindexed',
+            'components' => array(array('role' => 'reactant', 'smiles' => 'CCO')),
+        ));
+        $this->assertSame('CCO>>', new Reactions($entity, $id)->readOne()['reaction_smiles']);
+        $this->assertSame(0, $this->countFingerprints($id));
     }
 
     private function countFingerprints(int $reactionId): int

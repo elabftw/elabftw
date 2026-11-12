@@ -46,9 +46,14 @@ final class CompoundsFingerprints
 
     public function upsert(array $fp): int
     {
-        // destroy first to avoid PK clash
-        $this->destroy();
-        return $this->create($fp);
+        $compound = $this->getCompoundOrExplode();
+        // an empty fingerprint is not recorded: it replaces the previous one with nothing
+        if (array_sum($fp) === 0) {
+            $this->destroy();
+            return 0;
+        }
+        $this->Table->replace($compound, $fp);
+        return $compound;
     }
 
     public function destroy(): bool
@@ -59,14 +64,6 @@ final class CompoundsFingerprints
         $req->bindValue(':id', $compound, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
-    }
-
-    public function search(array $fp): array
-    {
-        $sql = 'SELECT entity_id, entity_type FROM compounds WHERE 1=1' . FingerprintTable::containsSql($fp);
-        $req = $this->Db->prepare($sql . ' LIMIT 2');
-        $this->Db->execute($req);
-        return $req->fetchAll();
     }
 
     public function getSmilesMissingFp(bool $all = false): array

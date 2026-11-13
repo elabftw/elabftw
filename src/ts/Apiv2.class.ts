@@ -9,6 +9,7 @@ import { Method } from './interfaces';
 import type { Selected } from './interfaces';
 import { getNewIdFromPostRequest } from './misc';
 import { notify } from './notify';
+import { downloadBlob, downloadFilename } from './download';
 
 type ApiParams = Record<string, unknown> | FormData | object | Selected;
 
@@ -31,27 +32,15 @@ export class Api {
 
   // fetch a binary file from a GET request, and make client download it
   async getBlob(query: string, filename: string): Promise<void> {
-    this.get(query).then(async resp => {
-      const disposition = resp.headers.get('Content-Disposition');
-      if (disposition && disposition.includes('filename=')) {
-        const filenameMatch = disposition.match(/filename="(.+)"/);
-        if (filenameMatch.length > 1) {
-          filename = filenameMatch[1];
-        }
-      }
-      return resp.blob().then(blob => ({ blob, filename }));
-    }).then(({ blob, filename }) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }).catch(error => {
-      notify.error('error-fetch-request', { error });
-    });
+    try {
+      // This method owns the notification so request failures are reported only once.
+      const response = await this.get(query, { notifOnError: 0 });
+      const resolvedName = downloadFilename(response.headers.get('Content-Disposition'), filename);
+      downloadBlob(await response.blob(), resolvedName);
+    } catch (error) {
+      notify.error('error-fetch-request', { error: String(error) });
+      throw error;
+    }
   }
 
   patch(query: string, params: ApiParams = {}): Promise<Response> {
@@ -73,7 +62,12 @@ export class Api {
 
   // private method: use patch/post/delete instead
   private async send(method: Method, query: string, params: ApiParams = {}): Promise<Response> {
-    const isFormData = params instanceof FormData;
+    // Notification flags are transport options; do not delete them from caller-owned objects.
+    const payload = params instanceof FormData ? new FormData() : { ...params };
+    if (params instanceof FormData && payload instanceof FormData) {
+      params.forEach((value, key) => payload.append(key, value));
+    }
+    const isFormData = payload instanceof FormData;
 
 
     // allow toggle notifs off by sending notifOn(Saved|Error)=0 as param
@@ -81,20 +75,20 @@ export class Api {
     let notifOnError = true;
     if (isFormData) {
       // FormData values are strings, and the flags must not reach the server as form fields
-      notifOnSaved = params.get('notifOnSaved') !== '0';
-      notifOnError = params.get('notifOnError') !== '0';
-      params.delete('notifOnSaved');
-      params.delete('notifOnError');
+      notifOnSaved = payload.get('notifOnSaved') !== '0';
+      notifOnError = payload.get('notifOnError') !== '0';
+      payload.delete('notifOnSaved');
+      payload.delete('notifOnError');
     } else {
-      if (params['notifOnSaved'] === 0) {
+      if (payload['notifOnSaved'] === 0) {
         notifOnSaved = false;
       }
-      delete params['notifOnSaved'];
+      delete payload['notifOnSaved'];
 
-      if (params['notifOnError'] === 0) {
+      if (payload['notifOnError'] === 0) {
         notifOnError = false;
       }
-      delete params['notifOnError'];
+      delete payload['notifOnError'];
     }
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -115,21 +109,31 @@ export class Api {
     };
 
     if ([Method.POST, Method.PATCH].includes(method)) {
-      options.body = isFormData ? params : JSON.stringify(params);
+      options.body = isFormData ? payload : JSON.stringify(payload);
     }
 
     let urlParams = '';
-    if (method === Method.GET && !isFormData && Object.keys(params).length > 0) {
-      urlParams = `?${new URLSearchParams(params as Record<string, string>).toString()}`;
+    if (method === Method.GET && !isFormData && Object.keys(payload).length > 0) {
+      urlParams = `${query.includes('?') ? '&' : '?'}${new URLSearchParams(payload as Record<string, string>).toString()}`;
     }
 
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
-        return response.json().then(json => {
-          const error = new Error(json.message || json.description) as Error & { status?: number };
-          error.status = response.status;
-          throw error;
-        });
+        let message = `HTTP ${response.status}${response.statusText ? `: ${response.statusText}` : ''}`;
+        try {
+          const json: unknown = await response.json();
+          if (json && typeof json === 'object') {
+            const details = json as { message?: unknown; description?: unknown };
+            const description = typeof details.message === 'string' && details.message.trim()
+              ? details.message : details.description;
+            if (typeof description === 'string' && description.trim()) message = description;
+          }
+        } catch {
+          // A proxy can return HTML or an empty body. Preserve the HTTP error and status.
+        }
+        const error = new Error(message) as Error & { status?: number };
+        error.status = response.status;
+        throw error;
       }
       return response;
     }).then(response => {
@@ -142,9 +146,7 @@ export class Api {
         notify.error(error.message);
       }
 
-      const wrappedError = new Error(error.message) as Error & { status?: number };
-      wrappedError.status = error.status;
-      return Promise.reject(wrappedError);
+      throw error;
     });
   }
 

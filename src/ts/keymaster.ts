@@ -90,6 +90,8 @@ function updateModifierKey(event: KeyboardEvent) {
 
 // handle keydown event
 function dispatch(event: KeyboardEvent) {
+  // Do not create entries while typing with an IME, holding a key, or after another handler consumed it.
+  if (event.isComposing || event.keyCode === 229 || event.repeat || event.defaultPrevented) return;
   let key, handler, k, i, modifiersMatch;
   key = event.keyCode;
   if (_downKeys.indexOf(key) === -1) {
@@ -162,7 +164,7 @@ function filter(event){
   }
   const tagName = target.tagName;
   // ignore keypressed in any elements that support keyboard data input
-  return !(tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || target.hasAttribute('contenteditable'));
+  return !(tagName === 'INPUT' || tagName === 'SELECT' || tagName === 'TEXTAREA' || target.isContentEditable);
 }
 
 // initialize key.<modifier> to false

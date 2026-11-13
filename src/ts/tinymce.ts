@@ -349,8 +349,8 @@ export function getTinymceBaseConfig(page: string): object {
           return;
         }
         // grab experiments and items
-        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=12&scope=3&fastq=${query}`);
-        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=12&scope=3&fastq=${query}`);
+        const expjson = ApiC.getJson(`${EntityType.Experiment}`, { limit: 12, scope: 3, fastq: query });
+        const itemjson = ApiC.getJson(`${EntityType.Item}`, { limit: 12, scope: 3, fastq: query });
         // and merge them into one
         Promise.all([expjson, itemjson]).then(values => {
           process(values[0].concat(values[1]));

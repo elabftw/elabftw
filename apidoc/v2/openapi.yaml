@@ -6526,6 +6526,7 @@ paths:
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
             If scope is `compounds_history`, you can also provide `start` and `end` (format `YYYY-MM-DD`).
+            The `compounds_history` report has one row per compound used in your experiments dated in that period: linked to the experiment (`source` is `experiment`), linked to a resource linked to it (`linked_resource`), or used as a component of one of its reactions (`reaction`, with the role, the planned and actual quantities and the reaction conditions). Each row has the identifiers, the hazard flags, the GHS signal word and the GHS statements of the compound.
           examples:
             instance:
               summary: Get instance level report

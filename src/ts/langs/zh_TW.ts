@@ -145,6 +145,7 @@ const t = {
     "not-set": "未設定",
     "no-tasks-yet": "尚無任務。",
     "nothing-selected": "未選擇任何內容！",
+    "nothing-to-export": "沒有可匯出的項目！",
     "now": "現在",
     "oc-version-warning": "警告：目前 OpenCloning 版本與此版本的 eLabFTW 不相容。",
     "onboarding-email-sent": "歡迎（群發）郵件即將發出。",

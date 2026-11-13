@@ -10,6 +10,7 @@
  * Code related to the compounds table present on the Compounds page from ag-grid
  */
 import {
+  ClientSideRowModelApiModule,
   ClientSideRowModelModule,
   CellStyleModule,
   ColumnApiModule,
@@ -26,7 +27,10 @@ import 'ag-grid-community/styles/ag-grid.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
+import { getCsvDate, toCsv } from './csv';
+import { off, on } from './handlers';
+import { DEFAULT_AG_GRID_PAGINATION, saveStringAsFile, toggleEditCompound } from './misc';
+import { notify } from './notify';
 import { readStorage, writeStorage } from './localStorage';
 import i18next from './i18n';
 import { getAgGridTheme } from './theme';
@@ -37,6 +41,8 @@ const COLUMN_STATE_STORAGE_KEY = 'persistent_compounds_table_column_state_v1';
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  // for forEachNodeAfterFilterAndSort() in exportCsv: without it, the call does nothing and the export is always empty
+  ClientSideRowModelApiModule,
   CellStyleModule,
   ColumnApiModule,
   ColumnAutoSizeModule,
@@ -128,6 +134,23 @@ const getStoredColumnState = () => {
 };
 
 const storeColumnState = api => writeStorage(COLUMN_STATE_STORAGE_KEY, JSON.stringify(api.getColumnState()));
+
+// Export the compounds shown in the table, in their order: the text of the search bar filters them in the browser,
+// so the server cannot know which ones they are. The rows are the ones of the API, so the columns are the same as
+// in the report of all the compounds (/api/v2/reports?scope=compounds&format=csv).
+const exportCsv = api => {
+  const rows = [];
+  api.forEachNodeAfterFilterAndSort(node => {
+    if (node.data) {
+      rows.push(node.data);
+    }
+  });
+  if (rows.length === 0) {
+    notify.error('nothing-to-export');
+    return;
+  }
+  saveStringAsFile(`${getCsvDate()}-compounds.elabftw.csv`, toCsv(rows), 'text/csv;charset=utf-8');
+};
 
 const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelpId, searchPlaceholder, syncUrl }) => {
     const [rowData, setRowData] = useState([]);
@@ -250,6 +273,16 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelp
       storeQueryInUrl(query);
     }
   }, [query]);
+
+  // the export button is in the title of the page, outside of the table: unregistered when the table is remounted
+  useEffect(() => {
+    if (!gridApi) {
+      return;
+    }
+    const handler = () => exportCsv(gridApi);
+    on('get-compounds-csv', handler);
+    return () => off('get-compounds-csv', handler);
+  }, [gridApi]);
 
     const defaultColDef = useMemo(() => {
         return {

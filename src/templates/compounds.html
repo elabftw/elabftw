@@ -3,9 +3,8 @@
 {% block title %}
 <div class='d-flex'>
   <h1 id='pageTitle'>{{ pageTitle }}</h1>
-  <a class='ml-auto' href='/api/v2/reports?scope=compounds&format=csv'>
-    <button class='btn btn-secondary' data-action='get-compounds-csv'>{{ 'Export to CSV'|trans }}</button>
-  </a>
+  {# exports the compounds shown in the table, so only the ones matching the search: see exportCsv in compounds-table.jsx #}
+  <button type='button' class='btn btn-secondary ml-auto align-self-center' data-action='get-compounds-csv'>{{ 'Export to CSV'|trans }}</button>
 </div>
 <hr>
 {% endblock title %}

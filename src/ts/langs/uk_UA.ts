@@ -145,6 +145,7 @@ const t = {
     "not-set": "Не встановлено",
     "no-tasks-yet": "Завдань ще немає.",
     "nothing-selected": "Нічого не вибрано!",
+    "nothing-to-export": "Нічого для експорту!",
     "now": "Зараз",
     "oc-version-warning": "Попередження: поточна версія OpenCloning несумісна з цією версією eLabFTW.",
     "onboarding-email-sent": "Інформаційний лист(и) для реєстрації буде надіслано найближчим часом.",

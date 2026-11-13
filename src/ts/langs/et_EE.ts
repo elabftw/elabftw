@@ -145,6 +145,7 @@ const t = {
     "not-set": "Pole määratud",
     "no-tasks-yet": "Ülesandeid veel pole.",
     "nothing-selected": "Midagi pole valitud!",
+    "nothing-to-export": "Pole midagi eksportida!",
     "now": "Nüüd",
     "oc-version-warning": "Hoiatus: praegune OpenCloningi versioon ei ühildu selle eLabFTW versiooniga.",
     "onboarding-email-sent": "Sisseelamismeil(id) saadetakse peagi.",

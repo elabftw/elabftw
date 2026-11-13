@@ -145,6 +145,7 @@ const t = {
     "not-set": "Belgilanmagan",
     "no-tasks-yet": "Hali vazifalar yo‘q.",
     "nothing-selected": "Hech narsa tanlanmagan!",
+    "nothing-to-export": "Eksport qilish uchun hech narsa yo'q!",
     "now": "Hozir",
     "oc-version-warning": "Ogohlantirish: joriy OpenCloning versiyasi eLabFTW ning ushbu versiyasi bilan mos emas.",
     "onboarding-email-sent": "Tez orada ishga kirish haqidagi e-pochta(lar) yuboriladi.",

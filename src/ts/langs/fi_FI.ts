@@ -145,6 +145,7 @@ const t = {
     "not-set": "Ei valittu",
     "no-tasks-yet": "Ei vielä tehtäviä.",
     "nothing-selected": "Ei valittu mitään!",
+    "nothing-to-export": "Ei mitään vientiä!",
     "now": "Nyt",
     "oc-version-warning": "Varoitus: nykyinen OpenCloning-versio ei ole yhteensopiva tämän eLabFTW-version kanssa.",
     "onboarding-email-sent": "Aloitussähköposti(t) lähetetään pian.",

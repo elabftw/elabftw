@@ -145,6 +145,7 @@ const t = {
     "not-set": "Inte angivet",
     "no-tasks-yet": "Inga uppgifter ännu.",
     "nothing-selected": "Inget markerat!",
+    "nothing-to-export": "Inget att exportera!",
     "now": "Nu",
     "oc-version-warning": "Varning: den aktuella versionen av OpenCloning är inkompatibel med den här versionen av eLabFTW.",
     "onboarding-email-sent": "Introduktionsmeddelande kommer snart att skickas.",

@@ -145,6 +145,7 @@ const t = {
     "not-set": "Tidak diatur",
     "no-tasks-yet": "Belum ada tugas.",
     "nothing-selected": "Tidak ada yang dipilih!",
+    "nothing-to-export": "Tidak ada yang bisa diekspor!",
     "now": "Sekarang",
     "oc-version-warning": "Peringatan: versi OpenCloning saat ini tidak kompatibel dengan versi eLabFTW ini.",
     "onboarding-email-sent": "Email orientasi akan segera dikirimkan.",

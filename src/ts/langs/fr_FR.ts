@@ -145,6 +145,7 @@ const t = {
     "not-set": "Non défini",
     "no-tasks-yet": "Aucune tâche pour l'instant.",
     "nothing-selected": "Aucune sélection !",
+    "nothing-to-export": "Rien à exporter !",
     "now": "Maintenant",
     "oc-version-warning": "Attention : la version actuelle d'OpenCloning est incompatible avec cette version d'eLabFTW.",
     "onboarding-email-sent": "Le(s) courriel(s) d'accueil sera(ont) bientôt envoyé(s).",

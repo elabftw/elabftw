@@ -191,6 +191,7 @@ final class i18n4Js
             'not-set' => _('Not set'),
             'no-tasks-yet' => _('No tasks yet.'),
             'nothing-selected' => _('Nothing selected!'),
+            'nothing-to-export' => _('Nothing to export!'),
             'now' => _('Now'),
             'oc-version-warning' => _('Warning: current OpenCloning version is incompatible with this version of eLabFTW.'),
             'onboarding-email-sent' => _('Onboarding email(s) will soon be sent.'),

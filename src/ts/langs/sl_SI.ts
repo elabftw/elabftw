@@ -145,6 +145,7 @@ const t = {
     "not-set": "Ni nastavljeno",
     "no-tasks-yet": "Ni še nalog.",
     "nothing-selected": "Nič izbranega!",
+    "nothing-to-export": "Nič za izvoz!",
     "now": "zdaj",
     "oc-version-warning": "Opozorilo: trenutna izdaja OpenCloning ne podpira te izdaje eLabFTW.",
     "onboarding-email-sent": "E-poštna sporočila za pripravo bodo kmalu poslana.",

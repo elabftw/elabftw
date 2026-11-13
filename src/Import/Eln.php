@@ -22,7 +22,9 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
@@ -32,6 +34,7 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\UploadGroups;
@@ -54,6 +57,7 @@ use function array_filter;
 use function array_find;
 use function array_intersect_key;
 use function array_is_list;
+use function array_merge;
 use function array_values;
 use function basename;
 use function is_array;
@@ -530,7 +534,14 @@ class Eln extends AbstractZip
         if (($node['@type'] ?? null) !== 'MolecularEntity') {
             return null;
         }
-        $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
+        try {
+            // the values come from the archive, not from PubChem, even with a PubChem CID: they get the restricted defaults
+            $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node), fromPubChem: false);
+        } catch (CompoundNotAccessibleException $e) {
+            // the compound exists already and the importer cannot read it: import the entry without the link
+            $this->logger->warning($e->getMessage());
+            return null;
+        }
         $this->insertedCompounds[$id] = $compoundId;
         return $compoundId;
     }
@@ -555,6 +566,7 @@ class Eln extends AbstractZip
                 }
             }
         }
+        [$ghsSignalWord, $ghsStatements] = $this->ghsFromPropertyValues($node);
         $str = static fn(mixed $value): ?string => is_string($value) && $value !== '' ? $value : null;
         return new Compound(
             cas: $str($casNumber),
@@ -566,7 +578,32 @@ class Eln extends AbstractZip
             smiles: $str($node['smiles'] ?? null),
             molecularFormula: $str($node['molecularFormula'] ?? null),
             molecularWeight: is_numeric($node['molecularWeight'] ?? null) ? (float) $node['molecularWeight'] : null,
+            ghsSignalWord: $ghsSignalWord,
+            ghsStatements: $ghsStatements,
         );
+    }
+
+    /**
+     * Only the codes are read: the texts come from the reference list of this instance
+     *
+     * @return array{0: ?GhsSignalWord, 1: string[]}
+     */
+    private function ghsFromPropertyValues(array $node): array
+    {
+        $signalWord = null;
+        $codes = array();
+        $properties = is_array($node['additionalProperty'] ?? null) ? $node['additionalProperty'] : array();
+        foreach ($properties as $property) {
+            if (!is_array($property) || !is_string($property['value'] ?? null)) {
+                continue;
+            }
+            match ($property['propertyID'] ?? null) {
+                Compound::ELN_GHS_SIGNAL_WORD => $signalWord = GhsSignalWord::tryFrom($property['value']),
+                Compound::ELN_GHS_HAZARD_STATEMENT, Compound::ELN_GHS_PRECAUTIONARY_STATEMENT => $codes = array_merge($codes, Compound::extractGhsCodes($property['value'])),
+                default => null,
+            };
+        }
+        return array($signalWord, $codes);
     }
 
     private function getChangelogLinkReplacements(): array
@@ -820,6 +857,20 @@ class Eln extends AbstractZip
                         if (!empty($tag)) {
                             $Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
                         }
+                    }
+                    break;
+                case 'https://www.elabftw.net/ns#reactions':
+                    $reactions = $value['@value'] ?? array();
+                    if (!is_array($reactions)) {
+                        $this->logger->warning('Invalid reaction shape: not an array!');
+                        break;
+                    }
+                    foreach ($reactions as $reaction) {
+                        if (!is_array($reaction)) {
+                            $this->logger->warning('Invalid reaction shape: not an array!');
+                            continue;
+                        }
+                        new Reactions($this->Entity)->import($reaction);
                     }
                     break;
                 case 'compounds_links':

@@ -17,6 +17,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\TagParam;
 use Elabftw\Traits\TestsUtilsTrait;
 
+use function array_column;
 use function bin2hex;
 use function count;
 use function random_bytes;
@@ -52,6 +53,19 @@ class TeamTagsTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertIsArray($this->TeamTags->readAll());
         // TODO test with query
+    }
+
+    public function testReadSuggestions(): void
+    {
+        $prefix = 'suggest-' . bin2hex(random_bytes(4));
+        $this->TeamTags->postAction(Action::Create, array('tag' => $prefix . '-a'));
+        $this->TeamTags->postAction(Action::Create, array('tag' => $prefix . '-b'));
+        $this->TeamTags->postAction(Action::Create, array('tag' => $prefix . '-c'));
+
+        $tags = array_column($this->TeamTags->readSuggestions(array($prefix . '-b'), $prefix), 'tag');
+        $this->assertSame(array($prefix . '-a', $prefix . '-c'), $tags);
+        $this->assertCount(1, $this->TeamTags->readSuggestions(array(), $prefix, 1));
+        $this->assertCount(3, $this->TeamTags->readSuggestions(array(), $prefix));
     }
 
     public function testDeletedEntitiesAreNotCounted(): void

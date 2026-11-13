@@ -55,6 +55,19 @@ final class Extensions
         'odt',
     );
 
+    // Text formats that can be loaded in the chemical editor.
+    public const array CHEM_EDITOR = array(
+        'cdxml',
+        'cml',
+        'inchi',
+        'ket',
+        'mol',
+        'rxn',
+        'sdf',
+        'smi',
+        'smiles',
+    );
+
     public const array IMAGE = array(
         'gif',
         'heic',
@@ -65,6 +78,15 @@ final class Extensions
         'tif',
         'tiff',
         'webp',
+    );
+
+    // images that the browser can draw on the canvas of the image editor
+    public const array DOODLE = array(
+        'bmp',
+        'gif',
+        'jpeg',
+        'jpg',
+        'png',
     );
 
     public const array HAS_EXIF = array(

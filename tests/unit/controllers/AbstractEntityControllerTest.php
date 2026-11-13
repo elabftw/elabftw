@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
+use Elabftw\Enums\Action;
 use Elabftw\Models\Config;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\DomCrawler\Crawler;
@@ -16,13 +18,14 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 use function array_map;
+use function json_decode;
 use function sprintf;
 
 class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
 
-    public function testShowProvidesVisibleTeamsToSelectedPermissionsModals(): void
+    public function testShowProvidesVisibleTeamsToSelectedPermissionsModal(): void
     {
         $user = $this->getRandomUserInTeam(1);
         // create the application using an experiments-page request
@@ -49,16 +52,49 @@ class AbstractEntityControllerTest extends \PHPUnit\Framework\TestCase
             $App->Teams->readAllVisible(),
         );
 
-        // check both the read-permission and write-permission modals
+        // the show page has the permissions modal for the selected entries, with a view and an edit section
+        self::assertCount(1, $Crawler->filter('#permissionsModal[data-permissions-mode="manual"]'));
         foreach (array('canread', 'canwrite') as $permission) {
-            // find every team option inside the current permission modal.
+            // find every team option inside the search of the current section: nothing is selected yet, so all teams are there
             $actual = $Crawler
-                ->filter(sprintf('#%sSelected_select_teams option', $permission))
+                ->filter(sprintf('#permissionsModal #%s_permissions_search option[value^="team:"]', $permission))
                 // extract the value attribute from every matching option.
                 ->each(static fn(Crawler $option): string => (string) $option->attr('value'));
-            // confirm that the modal contains exactly all visible teams.
+            // confirm that the section can search exactly all visible teams.
             self::assertSame($expected, $actual);
         }
+    }
+
+    public function testViewWithTheAccessKeyHasTheReactionPreviewsInline(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $entity = $this->getFreshExperimentWithGivenUser($user);
+        // 1x1 pixel
+        $png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+        $reactionId = new Reactions($entity)->postAction(Action::Create, array('title' => 'Shared reaction', 'preview_png' => $png));
+        $App = new App(
+            Request::create(sprintf('/experiments.php?mode=view&id=%d', $entity->id)),
+            new Session(new MockArraySessionStorage()),
+            Config::getConfig(),
+            App::getDefaultLogger(),
+            $user,
+        );
+        $App->boot();
+        // the page gives the reactions to reaction-summary.ts, which renders them
+        $reaction = static fn(Experiments $Entity): array => json_decode(
+            (string) new Crawler((string) new ExperimentsController($App, $Entity)->getResponse()->getContent())->filter('#reactionsList')->attr('data-reactions'),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        )[0];
+
+        // a normal view loads the preview from the api
+        $summary = $reaction(new Experiments($user, $entity->id));
+        self::assertSame($reactionId, $summary['id']);
+        self::assertSame(1, (int) $summary['has_preview']);
+        self::assertArrayNotHasKey('preview_png', $summary);
+        // opened with the access key, the api would not authorize it: it is in the page
+        self::assertSame($png, $reaction(new Experiments($user, $entity->id, bypassReadPermission: true))['preview_png']);
     }
 
     public function testShowRendersTheBatchContainerModalWithoutReadingStorage(): void

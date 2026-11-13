@@ -8,6 +8,10 @@
 {% include('booking-params-modal.html') %}
 {# IMPORT FROM PUBCHEM #}
 {% include('import-pubchem-modal.html') %}
+{# permissions of the compounds: opened from the import, create and edit compound modals #}
+{% if not App.isAnonymous() %}
+  {% include 'permissions-modal.html' with {context: 'compound'} %}
+{% endif %}
 {# PROCUREMENT PARAMS #}
 {% include('procurement-params-modal.html') %}
 {# BOOKINGS EMAIL #}

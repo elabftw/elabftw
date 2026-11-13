@@ -23,8 +23,12 @@ use Elabftw\Traits\SetIdTrait;
 use Override;
 use PDO;
 
+use function array_keys;
+use function array_map;
 use function array_pop;
+use function array_values;
 use function explode;
+use function implode;
 use function sprintf;
 
 /**
@@ -130,6 +134,36 @@ final class TeamTags extends AbstractRest
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $query . '%');
+        $this->Db->execute($req);
+
+        return $req->fetchAll();
+    }
+
+    /**
+     * The tags to suggest on an entry, without the ones it already has
+     * Done in the query so the edit page doesn't hold all the tags of the team to display a few
+     */
+    public function readSuggestions(array $attachedTags, string $query = '', int $limit = 101): array
+    {
+        $attachedTags = array_values($attachedTags);
+        $notInSql = '';
+        if (!empty($attachedTags)) {
+            $placeholders = array_map(static fn(int $key): string => ':attached' . $key, array_keys($attachedTags));
+            $notInSql = sprintf(' AND tags.tag NOT IN (%s)', implode(', ', $placeholders));
+        }
+        $sql = sprintf('SELECT tags.id, tags.tag,
+            EXISTS (SELECT 1 FROM favtags2users WHERE favtags2users.users_id = :userid AND favtags2users.tags_id = tags.id) AS is_favorite
+            FROM tags
+            WHERE tags.team = :team AND tags.tag LIKE :query%s
+            ORDER BY tags.tag LIMIT :limit', $notInSql);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
+        $req->bindValue(':query', '%' . $query . '%');
+        $req->bindValue(':limit', $limit, PDO::PARAM_INT);
+        foreach ($attachedTags as $key => $tag) {
+            $req->bindValue(':attached' . $key, (string) $tag);
+        }
         $this->Db->execute($req);
 
         return $req->fetchAll();

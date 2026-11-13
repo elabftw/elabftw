@@ -39,7 +39,7 @@ try {
             $bypassReadPermission = true;
         }
     }
-    $Response = new DatabaseController($App, new Items($App->Users, $id, bypassReadPermission: $bypassReadPermission))->getResponse();
+    $Response = new DatabaseController($App, new Items($App->Users, $id, bypassReadPermission: $bypassReadPermission, withChangelog: false))->getResponse();
 } catch (Exception $e) {
     $Response = $App->getResponseFromException($e);
 } finally {

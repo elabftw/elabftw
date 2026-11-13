@@ -33,6 +33,7 @@ use Elabftw\Import\Handler as ImportHandler;
 use Elabftw\Interfaces\RestInterface;
 use Elabftw\Make\ReportsHandler;
 use Elabftw\Make\Exports;
+use Elabftw\Make\MakeStorageHazardsPdf;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\AuditLogs;
@@ -41,12 +42,14 @@ use Elabftw\Models\BodyRevisions;
 use Elabftw\Models\Branding;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
+use Elabftw\Models\CompoundsGhsStatements;
 use Elabftw\Models\Config;
 use Elabftw\Models\Dspace;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
 use Elabftw\Models\FavTags;
+use Elabftw\Models\GhsStatements;
 use Elabftw\Models\Idps;
 use Elabftw\Models\IdpsCerts;
 use Elabftw\Models\IdpsEndpoints;
@@ -62,6 +65,7 @@ use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\UserNotifications;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\RequestActions;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\SigKeys;
@@ -86,6 +90,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Models\UserUploads;
 use Elabftw\Services\Email;
 use Elabftw\Services\HttpGetter;
+use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\OpenBabelFingerprinter;
 use Exception;
 use GuzzleHttp\Client;
@@ -290,14 +295,21 @@ final class Apiv2Controller extends AbstractApiController
         return match ($this->format) {
             ExportFormat::Binary => (
                 function () {
-                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports || $this->Model instanceof Branding) {
+                    if ($this->Model instanceof Uploads || $this->Model instanceof Exports || $this->Model instanceof Branding || $this->Model instanceof Reactions) {
                         $response = $this->Model->readBinary();
                         $response->isNotModified($this->Request);
                         return $response;
                     }
-                    throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding endpoints.');
+                    throw new ImproperActionException('Incorrect format (binary): only available for uploads/exports/branding/reactions endpoints.');
                 }
             )(),
+            // the hazards sheet of a location, for firefighters
+            ExportFormat::Pdf => $this->Model instanceof StorageUnits
+                ? new MakeStorageHazardsPdf(
+                    new MpdfProvider($this->requester->userData['fullname'], $this->requester->userData['pdf_format']),
+                    $this->Model,
+                )->getResponse()
+                : (new MakeController($this->requester, $this->Request))->getResponse(),
             ExportFormat::Csv,
             ExportFormat::Eln,
             ExportFormat::ElnHtml,
@@ -305,7 +317,6 @@ final class Apiv2Controller extends AbstractApiController
             ExportFormat::QrPdf,
             ExportFormat::QrPng,
             ExportFormat::QrSvg,
-            ExportFormat::Pdf,
             ExportFormat::PdfA,
             ExportFormat::ZipA,
             ExportFormat::Zip => (new MakeController($this->requester, $this->Request))->getResponse(),
@@ -379,6 +390,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->Request->query->getInt('limit'),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
+            ApiEndpoint::GhsStatements => new GhsStatements(),
             ApiEndpoint::Reports => new ReportsHandler($this->requester),
             ApiEndpoint::StorageUnits => new StorageUnits($this->requester, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1', $this->id),
             // Temporary informational endpoint, can be removed in 5.2
@@ -425,6 +437,7 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::CompoundsLinks => LinksFactory::getCompoundsLinks($this->Model, $this->subId),
                 ApiSubModels::ItemsLinks => LinksFactory::getItemsLinks($this->Model, $this->subId),
                 ApiSubModels::RequestActions => new RequestActions($this->requester, $this->Model, $this->subId),
+                ApiSubModels::Reactions => new Reactions($this->Model, $this->subId),
                 ApiSubModels::Revisions => new BodyRevisions($this->Model, $this->subId),
                 ApiSubModels::StepGroups => new StepGroups($this->Model, $this->subId),
                 ApiSubModels::Steps => new Steps($this->Model, $this->subId),
@@ -432,6 +445,12 @@ final class Apiv2Controller extends AbstractApiController
                 ApiSubModels::UploadGroups => new UploadGroups($this->Model, $this->subId),
                 ApiSubModels::Uploads => new Uploads($this->Model, $this->subId),
                 default => throw new InvalidApiSubModelException(ApiEndpoint::from($this->Model->entityType->value)),
+            };
+        }
+        if ($this->Model instanceof Compounds) {
+            return match ($submodel) {
+                ApiSubModels::GhsStatements => new CompoundsGhsStatements($this->Model, $this->subId),
+                default => throw new InvalidApiSubModelException(ApiEndpoint::Compounds),
             };
         }
         if ($this->Model instanceof Teams) {

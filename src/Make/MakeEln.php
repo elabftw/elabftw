@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
@@ -28,6 +29,7 @@ use Elabftw\Models\Compounds;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Items;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
@@ -351,7 +353,13 @@ class MakeEln extends AbstractMakeEln
             }
             $datasetNode['about'] = array('@id' => $categoryAtId);
         }
-
+        // JSON-LD's @json preserves nested local snapshots without interpreting
+        // their installation-local ids as references to other crate nodes.
+        // The entry only has their summaries: an import needs the drawings too.
+        $reactions = new Reactions($entity)->readFull();
+        if ($reactions !== array()) {
+            $datasetNode['https://www.elabftw.net/ns#reactions'] = array('@type' => '@json', '@value' => $reactions);
+        }
         // METADATA (extra fields)
         if ($e['metadata']) {
             $metadataReferences = $this->processMetadataReferences($e['metadata'], $metadataReferences);
@@ -724,7 +732,7 @@ class MakeEln extends AbstractMakeEln
                 'sameAs' => sprintf('https://pubchem.ncbi.nlm.nih.gov/#query=%d', $compound['pubchem_cid']),
             );
         }
-        $this->dataEntities[] = array(
+        $node = array(
             '@id' => $id,
             '@type' => 'MolecularEntity',
             'name' => $compound['name'],
@@ -736,7 +744,36 @@ class MakeEln extends AbstractMakeEln
             'smiles' => $compound['smiles'],
             'identifier' => $identifiers,
         );
+        $ghsProperties = $this->ghsToPropertyValues($compound);
+        if ($ghsProperties !== array()) {
+            $node['additionalProperty'] = $ghsProperties;
+        }
+        $this->dataEntities[] = $node;
         return $reference;
+    }
+
+    /**
+     * The GHS signal word and statements: the import reads them back from the codes
+     */
+    private function ghsToPropertyValues(array $compound): array
+    {
+        $properties = array();
+        if (!empty($compound['ghs_signal_word'])) {
+            $properties[] = array(
+                '@type' => 'PropertyValue',
+                'propertyID' => Compound::ELN_GHS_SIGNAL_WORD,
+                'value' => $compound['ghs_signal_word'],
+            );
+        }
+        foreach ($compound['ghs_statements'] ?? array() as $statement) {
+            $properties[] = array(
+                '@type' => 'PropertyValue',
+                'propertyID' => $statement['kind'] === 'P' ? Compound::ELN_GHS_PRECAUTIONARY_STATEMENT : Compound::ELN_GHS_HAZARD_STATEMENT,
+                'value' => $statement['code'],
+                'description' => $statement['statement'],
+            );
+        }
+        return $properties;
     }
 
     // convert changelog actions to schema.org valid fields UpdateAction

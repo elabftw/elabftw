@@ -14,6 +14,7 @@ namespace Elabftw\Elabftw;
 use Elabftw\AuditEvent\ImpersonationStopped;
 use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
+use Elabftw\Auth\SamlLogout;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\UnauthorizedException;
@@ -134,7 +135,7 @@ if ($App->Request->query->has('sls') && ($App->Request->query->has('SAMLRequest'
     $samlAuthLib = new SamlAuthLib($settings);
 
     // destroy Session and create response if needed
-    $samlRedirectUrl = $samlAuthLib->processSLO(false, null, false, $destroySession, true);
+    $samlRedirectUrl = SamlLogout::process($samlAuthLib, $destroySession);
 
     $errors = $samlAuthLib->getErrors();
 

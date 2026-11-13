@@ -77,7 +77,11 @@ $tooltips.each((_, trigger) => {
   });
 
   $trigger.on(`hide.bs.tooltip${namespace}`, event => {
-    if (!isDismissing && getTooltipElement(trigger)?.matches(':hover')) {
+    const active =
+      trigger.matches(':focus-within') ||
+      getTooltipElement(trigger)?.matches(':hover');
+
+    if (!isDismissing && active) {
       event.preventDefault();
       return;
     }

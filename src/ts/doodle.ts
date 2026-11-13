@@ -5,10 +5,16 @@
  * @license AGPL-3.0
  * @package elabftw
  */
-import { getInput, reloadElements } from './misc';
+import { getInput, reloadUploads } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { ApiC } from './api';
+import { entity } from './getEntity';
+import { on } from './handlers';
+import { isCompatible, showLoadAttachmentModal } from './load-attachment';
+import { notify } from './notify';
+import { getUploadUrl, uploadFileToEntity } from './pasteImage';
+import { showTab } from './tabbed-sections';
 
 const doodleCanvas = document.getElementById('doodleCanvas') as HTMLCanvasElement;
 if (doodleCanvas) {
@@ -20,8 +26,169 @@ if (doodleCanvas) {
   // bool to store the state of painting
   let isPainting = false;
   let wasPainting = false;
+  // something was drawn or loaded since the last clear, so replacing the canvas needs a confirmation
+  let hasContent = false;
+
+  const doodleDiv = document.getElementById('doodleDiv');
+  const extensions: string[] = JSON.parse(doodleDiv.dataset.extensions);
+  const confirmReplace = (): boolean => !hasContent || confirm(doodleDiv.dataset.confirmReplace);
 
   const context: CanvasRenderingContext2D = doodleCanvas.getContext('2d');
+
+  // draw with the primary color of the user (or of the theme) by default
+  // a color input only takes #rrggbb: let a canvas convert whatever the css variable holds
+  const probe = document.createElement('canvas').getContext('2d');
+  probe.fillStyle = 'rgba(0, 0, 0, 0)';
+  probe.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+  // an invalid or transparent color leaves the rgba() value: keep the default of the input then
+  if (/^#[0-9a-f]{6}$/i.test(probe.fillStyle)) {
+    getInput('doodleStrokeStyle').value = probe.fillStyle;
+  }
+
+  const wrapper = document.getElementById('doodleCanvasWrapper');
+  const sizeLabel = document.getElementById('doodleCanvasSize');
+  // once the user resized the canvas, it no longer follows the width of the editor
+  let userSized = false;
+  const minSize = 100;
+
+  function copyCanvas(): HTMLCanvasElement {
+    const copy = document.createElement('canvas');
+    copy.width = doodleCanvas.width;
+    copy.height = doodleCanvas.height;
+    copy.getContext('2d').drawImage(doodleCanvas, 0, 0);
+    return copy;
+  }
+
+  // changing the size of a canvas clears it, so draw back what was there: the part outside of a smaller canvas is cropped
+  function setSize(width: number, height: number, snapshot: HTMLCanvasElement = copyCanvas()): void {
+    doodleCanvas.width = Math.round(width);
+    doodleCanvas.height = Math.round(height);
+    context.drawImage(snapshot, 0, 0);
+    sizeLabel.textContent = `${doodleCanvas.width} × ${doodleCanvas.height} px`;
+  }
+
+  // the canvas fills the width of the editor through its width attribute, not css: stretching it with css would
+  // scale the drawing and shift it away from the pointer. Once something is drawn it only grows, so it is never cropped.
+  function fitWidth(): void {
+    const width = wrapper.clientWidth;
+    if (userSized || width === 0 || width === doodleCanvas.width || (width < doodleCanvas.width && hasContent)) {
+      return;
+    }
+    setSize(width, doodleCanvas.height);
+  }
+  // inactive tabs keep their width (see tabbed-sections.ts), so this works even before the image tab is shown
+  new ResizeObserver(fitWidth).observe(wrapper);
+  sizeLabel.textContent = `${doodleCanvas.width} × ${doodleCanvas.height} px`;
+
+  // resize handle in the bottom right corner of the canvas
+  const handle = document.getElementById('doodleResizeHandle');
+  const resizeTo = (width: number, height: number, snapshot?: HTMLCanvasElement): void => {
+    userSized = true;
+    setSize(Math.max(minSize, width), Math.max(minSize, height), snapshot);
+  };
+  handle.addEventListener('pointerdown', (event: PointerEvent) => {
+    event.preventDefault();
+    // always redraw from the canvas as it was when the drag started, so shrinking then growing again loses nothing
+    const snapshot = copyCanvas();
+    const start = { x: event.clientX, y: event.clientY, width: doodleCanvas.width, height: doodleCanvas.height };
+    const onMove = (move: PointerEvent): void => {
+      resizeTo(start.width + move.clientX - start.x, start.height + move.clientY - start.y, snapshot);
+    };
+    // listen on the document so the drag continues when the pointer goes past the handle
+    const onUp = (): void => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
+    };
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onUp);
+  });
+  handle.addEventListener('keydown', (event: KeyboardEvent) => {
+    const step = event.shiftKey ? 50 : 10;
+    const delta = {
+      ArrowLeft: [-step, 0],
+      ArrowRight: [step, 0],
+      ArrowUp: [0, -step],
+      ArrowDown: [0, step],
+    }[event.key];
+    if (!delta) {
+      return;
+    }
+    event.preventDefault();
+    resizeTo(doodleCanvas.width + delta[0], doodleCanvas.height + delta[1]);
+  });
+
+  // margins around a loaded image, in px
+  const doodleMinMargin = 40;
+  const doodleMaxMargin = 120;
+
+  // draw the image in the middle of the canvas
+  function loadImage(url: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const img = new Image();
+      img.addEventListener('load', () => {
+        // leave room around the image for annotations: a tenth of its largest side, but within bounds so a big image
+        // does not end up lost in empty space, and a small one still has room around it
+        const margin = Math.round(Math.min(Math.max(Math.max(img.width, img.height) * 0.1, doodleMinMargin), doodleMaxMargin));
+        // keep the canvas at least as wide as the editor, and follow it again until the user resizes it
+        userSized = false;
+        // an empty snapshot: the previous drawing is replaced, not kept
+        setSize(Math.max(img.width + 2 * margin, wrapper.clientWidth), img.height + 2 * margin, document.createElement('canvas'));
+        context.drawImage(img, (doodleCanvas.width - img.width) / 2, margin);
+        clickX = [];
+        clickY = [];
+        hasContent = true;
+        showTab('image', { scroll: true });
+        resolve();
+      });
+      img.addEventListener('error', () => reject(new Error(doodleDiv.dataset.error)));
+      img.src = url;
+    }).catch(error => notify.error(error));
+  }
+
+  // from the menu of an upload
+  on('annotate-image', (el: HTMLElement) => {
+    if (!confirmReplace()) {
+      return;
+    }
+    void loadImage(getUploadUrl({ long_name: el.dataset.path, storage: Number(el.dataset.storage) }));
+  });
+
+  // pick one of the image attachments of the entry
+  on('doodle-load-attachment', () => showLoadAttachmentModal({
+    extensions,
+    load: async upload => {
+      if (!confirmReplace()) {
+        return false;
+      }
+      await loadImage(getUploadUrl(upload));
+    },
+  }));
+
+  // upload a new image as attachment and load it right away
+  const uploadInput = document.getElementById('doodleUploadInput') as HTMLInputElement;
+  on('doodle-upload-image', () => uploadInput.click());
+  uploadInput.addEventListener('change', async () => {
+    const file = uploadInput.files?.[0];
+    // reset so selecting the same file again still triggers a change
+    uploadInput.value = '';
+    if (!file) {
+      return;
+    }
+    if (!isCompatible(file.name, extensions)) {
+      notify.error(doodleDiv.dataset.error);
+      return;
+    }
+    if (!confirmReplace()) {
+      return;
+    }
+    try {
+      await loadImage(await uploadFileToEntity(file, file.name));
+    } catch {
+      // the api client already displayed the error
+    }
+  });
 
   function draw(dragging: boolean): void {
     // get last items in arrays
@@ -53,12 +220,14 @@ if (doodleCanvas) {
   }
 
   function addText(x: number, y: number, text: string): void {
+    hasContent = true;
     context.font = '18px Arial';
     context.fillStyle = getInput('doodleStrokeStyle').value;
     context.fillText(text, x, y);
   }
 
   function addClick(x: number, y: number, dragging: boolean): void {
+    hasContent = true;
     clickX.push(x);
     clickY.push(y);
     draw(dragging);
@@ -68,11 +237,11 @@ if (doodleCanvas) {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     clickX = [];
     clickY = [];
+    hasContent = false;
   });
 
-  document.getElementById('saveCanvas').addEventListener('click', (e) => {
+  document.getElementById('saveCanvas').addEventListener('click', () => {
     const image = doodleCanvas.toDataURL();
-    const elDataset = (e.target as HTMLButtonElement).dataset;
     const realName = prompt(i18next.t('request-filename'));
     if (realName === null || realName === '') {
       return;
@@ -83,7 +252,8 @@ if (doodleCanvas) {
       'real_name': realName,
       'content': image,
     };
-    ApiC.post(`${elDataset.type}/${elDataset.id}/${Model.Upload}`, params).then(() => reloadElements(['uploadsDiv']));
+    // sent as a data url: the server adds the png extension when the name has none
+    ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}`, params).then(() => reloadUploads());
   });
 
   /**

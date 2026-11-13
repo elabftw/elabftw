@@ -28,6 +28,7 @@ use Elabftw\Services\UserArchiver;
 use PDO;
 
 use function count;
+use function _;
 
 /**
  * Manage the link between users and teams
@@ -118,7 +119,10 @@ final class Users2Teams
      */
     public function destroy(int $userid, int $teamid): array
     {
-        $this->requesterCanModifyInTeamOrExplode($teamid);
+        // removing a membership can make a user's data look like it vanished from a team, so team Admins should archive instead
+        if (!$this->requester->isSysadmin() && $this->requester->userData['can_manage_users2teams'] !== 1) {
+            throw new ForbiddenException(_('Only a Sysadmin or a user with the "Can manage users/teams association" permission can remove a user from a team. Use the "Is Archived" property instead to mark them as inactive.'));
+        }
         return $this->removeUserFromTeam($userid, $teamid);
     }
 
@@ -138,7 +142,7 @@ final class Users2Teams
         $ApiKeys = new ApiKeys(new Users($userid, $teamid));
         $ApiKeys->destroyInTeam($teamid);
 
-        AuditLogs::create(new TeamRemoval($teamid, 0, $userid));
+        AuditLogs::create(new TeamRemoval($teamid, $this->requester->userid ?? 0, $userid));
         $Users = new Users($userid);
         return $Users->readOne();
     }

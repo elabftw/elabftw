@@ -20,10 +20,12 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\AuditLogs;
 use Elabftw\Models\Items;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\BaseQueryParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\UnprocessableContentException;
 
@@ -64,7 +66,7 @@ class HandlerTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals(2, new Items(new Users(2, 1), (int) $itemId)->readOne()['userid']);
         }
         // and the audit log must still identify the authenticated requester, not the selected owner
-        $auditLog = AuditLogs::read(1)[0];
+        $auditLog = new AuditLogs(new Users(1, 1))->readAll(new BaseQueryParams(new InputBag(array('limit' => 1))))[0];
         $this->assertEquals(AuditCategory::Import->value, $auditLog['category']);
         $this->assertEquals(1, $auditLog['requester_userid']);
     }

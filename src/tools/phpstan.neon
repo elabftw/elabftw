@@ -11,6 +11,9 @@ parameters:
       path: %currentWorkingDirectory%/web
     - message: '#.*type has no value type specified.*#'
     - message: '#.*with no value type specified in iterable type array.*#'
+    # the bundled phpstorm-stubs predate the $dict parameter of php-ext-zstd functions
+    - message: '#^Function zstd_(un)?compress invoked with [23] parameters#'
+      path: %currentWorkingDirectory%/src/Services/BodyRevisionsStore.php
   excludePaths:
     - %currentWorkingDirectory%/src/Services/AdvancedSearchQuery/Grammar/Parser.php
 

@@ -1,0 +1,22 @@
+{% set editReactions = editReactions|default(false) %}
+{% if editReactions or Entity.entityData.reactions %}
+<section id='reactionsSection' class='mt-3' aria-label='{{ 'Reactions'|trans }}'>
+  <h3>{{ 'Reactions'|trans }}</h3>
+  {# rendered by reaction-summary.ts, from the summaries of the entry #}
+  <div id='reactionsList'
+    data-reactions='{{ Entity.entityData.reactions|default([])|json_encode }}'
+    data-entity-type='{{ Entity.entityType.value }}'
+    data-entity-id='{{ Entity.id }}'
+    data-label-same-reaction='{{ 'Find experiments with the same reaction'|trans }}'
+    data-label-same-compound='{{ 'Find experiments using this compound'|trans }}'
+    {% if editReactions %}
+    data-label-load='{{ 'Load in editor'|trans }}'
+    data-label-edit='{{ 'Edit'|trans }}'
+    data-label-delete='{{ 'Delete reaction'|trans }}'
+    {% endif %}
+  ></div>
+  {% if editReactions %}
+    <p class='text-muted'>{{ 'Draw a reaction in the chemical editor, then select Create reaction to register its components and quantities.'|trans }}</p>
+  {% endif %}
+</section>
+{% endif %}

@@ -23,11 +23,12 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
-import { DEFAULT_AG_GRID_PAGINATION, getEntityTypeFromPage } from './misc';
+import { DEFAULT_AG_GRID_PAGINATION, errorMessage, getEntityTypeFromPage } from './misc';
+import { readStorage, writeStorage } from './localStorage';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
 
@@ -94,24 +95,13 @@ const applyNumberParamFallback = (params, param, fallback) => {
 
 const getStoredColumnState = () => {
   try {
-    return JSON.parse(
-      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
-    );
+    return JSON.parse(readStorage(COLUMN_STATE_STORAGE_KEY) ?? 'null');
   } catch {
     return null;
   }
 };
 
-const storeColumnState = api => {
-  try {
-    localStorage.setItem(
-      COLUMN_STATE_STORAGE_KEY,
-      JSON.stringify(api.getColumnState())
-    );
-  } catch {
-    // localStorage might be unavailable
-  }
-};
+const storeColumnState = api => writeStorage(COLUMN_STATE_STORAGE_KEY, JSON.stringify(api.getColumnState()));
 
 const getEntityFilterParams = event => {
   const detail = event?.detail;
@@ -266,17 +256,32 @@ const EntitiesTable = ({
     return params;
   }, [order, sort, related, relatedOrigin]);
 
+  // only the last request shows its results: an older one can finish after it
+  const requestSeq = useRef(0);
+
   // all the entries are loaded in the table, which does client side pagination
+  // like the list (EntityList.svelte), tell the forms that changed the filters if they were rejected, see initReactionSearch() in show.ts
   const fetchData = useCallback(async event => {
     const params = getResolvedEntityFilterParams(event);
     const queryString = params.toString();
+    const seq = ++requestSeq.current;
 
     try {
       const endpoint = getEntityTypeFromPage(window.location);
       const url = queryString ? `${endpoint}?${queryString}` : endpoint;
       const entities = await ApiC.getJson(url, {notifOnError: 0});
+      if (seq !== requestSeq.current) {
+        return;
+      }
       setRowData(entities);
+      window.dispatchEvent(new CustomEvent('entity-list-loaded'));
     } catch (error) {
+      if (seq !== requestSeq.current) {
+        return;
+      }
+      // the rows of the previous query are not the results of this one
+      setRowData([]);
+      window.dispatchEvent(new CustomEvent('entity-list-rejected', { detail: errorMessage(error) }));
       console.error(`Could not load entities: ${error}`);
     }
   }, [getResolvedEntityFilterParams]);
@@ -301,6 +306,18 @@ const EntitiesTable = ({
       window.removeEventListener('entity-filters-changed', handleEntityFiltersChanged);
     };
   }, [fetchData]);
+
+  // the selection can also be dropped from outside the grid, as a batch action does once it
+  // is finished: the ticks have to follow, or the next tick would bring the old rows back
+  useEffect(() => {
+    const handleSelectionCleared = () => gridApi?.deselectAll();
+
+    window.addEventListener('entities-selection-cleared', handleSelectionCleared);
+
+    return () => {
+      window.removeEventListener('entities-selection-cleared', handleSelectionCleared);
+    };
+  }, [gridApi]);
 
   // when a row is selected with the checkbox
   const selectionChanged = (event) => {

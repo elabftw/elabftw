@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -159,16 +160,27 @@ abstract class AbstractEntity extends AbstractRest
 
     private bool $readAfterPatch = true;
 
-    public function __construct(public Users $Users, public ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
-    {
+    // set by readOneFull(): readOne() then gives the reactions with their drawings instead of their summaries
+    private bool $withFullReactions = false;
+
+    /**
+     * @param bool $withChangelog false to skip reading the changelog in readOne(): it grows with every save, and the entry pages
+     * do not display it (the changelog mode reads it on its own)
+     */
+    public function __construct(
+        public Users $Users,
+        public ?int $id = null,
+        public ?bool $bypassReadPermission = false,
+        public ?bool $bypassWritePermission = false,
+        public bool $withChangelog = true,
+    ) {
         parent::__construct();
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
         $this->Uploads = new Uploads($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
-        // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
+        // readOne() also sets isReadOnly if another user has the entry in exclusive edit mode
         $this->setId($id);
     }
 
@@ -453,6 +465,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
 
         $this->bindExtendedValues($req);
         $this->Db->execute($req);
@@ -512,6 +525,7 @@ abstract class AbstractEntity extends AbstractRest
         $req = $this->Db->prepare($sql);
         $userid = $this->Users->getUserid();
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -711,13 +725,16 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['step_groups'] = new StepGroups($this)->readAll();
+        // summaries only, unless for readOneFull(): this runs on every read of the entry, including the response to each autosave
+        $Reactions = new Reactions($this);
+        $this->entityData['reactions'] = $this->withFullReactions ? $Reactions->readFull() : $Reactions->readSummaries();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        $this->entityData['changelog'] = new Changelog($this)->readAll();
+        $this->entityData['changelog'] = $this->withChangelog ? new Changelog($this)->readAll() : array();
         $this->entityData['comments'] = new Comments($this)->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
@@ -746,8 +763,7 @@ abstract class AbstractEntity extends AbstractRest
         );
 
         if (
-            $this->Users instanceof AnonymousUser
-            && $accessKey !== ''
+            $accessKey !== ''
             && $entityAccessKey !== ''
             && hash_equals($entityAccessKey, $accessKey)
         ) {
@@ -758,6 +774,10 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        // reuse the row we just read instead of querying it again with isActive()
+        if ($this->ExclusiveEditMode->isActiveFromData($exclusiveEditMode)) {
+            $this->isReadOnly = true;
+        }
         $this->entityData['created_from_type_human'] = EntityType::fromInt($this->entityData['created_from_type'])?->toGenre();
         $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
         $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();
@@ -774,11 +794,21 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readOneFull(): array
     {
-        $base = $this->readOne();
-        // anonymous users cannot access revisions
-        $base['revisions'] = $this->Users instanceof AnonymousUser
+        // a full export carries what is needed to draw and edit the reactions again
+        $this->withFullReactions = true;
+        try {
+            $base = $this->readOne();
+        } finally {
+            $this->withFullReactions = false;
+        }
+        // anonymous users cannot access revisions, including reaction revisions
+        $isAnonymous = $this->Users instanceof AnonymousUser;
+        $base['revisions'] = $isAnonymous
             ? array()
-            : (new Revisions($this))->readAll();
+            : new BodyRevisions($this)->readAll();
+        $base['reaction_history'] = $isAnonymous
+            ? array()
+            : new Reactions($this)->readAllHistory();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -822,6 +852,7 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':teamid', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
+        $displayParams->bindFilterValues($req);
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
         }
@@ -971,7 +1002,7 @@ abstract class AbstractEntity extends AbstractRest
         return $this->readOne();
     }
 
-    // Update an entity. The revision is saved before so it can easily compare old and new body.
+    // Update an entity. A new body is recorded in the revisions once it is saved.
     public function update(ContentParamsInterface $params): bool
     {
         if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
@@ -1004,18 +1035,6 @@ abstract class AbstractEntity extends AbstractRest
             throw new UnprocessableContentException(_('Cannot modify permissions immutability settings.'));
         }
 
-        // save a revision for body target
-        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
-            $Config = Config::getConfig();
-            $Revisions = new Revisions(
-                $this,
-                (int) $Config->configArr['max_revisions'],
-                (int) $Config->configArr['min_delta_revisions'],
-                (int) $Config->configArr['min_days_revisions'],
-            );
-            $Revisions->create((string) $content);
-        }
-
         $Changelog = new Changelog($this);
         $Changelog->create($params);
         // getColumn cannot be malicious here because of the previous switch
@@ -1026,13 +1045,20 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
         // custom_id could be used twice unintentionally
         try {
-            return $this->Db->execute($req);
+            $res = $this->Db->execute($req);
         } catch (DatabaseErrorException $e) {
             if ($params->getColumn() === 'custom_id' && $e->getErrorCode() === Db::DUPLICATE_CONSTRAINT_ERROR) {
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
             throw $e;
         }
+
+        if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
+            new BodyRevisions($this)->create((string) $content);
+            // a later body update in the same request must be compared with this body
+            $this->entityData['body'] = $content;
+        }
+        return $res;
     }
 
     public function timestamp(): array
@@ -1073,14 +1099,8 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Timestamp);
 
-        // force create a revision
-        $Revisions = new Revisions(
-            $this,
-            (int) $Config->configArr['max_revisions'],
-            (int) $Config->configArr['min_delta_revisions'],
-            (int) $Config->configArr['min_days_revisions'],
-        );
-        $Revisions->dbInsert($this->entityData['body']);
+        // the timestamped body must be in the revisions
+        new BodyRevisions($this)->create((string) ($this->entityData['body'] ?? ''));
 
         return $this->readOne();
     }
@@ -1151,6 +1171,7 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         $stepsMap = new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        new Reactions($sourceEntity)->duplicate($fresh);
         // step links in the body point at the source entry and its steps: point them at the copy
         $body = (string) $fresh->entityData['body'];
         if ($stepsMap !== array() && str_contains($body, 'highlightstep')) {
@@ -1170,9 +1191,8 @@ abstract class AbstractEntity extends AbstractRest
         foreach (array_column(new Tags($sourceEntity)->readAll(), 'tag') as $tag) {
             $freshTags->postAction(Action::Create, array('tag' => $tag));
         }
-        if ($copyFiles) {
-            $sourceEntity->Uploads->duplicate($fresh);
-        }
+        // files shown in the body are always copied, or the copy would display files it doesn't own (#6187)
+        $sourceEntity->Uploads->duplicate($fresh, onlyLinkedInBody: !$copyFiles);
         return $newId;
     }
 
@@ -1436,9 +1456,8 @@ abstract class AbstractEntity extends AbstractRest
         $RequestActions = new RequestActions($this->Users, $this);
         $RequestActions->remove(RequestableAction::Sign);
         AuditLogs::create(new SignatureCreated($this->Users->userData['userid'], $this->id ?? 0, $this->entityType));
-        // force create a revision
-        $Revisions = new Revisions($this, 9000, 0, 0);
-        $Revisions->dbInsert($this->entityData['body']);
+        // the signed body must be in the revisions
+        new BodyRevisions($this)->create((string) ($this->entityData['body'] ?? ''));
         return $this->readOne();
     }
 
@@ -1531,6 +1550,7 @@ abstract class AbstractEntity extends AbstractRest
         $req = $this->Db->prepare($sql);
         $userid = $this->Users->getUserid();
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
         $this->Db->execute($req);
 
         return $this->hydrateTags($req->fetchAll());
@@ -1560,7 +1580,7 @@ abstract class AbstractEntity extends AbstractRest
     private function isAdvancedSearchQuery(string $query): bool
     {
         return preg_match(
-            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
+            '/(?:^|\s)(?:attachment|author|body|category|custom_id|date|elabid|extrafield|group|id|locked|owner|rating|state|status|tag|timestamped|timestamped_at|created_at|locked_at|title|visibility):/i',
             $query,
         ) === 1
             || preg_match('/\b(?:AND|OR|NOT)\b|[()!&|"\']/', $query) === 1;
@@ -1785,12 +1805,14 @@ abstract class AbstractEntity extends AbstractRest
             FROM compounds2%2$s AS c2e_search
             INNER JOIN compounds AS cmp_search
                 ON cmp_search.id = c2e_search.compound_id
-            WHERE %3$s
+            WHERE (%3$s)%4$s
         ) AS search_ids
             ON search_ids.id = entity.id',
             $this->getEntitySimpleQuerySql($query, $this->entityType->value),
             $this->entityType->value,
             $this->getCompoundsSimpleQuerySql($query),
+            // only find an entry from the compounds the requester can read
+            new CompoundPermissions($this->Users)->getCanFilter('cmp_search'),
         );
     }
 

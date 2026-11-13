@@ -14,6 +14,7 @@ namespace Elabftw\Import;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Storage;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\Items;
@@ -21,16 +22,23 @@ use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
+use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_column;
+use function bin2hex;
 use function dirname;
 use function file_put_contents;
+use function random_bytes;
 use function sprintf;
+use function strtoupper;
+use function substr;
 use function sys_get_temp_dir;
 use function tempnam;
 use function uniqid;
@@ -40,6 +48,41 @@ use const UPLOAD_ERR_OK;
 
 class CompoundsCsvTest extends \PHPUnit\Framework\TestCase
 {
+    use TestsUtilsTrait;
+
+    public function testCompoundTheImporterCannotReadIsSkipped(): void
+    {
+        $httpGetter = new HttpGetter(new Client(), '', false);
+        // a compound only its owner, in another team, can read
+        $owner = $this->getUserInTeam(2);
+        $hiddenKey = substr(strtoupper(bin2hex(random_bytes(14))), 0, 27);
+        $hiddenId = new Compounds($httpGetter, $owner, new NullFingerprinter(), false)
+            ->create(name: 'Hidden compound', inchiKey: $hiddenKey, canreadBase: BasePermissions::UserOnly, canwriteBase: BasePermissions::UserOnly);
+
+        $requester = new Users(1, 1);
+        $this->assertNotSame($owner->userid, $requester->userid);
+        $visibleKey = substr(strtoupper(bin2hex(random_bytes(14))), 0, 27);
+        $csv = sprintf("name,inchi_key\nSame as hidden,%s\nNew compound,%s\n", $hiddenKey, $visibleKey);
+        $csvPath = tempnam(sys_get_temp_dir(), 'compounds-not-accessible-');
+        file_put_contents($csvPath, $csv);
+
+        try {
+            $uploadedFile = new UploadedFile($csvPath, 'compounds-not-accessible.csv', 'text/csv', UPLOAD_ERR_OK, true);
+            $Compounds = new Compounds($httpGetter, $requester, new NullFingerprinter(), false);
+            // the resources are still created for both rows: the skipped compound is only a warning
+            $Import = new CompoundsCsv(new NullLogger(), new Items($requester), $uploadedFile, $Compounds, 1);
+            $this->assertSame(2, $Import->import());
+        } finally {
+            unlink($csvPath);
+        }
+
+        $names = array_column($Compounds->readAll($Compounds->getQueryParams(new InputBag(array('q' => $visibleKey)))), 'name');
+        $this->assertSame(array('New compound'), $names);
+        // the existing compound was not touched
+        $Hidden = new Compounds($httpGetter, $owner, new NullFingerprinter(), false, $hiddenId);
+        $this->assertSame('Hidden compound', $Hidden->readOne()['name']);
+    }
+
     public function testImport(): void
     {
         $requester = new Users(1, 1);

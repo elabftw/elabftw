@@ -140,6 +140,7 @@ This project is backed by [Deltablot](https://www.deltablot.com) company.
 
 These projects were created by users of eLabFTW, check them out if interested!
 
+* [eLabLink](https://github.com/ThibautJacqmin/elablink): a simple Python interface to eLabFTW experiments and resources, with optional asynchronous synchronization of Labmate acquisition data, code and figures, for experimental scientists.
 * [elAPI](https://github.com/uhd-urz/elAPI/): a powerful, extensible API client for eLabFTW developed at the University Computing Centre of University of Heidelberg
 * [elAPI Plugins](https://github.com/sfb1638/elAPI_Plugins): a desktop application for bulk importing and exporting resources and experiments, part of the INF Project of CRC 1638 at the Heidelberg University Biochemistry Center (BZH)
 * [pyelabdata](https://github.com/FAU-PHYSIK-EP/pyelabdata): provides functions for simple one-line access to data stored in eLabFTW via Python

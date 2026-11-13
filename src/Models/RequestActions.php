@@ -29,7 +29,9 @@ use Override;
 use PDO;
 
 use function _;
+use function array_column;
 use function array_map;
+use function array_merge;
 use function in_array;
 use function preg_replace;
 use function sprintf;
@@ -71,17 +73,25 @@ final class RequestActions extends AbstractRest
 
     public function readAllFull(): array
     {
-        return array_map(function (array $action): array {
-            $Requester = new Users($action['requester_userid']);
-            $action['requester_fullname'] = $Requester->userData['fullname'];
-            $Target = new Users($action['target_userid']);
-            $action['target_fullname'] = $Target->userData['fullname'];
+        $actions = $this->readAll();
+        // all the names in one query instead of loading two users per action
+        $fullnames = array_column(
+            $this->requester->readFullnamesFromIds(array_merge(
+                array_column($actions, 'requester_userid'),
+                array_column($actions, 'target_userid'),
+            )),
+            'fullname',
+            'userid',
+        );
+        return array_map(function (array $action) use ($fullnames): array {
+            $action['requester_fullname'] = $fullnames[$action['requester_userid']] ?? '';
+            $action['target_fullname'] = $fullnames[$action['target_userid']] ?? '';
             $action['description'] = RequestableAction::from($action['action'])->toHuman();
             $action['target'] = strtolower(RequestableAction::from($action['action'])->name);
             /** @psalm-suppress PossiblyNullArgument */
             $action['action'] = _(preg_replace('/([a-z])([A-Z])/', '${1} ${2}', RequestableAction::from($action['action'])->name));
             return $action;
-        }, $this->readAll());
+        }, $actions);
     }
 
     #[Override]

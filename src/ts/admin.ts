@@ -42,7 +42,6 @@ function collectInt(name: string): number {
 
 // Collect selected teams, user groups and users from TomSelect-backed selects.
 function collectCan(): string {
-  // Warning: copy pasta from common.ts save-permissions action
   return permissionsToJson(
     Array.from((document.getElementById('masscan_select_teams') as HTMLSelectElement).selectedOptions).map(v => v.value)
       .concat(Array.from((document.getElementById('masscan_select_teamgroups') as HTMLSelectElement).selectedOptions).map(v => v.value))

@@ -3,9 +3,8 @@
 {% block title %}
 <div class='d-flex'>
   <h1 id='pageTitle'>{{ pageTitle }}</h1>
-  <a class='ml-auto' href='/api/v2/reports?scope=compounds&format=csv'>
-    <button class='btn btn-secondary' data-action='get-compounds-csv'>{{ 'Export to CSV'|trans }}</button>
-  </a>
+  {# exports the compounds shown in the table, so only the ones matching the search: see exportCsv in compounds-table.jsx #}
+  <button type='button' class='btn btn-secondary ml-auto align-self-center' data-action='get-compounds-csv'>{{ 'Export to CSV'|trans }}</button>
 </div>
 <hr>
 {% endblock title %}
@@ -13,9 +12,11 @@
 {% block body %}
 {# IMPORT FROM PUBCHEM #}
 {% include('import-pubchem-modal.html') %}
+{# permissions of the compounds: opened from the import, create and edit compound modals #}
+{% include 'permissions-modal.html' with {context: 'compound'} %}
 {% include('create-compound-modal.html') %}
 {% include('edit-compound-modal.html') %}
-<p>{{ 'Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage your compounds database, which is shared to everyone on the instance. Once created, a compound can be associated with a Resource (or Experiment).'|trans }}</p>
+<p>{{ 'Compounds are chemical entities associated with properties such as a CAS number, a molecular formula, SMILES or InChI representations, hazardous properties, etc... This page allows you to manage the compounds database of the instance. Like an entry, each compound has read and write permissions: use the Permissions button to set them, also before adding or importing a compound. Once created, a compound can be associated with a Resource (or Experiment).'|trans }}</p>
 {% if App.Config.configArr.compounds_require_edit_rights == 1 %}
   <p>{{ 'Note: only users who were given permission to edit the common compounds table can modify the compounds (add/edit/remove).'|trans }}</p>
 {% endif %}
@@ -26,27 +27,14 @@
     <button type='button' {{ compoundsDisabled ? 'disabled' }} data-action='toggle-modal' data-target='createCompoundModal' class='btn btn-secondary'>{{ 'Add compound'|trans }}</button>
   </div>
   <p class='smallgray'>{{ 'Double-click a row in the table below to view complete information about a compound.'|trans }}</p>
+  {# a single search for the table, see parseSearch in compounds-table.jsx #}
+  <p class='smallgray' id='compoundsSearchHelp'>{{ 'Type to filter the compounds on any column: name, CAS number, formula, InChI, InChIKey (which also finds stereoisomers)… For a structure search, type smiles: then a SMILES for the compounds containing this substructure, exact: then a SMILES for this exact structure, or smarts: then a SMARTS pattern, for instance smarts:[OX2H]c for a phenol.'|trans }}</p>
   <div id='compounds-table'
+       data-sync-url='1'
+       data-search-help-id='compoundsSearchHelp'
+       data-search-placeholder="{{ 'Name, CAS number, InChIKey, smiles:CCO, smarts:[OX2H]c…'|trans }}"
        data-can-manage-compounds="{{ compoundsDisabled ? '0' : '1' }}"
        data-delete-label="{{ 'Delete selected compounds'|trans }}"
        data-restore-label="{{ 'Restore selected compounds'|trans }}"></div>
 
-  <div class='mt-5'>
-    <hr>
-    <h3>{{ 'Substructure search from SMILES'|trans }}</h3>
-    <form method='GET' action='/compounds.php'>
-      <div class='input-group my-2'>
-        <div class='input-group-prepend'>
-          <span class='btn btn-ghost' tabindex='-1'><i class='fas fa-magnifying-glass' aria-hidden='true'></i></span>
-        </div>
-        <input name='search_fp_smi' value='{{ App.Request.query.get('search_fp_smi') }}' class='form-control' id='substructureSearchInput' placeholder='O=N(=O)C=1C(F)=CC(F)=CC1Br' title='{{ 'Substructure search from SMILES'|trans }}' autocomplete='off' />
-        <div class='input-group-append'>
-          <button type='submit' data-action='substructure-search' class='btn btn-primary'>{{ 'Search similar compounds'|trans }}</button>
-          <div class='input-group-text'>
-            <input type='checkbox' name='exact' id='search-fp-exact' {{ App.Request.query.get('exact') == 'on' ? 'checked="checked"' }} aria-label='{{ 'Search exact structure'|trans }}'><span class='ml-1'>{{ 'Exact'|trans }}</span>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
 {% endblock body %}

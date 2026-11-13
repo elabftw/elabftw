@@ -53,7 +53,8 @@ CREATE TABLE `audit_logs` (
   `requester_userid` INT UNSIGNED NOT NULL,
   `target_userid` INT UNSIGNED NOT NULL,
   `body` TEXT NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_audit_logs_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 --
@@ -260,41 +261,6 @@ CREATE TABLE IF NOT EXISTS `experiments_request_actions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `experiments_revisions`
---
-
-CREATE TABLE `experiments_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
-CREATE TABLE `items_types_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
---
--- RELATIONSHIPS FOR TABLE `experiments_revisions`:
---   `item_id`
---       `experiments` -> `id`
---   `userid`
---       `users` -> `userid`
---
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `experiments_step_groups`
 --
 
@@ -323,6 +289,7 @@ CREATE TABLE `experiments_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_experiments_steps_group_id` (`group_id`),
   CONSTRAINT `fk_experiments_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `experiments_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -433,31 +400,6 @@ CREATE TABLE `experiments_templates_changelog` (
   `content` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Table structure for table `experiments_templates_revisions`
---
-
-CREATE TABLE `experiments_templates_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `experiments_templates_revisions`:
---   `item_id`
---       `experiments_templates` -> `id`
---   `userid`
---       `users` -> `userid`
---
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `experiments_templates_comments`
@@ -709,6 +651,7 @@ CREATE TABLE `items` (
   `timestamped_at` timestamp NULL DEFAULT NULL,
   `access_key` varchar(36) NULL DEFAULT NULL,
   `is_bookable` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `requires_booking_approval` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_max_slots` INT UNSIGNED NOT NULL DEFAULT 0,
   `book_can_overlap` TINYINT UNSIGNED NOT NULL DEFAULT 1,
@@ -822,27 +765,6 @@ CREATE TABLE IF NOT EXISTS `items_request_actions` (
 --       `users` -> `userid`
 --   `target_userid`
 --       `users` -> `userid`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `items_revisions`
---
-
-CREATE TABLE `items_revisions` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) UNSIGNED NOT NULL,
-  `body` mediumtext NOT NULL,
-  `content_type` tinyint NOT NULL DEFAULT 1,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `userid` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `items_revisions`:
 --
 
 -- --------------------------------------------------------
@@ -997,6 +919,7 @@ CREATE TABLE `items_types_steps` (
   `deadline` datetime DEFAULT NULL,
   `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_items_types_steps_group_id` (`group_id`),
   CONSTRAINT `fk_items_types_steps_group_id` FOREIGN KEY (`group_id`) REFERENCES `items_types_step_groups` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
@@ -1307,6 +1230,11 @@ CREATE TABLE `team_events` (
   `item_link` int(10) UNSIGNED DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  -- 0: no approval, 1: pending, 2: approved, 3: rejected (Overdue is UI-only)
+  `approval_status` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `approved_by` INT UNSIGNED NULL DEFAULT NULL,
+  `approved_at` DATETIME NULL DEFAULT NULL,
+  `approval_comment` TEXT NULL DEFAULT NULL,
   `recurrence_id` CHAR(36) DEFAULT NULL,
   `recurrence_index` SMALLINT UNSIGNED DEFAULT NULL,
   `recurrence_frequency` VARCHAR(7) DEFAULT NULL,
@@ -1330,6 +1258,7 @@ CREATE TABLE `team_events` (
 CREATE INDEX `idx_team_events_item_start_end` ON `team_events` (`item`, `start`, `end`);
 CREATE INDEX `idx_team_events_team_start_end` ON `team_events` (`team`, `start`, `end`);
 CREATE INDEX `idx_team_events_user_start_end` ON `team_events` (`userid`, `start`, `end`);
+CREATE INDEX `idx_team_events_approval` ON `team_events` (`item`, `approval_status`, `start`);
 CREATE UNIQUE INDEX `uniq_team_events_recurrence_index` ON `team_events` (`recurrence_id`, `recurrence_index`);
 
 --
@@ -1461,7 +1390,6 @@ CREATE TABLE `users` (
   `scope_items` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_items_types` tinyint UNSIGNED NOT NULL DEFAULT 2,
   `scope_experiments_templates` tinyint UNSIGNED NOT NULL DEFAULT 2,
-  `scope_teamgroups` tinyint UNSIGNED NOT NULL DEFAULT 3,
   `use_isodate` tinyint UNSIGNED NOT NULL DEFAULT 0,
   `uploads_layout` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `validated` tinyint UNSIGNED NOT NULL DEFAULT 0,
@@ -1491,6 +1419,10 @@ CREATE TABLE `users` (
   `notif_user_need_validation_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_step_deadline` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_step_deadline_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_requested` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_requested_email` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_updated` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `notif_booking_approval_updated_email` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `notif_event_deleted` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `notif_event_deleted_email` tinyint UNSIGNED NOT NULL DEFAULT 1,
   `auth_lock_time` datetime DEFAULT NULL,
@@ -1544,6 +1476,16 @@ CREATE TABLE `users2team_groups` (
 --   `userid`
 --       `users` -> `userid`
 --
+
+-- Many-to-many approvers: a user may approve bookings on several resources.
+CREATE TABLE `items_booking_approvers` (
+  `entity_id` INT UNSIGNED NOT NULL,
+  `userid` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`entity_id`, `userid`),
+  INDEX `idx_items_booking_approvers_userid` (`userid`),
+  CONSTRAINT `fk_items_booking_approvers_item` FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_items_booking_approvers_user` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -1912,17 +1854,6 @@ ALTER TABLE `experiments2items`
   ADD CONSTRAINT `fk_experiments2items_items_id` FOREIGN KEY (`link_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `experiments_revisions`
---
-ALTER TABLE `experiments_revisions`
-  ADD CONSTRAINT `fk_experiments_revisions_experiments_id` FOREIGN KEY (`item_id`) REFERENCES `experiments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `items_types_revisions`
-  ADD CONSTRAINT FOREIGN KEY (`item_id`) REFERENCES `items_types`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `experiments_steps`
 --
 ALTER TABLE `experiments_steps`
@@ -1951,17 +1882,6 @@ ALTER TABLE `experiments_templates`
 --
 ALTER TABLE `exports`
   ADD CONSTRAINT `fk_exports_requester_userid_users_userid` FOREIGN KEY (`requester_userid`) REFERENCES `users`(`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `experiments_templates_revisions`
---
-ALTER TABLE `experiments_templates_revisions`
-  ADD CONSTRAINT `fk_experiments_templates_revisions_experiments_templates_id`
-    FOREIGN KEY (`item_id`) REFERENCES `experiments_templates`(`id`)
-    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_experiments_templates_revisions_users_userid`
-    FOREIGN KEY (`userid`) REFERENCES `users`(`userid`)
-    ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `experiments_templates_request_actions`
@@ -2006,13 +1926,6 @@ ALTER TABLE `items_request_actions`
   ADD CONSTRAINT `fk_items_request_actions_target_users_userid`
     FOREIGN KEY (`target_userid`) REFERENCES `users` (`userid`)
     ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `items_revisions`
---
-ALTER TABLE `items_revisions`
-  ADD CONSTRAINT `fk_items_revisions_items_id` FOREIGN KEY (`item_id`) REFERENCES `items`(`id`) ON DELETE cascade ON UPDATE cascade,
-  ADD CONSTRAINT `fk_items_revisions_users_userid` FOREIGN KEY (`userid`) REFERENCES `users`(`userid`) ON DELETE cascade ON UPDATE cascade;
 
 --
 -- Constraints for table `items_edit_mode`
@@ -2145,6 +2058,7 @@ CREATE TABLE `items_steps` (
     `deadline` datetime DEFAULT NULL,
     `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `fk_items_steps_items_id` (`item_id`),
     KEY `idx_items_steps_group_id` (`group_id`),
@@ -2173,6 +2087,7 @@ CREATE TABLE `experiments_templates_steps` (
     `deadline` datetime DEFAULT NULL,
     `deadline_notif` tinyint UNSIGNED NOT NULL DEFAULT 0,
     `is_immutable` tinyint UNSIGNED NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     KEY `fk_experiments_templates_steps_items_id` (`item_id`),
     KEY `idx_experiments_templates_steps_group_id` (`group_id`),
@@ -2210,6 +2125,10 @@ CREATE TABLE IF NOT EXISTS compounds (
   `userid` INT UNSIGNED NOT NULL,
   `team` INT UNSIGNED NOT NULL,
   `state` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  `canread_base` TINYINT UNSIGNED NOT NULL DEFAULT 30,
+  `canwrite_base` TINYINT UNSIGNED NOT NULL DEFAULT 20,
+  `canread` JSON NOT NULL,
+  `canwrite` JSON NOT NULL,
   `name` TEXT NULL DEFAULT NULL,
   `molecular_formula` VARCHAR(255) NULL DEFAULT NULL,
   `cas_number` VARCHAR(20) NULL DEFAULT NULL UNIQUE,
@@ -2260,6 +2179,7 @@ CREATE TABLE IF NOT EXISTS compounds (
   `is_pmt` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_vpvb` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `is_vpvm` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `ghs_signal_word` ENUM('Danger', 'Warning') NULL DEFAULT NULL,
   primary key(`id`)
 );
 
@@ -2339,6 +2259,348 @@ CREATE TABLE IF NOT EXISTS compounds_fingerprints (
   primary key(`id`),
   FOREIGN KEY (id) REFERENCES compounds(id) ON DELETE CASCADE
 );
+
+-- GHS HAZARD AND PRECAUTIONARY STATEMENTS
+-- The code is case-sensitive: H360FD and H360Fd are different statements.
+CREATE TABLE IF NOT EXISTS `ghs_statements` (
+  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `code` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `kind` ENUM('H', 'EUH', 'P') NOT NULL,
+  `statement` TEXT NOT NULL,
+  -- withdrawn codes are kept when imported and stay readable, but cannot be added by hand anymore
+  `is_deprecated` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_ghs_statements_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `compounds2ghs_statements` (
+  `compound_id` INT UNSIGNED NOT NULL,
+  `statement_id` SMALLINT UNSIGNED NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`compound_id`, `statement_id`),
+  KEY `idx_c2ghs_statement_id` (`statement_id`),
+  CONSTRAINT `fk_c2ghs_compound_id_compounds_id` FOREIGN KEY (`compound_id`) REFERENCES `compounds` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_c2ghs_statement_id_ghs_statements_id` FOREIGN KEY (`statement_id`) REFERENCES `ghs_statements` (`id`) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `ghs_statements` (`code`, `kind`, `statement`, `is_deprecated`) VALUES
+  ('H200', 'H', 'Unstable explosives.', 0),
+  ('H201', 'H', 'Explosive; mass explosion hazard.', 0),
+  ('H202', 'H', 'Explosive, severe projection hazard.', 0),
+  ('H203', 'H', 'Explosive; fire, blast or projection hazard.', 0),
+  ('H204', 'H', 'Fire or projection hazard.', 0),
+  ('H205', 'H', 'May mass explode in fire.', 0),
+  ('H206', 'H', 'Fire, blast or projection hazard; increased risk of explosion if desensitising agent is reduced.', 0),
+  ('H207', 'H', 'Fire or projection hazard; increased risk of explosion if desensitising agent is reduced.', 0),
+  ('H208', 'H', 'Fire hazard; increased risk of explosion if desensitising agent is reduced.', 0),
+  ('H209', 'H', 'Explosive.', 0),
+  ('H210', 'H', 'Very sensitive.', 0),
+  ('H211', 'H', 'May be sensitive.', 0),
+  ('H220', 'H', 'Extremely flammable gas.', 0),
+  ('H221', 'H', 'Flammable gas.', 0),
+  ('H222', 'H', 'Extremely flammable aerosol.', 0),
+  ('H223', 'H', 'Flammable aerosol.', 0),
+  ('H224', 'H', 'Extremely flammable liquid and vapour.', 0),
+  ('H225', 'H', 'Highly flammable liquid and vapour.', 0),
+  ('H226', 'H', 'Flammable liquid and vapour.', 0),
+  ('H227', 'H', 'Combustible liquid.', 0),
+  ('H228', 'H', 'Flammable solid.', 0),
+  ('H229', 'H', 'Pressurised container: May burst if heated.', 0),
+  ('H230', 'H', 'May react explosively even in the absence of air.', 0),
+  ('H231', 'H', 'May react explosively even in the absence of air at elevated pressure and/or temperature.', 0),
+  ('H232', 'H', 'May ignite spontaneously if exposed to air.', 0),
+  ('H240', 'H', 'Heating may cause an explosion.', 0),
+  ('H241', 'H', 'Heating may cause a fire or explosion.', 0),
+  ('H242', 'H', 'Heating may cause a fire.', 0),
+  ('H250', 'H', 'Catches fire spontaneously if exposed to air.', 0),
+  ('H251', 'H', 'Self-heating: may catch fire.', 0),
+  ('H252', 'H', 'Self-heating in large quantities; may catch fire.', 0),
+  ('H260', 'H', 'In contact with water releases flammable gases which may ignite spontaneously.', 0),
+  ('H261', 'H', 'In contact with water releases flammable gases.', 0),
+  ('H270', 'H', 'May cause or intensify fire; oxidiser.', 0),
+  ('H271', 'H', 'May cause fire or explosion; strong oxidiser.', 0),
+  ('H272', 'H', 'May intensify fire; oxidiser.', 0),
+  ('H280', 'H', 'Contains gas under pressure; may explode if heated.', 0),
+  ('H281', 'H', 'Contains refrigerated gas; may cause cryogenic burns or injury.', 0),
+  ('H282', 'H', 'Extremely flammable chemical under pressure: may explode if heated.', 0),
+  ('H283', 'H', 'Flammable chemical under pressure: may explode if heated.', 0),
+  ('H284', 'H', 'Chemical under pressure: may explode if heated.', 0),
+  ('H290', 'H', 'May be corrosive to metals.', 0),
+  ('H300', 'H', 'Fatal if swallowed.', 0),
+  ('H300+H310', 'H', 'Fatal if swallowed or in contact with skin', 0),
+  ('H300+H310+H330', 'H', 'Fatal if swallowed, in contact with skin or if inhaled', 0),
+  ('H300+H330', 'H', 'Fatal if swallowed or if inhaled', 0),
+  ('H301', 'H', 'Toxic if swallowed.', 0),
+  ('H301+H311', 'H', 'Toxic if swallowed or in contact with skin', 0),
+  ('H301+H311+H331', 'H', 'Toxic if swallowed, in contact with skin or if inhaled', 0),
+  ('H301+H331', 'H', 'Toxic if swallowed or if inhaled', 0),
+  ('H302', 'H', 'Harmful if swallowed.', 0),
+  ('H302+H312', 'H', 'Harmful if swallowed or in contact with skin', 0),
+  ('H302+H312+H332', 'H', 'Harmful if swallowed, in contact with skin or if inhaled', 0),
+  ('H302+H332', 'H', 'Harmful if swallowed or if inhaled', 0),
+  ('H303', 'H', 'May be harmful if swallowed.', 0),
+  ('H303+H313', 'H', 'May be harmful if swallowed or in contact with skin.', 0),
+  ('H303+H313+H333', 'H', 'May be harmful if swallowed, in contact with skin or if inhaled.', 0),
+  ('H303+H333', 'H', 'May be harmful if swallowed or if inhaled.', 0),
+  ('H304', 'H', 'May be fatal if swallowed and enters airways.', 0),
+  ('H305', 'H', 'May be harmful if swallowed and enters airways.', 0),
+  ('H310', 'H', 'Fatal in contact with skin.', 0),
+  ('H310+H330', 'H', 'Fatal in contact with skin or if inhaled', 0),
+  ('H311', 'H', 'Toxic in contact with skin.', 0),
+  ('H311+H331', 'H', 'Toxic in contact with skin or if inhaled', 0),
+  ('H312', 'H', 'Harmful in contact with skin.', 0),
+  ('H312+H332', 'H', 'Harmful in contact with skin or if inhaled', 0),
+  ('H313', 'H', 'May be harmful in contact with skin.', 0),
+  ('H313+H333', 'H', 'May be harmful in contact with skin or if inhaled.', 0),
+  ('H314', 'H', 'Causes severe skin burns and eye damage.', 0),
+  ('H315', 'H', 'Causes skin irritation.', 0),
+  ('H315+H320', 'H', 'Causes skin and eye irritation.', 0),
+  ('H316', 'H', 'Causes mild skin irritation.', 0),
+  ('H317', 'H', 'May cause an allergic skin reaction.', 0),
+  ('H318', 'H', 'Causes serious eye damage.', 0),
+  ('H319', 'H', 'Causes serious eye irritation.', 0),
+  ('H320', 'H', 'Causes eye irritation.', 0),
+  ('H330', 'H', 'Fatal if inhaled.', 0),
+  ('H331', 'H', 'Toxic if inhaled.', 0),
+  ('H332', 'H', 'Harmful if inhaled.', 0),
+  ('H333', 'H', 'May be harmful if inhaled.', 0),
+  ('H334', 'H', 'May cause allergy or asthma symptoms or breathing difficulties if inhaled.', 0),
+  ('H335', 'H', 'May cause respiratory irritation.', 0),
+  ('H336', 'H', 'May cause drowsiness or dizziness.', 0),
+  ('H340', 'H', 'May cause genetic defects.', 0),
+  ('H341', 'H', 'Suspected of causing genetic defects.', 0),
+  ('H350', 'H', 'May cause cancer.', 0),
+  ('H350i', 'H', 'May cause cancer by inhalation.', 0),
+  ('H351', 'H', 'Suspected of causing cancer.', 0),
+  ('H360', 'H', 'May damage fertility or the unborn child.', 0),
+  ('H360D', 'H', 'May damage the unborn child.', 0),
+  ('H360Df', 'H', 'May damage the unborn child. Suspected of damaging fertility.', 0),
+  ('H360F', 'H', 'May damage fertility.', 0),
+  ('H360FD', 'H', 'May damage fertility. May damage the unborn child.', 0),
+  ('H360Fd', 'H', 'May damage fertility. Suspected of damaging the unborn child.', 0),
+  ('H361', 'H', 'Suspected of damaging fertility or the unborn child.', 0),
+  ('H361d', 'H', 'Suspected of damaging the unborn child.', 0),
+  ('H361f', 'H', 'Suspected of damaging fertility.', 0),
+  ('H361fd', 'H', 'Suspected of damaging fertility. Suspected of damaging the unborn child.', 0),
+  ('H362', 'H', 'May cause harm to breast-fed children.', 0),
+  ('H370', 'H', 'Causes damage to organs.', 0),
+  ('H371', 'H', 'May cause damage to organs.', 0),
+  ('H372', 'H', 'Causes damage to organs through prolonged or repeated exposure.', 0),
+  ('H373', 'H', 'May cause damage to organs through prolonged or repeated exposure.', 0),
+  ('H400', 'H', 'Very toxic to aquatic life.', 0),
+  ('H401', 'H', 'Toxic to aquatic life.', 0),
+  ('H402', 'H', 'Harmful to aquatic life.', 0),
+  ('H410', 'H', 'Very toxic to aquatic life with long lasting effects.', 0),
+  ('H411', 'H', 'Toxic to aquatic life with long lasting effects.', 0),
+  ('H412', 'H', 'Harmful to aquatic life with long lasting effects.', 0),
+  ('H413', 'H', 'May cause long lasting harmful effects to aquatic life.', 0),
+  ('H420', 'H', 'Harms public health and the environment by destroying ozone in the upper atmosphere', 0),
+  ('EUH001', 'EUH', 'Explosive when dry.', 1),
+  ('EUH006', 'EUH', 'Explosive with or without contact with air.', 1),
+  ('EUH014', 'EUH', 'Reacts violently with water.', 0),
+  ('EUH018', 'EUH', 'In use may form flammable/explosive vapour-air mixture.', 0),
+  ('EUH019', 'EUH', 'May form explosive peroxides.', 0),
+  ('EUH029', 'EUH', 'Contact with water liberates toxic gas.', 0),
+  ('EUH031', 'EUH', 'Contact with acids liberates toxic gas.', 0),
+  ('EUH032', 'EUH', 'Contact with acids liberates very toxic gas.', 0),
+  ('EUH044', 'EUH', 'Risk of explosion if heated under confinement.', 0),
+  ('EUH059', 'EUH', 'Hazardous to the ozone layer.', 1),
+  ('EUH066', 'EUH', 'Repeated exposure may cause skin dryness or cracking.', 0),
+  ('EUH070', 'EUH', 'Toxic by eye contact.', 0),
+  ('EUH071', 'EUH', 'Corrosive to the respiratory tract.', 0),
+  ('EUH201', 'EUH', 'Contains lead. Should not be used on surfaces liable to be chewed or sucked by children.', 0),
+  ('EUH201A', 'EUH', 'Warning! Contains lead.', 0),
+  ('EUH202', 'EUH', 'Cyanoacrylate. Danger. Bonds skin and eyes in seconds. Keep out of the reach of children.', 0),
+  ('EUH203', 'EUH', 'Contains chromium (VI). May produce an allergic reaction.', 0),
+  ('EUH204', 'EUH', 'Contains isocyanates. May produce an allergic reaction.', 0),
+  ('EUH205', 'EUH', 'Contains epoxy constituents. May produce an allergic reaction.', 0),
+  ('EUH206', 'EUH', 'Warning! Do not use together with other products. May release dangerous gases (chlorine).', 0),
+  ('EUH207', 'EUH', 'Warning! Contains cadmium. Dangerous fumes are formed during use. See information supplied by the manufacturer. Comply with the safety instructions.', 0),
+  ('EUH208', 'EUH', 'Contains …. May produce an allergic reaction.', 0),
+  ('EUH209', 'EUH', 'Can become highly flammable in use.', 0),
+  ('EUH209A', 'EUH', 'Can become flammable in use.', 0),
+  ('EUH210', 'EUH', 'Safety data sheet available on request.', 0),
+  ('EUH211', 'EUH', 'Warning! Hazardous respirable droplets may be formed when sprayed. Do not breathe spray or mist.', 0),
+  ('EUH212', 'EUH', 'Warning! Hazardous respirable dust may be formed when used. Do not breathe dust.', 0),
+  ('EUH380', 'EUH', 'May cause endocrine disruption in humans', 0),
+  ('EUH381', 'EUH', 'Suspected of causing endocrine disruption in humans', 0),
+  ('EUH401', 'EUH', 'To avoid risks to human health and the environment, comply with the instructions for use.', 0),
+  ('EUH430', 'EUH', 'May cause endocrine disruption in the environment', 0),
+  ('EUH431', 'EUH', 'Suspected of causing endocrine disruption in the environment', 0),
+  ('EUH440', 'EUH', 'Accumulates in the environment and living organisms including in humans', 0),
+  ('EUH441', 'EUH', 'Strongly accumulates in the environment and living organisms including in humans', 0),
+  ('EUH450', 'EUH', 'Can cause long-lasting and diffuse contamination of water resources', 0),
+  ('EUH451', 'EUH', 'Can cause very long-lasting and diffuse contamination of water resources', 0),
+  ('P101', 'P', 'If medical advice is needed, have product container or label at hand.', 0),
+  ('P102', 'P', 'Keep out of reach of children.', 0),
+  ('P103', 'P', 'Read label before use.', 0),
+  ('P201', 'P', 'Obtain special instructions before use.', 0),
+  ('P202', 'P', 'Do not handle until all safety precautions have been read and understood.', 0),
+  ('P203', 'P', 'Obtain, read and follow all safety instructions before use.', 0),
+  ('P210', 'P', 'Keep away from heat, hot surfaces, sparks, open flames and other ignition sources. No smoking.', 0),
+  ('P211', 'P', 'Do not spray on an open flame or other ignition source.', 0),
+  ('P212', 'P', 'Avoid heating under confinement or reduction of the desensitising agent.', 0),
+  ('P220', 'P', 'Keep away from clothing and other combustible materials.', 0),
+  ('P221', 'P', 'Take any precaution to avoid mixing with combustibles/…', 1),
+  ('P222', 'P', 'Do not allow contact with air.', 0),
+  ('P223', 'P', 'Do not allow contact with water.', 0),
+  ('P230', 'P', 'Keep wetted with…', 0),
+  ('P231', 'P', 'Handle and store contents under inert gas/…', 0),
+  ('P231+P232', 'P', 'Handle and store contents under inert gas/…. Protect from moisture.', 0),
+  ('P232', 'P', 'Protect from moisture.', 0),
+  ('P233', 'P', 'Keep container tightly closed.', 0),
+  ('P234', 'P', 'Keep only in original packaging.', 0),
+  ('P235', 'P', 'Keep cool.', 0),
+  ('P235+P410', 'P', 'Keep cool. Protect from sunlight.', 1),
+  ('P236', 'P', 'Keep only in original packaging; Division … in the transport configuration.', 0),
+  ('P240', 'P', 'Ground and bond container and receiving equipment.', 0),
+  ('P241', 'P', 'Use explosion-proof [electrical/ventilating/lighting/…] equipment.', 0),
+  ('P242', 'P', 'Use non-sparking tools.', 0),
+  ('P243', 'P', 'Take action to prevent static discharges.', 0),
+  ('P244', 'P', 'Keep valves and fittings free from oil and grease.', 0),
+  ('P250', 'P', 'Do not subject to grinding/shock/friction/….', 0),
+  ('P251', 'P', 'Do not pierce or burn, even after use.', 0),
+  ('P260', 'P', 'Do not breathe dust/fume/gas/mist/vapours/spray.', 0),
+  ('P261', 'P', 'Avoid breathing dust/fume/gas/mist/vapours/spray.', 0),
+  ('P262', 'P', 'Do not get in eyes, on skin, or on clothing.', 0),
+  ('P263', 'P', 'Avoid contact during pregnancy and while nursing.', 0),
+  ('P264', 'P', 'Wash … thoroughly after handling.', 0),
+  ('P264+P265', 'P', 'Wash hands [and …] thoroughly after handling. Do not touch eyes.', 0),
+  ('P265', 'P', 'Do not touch eyes.', 0),
+  ('P270', 'P', 'Do not eat, drink or smoke when using this product.', 0),
+  ('P271', 'P', 'Use only outdoors or in a well-ventilated area.', 0),
+  ('P272', 'P', 'Contaminated work clothing should not be allowed out of the workplace.', 0),
+  ('P273', 'P', 'Avoid release to the environment.', 0),
+  ('P280', 'P', 'Wear protective gloves/protective clothing/eye protection/face protection.', 0),
+  ('P281', 'P', 'Use personal protective equipment as required.', 1),
+  ('P282', 'P', 'Wear cold insulating gloves and either face shield or eye protection.', 0),
+  ('P283', 'P', 'Wear fire resistant or flame retardant clothing.', 0),
+  ('P284', 'P', '[In case of inadequate ventilation] wear respiratory protection.', 0),
+  ('P285', 'P', 'In case of inadequate ventilation wear respiratory protection.', 1),
+  ('P301', 'P', 'IF SWALLOWED:', 0),
+  ('P301+P310', 'P', 'IF SWALLOWED: Immediately call a POISON CENTER/doctor/…', 0),
+  ('P301+P312', 'P', 'IF SWALLOWED: Call a POISON CENTRE/doctor/… if you feel unwell.', 0),
+  ('P301+P316', 'P', 'IF SWALLOWED: Get emergency medical help immediately.', 0),
+  ('P301+P317', 'P', 'IF SWALLOWED: Get medical help.', 0),
+  ('P301+P330+P331', 'P', 'IF SWALLOWED: Rinse mouth. Do NOT induce vomiting.', 0),
+  ('P302', 'P', 'IF ON SKIN:', 0),
+  ('P302+P317', 'P', 'IF ON SKIN: Get medical help.', 0),
+  ('P302+P334', 'P', 'IF ON SKIN: Immerse in cool water or wrap in wet bandages.', 0),
+  ('P302+P335+P334', 'P', 'IF ON SKIN: Brush off loose particles from skin. Immerse in cool water [or wrap in wet bandages].', 0),
+  ('P302+P350', 'P', 'IF ON SKIN: Gently wash with plenty of soap and water.', 1),
+  ('P302+P352', 'P', 'IF ON SKIN: Wash with plenty of water/…', 0),
+  ('P302+P361+P354', 'P', 'IF ON SKIN: Take off immediately all contaminated clothing. Immediately rinse with water for several minutes.', 0),
+  ('P303', 'P', 'IF ON SKIN (or hair):', 0),
+  ('P303+P361+P353', 'P', 'IF ON SKIN (or hair): Take off immediately all contaminated clothing. Rinse skin with water [or shower].', 0),
+  ('P304', 'P', 'IF INHALED:', 0),
+  ('P304+P312', 'P', 'IF INHALED: Call a POISON CENTER/doctor/… if you feel unwell.', 1),
+  ('P304+P317', 'P', 'IF INHALED: Get medical help.', 0),
+  ('P304+P340', 'P', 'IF INHALED: Remove person to fresh air and keep comfortable for breathing.', 0),
+  ('P304+P341', 'P', 'IF INHALED: If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing.', 1),
+  ('P305', 'P', 'IF IN EYES:', 0),
+  ('P305+P351+P338', 'P', 'IF IN EYES: Rinse cautiously with water for several minutes. Remove contact lenses, if present and easy to do. Continue rinsing.', 0),
+  ('P305+P354+P338', 'P', 'IF IN EYES: Immediately rinse with water for several minutes. Remove contact lenses if present and easy to do. Continue rinsing.', 0),
+  ('P306', 'P', 'IF ON CLOTHING:', 0),
+  ('P306+P360', 'P', 'IF ON CLOTHING: rinse immediately contaminated clothing and skin with plenty of water before removing clothes.', 0),
+  ('P307', 'P', 'IF exposed:', 1),
+  ('P307+P311', 'P', 'IF exposed: call a POISON CENTER or doctor/physician.', 1),
+  ('P308', 'P', 'IF exposed or concerned:', 0),
+  ('P308+P311', 'P', 'IF exposed or concerned: Call a POISON CENTER/doctor/…', 0),
+  ('P308+P313', 'P', 'IF exposed or concerned: Get medical advice/attention.', 0),
+  ('P308+P316', 'P', 'IF exposed or concerned: Get emergency medical help immediately.', 0),
+  ('P309', 'P', 'IF exposed or if you feel unwell:', 1),
+  ('P309+P311', 'P', 'IF exposed or if you feel unwell: call a POISON CENTER or doctor/physician.', 1),
+  ('P310', 'P', 'Immediately call a POISON CENTER/doctor/…', 0),
+  ('P311', 'P', 'Call a POISON CENTER/doctor/…', 0),
+  ('P312', 'P', 'Call a POISON CENTRE/doctor/… if you feel unwell.', 0),
+  ('P313', 'P', 'Get medical advice/attention.', 0),
+  ('P314', 'P', 'Get medical advice/attention if you feel unwell.', 0),
+  ('P315', 'P', 'Get immediate medical advice/attention.', 0),
+  ('P316', 'P', 'Get emergency medical help immediately.', 0),
+  ('P317', 'P', 'Get medical help.', 0),
+  ('P318', 'P', 'IF exposed or concerned, get medical advice.', 0),
+  ('P319', 'P', 'Get medical help if you feel unwell.', 0),
+  ('P320', 'P', 'Specific treatment is urgent (see … on this label).', 0),
+  ('P321', 'P', 'Specific treatment (see … on this label).', 0),
+  ('P322', 'P', 'Specific measures (see …on this label).', 1),
+  ('P330', 'P', 'Rinse mouth.', 0),
+  ('P331', 'P', 'Do NOT induce vomiting.', 0),
+  ('P332', 'P', 'If skin irritation occurs:', 0),
+  ('P332+P313', 'P', 'If skin irritation occurs: Get medical advice/attention.', 0),
+  ('P332+P317', 'P', 'If skin irritation occurs: Get medical help.', 0),
+  ('P333', 'P', 'If skin irritation or rash occurs:', 0),
+  ('P333+P313', 'P', 'If skin irritation or rash occurs: Get medical advice/attention.', 0),
+  ('P333+P317', 'P', 'If skin irritation or rash occurs: Get medical help.', 0),
+  ('P334', 'P', 'Immerse in cool water [or wrap in wet bandages].', 0),
+  ('P335', 'P', 'Brush off loose particles from skin.', 0),
+  ('P335+P334', 'P', 'Brush off loose particles from skin. Immerse in cool water/wrap in wet bandages.', 1),
+  ('P336', 'P', 'Thaw frosted parts with lukewarm water. Do no rub affected area.', 0),
+  ('P336+P315', 'P', 'Thaw frosted parts with lukewarm water. Do not rub affected area. Get immediate medical advice/attention.', 0),
+  ('P336+P317', 'P', 'Immediately thaw frosted parts with lukewarm water. Do not rub affected area. Get medical help.', 0),
+  ('P337', 'P', 'If eye irritation persists:', 0),
+  ('P337+P313', 'P', 'If eye irritation persists: Get medical advice/attention.', 0),
+  ('P337+P317', 'P', 'If eye irritation persists: Get medical help.', 0),
+  ('P338', 'P', 'Remove contact lenses, if present and easy to do. Continue rinsing.', 0),
+  ('P340', 'P', 'Remove person to fresh air and keep comfortable for breathing.', 0),
+  ('P341', 'P', 'If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing.', 1),
+  ('P342', 'P', 'If experiencing respiratory symptoms:', 0),
+  ('P342+P311', 'P', 'If experiencing respiratory symptoms: Call a POISON CENTER/doctor/…', 0),
+  ('P342+P316', 'P', 'If experiencing respiratory symptoms: Get emergency medical help immediately.', 0),
+  ('P350', 'P', 'Gently wash with plenty of soap and water.', 1),
+  ('P351', 'P', 'Rinse cautiously with water for several minutes.', 0),
+  ('P352', 'P', 'Wash with plenty of water/…', 0),
+  ('P353', 'P', 'Rinse skin with water [or shower].', 0),
+  ('P354', 'P', 'Immediately rinse with water for several minutes.', 0),
+  ('P360', 'P', 'Rinse immediately contaminated clothing and skin with plenty of water before removing clothes.', 0),
+  ('P361', 'P', 'Take off immediately all contaminated clothing.', 0),
+  ('P361+P364', 'P', 'Take off immediately all contaminated clothing and wash it before reuse.', 0),
+  ('P362', 'P', 'Take off contaminated clothing.', 0),
+  ('P362+P364', 'P', 'Take off contaminated clothing and wash it before reuse.', 0),
+  ('P363', 'P', 'Wash contaminated clothing before reuse.', 0),
+  ('P364', 'P', 'And wash it before reuse.', 0),
+  ('P370', 'P', 'In case of fire:', 0),
+  ('P370+P372+P380+P373', 'P', 'In case of fire: Explosion risk. Evacuate area. DO NOT fight fire when fire reaches explosives.', 0),
+  ('P370+P376', 'P', 'In case of fire: Stop leak if safe to do so.', 0),
+  ('P370+P378', 'P', 'In case of fire: Use… to extinguish.', 0),
+  ('P370+P380', 'P', 'In case of fire: Evacuate area.', 1),
+  ('P370+P380+P375', 'P', 'In case of fire: Evacuate area. Fight fire remotely due to the risk of explosion.', 0),
+  ('P370+P380+P375[+P378]', 'P', 'In case of fire: Evacuate area. Fight fire remotely due to the risk of explosion. [Use … to extinguish].', 0),
+  ('P371', 'P', 'In case of major fire and large quantities:', 0),
+  ('P371+P380+P375', 'P', 'In case of major fire and large quantities: Evacuate area. Fight fire remotely due to the risk of explosion.', 0),
+  ('P372', 'P', 'Explosion risk.', 0),
+  ('P373', 'P', 'DO NOT fight fire when fire reaches explosives.', 0),
+  ('P374', 'P', 'Fight fire with normal precautions from a reasonable distance.', 1),
+  ('P375', 'P', 'Fight fire remotely due to the risk of explosion.', 0),
+  ('P376', 'P', 'Stop leak if safe to do so.', 0),
+  ('P377', 'P', 'Leaking gas fire: Do not extinguish, unless leak can be stopped safely.', 0),
+  ('P378', 'P', 'Use… to extinguish.', 0),
+  ('P380', 'P', 'Evacuate area.', 0),
+  ('P381', 'P', 'In case of leakage, eliminate all ignition sources.', 0),
+  ('P390', 'P', 'Absorb spillage to prevent material damage.', 0),
+  ('P391', 'P', 'Collect spillage.', 0),
+  ('P401', 'P', 'Store in accordance with….', 0),
+  ('P402', 'P', 'Store in a dry place.', 0),
+  ('P402+P404', 'P', 'Store in a dry place. Store in a closed container.', 0),
+  ('P403', 'P', 'Store in a well-ventilated place.', 0),
+  ('P403+P233', 'P', 'Store in a well-ventilated place. Keep container tightly closed.', 0),
+  ('P403+P235', 'P', 'Store in a well-ventilated place. Keep cool.', 0),
+  ('P404', 'P', 'Store in a closed container.', 0),
+  ('P405', 'P', 'Store locked up.', 0),
+  ('P406', 'P', 'Store in a corrosion-resistant/… container with a resistant inner liner.', 0),
+  ('P407', 'P', 'Maintain air gap between stacks or pallets.', 0),
+  ('P410', 'P', 'Protect from sunlight.', 0),
+  ('P410+P403', 'P', 'Protect from sunlight. Store in a well-ventilated place.', 0),
+  ('P410+P412', 'P', 'Protect from sunlight. Do no expose to temperatures exceeding 50 °C/122°F.', 0),
+  ('P411', 'P', 'Store at temperatures not exceeding … °C/…°F.', 0),
+  ('P411+P235', 'P', 'Store at temperatures not exceeding … °C/…°F. Keep cool.', 1),
+  ('P412', 'P', 'Do not expose to temperatures exceeding 50 °C/122°F.', 0),
+  ('P413', 'P', 'Store bulk masses greater than … kg/… lbs at temperatures not exceeding … °C/…°F.', 0),
+  ('P420', 'P', 'Store separately.', 0),
+  ('P422', 'P', 'Store contents under …', 1),
+  ('P501', 'P', 'Dispose of contents/container to …', 0),
+  ('P502', 'P', 'Refer to manufacturer or supplier for information on recovery or recycling.', 0),
+  ('P503', 'P', 'Refer to manufacturer/supplier/… for information on disposal/recovery/recycling.', 0)
+  ON DUPLICATE KEY UPDATE `kind` = VALUES(`kind`), `statement` = VALUES(`statement`), `is_deprecated` = VALUES(`is_deprecated`);
 
 -- STORAGE UNITS
 CREATE TABLE IF NOT EXISTS storage_units (
@@ -2743,6 +3005,260 @@ ALTER TABLE `experiments_templates_comments`
 ALTER TABLE `items_types_comments`
   ADD INDEX `idx_items_types_comments_item_created` (`item_id`, `created_at`);
 -- end schema 216
+
+-- First-class reaction records, owned by an entry through typed links.
+CREATE TABLE reactions (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  scheme JSON NULL,
+  rxn MEDIUMTEXT NOT NULL,
+  -- derived from the components on save: reactants>agents>products
+  reaction_smiles MEDIUMTEXT NOT NULL,
+  -- derived on save: SHA-256 of the sorted reactant and product InChIKeys, to find the same transformation
+  reaction_key CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  preview_png MEDIUMTEXT NOT NULL,
+  temperature_c DECIMAL(24,12) NULL,
+  duration_s DECIMAL(24,12) NULL,
+  pressure_pa DECIMAL(24,12) NULL,
+  atmosphere VARCHAR(255) NOT NULL DEFAULT '',
+  conditions_notes TEXT NOT NULL,
+  reference_component_key CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  yield_basis_component_key CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NULL,
+  version INT UNSIGNED NOT NULL DEFAULT 1,
+  state TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  modified_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by INT UNSIGNED NOT NULL,
+  modified_by INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  KEY idx_reactions_reaction_key (reaction_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE reaction_components (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  reaction_id INT UNSIGNED NOT NULL,
+  component_key CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  ordering SMALLINT UNSIGNED NOT NULL,
+  role VARCHAR(20) NOT NULL,
+  name TEXT NOT NULL,
+  molfile MEDIUMTEXT NOT NULL,
+  smiles MEDIUMTEXT NOT NULL,
+  inchi_key VARCHAR(27) NOT NULL DEFAULT '',
+  molecular_formula VARCHAR(255) NOT NULL DEFAULT '',
+  molecular_weight DECIMAL(24,12) NULL,
+  compound_id INT UNSIGNED NULL,
+  item_id INT UNSIGNED NULL,
+  material_form VARCHAR(10) NOT NULL DEFAULT 'neat',
+  purity_percent DECIMAL(24,12) NOT NULL DEFAULT 100,
+  density_g_ml DECIMAL(24,12) NULL,
+  concentration_mol_l DECIMAL(24,12) NULL,
+  coefficient DECIMAL(24,12) NOT NULL DEFAULT 1,
+  planned_basis VARCHAR(16) NOT NULL DEFAULT 'mass',
+  planned_unit VARCHAR(8) NOT NULL DEFAULT 'g',
+  planned_value DECIMAL(24,12) NULL,
+  actual_basis VARCHAR(16) NOT NULL DEFAULT 'mass',
+  actual_unit VARCHAR(8) NOT NULL DEFAULT 'g',
+  actual_value DECIMAL(24,12) NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY idx_reaction_component_key (reaction_id, component_key),
+  KEY idx_reaction_components_inchi_key (inchi_key),
+  CONSTRAINT fk_reaction_components_reaction FOREIGN KEY (reaction_id) REFERENCES reactions(id) ON DELETE CASCADE,
+  CONSTRAINT fk_reaction_components_compound FOREIGN KEY (compound_id) REFERENCES compounds(id) ON DELETE SET NULL,
+  CONSTRAINT fk_reaction_components_item FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- Open Babel FP2 fingerprints of the components, same layout as compounds_fingerprints, for substructure search
+CREATE TABLE reaction_component_fingerprints (
+  component_id INT UNSIGNED NOT NULL,
+  fp0 INT UNSIGNED NOT NULL,
+  fp1 INT UNSIGNED NOT NULL,
+  fp2 INT UNSIGNED NOT NULL,
+  fp3 INT UNSIGNED NOT NULL,
+  fp4 INT UNSIGNED NOT NULL,
+  fp5 INT UNSIGNED NOT NULL,
+  fp6 INT UNSIGNED NOT NULL,
+  fp7 INT UNSIGNED NOT NULL,
+  fp8 INT UNSIGNED NOT NULL,
+  fp9 INT UNSIGNED NOT NULL,
+  fp10 INT UNSIGNED NOT NULL,
+  fp11 INT UNSIGNED NOT NULL,
+  fp12 INT UNSIGNED NOT NULL,
+  fp13 INT UNSIGNED NOT NULL,
+  fp14 INT UNSIGNED NOT NULL,
+  fp15 INT UNSIGNED NOT NULL,
+  fp16 INT UNSIGNED NOT NULL,
+  fp17 INT UNSIGNED NOT NULL,
+  fp18 INT UNSIGNED NOT NULL,
+  fp19 INT UNSIGNED NOT NULL,
+  fp20 INT UNSIGNED NOT NULL,
+  fp21 INT UNSIGNED NOT NULL,
+  fp22 INT UNSIGNED NOT NULL,
+  fp23 INT UNSIGNED NOT NULL,
+  fp24 INT UNSIGNED NOT NULL,
+  fp25 INT UNSIGNED NOT NULL,
+  fp26 INT UNSIGNED NOT NULL,
+  fp27 INT UNSIGNED NOT NULL,
+  fp28 INT UNSIGNED NOT NULL,
+  fp29 INT UNSIGNED NOT NULL,
+  fp30 INT UNSIGNED NOT NULL,
+  fp31 INT UNSIGNED NOT NULL,
+  PRIMARY KEY (component_id),
+  CONSTRAINT fk_reaction_component_fingerprints_component FOREIGN KEY (component_id) REFERENCES reaction_components(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE reaction_revisions (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  reaction_id INT UNSIGNED NOT NULL,
+  version INT UNSIGNED NOT NULL,
+  snapshot JSON NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by INT UNSIGNED NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY idx_reaction_revision (reaction_id, version),
+  CONSTRAINT fk_reaction_revisions_reaction FOREIGN KEY (reaction_id) REFERENCES reactions(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE reactions2experiments (
+  reaction_id INT UNSIGNED NOT NULL,
+  entity_id INT UNSIGNED NOT NULL,
+  ordering INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (reaction_id),
+  KEY idx_r2experiments_entity (entity_id, ordering),
+  CONSTRAINT fk_r2experiments_reaction FOREIGN KEY (reaction_id) REFERENCES reactions(id) ON DELETE CASCADE,
+  CONSTRAINT fk_r2experiments_entity FOREIGN KEY (entity_id) REFERENCES experiments(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE reactions2items (
+  reaction_id INT UNSIGNED NOT NULL,
+  entity_id INT UNSIGNED NOT NULL,
+  ordering INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (reaction_id),
+  KEY idx_r2items_entity (entity_id, ordering),
+  CONSTRAINT fk_r2items_reaction FOREIGN KEY (reaction_id) REFERENCES reactions(id) ON DELETE CASCADE,
+  CONSTRAINT fk_r2items_entity FOREIGN KEY (entity_id) REFERENCES items(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE reactions2experiments_templates (
+  reaction_id INT UNSIGNED NOT NULL,
+  entity_id INT UNSIGNED NOT NULL,
+  ordering INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (reaction_id),
+  KEY idx_r2experiments_templates_entity (entity_id, ordering),
+  CONSTRAINT fk_r2experiments_templates_reaction FOREIGN KEY (reaction_id) REFERENCES reactions(id) ON DELETE CASCADE,
+  CONSTRAINT fk_r2experiments_templates_entity FOREIGN KEY (entity_id) REFERENCES experiments_templates(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+CREATE TABLE reactions2items_types (
+  reaction_id INT UNSIGNED NOT NULL,
+  entity_id INT UNSIGNED NOT NULL,
+  ordering INT UNSIGNED NOT NULL DEFAULT 0,
+  PRIMARY KEY (reaction_id),
+  KEY idx_r2items_types_entity (entity_id, ordering),
+  CONSTRAINT fk_r2items_types_reaction FOREIGN KEY (reaction_id) REFERENCES reactions(id) ON DELETE CASCADE,
+  CONSTRAINT fk_r2items_types_entity FOREIGN KEY (entity_id) REFERENCES items_types(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `experiments_body_revisions`
+--
+
+CREATE TABLE `experiments_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_experiments_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_experiments_body_revisions_experiments_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_experiments_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `items_body_revisions`
+--
+
+CREATE TABLE `items_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_items_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_items_body_revisions_items_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `items` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_items_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `experiments_templates_body_revisions`
+--
+
+CREATE TABLE `experiments_templates_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_experiments_templates_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_experiments_templates_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_experiments_templates_body_revisions_experiments_templates_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `experiments_templates` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_experiments_templates_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `items_types_body_revisions`
+--
+
+CREATE TABLE `items_types_body_revisions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `entity_id` INT UNSIGNED NOT NULL,
+  `parent_id` INT UNSIGNED NULL DEFAULT NULL,
+  `depth` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `body_zstd` LONGBLOB NOT NULL,
+  `body_sha256` CHAR(64) NOT NULL,
+  `content_type` TINYINT NOT NULL DEFAULT 1,
+  `users_id` INT UNSIGNED NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_items_types_body_revisions_entity_id` (`entity_id`, `id`),
+  KEY `idx_items_types_body_revisions_entity_id_created_at` (`entity_id`, `created_at`, `id`),
+  CONSTRAINT `fk_items_types_body_revisions_items_types_id`
+    FOREIGN KEY (`entity_id`) REFERENCES `items_types` (`id`)
+    ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_items_types_body_revisions_users_userid`
+    FOREIGN KEY (`users_id`) REFERENCES `users` (`userid`)
+    ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 
 COMMIT;
 

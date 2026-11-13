@@ -25,14 +25,17 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Services\TeamsHelper;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
 use function array_merge;
 use function array_unique;
+use function bin2hex;
 use function count;
 use function json_decode;
 use function json_encode;
+use function random_bytes;
 use function sprintf;
 
 class EntitySqlBuilderTest extends \PHPUnit\Framework\TestCase
@@ -141,6 +144,42 @@ class EntitySqlBuilderTest extends \PHPUnit\Framework\TestCase
             $this->assertFalse($this->canWrite(EntityType::Experiments, $anon, $id));
         } finally {
             $Experiments->destroy();
+        }
+    }
+
+    /**
+     * The access key gives anonymous read access to an entry: an impersonator must not be able to keep it
+     */
+    public function testAccessKeyIsHiddenFromImpersonator(): void
+    {
+        $ownerId = $this->getUserIdFromEmail('user1@demo.elabftw.net');
+        $Entity = $this->getFreshExperimentWithGivenUser(new Users($ownerId, 2));
+        // a uuid: the column is 36 chars long and must stay unique
+        $accessKey = 'a1b2c3d4-0000-4000-8000-' . bin2hex(random_bytes(6));
+        $req = Db::getConnection()->prepare('UPDATE experiments SET access_key = :key WHERE id = :id');
+        $req->bindValue(':key', $accessKey);
+        $req->bindValue(':id', $Entity->id, PDO::PARAM_INT);
+        Db::getConnection()->execute($req);
+
+        // the real user sees it
+        $entityData = new Experiments(new Users($ownerId, 2), $Entity->id)->readOne();
+        $this->assertSame($accessKey, $entityData['access_key']);
+        $this->assertStringContainsString($accessKey, $entityData['sharelink']);
+
+        // the impersonator does not, in a single entry or in a listing
+        $impersonated = new Users($ownerId, 2);
+        $impersonated->impersonatorId = 1;
+        $entityData = new Experiments($impersonated, $Entity->id)->readOne();
+        $this->assertNull($entityData['access_key']);
+        $this->assertStringNotContainsString($accessKey, $entityData['sharelink']);
+        $listing = new Experiments($impersonated)->readAll(new DisplayParams(
+            $impersonated,
+            EntityType::Experiments,
+            new InputBag(array('full' => 1, 'owner' => $ownerId, 'scope' => Scope::Everything->value, 'limit' => 9999)),
+        ));
+        $this->assertContains($Entity->id, array_column($listing, 'id'));
+        foreach ($listing as $entry) {
+            $this->assertNull($entry['access_key'] ?? null);
         }
     }
 

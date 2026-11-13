@@ -54,21 +54,17 @@
 
   {# BODY #}
   <hr>
-  {% if Entity.entityData.hide_main_text %}
-    <div>
-      <h3 class='d-inline togglable-section-title color-disabled'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-      {% set text = 'The Main Text feature has been disabled. Click the eye icon to re-enable it.'|trans %}
-      {% set label = Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans %}
-      <span class='ml-1 infotip' aria-label='{{ label }}' data-trigger='click' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='0'>
-      {% include 'infotip.html' with {icon: 'fa-eye-slash', text} %}
-    </span>
-    </div>
-  {% else %}
-    <div class='d-flex justify-content-between'>
-      <div>
-        <h3 data-action='toggle-next' data-toggle-target-extra='mainTextEllipsis' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' data-toggle-target='mainTextDiv' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-      </div>
-      <div class='dropdown' id='mainTextEllipsis'>
+  {# main text and chemical editor/reactions share this spot: tabs switch between them, see tabbed-sections.ts #}
+  {# not a toggle-next: collapsing must not use the hidden attribute, see tabbed-sections.ts #}
+  <h3 id='entityBodyToggle' data-action='toggle-tabbed-section' data-storage-key='entityBodyDiv-isHidden' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='entityBodyDiv' data-cy='body-section-toggle'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main'|trans }}</h3>
+  <div id='entityBodyDiv' class='mt-2'>
+    <div class='d-flex justify-content-between align-items-end'>
+      <ul class='entity-body-tabs flex-grow-1 mb-0' id='entityBodyTabs' role='tablist' data-storage-key='persistent_editBodyTab' aria-label='{{ 'Text editor or chemistry'|trans }}'>
+        <li role='presentation'><button type='button' class='btn btn-transparent selected' role='tab' id='mainTextTab' aria-controls='mainTextPane' aria-selected='true' data-action='switch-tab-pane' data-tab='main' data-cy='body-tab-main'>{{ 'Text editor'|trans }}</button></li>
+        <li role='presentation'><button type='button' class='btn btn-transparent' role='tab' id='chemTab' aria-controls='chemPane' aria-selected='false' tabindex='-1' data-action='switch-tab-pane' data-tab='chem' data-cy='body-tab-chem'>{{ 'Reactions'|trans }}</button></li>
+      </ul>
+      {% if not Entity.entityData.hide_main_text %}
+      <div class='dropdown' id='mainTextEllipsis' data-shown-with-tab='main'>
         <button class='btn btn-ghost' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'Main text options'|trans }}' aria-label='{{ 'Main text options'|trans }}' type='button'>
           <i class='fas fa-ellipsis-v fa-fw'></i>
         </button>
@@ -84,39 +80,58 @@
           </span>
         </div>
       </div>
+      {% endif %}
     </div>
 
-    <div data-save-hidden='mainTextDiv' id='mainTextDiv'>
-      <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
-        {# tinymce or markdown? #}
-        {% if Entity.entityData.content_type == '2' %}
-          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
-        {% else %}
-        {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
-          {% if App.devMode -%}
-            <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
-          {%- endif %}
-          <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
-        {% endif %}
+    <div id='mainTextPane' class='mt-2' role='tabpanel' aria-labelledby='mainTextTab'>
+    {% if Entity.entityData.hide_main_text %}
+      <div>
+        <h3 class='d-inline togglable-section-title color-disabled'><i class='fas fa-caret-right color-disabled fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
+        {% set text = 'The Main Text feature has been disabled. Click the eye icon to re-enable it.'|trans %}
+        {% set label = Entity.entityData.hide_main_text ? 'Show main text'|trans : 'Hide main text'|trans %}
+        <span class='ml-1 infotip' aria-label='{{ label }}' data-trigger='click' data-reload='page' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='hide_main_text' data-value='0'>
+        {% include 'infotip.html' with {icon: 'fa-eye-slash', text} %}
+      </span>
       </div>
-      <div data-scroll-btn='fa-font'
-        data-scroll-btn-label='{{ Entity.entityData.content_type == '2' ? 'Main text end'|trans : 'Main text'|trans }}'
-        {% if Entity.entityData.content_type != '2' %}
-          {# body_area_ifr is the id of tinymce iframe #}
-          data-scroll-btn-headings='body_area_ifr'
-          data-scroll-btn-top='entityBodyEditorDiv'
-          data-scroll-btn-top-label='{{ 'Top of text'|trans }}'
-          data-scroll-btn-bottom-label='{{ 'Bottom of text'|trans }}'
-        {% endif %}
-        data-scroll-btn-y='42' class='d-flex ml-1'>
-        {# LAST SAVED #}
-        <div>
-          <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
-          <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+    {% else %}
+      <div id='mainTextDiv'>
+        <div class='mt-2' id='entityBodyEditorDiv' data-content-type='{{ Entity.entityData.content_type }}'>{# << this div is important around the textarea to fix an issue on mobile editor. See #3107 #}
+          {# tinymce or markdown? #}
+          {% if Entity.entityData.content_type == '2' %}
+            <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='markdown-textarea' data-language='{{ App.getJsLang }}' name='body'>{{ Entity.entityData.body }}</textarea>
+          {% else %}
+          {# do not display body if set in metadata, done via css to avoid delayed disappearance after JS is executed #}
+            {% if App.devMode -%}
+              <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element: suppress errors from tinymce] -->
+            {%- endif %}
+            <textarea aria-label='{{ 'Main content'|trans }}' id='body_area' class='mceditable invisible' name='body'>{{ Entity.entityData.body }}</textarea>
+          {% endif %}
         </div>
-      </div>
+        <div data-scroll-btn='fa-font'
+          data-scroll-btn-label='{{ Entity.entityData.content_type == '2' ? 'Main text end'|trans : 'Main text'|trans }}'
+          {% if Entity.entityData.content_type != '2' %}
+            {# body_area_ifr is the id of tinymce iframe #}
+            data-scroll-btn-headings='body_area_ifr'
+            data-scroll-btn-top='entityBodyEditorDiv'
+            data-scroll-btn-top-label='{{ 'Top of text'|trans }}'
+            data-scroll-btn-bottom-label='{{ 'Bottom of text'|trans }}'
+          {% endif %}
+          data-scroll-btn-y='42' class='d-flex ml-1'>
+          {# LAST SAVED #}
+          <div>
+            <span class='smallgray'>{{ 'Last saved:'|trans }}</span>
+            <span id='lastSavedAt' class='ml-1 relative-moment smallgray' title='{{ Entity.entityData.modified_at }}'></span>
+          </div>
+        </div>
+    </div>
+    {% endif %}
+    </div>
+
+    <div id='chemPane' class='mt-2 entity-body-pane-inactive' role='tabpanel' aria-labelledby='chemTab'>
+      {% include 'chem-editor-edit.html' %}
+      {% include 'reactions.html' with {'editReactions': true} %}
+    </div>
   </div>
-  {% endif %}
 </section>
 
 <hr>
@@ -137,67 +152,81 @@
 
 {% include 'steps-edit.html' %}
 
-{% include 'spreadsheet-editor.html' %}
-
 {% include 'links.html' %}
 
 {% include 'storage-view-edit.html' %}
 
-{# PERMISSIONS #}
-<h3 title='{{ 'Toggle visibility'|trans }}' data-scroll-btn='fa-user-lock' data-scroll-btn-label='{{ 'Permissions'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
-<div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
-  {% if Entity.entityData.canread_target %}
-    <h5>{{ 'Permissions for the template'|trans }}</h5>
-  {% endif %}
-  {% include 'edit-permissions.html' %}
-  {% include 'view-edit-target-permissions.html' %}
-</div>
-<hr>
+{# EDITORS #}
+{# spreadsheet, image and json editors share this spot: tabs switch between them, see tabbed-sections.ts #}
+{# collapsed by default like they were as separate sections, the remembered state is restored in js #}
+<section id='editorsSection' aria-labelledby='editorsToggle'>
+  <h3 id='editorsToggle' data-action='toggle-tabbed-section' data-storage-key='editorsDiv-isHidden' data-scroll-btn='fa-screwdriver-wrench' data-scroll-btn-label='{{ 'Editors'|trans }}' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='editorsDiv' data-cy='editors-section-toggle'><i class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Editors'|trans }}</h3>
+  <div id='editorsDiv' class='mt-2 entity-body-pane-inactive'>
+    <ul class='entity-body-tabs mb-0' id='editorsTabs' role='tablist' data-storage-key='persistent_editEditorsTab' aria-label='{{ 'Editors'|trans }}'>
+      <li role='presentation'><button type='button' class='btn btn-transparent selected' role='tab' id='spreadsheetTab' aria-controls='spreadsheetPane' aria-selected='true' data-action='switch-tab-pane' data-tab='spreadsheet' data-cy='editors-tab-spreadsheet'>{{ 'Spreadsheet'|trans }}</button></li>
+      <li role='presentation'><button type='button' class='btn btn-transparent' role='tab' id='imageTab' aria-controls='imagePane' aria-selected='false' tabindex='-1' data-action='switch-tab-pane' data-tab='image' data-cy='editors-tab-image'>{{ 'Image'|trans }}</button></li>
+      <li role='presentation'><button type='button' class='btn btn-transparent' role='tab' id='jsonTab' aria-controls='jsonPane' aria-selected='false' tabindex='-1' data-action='switch-tab-pane' data-tab='json' data-cy='editors-tab-json'>{{ 'JSON'|trans }}</button></li>
+    </ul>
 
-{# DOODLE #}
-{# id for the i is needed by the annotate-image action #}
-<h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='false' aria-controls='doodleDiv'><i id='doodleDivIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Draw something'|trans }}</h3>
-<div id='doodleDiv' hidden class='mt-2' data-save-hidden='doodleDiv'>
-  <div class='d-flex'>
-    {# do not use w-100 here as it will break the canvas #}
-    <canvas class='bg-white rounded' width='800' height='600' id='doodleCanvas'></canvas>
+    <div id='spreadsheetPane' class='mt-2' role='tabpanel' aria-labelledby='spreadsheetTab'>
+      {% include 'spreadsheet-editor.html' %}
+    </div>
 
-    <div class='ml-3'>
-      <hr>
-      <div>
-        <label for='doodleStrokeStyle'>{{ 'Color'|trans }}</label>
-        <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' />
-      </div>
+    <div id='imagePane' class='mt-2 entity-body-pane-inactive' role='tabpanel' aria-labelledby='imageTab'>
+      {% set doodleExtensions = constant('Elabftw\\Elabftw\\Extensions::DOODLE') %}
+      <div id='doodleDiv' data-confirm-replace='{{ 'Replace the current drawing with this image?'|trans }}' data-error='{{ 'Could not load this image.'|trans }}' data-extensions='{{ doodleExtensions|json_encode|e('html_attr') }}'>
+        {# TOOLBAR: the tools one after the other above the canvas, wrapping on narrow screens #}
+        <div class='d-flex flex-wrap align-items-center mb-2 doodle-toolbar' role='toolbar' aria-label='{{ 'Image editor'|trans }}'>
+          <button type='button' class='btn btn-secondary mr-2' data-action='doodle-load-attachment' data-cy='doodle-load-attachment'><i class='fas fa-folder-open fa-fw mr-1'></i>{{ 'Load attachment'|trans }}</button>
+          <button type='button' class='btn btn-secondary' data-action='doodle-upload-image' data-cy='doodle-upload-image'><i class='fas fa-upload fa-fw mr-1'></i>{{ 'Upload image'|trans }}</button>
+          {# the file is uploaded as a normal attachment, then loaded in the editor #}
+          <input type='file' id='doodleUploadInput' class='d-none' accept='.{{ doodleExtensions|join(',.') }}' aria-label='{{ 'Upload image'|trans }}' data-cy='doodle-upload-input'>
 
-      <hr>
+          <div class='vertical-separator'></div>
 
-      <div id='doodleStrokeWidthContainer'>
-        <label for='doodleStrokeWidth'>{{ 'Stroke width'|trans }}</label>
-        <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' />
-      </div>
+          <label for='doodleStrokeStyle' class='mb-0 mr-2'>{{ 'Color'|trans }}</label>
+          <input type='color' name='strokeStyle' value='#29aeb9' id='doodleStrokeStyle' class='mr-3' />
 
-      <hr>
+          <label for='doodleStrokeWidth' class='mb-0 mr-2'>{{ 'Stroke width'|trans }}</label>
+          <input type='range' min='1' max='20' name='strokeWidth' value='5' id='doodleStrokeWidth' class='mr-3' />
 
-      <div>
-        <input type='checkbox' id='doodleEraser' /> <label for='doodleEraser'>{{ 'Eraser'|trans }}</label>
-      </div>
+          <input type='checkbox' id='doodleEraser' class='mr-1' />
+          <label for='doodleEraser' class='mb-0'>{{ 'Eraser'|trans }}</label>
 
-      <hr>
+          <div class='vertical-separator'></div>
 
-      <p>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          <button type='button' id='clearCanvas' class='btn btn-danger mr-2'>{{ 'Clear'|trans }}</button>
+          <button type='button' id='saveCanvas' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+        </div>
 
-      <hr>
-      <div>
-        <button type='button' id='clearCanvas' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
-        <button type='button' id='saveCanvas' class='btn btn-primary' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Save'|trans }}</button>
+        <div class='d-flex justify-content-between mb-1'>
+          <p class='smallgray mb-0'>{{ 'Use %sCtrl%s + click to add text'|trans|format('<kbd>', '</kbd>')|raw }}</p>
+          {# filled in doodle.ts #}
+          <span class='smallgray' id='doodleCanvasSize' aria-live='polite'></span>
+        </div>
+        {# a loaded image can make the canvas wider than the page: scroll it rather than overflow #}
+        <div class='overflow-auto' id='doodleCanvasWrapper'>
+          <div class='doodle-canvas-frame'>
+            {# full width is set in doodle.ts through the width attribute: do not use w-100 here, css scaling breaks the drawing #}
+            <canvas class='bg-white rounded d-block' width='800' height='600' id='doodleCanvas'></canvas>
+            {# drag it, or focus it and use the arrow keys (shift for bigger steps) #}
+            <button type='button' class='doodle-resize-handle' id='doodleResizeHandle' title='{{ 'Resize canvas'|trans }}' aria-label='{{ 'Resize canvas'|trans }}' data-cy='doodle-resize-handle'></button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<hr>
-{% include 'json-editor.html' %}
-<hr>
+    <div id='jsonPane' class='mt-2 entity-body-pane-inactive' role='tabpanel' aria-labelledby='jsonTab'>
+      {% include 'json-editor.html' %}
+    </div>
+  </div>
+</section>
+
+{# modals live outside of the tab panes, as they cannot be displayed from a hidden parent #}
+{% include 'chem-editor-edit-modals.html' %}
+{% include 'reaction-edit-modal.html' %}
+{# shared by the chemical and image editors #}
+{% include 'load-attachment-modal.html' %}
 
 <div id='info'
     data-page='edit'

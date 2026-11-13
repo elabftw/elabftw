@@ -15,7 +15,6 @@ namespace Elabftw\Elabftw;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\AuthenticatedUser;
-use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\TeamsHelper;
 
@@ -29,8 +28,6 @@ use function in_array;
 final class Permissions
 {
     private const int CAN_DEPTH = 3;
-
-    private TeamGroups $TeamGroups;
 
     private BasePermissions $canreadBase;
 
@@ -47,7 +44,6 @@ final class Permissions
 
     public function __construct(private Users $Users, private array $item)
     {
-        $this->TeamGroups = new TeamGroups($this->Users);
         $this->canreadBase = BasePermissions::from($item['canread_base']);
         $this->canwriteBase = BasePermissions::from($item['canwrite_base']);
         $this->canbookBase = isset($item['canbook_base']) ? BasePermissions::from($item['canbook_base']) : null;
@@ -85,6 +81,12 @@ final class Permissions
             return false;
         }
 
+        // if we own the entity, we have access on it for sure
+        // checked before the rules that need a query: all the rules below only grant access
+        if ($this->item['userid'] === $this->Users->userData['userid']) {
+            return true;
+        }
+
         if ($base === BasePermissions::Organization && $this->Users instanceof AuthenticatedUser) {
             return true;
         }
@@ -118,8 +120,9 @@ final class Permissions
 
         // check for teamgroups
         if (!empty($can['teamgroups'])) {
+            $teamgroupsOfUser = $this->Users->getTeamGroupIds();
             foreach ($can['teamgroups'] as $teamgroup) {
-                if ($this->TeamGroups->isInTeamGroup($this->Users->userData['userid'], (int) $teamgroup)) {
+                if (in_array((int) $teamgroup, $teamgroupsOfUser, true)) {
                     return true;
                 }
             }
@@ -127,11 +130,6 @@ final class Permissions
 
         // check for users
         if (in_array($this->Users->userData['userid'], $can['users'] ?? array(), true)) {
-            return true;
-        }
-
-        // if we own the entity, we have access on it for sure
-        if ($this->item['userid'] === $this->Users->userData['userid']) {
             return true;
         }
 

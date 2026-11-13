@@ -27,6 +27,7 @@ enum ApiSubModels: string
     case ExperimentsLinks = 'experiments_links';
     case ExperimentsStatus = 'experiments_status';
     case Events = 'events';
+    case GhsStatements = 'ghs_statements';
     case ResourcesCategories = 'resources_categories';
     case IdpsCerts = 'certs';
     case IdpsEndpoints = 'endpoints';
@@ -36,6 +37,7 @@ enum ApiSubModels: string
     case Recurrences = 'recurrences';
     case ProcurementRequests = 'procurement_requests';
     case RequestActions = 'request_actions';
+    case Reactions = 'reactions';
     case Revisions = 'revisions';
     case Rors = 'rors';
     case SigKeys = 'sig_keys';
@@ -55,6 +57,7 @@ enum ApiSubModels: string
             ApiEndpoint::Items,
             ApiEndpoint::ItemsTypes,
             ApiEndpoint::ExperimentsTemplates => self::getAbstractEntityCases(),
+            ApiEndpoint::Compounds => self::getCompoundsCases(),
             ApiEndpoint::Teams => self::getTeamsCases(),
             ApiEndpoint::Users => self::getUsersCases(),
             ApiEndpoint::Event => self::getSchedulerCases(),
@@ -74,6 +77,7 @@ enum ApiSubModels: string
                 self::CompoundsLinks,
                 self::ItemsLinks,
                 self::RequestActions,
+                self::Reactions,
                 self::Revisions,
                 self::StepGroups,
                 self::Steps,
@@ -81,6 +85,16 @@ enum ApiSubModels: string
                 self::Tags,
                 self::UploadGroups,
                 self::Uploads,
+            ),
+        );
+    }
+
+    private static function getCompoundsCases(): array
+    {
+        return array_map(
+            fn(self $case): string => $case->value,
+            array(
+                self::GhsStatements,
             ),
         );
     }

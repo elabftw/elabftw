@@ -8,18 +8,39 @@
 import {
   escapeRegExp,
   getNewIdFromPostRequest,
-  reloadElements,
+  reloadUploads,
   updateEntityBody,
 } from './misc';
 import { Target, Model, Action } from './interfaces';
 import './doodle';
+import './tabbed-sections';
+import { initReactionsList } from './reaction-summary';
 import { getEditor } from './Editor.class';
+import tinymce from 'tinymce/tinymce';
 import DOMPurify from 'dompurify';
 import { ApiC } from './api';
 import { Uploader } from './uploader';
-import { clearLocalStorage } from './localStorage';
+import { getRecoveryData, removeRecoveryData } from './recovery';
 import { entity } from './getEntity';
 import { on } from './handlers';
+import { enableMarkdownImagePaste } from './pasteImage';
+
+initReactionsList();
+
+// the main text tab can be shown without a scroll or resize, so let tinymce update its height and sticky toolbar now
+document.addEventListener('tab-shown', (event: CustomEvent<string>) => {
+  const editor = tinymce.activeEditor;
+  if (event.detail !== 'main' || !editor) {
+    return;
+  }
+  window.requestAnimationFrame(() => {
+    if (editor.plugins.autoresize) {
+      // a layout change must not move the focus into the editor
+      editor.execCommand('mceAutoResize', false, undefined, { skip_focus: true });
+    }
+    window.dispatchEvent(new Event('scroll'));
+  });
+});
 
 // remove exclusive edit mode when leaving the page
 window.onbeforeunload = function() {
@@ -31,12 +52,16 @@ const editor = getEditor();
 editor.init('edit');
 
 if (editor.type === 'md') {
-  document.getElementById('body_area')?.addEventListener('keydown', event => {
+  const bodyArea = document.getElementById('body_area') as HTMLTextAreaElement | null;
+  bodyArea?.addEventListener('keydown', event => {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
       event.preventDefault();
       updateEntityBody(false);
     }
   });
+  if (bodyArea) {
+    enableMarkdownImagePaste(bodyArea);
+  }
 }
 
 // initialize the file uploader
@@ -45,20 +70,18 @@ if (editor.type === 'md') {
 ////////////////
 // DATA RECOVERY
 
-// check if there is some local data with this id to recover
-if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('type') == entity.type)) {
-  const savedDate = localStorage.getItem('date') ?? '';
-  const savedBody = localStorage.getItem('body') ?? '';
-
+// check if there is some local data for this entity to recover
+const recovery = getRecoveryData(entity.type, entity.id);
+if (recovery) {
   const savedSpan = document.createElement('span');
-  savedSpan.innerText = savedDate;
+  savedSpan.innerText = new Date(recovery.date).toLocaleString();
 
   const bodyRecovery = document.createElement('div');
   bodyRecovery.id = 'recoveryDiv';
   bodyRecovery.classList.add('alert', 'alert-warning');
 
   const bodyHtml = document.createElement('div');
-  bodyHtml.innerHTML = DOMPurify.sanitize(savedBody, {
+  bodyHtml.innerHTML = DOMPurify.sanitize(recovery.body, {
     USE_PROFILES: { html: true },
     FORBID_TAGS: ['style', 'script', 'iframe', 'form'],
   });
@@ -94,19 +117,23 @@ if ((localStorage.getItem('id') == String(entity.id)) && (localStorage.getItem('
 
 // RECOVER YES
 on('recover-yes', () => {
+  const data = getRecoveryData(entity.type, entity.id);
+  if (!data) {
+    return;
+  }
   const params = {};
-  params[Target.Body] = localStorage.getItem('body');
+  params[Target.Body] = data.body;
 
   ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => {
-    editor.replaceContent(localStorage.getItem('body'));
-    clearLocalStorage();
+    editor.replaceContent(data.body);
+    removeRecoveryData(entity.type, entity.id);
     document.getElementById('recoveryDiv')?.remove();
   });
 });
 
 // RECOVER NO
 on('recover-no', () => {
-  clearLocalStorage();
+  removeRecoveryData(entity.type, entity.id);
   document.getElementById('recoveryDiv')?.remove();
 });
 // END DATA RECOVERY
@@ -121,29 +148,6 @@ on('get-next-custom-id', (el: HTMLElement) => {
   ApiC.patch(`${entity.type}/${entity.id}`, {action: Action.SetNextCustomId}).then(res => res.json()).then(json => {
     inputEl.value = String(json.custom_id);
   }).finally(() => button.disabled = false);
-});
-
-on('annotate-image', (el: HTMLElement) => {
-  // show doodle canvas
-  const doodleDiv = document.getElementById('doodleDiv');
-  doodleDiv.removeAttribute('hidden');
-  doodleDiv.scrollIntoView({behavior: 'smooth'});
-  // adjust caret icon
-  const doodleDivIcon = document.getElementById('doodleDivIcon');
-  doodleDivIcon.classList.remove('fa-caret-right');
-  doodleDivIcon.classList.add('fa-caret-down');
-
-  const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
-  const img = new Image();
-  // set src attribute to image path
-  img.addEventListener('load', function() {
-    // make canvas bigger than image
-    context.canvas.width = (this as HTMLImageElement).width * 2;
-    context.canvas.height = (this as HTMLImageElement).height * 2;
-    // add image to canvas
-    context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-  });
-  img.src = `app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`;
 });
 
 on('import-link-body', (el: HTMLElement) => {
@@ -248,7 +252,7 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
       method: 'POST',
       body: formData,
     }).then(resp => {
-      reloadElements(['uploadsDiv']);
+      void reloadUploads();
       // return early if longName is not found in body
       if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
         && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)

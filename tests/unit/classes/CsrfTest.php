@@ -47,6 +47,18 @@ class CsrfTest extends \PHPUnit\Framework\TestCase
         $Csrf->validate();
     }
 
+    /**
+     * X-HTTP-Method-Override makes Symfony see this POST as a GET, the token must still be checked
+     */
+    public function testValidateMethodOverrideFail(): void
+    {
+        $Request = Request::create('/', 'POST', server: array('HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET'));
+        $this->assertSame('GET', $Request->getMethod());
+        $Csrf = new Csrf($Request);
+        $this->expectException(UnauthorizedException::class);
+        $Csrf->validate();
+    }
+
     public function testValidateForm(): void
     {
         $Request = Request::create('/', 'POST', array('csrf' => 'fake-token'));

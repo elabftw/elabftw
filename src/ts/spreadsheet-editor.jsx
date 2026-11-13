@@ -20,6 +20,7 @@ import "jspreadsheet-ce/dist/jspreadsheet.css";
 import i18next from './i18n';
 import { fileToWorkbook } from './spreadsheet-utils';
 import { assignKey } from './keymaster';
+import { errorMessage } from './misc';
 import { notify } from './notify';
 
 function SpreadsheetEditor() {
@@ -109,7 +110,7 @@ function SpreadsheetEditor() {
       setUnsavedWarning(true);
       portRef.current?.postMessage({ type: 'jss-new-document' });
     } catch (error) {
-      notify.error(error instanceof Error ? error.message : 'Unexpected error while importing spreadsheet.');
+      notify.error(errorMessage(error, 'Unexpected error while importing spreadsheet.'));
     } finally {
       input.value = '';
     }

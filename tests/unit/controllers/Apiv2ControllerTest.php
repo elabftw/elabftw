@@ -12,23 +12,33 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use DateTimeImmutable;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\ApiKeys;
+use Elabftw\Models\BodyRevisions;
 use Elabftw\Models\Config;
 use Elabftw\Models\Links\Containers2ItemsLinks;
-use Elabftw\Models\Revisions;
+use Elabftw\Models\Scheduler;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_keys;
+use function array_column;
+use function array_map;
+use function array_unique;
+use function array_values;
 use function basename;
 use function json_decode;
 use function sprintf;
+use function str_replace;
 
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -171,7 +181,8 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         foreach (array(EntityType::Experiments, EntityType::Items) as $entityType) {
             $Entity = $entityType->toInstance($user);
             $Entity->setId($Entity->create(canreadBase: BasePermissions::Full));
-            $revisionId = new Revisions($Entity)->dbInsert('Previous body');
+            $Entity->patch(Action::Update, array('body' => 'Previous body'));
+            $revisionId = new BodyRevisions($Entity)->readAll()[0]['id'];
             $entityUri = sprintf('/%s%d', $Entity->getApiPath(), $Entity->id);
 
             $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($entityUri));
@@ -206,7 +217,84 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             Request::create('/api/v2/users/1/uploads', 'GET'),
         );
         $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testCannotReadAnotherUsersRors(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/users/1/rors', 'GET'),
+        );
+        $res = $Controller->getResponse();
         self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testCannotReadRorsOfUserOutsideOfTeam(): void
+    {
+        $admin = $this->getRandomUserInTeam(2, admin: 1);
+        // userid 1 is only in team 1
+        $Controller = new Apiv2Controller(
+            $admin,
+            Request::create('/api/v2/users/1/rors', 'GET'),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_FORBIDDEN, $res->getStatusCode());
+    }
+
+    public function testCanReadOwnRors(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create(sprintf('/api/v2/users/%d/rors', $user->getUserid()), 'GET'),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testUserReadsLimitedProfileOfAnotherUser(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller(
+            $user,
+            Request::create('/api/v2/users/1', 'GET'),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $json = json_decode((string) $res->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame(array('firstname', 'lastname', 'fullname', 'email'), array_keys($json));
+        self::assertStringContainsString('***', $json['email']);
+    }
+
+    public function testTeamAdminReadsProfileOfTeamMember(): void
+    {
+        // team 1 Admin is also Sysadmin, so use team 2
+        $admin = $this->getRandomUserInTeam(2, admin: 1);
+        $user = $this->getRandomUserInTeam(2);
+        $json = $this->getUserAs($admin, $user->getUserid());
+        self::assertSame($user->getUserid(), $json['userid']);
+        self::assertSame($user->userData['email'], $json['email']);
+        self::assertArrayNotHasKey('password_hash', $json);
+        self::assertArrayNotHasKey('last_login', $json);
+    }
+
+    public function testTeamAdminReadsLimitedProfileOutsideOfTeam(): void
+    {
+        $admin = $this->getRandomUserInTeam(2, admin: 1);
+        // userid 1 is only in team 1
+        $json = $this->getUserAs($admin, 1);
+        self::assertSame(array('firstname', 'lastname', 'fullname', 'email'), array_keys($json));
+    }
+
+    public function testSysadminReadsProfileOfAnyUser(): void
+    {
+        $user = $this->getRandomUserInTeam(2);
+        $json = $this->getUserAs(new Users(1, 1), $user->getUserid());
+        self::assertSame($user->userData['email'], $json['email']);
+        self::assertArrayHasKey('last_login', $json);
+        self::assertArrayNotHasKey('password_hash', $json);
     }
 
     public function testAnonymousUserCannotReadAnotherTeamsSubmodel(): void
@@ -342,6 +430,49 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 
+    public function testGetGhsStatements(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/ghs_statements', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+        $this->assertContains('H300', array_column(json_decode((string) $res->getContent(), true), 'code'));
+    }
+
+    public function testCompoundGhsStatements(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $send = function (string $uri, string $method, ?string $content = null) use ($user): Response {
+            $Controller = new Apiv2Controller($user, Request::create($uri, $method, server: array('CONTENT_TYPE' => 'application/json'), content: $content));
+            $Controller->canWrite = true;
+            return $Controller->getResponse();
+        };
+        $res = $send('/api/v2/compounds', 'POST', '{"name": "Controller GHS compound"}');
+        $this->assertSame(Response::HTTP_CREATED, $res->getStatusCode());
+        $uri = sprintf('/api/v2/compounds/%d/ghs_statements', (int) basename((string) $res->headers->get('Location')));
+
+        $res = $send($uri, 'POST', '{"code": "H225"}');
+        $this->assertSame(Response::HTTP_CREATED, $res->getStatusCode());
+        $statementId = (int) basename((string) $res->headers->get('Location'));
+
+        $res = $send($uri, 'GET');
+        $this->assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $this->assertSame(array('H225'), array_column(json_decode((string) $res->getContent(), true), 'code'));
+
+        $res = $send(sprintf('%s/%d', $uri, $statementId), 'GET');
+        $this->assertSame('H225', json_decode((string) $res->getContent(), true)['code']);
+
+        $res = $send(sprintf('%s/%d', $uri, $statementId), 'DELETE');
+        $this->assertSame(Response::HTTP_NO_CONTENT, $res->getStatusCode());
+
+        $res = $send($uri, 'POST', '{"code": "H999"}');
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+
+        // compounds have no other submodel
+        $res = $send(str_replace('ghs_statements', 'tags', $uri), 'GET');
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
     public function testGetExports(): void
     {
         $user = $this->getRandomUserInTeam(1);
@@ -366,5 +497,46 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
             'Unknown "action" value. Expected one of: getcollections, gettypes.',
             $data['message']
         );
+    }
+
+    public function testAnonymousUserCannotReadEvents(): void
+    {
+        $Item = $this->getFreshBookableItem(1);
+        $Item->patch(Action::Update, array('canread_base' => BasePermissions::Full->value));
+        $itemUri = sprintf('/%s%d', $Item->getApiPath(), $Item->id);
+        foreach (array($itemUri . '/events', $itemUri . '/events/1') as $uri) {
+            $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($uri));
+            self::assertSame(Response::HTTP_FORBIDDEN, $Controller->getResponse()->getStatusCode(), $uri);
+        }
+    }
+
+    public function testNestedEventsAreScopedToParentItem(): void
+    {
+        $ItemA = $this->getFreshBookableItem(1);
+        $ItemB = $this->getFreshBookableItem(1);
+        $start = new DateTimeImmutable('+3 hour')->format('c');
+        $end = new DateTimeImmutable('+4 hour')->format('c');
+        $eventA = new Scheduler($ItemA)->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'nested scope A'));
+        $eventB = new Scheduler($ItemB)->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'nested scope B'));
+
+        $Controller = new Apiv2Controller(
+            $ItemA->Users,
+            Request::create(sprintf('/%s%d/events', $ItemA->getApiPath(), $ItemA->id)),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $events = json_decode((string) $res->getContent(), true);
+        $ids = array_map('intval', array_column($events, 'id'));
+        self::assertContains($eventA, $ids);
+        self::assertNotContains($eventB, $ids);
+        self::assertSame(array($ItemA->id), array_values(array_unique(array_map('intval', array_column($events, 'item')))));
+    }
+
+    private function getUserAs(Users $requester, int $userid): array
+    {
+        $Controller = new Apiv2Controller($requester, Request::create('/api/v2/users/' . $userid, 'GET'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        return json_decode((string) $res->getContent(), true, 512, JSON_THROW_ON_ERROR);
     }
 }

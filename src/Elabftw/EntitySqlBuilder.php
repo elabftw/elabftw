@@ -22,7 +22,6 @@ use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractTemplateEntity;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Items;
-use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Users\AnonymousUser;
 use Override;
 
@@ -38,9 +37,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
     protected array $joinsSql = array();
 
     private string $searchJoinSql = '';
-
-    // ids of the team groups of the user, only fetched once even if several access types are checked
-    private ?array $teamgroupsOfUser = null;
 
     public function __construct(private AbstractEntity $entity) {}
 
@@ -226,6 +222,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         if ($fullSelect) {
             // get all the columns of entity table
             $this->selectSql[] = 'entity.*';
+            // the access key gives anonymous read access to the entry: an impersonator could keep it and read the entry
+            // once the impersonation is over. Same column name after entity.* so it replaces it in the fetched row.
+            if ($this->entity->Users->impersonatorId !== null) {
+                $this->selectSql[] = 'NULL AS access_key';
+            }
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(
                 "'%s' AS page, '%s' AS type",
@@ -282,8 +283,10 @@ final class EntitySqlBuilder implements SqlBuilderInterface
 
     protected function compounds(): void
     {
+        // a compound the requester cannot read is not joined: an entry cannot be found from what it hides
         $this->joinsSql[] = 'LEFT JOIN compounds2%1$s AS compoundslinks ON compoundslinks.entity_id = entity.id
-            LEFT JOIN compounds ON compoundslinks.compound_id = compounds.id';
+            LEFT JOIN compounds ON (compoundslinks.compound_id = compounds.id AND '
+            . new CompoundPermissions($this->entity->Users)->getCanCondition('compounds') . ')';
     }
 
     protected function uploads(): void
@@ -458,7 +461,7 @@ final class EntitySqlBuilder implements SqlBuilderInterface
      */
     protected function canTeamGroups(string $can): string
     {
-        $teamgroupsOfUser = $this->getTeamgroupsOfUser();
+        $teamgroupsOfUser = $this->entity->Users->getTeamGroupIds();
         if (!empty($teamgroupsOfUser)) {
             // JSON_OVERLAPS checks for the intersection of two arrays
             // for instance [4,5,6] vs [2,6] has 6 in common -> 1 (true)
@@ -502,15 +505,6 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             $this->canTeamGroups($can),
             $this->canUsers($can),
         ));
-    }
-
-    private function getTeamgroupsOfUser(): array
-    {
-        if ($this->teamgroupsOfUser === null) {
-            $TeamGroups = new TeamGroups($this->entity->Users);
-            $this->teamgroupsOfUser = array_column($TeamGroups->readGroupsFromUser(), 'id');
-        }
-        return $this->teamgroupsOfUser;
     }
 
     /**
@@ -570,6 +564,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             $eventsColumn = 'experiment';
         } elseif ($this->entity instanceof Items) {
             $this->selectSql[] = 'entity.is_bookable';
+            $this->selectSql[] = 'COALESCE((
+                SELECT JSON_ARRAYAGG(userid)
+                FROM items_booking_approvers
+                WHERE entity_id = entity.id
+            ), JSON_ARRAY()) AS approvers';
             $eventsColumn = 'item_link = entity.id OR team_events.item';
         } elseif ($this->entity instanceof AbstractTemplateEntity) {
             return;

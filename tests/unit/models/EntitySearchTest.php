@@ -192,4 +192,32 @@ class EntitySearchTest extends \PHPUnit\Framework\TestCase
             $Unlinked->destroy();
         }
     }
+
+    #[DataProvider('concreteEntityTypes')]
+    public function testCompoundFilterNeedsReadAccessToTheCompound(EntityType $entityType): void
+    {
+        $owner = $this->getRandomUserInTeam(1, admin: 1);
+        $Compounds = new Compounds(new HttpGetter(new Client()), $owner, new NullFingerprinter(), false);
+        $compoundId = $Compounds->create(name: 'Private compound' . bin2hex(random_bytes(8)), canreadBase: BasePermissions::UserOnly);
+        // an entry everyone can read, linked to a compound only its owner can read
+        $Linked = $entityType->toInstance($owner);
+        $Linked->setId($Linked->create());
+        $Linked->patch(Action::Update, array('canread_base' => BasePermissions::Organization->value));
+        LinksFactory::getCompoundsLinks($Linked, $compoundId)->postAction(Action::Create, array());
+        $reader = $this->getUserInTeam(2);
+        $this->assertNotSame($owner->userid, $reader->userid);
+
+        $search = fn($user): array => array_column($entityType->toInstance($user)->readAll(new DisplayParams(
+            $user,
+            $entityType,
+            new InputBag(array('compound' => $compoundId, 'scope' => Scope::Everything->value)),
+        )), 'id');
+        try {
+            $this->assertSame(array($Linked->id), $search($owner));
+            // the entry is readable, but the filter must not reveal its link to the compound
+            $this->assertSame(array(), $search($reader));
+        } finally {
+            $Linked->destroy();
+        }
+    }
 }

@@ -862,11 +862,13 @@ class Eln extends AbstractZip
                 case 'https://www.elabftw.net/ns#reactions':
                     $reactions = $value['@value'] ?? array();
                     if (!is_array($reactions)) {
-                        throw new ImproperActionException('Invalid reactions in imported dataset.');
+                        $this->logger->warning('Invalid reaction shape: not an array!');
+                        break;
                     }
                     foreach ($reactions as $reaction) {
                         if (!is_array($reaction)) {
-                            throw new ImproperActionException('Invalid reactions in imported dataset.');
+                            $this->logger->warning('Invalid reaction shape: not an array!');
+                            continue;
                         }
                         new Reactions($this->Entity)->import($reaction);
                     }

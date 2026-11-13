@@ -40,6 +40,7 @@ module.exports = (env, argv) => {
         './src/ts/admin.ts',
         './src/ts/metadata.ts',
         './src/ts/show.ts',
+        './src/ts/tooltips.ts',
         'bootstrap/js/src/alert.js',
         'bootstrap/js/src/button.js',
         'bootstrap/js/src/collapse.js',

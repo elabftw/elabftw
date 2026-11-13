@@ -41,11 +41,13 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Clock\NativeClock;
 
 use function _;
+use function array_filter;
 use function array_values;
 use function implode;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function trim;
 
 /**
  * Process a SAML assertion and resolve it to a local authentication.
@@ -115,12 +117,12 @@ final class Saml
 
         try {
             if ($token === '') {
-                throw new UnauthorizedException('Decoding JWT Token failed');
+                throw new UnauthorizedException(_('Decoding JWT Token failed'));
             }
 
             $parsedToken = $config->parser()->parse($token);
             if (!$parsedToken instanceof UnencryptedToken) {
-                throw new UnauthorizedException('Decoding JWT Token failed');
+                throw new UnauthorizedException(_('Decoding JWT Token failed'));
             }
 
             $config->validator()->assert(
@@ -135,7 +137,7 @@ final class Saml
                 $parsedToken->claims()->get('nameid_format'),
             );
         } catch (CannotDecodeContent | InvalidTokenStructure | RequiredConstraintsViolated) {
-            throw new UnauthorizedException('Decoding JWT Token failed');
+            throw new UnauthorizedException(_('Decoding JWT Token failed'));
         }
     }
 
@@ -146,50 +148,19 @@ final class Saml
         $this->samlUserdata = $this->SamlAuthLib->getAttributes();
         $this->samlSessionIdx = $this->SamlAuthLib->getSessionIndex();
 
-        $emailAttr = $this->settings['idp']['emailAttr'] ?? null;
-        if (!is_string($emailAttr) || $emailAttr === '') {
-            throw new ImproperActionException('No email attribute configured for the IDP! Aborting.');
-        }
-        $email = $this->extractAttribute($emailAttr);
-
-        $orgid = $this->getAttribute('orgidAttr');
-        $orcid = $this->getAttribute('orcidAttr');
-        $firstname = $this->getName();
-        $lastname = $this->getName(last: true);
+        $email = $this->getEmail();
+        $orgid = $this->readAttribute('orgidAttr');
+        $orcid = $this->readAttribute('orcidAttr');
+        $firstname = $this->readAttribute('fnameAttr', self::UNKNOWN_VALUE);
+        $lastname = $this->readAttribute('lnameAttr', self::UNKNOWN_VALUE);
 
         $user = $this->getExistingUser($email, $orgid);
 
         if ($user === false) {
-            if (($this->configArr['saml_user_default'] ?? '0') === '0') {
-                $message = _('Could not find an existing user. Ask a Sysadmin to create your account.');
-
-                if (!empty($this->configArr['user_msg_need_local_account_created'])) {
-                    $message = $this->configArr['user_msg_need_local_account_created'];
-                }
-
-                throw new ImproperActionException($message);
+            $user = $this->provisionNewUser($email, $firstname, $lastname, $orgid, $orcid);
+            if ($user instanceof InitialTeamSelectionRequired) {
+                return $user;
             }
-
-            $teams = $this->getTeamsForNewUser();
-            if ($teams === null) {
-                return new InitialTeamSelectionRequired(
-                    email: $email,
-                    firstname: $firstname,
-                    lastname: $lastname,
-                    orgid: $orgid,
-                    orcid: $orcid,
-                );
-            }
-
-            $user = ValidatedUser::fromExternal(
-                $email,
-                $teams,
-                $firstname,
-                $lastname,
-                orgid: $orgid,
-                orcid: $orcid,
-                allowTeamCreation: $this->allowTeamCreation(),
-            );
         }
 
         $this->synchronizeTeams($user);
@@ -231,7 +202,7 @@ final class Saml
             ));
 
             $error = Messages::GenericError->toHuman();
-            if (($this->configArr['saml_debug'] ?? '0') === '1') {
+            if ($this->isEnabled('saml_debug')) {
                 $error = $details;
             }
 
@@ -243,7 +214,7 @@ final class Saml
                 'idp' => $this->getIdpEntityId(),
                 'requestId' => $requestId,
             ));
-            throw new UnauthorizedException('Authentication with IDP failed!');
+            throw new UnauthorizedException(_('Authentication with IDP failed!'));
         }
     }
 
@@ -253,34 +224,40 @@ final class Saml
         return is_string($entityId) && $entityId !== '' ? $entityId : self::UNKNOWN_VALUE;
     }
 
-    private function extractAttribute(string $attribute): string
+    private function getEmail(): string
     {
-        $error = sprintf(
-            'Could not find attribute "%s" in response from IDP! Aborting.',
-            $attribute,
-        );
-
-        if (!isset($this->samlUserdata[$attribute])) {
-            throw new ImproperActionException($error);
+        $emailAttr = $this->getAttributeName('emailAttr');
+        if ($emailAttr === null) {
+            throw new ImproperActionException(_('No email attribute configured for the IDP! Aborting.'));
         }
 
-        $value = $this->samlUserdata[$attribute];
-        if (is_array($value)) {
-            $value = $value[0] ?? null;
-        }
-
-        if (!is_string($value) || $value === '') {
-            throw new ImproperActionException($error);
-        }
-
-        return $value;
+        return $this->readAttribute('emailAttr') ?? throw new ImproperActionException(sprintf(
+            _('Could not find attribute "%s" in response from IDP! Aborting.'),
+            $emailAttr,
+        ));
     }
 
-    private function getAttribute(string $key): ?string
+    /**
+     * Name of the IdP attribute configured under this settings key
+     */
+    private function getAttributeName(string $settingKey): ?string
     {
-        $attribute = $this->settings['idp'][$key] ?? null;
-        if (!is_string($attribute) || $attribute === '') {
-            return null;
+        $attribute = $this->settings['idp'][$settingKey] ?? null;
+        return is_string($attribute) && $attribute !== '' ? $attribute : null;
+    }
+
+    /**
+     * First value of a single-valued IdP attribute, or the fallback when it is not configured, missing or empty
+     *
+     * @template T of string|null
+     * @param T $fallback
+     * @return string|T
+     */
+    private function readAttribute(string $settingKey, ?string $fallback = null): ?string
+    {
+        $attribute = $this->getAttributeName($settingKey);
+        if ($attribute === null) {
+            return $fallback;
         }
 
         $value = $this->samlUserdata[$attribute] ?? null;
@@ -288,49 +265,76 @@ final class Saml
             $value = $value[0] ?? null;
         }
 
-        return is_string($value) && $value !== '' ? $value : null;
+        return is_string($value) && $value !== '' ? $value : $fallback;
     }
 
-    private function getName(bool $last = false): string
+    private function provisionNewUser(
+        string $email,
+        string $firstname,
+        string $lastname,
+        ?string $orgid,
+        ?string $orcid,
+    ): Users|InitialTeamSelectionRequired {
+        if (!$this->isEnabled('saml_user_default')) {
+            throw new ImproperActionException($this->getAccountCreationDisabledMessage());
+        }
+
+        $teams = $this->getTeamsForNewUser();
+        if ($teams === null) {
+            return new InitialTeamSelectionRequired(
+                email: $email,
+                firstname: $firstname,
+                lastname: $lastname,
+                orgid: $orgid,
+                orcid: $orcid,
+            );
+        }
+
+        return ValidatedUser::fromExternal(
+            $email,
+            $teams,
+            $firstname,
+            $lastname,
+            orgid: $orgid,
+            orcid: $orcid,
+            allowTeamCreation: $this->allowTeamCreation(),
+        );
+    }
+
+    private function getAccountCreationDisabledMessage(): string
     {
-        $selector = $last ? 'lnameAttr' : 'fnameAttr';
-        $attribute = $this->settings['idp'][$selector] ?? null;
-
-        if (!is_string($attribute) || $attribute === '') {
-            return self::UNKNOWN_VALUE;
+        $message = $this->configArr['user_msg_need_local_account_created'] ?? null;
+        if (is_string($message) && $message !== '') {
+            return $message;
         }
-
-        $value = $this->samlUserdata[$attribute] ?? self::UNKNOWN_VALUE;
-        if (is_array($value)) {
-            $value = $value[0] ?? self::UNKNOWN_VALUE;
-        }
-
-        return is_string($value) ? $value : self::UNKNOWN_VALUE;
+        return _('Could not find an existing user. Ask a Sysadmin to create your account.');
     }
 
     /**
      * Return teams for a new local user.
      *
-     * A null return means the IdP did not provide teams and the instance is
+     * A null return means the IdP did not provide a usable team and the instance is
      * configured to let the user choose their initial team.
      *
      * @return list<mixed>|null
      */
     private function getTeamsForNewUser(): ?array
     {
-        $teamAttribute = $this->settings['idp']['teamAttr'] ?? null;
-        $teams = null;
+        $teams = $this->getTeamsFromAttribute();
 
-        if (is_string($teamAttribute) && $teamAttribute !== '') {
-            $teams = $this->samlUserdata[$teamAttribute] ?? null;
+        if (empty($teams) && $this->isTeamSyncEnabled()) {
+            // synchronization would remove the user from any team assigned here and fail on every login
+            throw new ImproperActionException(
+                _('Could not find team(s) in IDP response!'),
+            );
         }
 
-        if (empty($teams)) {
-            $teamId = (int) ($this->configArr['saml_team_default'] ?? 0);
+        $teamId = $this->getDefaultTeamId();
 
+        if (empty($teams)) {
             if ($teamId === 0) {
                 throw new ImproperActionException(
-                    'Could not find team ID to assign user!',
+                    _('Could not find team ID to assign user!'),
                 );
             }
 
@@ -341,27 +345,41 @@ final class Saml
             return array($teamId);
         }
 
-        if (is_string($teams)) {
-            return array($teams);
+        // The team attribute is often prefilled from federation metadata: when its value matches no team
+        // and teams cannot be created, let the user pick one instead of failing the login.
+        // Not with team synchronization: the next login would try to resolve the same unknown team and fail.
+        if (
+            $teamId === -1
+            && !$this->isTeamSyncEnabled()
+            && !$this->allowTeamCreation()
+            && !$this->anyTeamExists($teams)
+        ) {
+            return null;
         }
 
-        if (!is_array($teams)) {
-            throw new ImproperActionException(
-                'Invalid team attribute returned by IDP.',
-            );
-        }
+        return $teams;
+    }
 
-        return array_values($teams);
+    /**
+     * @param list<mixed> $teams
+     */
+    private function anyTeamExists(array $teams): bool
+    {
+        try {
+            new Teams(new Users())->getTeamsFromIdOrNameOrOrgidArray($teams);
+        } catch (ImproperActionException) {
+            return false;
+        }
+        return true;
     }
 
     private function synchronizeTeams(Users $user): void
     {
-        if (($this->configArr['saml_sync_teams'] ?? '0') !== '1') {
+        if (!$this->isTeamSyncEnabled()) {
             return;
         }
 
-        $teams = new Teams($user);
-        $teams->synchronize(
+        new Teams($user)->synchronize(
             $user->getUserid(),
             $this->getTeamsFromIdpResponse(),
         );
@@ -369,47 +387,58 @@ final class Saml
 
     private function getTeamsFromIdpResponse(): array
     {
-        $teamAttribute = $this->settings['idp']['teamAttr'] ?? null;
-        if (!is_string($teamAttribute) || $teamAttribute === '') {
+        if ($this->getAttributeName('teamAttr') === null) {
             throw new ImproperActionException(
-                'Cannot synchronize team(s) from IDP if no value is set for looking up team(s) in IDP response!',
+                _('Cannot synchronize team(s) from IDP if no value is set for looking up team(s) in IDP response!'),
             );
         }
 
-        $teams = $this->samlUserdata[$teamAttribute] ?? null;
+        $teams = $this->getTeamsFromAttribute();
         if (empty($teams)) {
             throw new ImproperActionException(
-                'Could not find team(s) in IDP response!',
+                _('Could not find team(s) in IDP response!'),
             );
         }
+
+        return new Teams(new Users())->getTeamsFromIdOrNameOrOrgidArray(
+            $teams,
+            $this->allowTeamCreation(),
+        );
+    }
+
+    /**
+     * Teams sent by the IdP, without blank values
+     *
+     * @return list<mixed>
+     */
+    private function getTeamsFromAttribute(): array
+    {
+        $teamAttribute = $this->getAttributeName('teamAttr');
+        $teams = $teamAttribute === null ? null : $this->samlUserdata[$teamAttribute] ?? null;
 
         if (is_string($teams)) {
             $teams = array($teams);
         }
 
-        if (!is_array($teams)) {
+        if ($teams !== null && !is_array($teams)) {
             throw new ImproperActionException(
-                'Invalid team attribute returned by IDP.',
+                _('Invalid team attribute returned by IDP.'),
             );
         }
 
-        return new Teams(new Users())->getTeamsFromIdOrNameOrOrgidArray(
-            array_values($teams),
-            $this->allowTeamCreation(),
-        );
+        // SAML attributes are multi-valued, so an IdP with nothing to send can still send array('')
+        return array_values(array_filter(
+            $teams ?? array(),
+            static fn(mixed $team): bool => !is_string($team) || trim($team) !== '',
+        ));
     }
 
-    private function getExistingUser(
-        string $email,
-        ?string $orgid = null,
-    ): Users|false {
+    private function getExistingUser(string $email, ?string $orgid = null): Users|false
+    {
         try {
             return ExistingUser::fromEmail($email);
         } catch (ResourceNotFoundException) {
-            if (
-                ($this->configArr['saml_fallback_orgid'] ?? '0') !== '1'
-                || $orgid === null
-            ) {
+            if (!$this->isEnabled('saml_fallback_orgid') || $orgid === null) {
                 return false;
             }
 
@@ -419,7 +448,7 @@ final class Saml
                 return false;
             }
 
-            if (($this->configArr['saml_sync_email_idp'] ?? '0') === '1') {
+            if ($this->isEnabled('saml_sync_email_idp')) {
                 $user->update(new UserParams('email', $email));
             }
 
@@ -451,8 +480,29 @@ final class Saml
         }
     }
 
+    /**
+     * Read a boolean setting from the instance config, stored as '0' or '1'
+     */
+    private function isEnabled(string $key, string $default = '0'): bool
+    {
+        return ($this->configArr[$key] ?? $default) === '1';
+    }
+
+    private function isTeamSyncEnabled(): bool
+    {
+        return $this->isEnabled('saml_sync_teams');
+    }
+
     private function allowTeamCreation(): bool
     {
-        return ($this->configArr['saml_team_create'] ?? '1') === '1';
+        return $this->isEnabled('saml_team_create', '1');
+    }
+
+    /**
+     * Team for new users without a usable team from the IdP: 0 rejects them, -1 lets them choose
+     */
+    private function getDefaultTeamId(): int
+    {
+        return (int) ($this->configArr['saml_team_default'] ?? 0);
     }
 }

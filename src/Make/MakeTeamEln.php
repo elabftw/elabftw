@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Enums\State;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
@@ -63,6 +64,7 @@ final class MakeTeamEln extends AbstractMakeEln
             new Instance2Rors(),
             new Teams2Rors($requester->getTeam(), false),
             new Users2Rors($requester->getUserid(), false),
+            CompoundsFactory::getCompounds($requester),
         );
         $Maker->bypassReadPermission = true;
         $Maker->getStreamZip();

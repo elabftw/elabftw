@@ -1,3 +1,7 @@
+{% if not App.isAnonymous() %}
+  {% include 'permissions-modal.html' %}
+{% endif %}
+
 {# Modal for request action #}
 <div class='modal fade' id='requestActionModal' tabindex='-1' role='dialog' aria-labelledby='requestActionModalLabel'>
   <div class='modal-dialog' role='document'>
@@ -291,6 +295,11 @@
         {% endif %}
         <button type='button' title='{{ alt }}' aria-label='{{ alt }}' data-action='do-requestable-action' data-target='lock' class='btn {{ Entity.entityData.locked ? 'btn-secondary' : 'btn-transparent' }} mr-2'>
           <i class='fas {{ lockIcon }} fa-fw'></i>
+        </button>
+
+        {# PERMISSIONS #}
+        <button type='button' title='{{ 'Permissions'|trans }}' aria-label='{{ 'Permissions'|trans }}' data-action='toggle-modal' data-target='permissionsModal' class='btn btn-transparent mr-2' data-cy='permissions-button'>
+          <i class='fas fa-share-nodes fa-fw'></i>
         </button>
       {% endif %}
 

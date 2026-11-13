@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
@@ -24,6 +25,7 @@ use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
@@ -995,6 +997,22 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Scheduler->destroy());
     }
 
+    public function testCannotMovePastEventToFuture(): void
+    {
+        $Scheduler = $this->getPastEventScheduler();
+        $start = new DateTimeImmutable('+2 days')->format('c');
+        $end = new DateTimeImmutable('+2 days +2 hours')->format('c');
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $start, 'end' => $end));
+    }
+
+    public function testCannotDestroyPastEvent(): void
+    {
+        $Scheduler = $this->getPastEventScheduler();
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->destroy();
+    }
+
     public function testCannotBookBeyondMaximumAdvanceDays(): void
     {
         $Items = $this->getFreshBookableItem(2);
@@ -1004,6 +1022,17 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $end = new DateTime('+3 days +2 hours')->format('c');
         $this->expectException(ImproperActionException::class);
         $this->getFreshSchedulerWithEvent($Items, $start, $end);
+    }
+
+    // a completed booking from a regular user, outside of the creation grace period
+    private function getPastEventScheduler(): Scheduler
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE team_events SET start = DATE_SUB(NOW(), INTERVAL 2 DAY), end = DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 2 HOUR, created_at = DATE_SUB(NOW(), INTERVAL 3 DAY) WHERE id = :id');
+        $req->bindValue(':id', $Scheduler->id, PDO::PARAM_INT);
+        $Db->execute($req);
+        return $Scheduler;
     }
 
     private function getFreshSchedulerWithEvent(?Items $Items = null, ?string $start = null, ?string $end = null): Scheduler

@@ -46,15 +46,21 @@ use Symfony\Component\HttpFoundation\Response;
 use function mb_substr;
 use function _;
 use function array_column;
+use function array_filter;
 use function array_key_exists;
 use function array_map;
 use function is_array;
 use function base64_decode;
 use function basename;
 use function dirname;
+use function explode;
 use function fclose;
 use function fopen;
 use function implode;
+use function preg_replace_callback;
+use function preg_split;
+use function rawurldecode;
+use function rawurlencode;
 use function rewind;
 use function sprintf;
 use function str_replace;
@@ -62,6 +68,8 @@ use function stream_copy_to_stream;
 use function stream_get_meta_data;
 use function str_contains;
 use function stream_get_contents;
+
+use const PREG_SPLIT_DELIM_CAPTURE;
 
 /**
  * All about the file uploads
@@ -248,12 +256,28 @@ final class Uploads extends AbstractRest
         return $uploadId;
     }
 
-    // entity is target entity
-    public function duplicate(AbstractEntity $entity): void
+    /**
+     * Copy uploads to the target entity and rewrite their links in its body
+     *
+     * @param bool $onlyLinkedInBody only copy the uploads that the body links to: the copy must not depend on the files of its source
+     */
+    public function duplicate(AbstractEntity $entity, bool $onlyLinkedInBody = false): void
     {
-        $groupMap = new UploadGroups($this->Entity)->duplicate($entity);
-        $uploads = $this->selectAll(array(State::Normal));
         $body = $entity->entityData['body'];
+        $uploads = $this->selectAll(array(State::Normal));
+        if ($onlyLinkedInBody) {
+            if ($body === null || $body === '') {
+                return;
+            }
+            // links inserted from the editor have their name url-encoded (ab%2Fab34[...].ext)
+            $uploads = array_filter($uploads, fn(array $upload): bool => str_contains($body, (string) $upload['long_name'])
+                || str_contains($body, rawurlencode((string) $upload['long_name'])));
+            if ($uploads === array()) {
+                return;
+            }
+        }
+        // groups are only meaningful when all the uploads are copied
+        $groupMap = $onlyLinkedInBody ? array() : new UploadGroups($this->Entity)->duplicate($entity);
         foreach ($uploads as $upload) {
             $param = $this->makeCreateUploadParam($upload);
             $groupId = $upload['group_id'] === null ? null : ($groupMap[(int) $upload['group_id']] ?? null);
@@ -263,6 +287,8 @@ final class Uploads extends AbstractRest
             if ($body === null) {
                 continue;
             }
+            $body = $this->rewriteDownloadLinks($body, (string) $upload['long_name'], (string) $fresh->uploadData['long_name'], (int) $fresh->uploadData['storage']);
+            // other references to the file
             $body = str_replace($upload['long_name'], $fresh->uploadData['long_name'], $body);
         }
         if ($body !== null && $body !== $entity->entityData['body']) {
@@ -527,6 +553,42 @@ final class Uploads extends AbstractRest
         $req->bindParam(':item_id', $this->Entity->id, PDO::PARAM_INT);
         $req->bindValue(':type', $this->Entity->entityType->value);
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Point the download links of a file to its copy: the copy can have another name encoding and live in another storage
+     */
+    private function rewriteDownloadLinks(string $body, string $oldLongName, string $newLongName, int $newStorage): string
+    {
+        return (string) preg_replace_callback(
+            '/(download\.php\?)([^"\'\s<>)]+)/',
+            function (array $matches) use ($oldLongName, $newLongName, $newStorage): string {
+                // query separator is "&amp;" in html and "&" in markdown
+                $parts = preg_split('/(&amp;|&)/', $matches[2], -1, PREG_SPLIT_DELIM_CAPTURE) ?: array();
+                $isLink = false;
+                foreach ($parts as $part) {
+                    $param = explode('=', $part, 2);
+                    if ($param[0] === 'f' && rawurldecode($param[1] ?? '') === $oldLongName) {
+                        $isLink = true;
+                        break;
+                    }
+                }
+                if (!$isLink) {
+                    return $matches[0];
+                }
+                foreach ($parts as $key => $part) {
+                    $param = explode('=', $part, 2);
+                    if ($param[0] === 'f') {
+                        // keep the encoding of the original link
+                        $parts[$key] = 'f=' . (($param[1] ?? '') === $oldLongName ? $newLongName : rawurlencode($newLongName));
+                    } elseif ($param[0] === 'storage') {
+                        $parts[$key] = 'storage=' . $newStorage;
+                    }
+                }
+                return $matches[1] . implode('', $parts);
+            },
+            $body,
+        );
     }
 
     // check that the filename is not in the body. see #432

@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 use Elabftw\Enums\EntityType;
+use PDOStatement;
 use Symfony\Component\HttpFoundation\InputBag;
 
 interface QueryParamsInterface
@@ -40,6 +41,9 @@ interface QueryParamsInterface
     public function getRelatedOrigin(): ?EntityType;
 
     public function getFilterSql(): string;
+
+    /** Bind the values of getFilterSql() on the statement that contains it */
+    public function bindFilterValues(PDOStatement $req): void;
 
     public function getSkipOrderPinned(): bool;
 

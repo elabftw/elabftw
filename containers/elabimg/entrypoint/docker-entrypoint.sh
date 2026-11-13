@@ -66,6 +66,8 @@ getEnv() {
     maintenance_mode=${MAINTENANCE_MODE:-false}
     auto_db_init=${AUTO_DB_INIT:-false}
     auto_db_update=${AUTO_DB_UPDATE:-false}
+    # max number of seconds to wait for the database to accept queries before running db:install or db:update
+    db_wait_timeout=${DB_WAIT_TIMEOUT:-120}
     aws_ak=${ELAB_AWS_ACCESS_KEY:-}
     aws_sk=${ELAB_AWS_SECRET_KEY:-}
     ldap_tls_reqcert=${LDAP_TLS_REQCERT:-false}
@@ -424,9 +426,56 @@ startupMessage() {
     say "info: starting server listening internally on port 8080 in ${http_mode}"
 }
 
+# Wait for the database to accept authenticated queries
+# This avoids a race condition on docker daemon restart where depends_on is not honored
+# and the web container starts before mysql is ready: https://github.com/elabftw/elabftw/issues/7467
+waitForDb() {
+    # only wait once
+    if [ "${db_ready:-false}" = true ]; then
+        return 0
+    fi
+    # validate the timeout value
+    if ! [[ "$db_wait_timeout" =~ ^[0-9]+$ ]]; then
+        say "warning: invalid DB_WAIT_TIMEOUT value: ${db_wait_timeout}, using 120"
+        db_wait_timeout=120
+    fi
+    local start elapsed output rc
+    start=$(date +%s)
+    say "info: waiting for database at ${db_host}:${db_port} (timeout: ${db_wait_timeout}s)"
+    while true; do
+        # bin/console connects and queries the config table before doing anything else
+        # so it exits with the same codes chronos relies on (from sysexits.h):
+        # 75: cannot connect, retry; 69: connected but structure not installed, the database is up
+        # a hanging connection is stopped by timeout: coreutils exits with 124, but busybox (alpine) lets
+        # the command die from SIGTERM so the shell sees 143
+        rc=0
+        output=$(timeout 10 /elabftw/bin/console list 2>&1) || rc=$?
+        case "$rc" in
+            0|69)
+                break
+                ;;
+            75|124|143)
+                ;;
+            *)
+                say "error: unexpected exit code ${rc} while checking the database, continuing anyway. Output: ${output}"
+                return 0
+                ;;
+        esac
+        elapsed=$(( $(date +%s) - start ))
+        if [ "$elapsed" -ge "$db_wait_timeout" ]; then
+            say "error: database at ${db_host}:${db_port} still not ready after ${elapsed}s, continuing anyway. Last output: ${output:-timeout}"
+            return 0
+        fi
+        sleep 1
+    done
+    say "info: database is ready"
+    db_ready=true
+}
+
 # Automatically initialize the database structure
 dbInit() {
     if isTrue "$auto_db_init"; then
+        waitForDb
         say "info: initializing database structure"
         /elabftw/bin/init db:install
     fi
@@ -435,6 +484,7 @@ dbInit() {
 # Automatically update the database schema
 dbUpdate() {
     if isTrue "$auto_db_update"; then
+        waitForDb
         say "info: updating database structure"
         # 69: the database is empty, there is nothing to update until it is installed
         /elabftw/bin/console db:update || [ "$?" -eq 69 ]

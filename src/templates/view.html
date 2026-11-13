@@ -131,26 +131,47 @@
       </p>
   {% endif %}
 
-  {# BODY (show only if not empty) #}
-  {% set body = Entity.entityData.body_html %}
-  {% if body != '' %}
-      <div {% if Entity.entityData.hide_main_text %}hidden='hidden'{% endif %}>
-        <h3 data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='body_view'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main text'|trans }}</h3>
-        <div id='body_view' class='pt-2 ml-3 overflow-auto' data-save-hidden='body_view'>{{ body|raw }}</div>
-        {% if Entity.entityData.content_type == '2' or Entity.entityData.hide_main_text %}
-          <hr>
-        {% else %}
-          <hr data-scroll-btn='fa-font'
-            data-scroll-btn-label='{{ 'Main text'|trans }}'
-            data-scroll-btn-headings='body_view'
-            data-scroll-btn-top='body_view'
-            data-scroll-btn-top-label='{{ 'Top of text'|trans }}'
-            data-scroll-btn-bottom-label='{{ 'Bottom of text'|trans }}'>
-        {% endif %}
-      </div>
-  {% endif %}
-
 </section>
+
+{# MAIN: the main text and the reactions share this spot, like in edit mode: tabs switch between them, see tabbed-sections.ts #}
+{% set body = Entity.entityData.body_html %}
+{% set showBody = body != '' and not Entity.entityData.hide_main_text %}
+{% set showReactions = Entity.entityData.reactions|length > 0 %}
+{% if showBody or showReactions %}
+  <section id='entityBodySection' aria-labelledby='entityBodyToggle'>
+    <h3 id='entityBodyToggle' data-action='toggle-tabbed-section' data-storage-key='viewEntityBodyDiv-isHidden' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='entityBodyDiv' data-cy='body-section-toggle'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Main'|trans }}</h3>
+    <div id='entityBodyDiv' class='mt-2'>
+      <ul class='entity-body-tabs mb-0' id='entityBodyTabs' role='tablist' data-storage-key='persistent_viewBodyTab' aria-label='{{ 'Main text or reactions'|trans }}'>
+        {% if showBody %}
+          <li role='presentation'><button type='button' class='btn btn-transparent selected' role='tab' id='mainTextTab' aria-controls='mainTextPane' aria-selected='true' data-action='switch-tab-pane' data-tab='main' data-cy='body-tab-main'>{{ 'Main text'|trans }}</button></li>
+        {% endif %}
+        {% if showReactions %}
+          <li role='presentation'><button type='button' class='btn btn-transparent {{ not showBody ? 'selected' }}' role='tab' id='reactionsTab' aria-controls='reactionsPane' aria-selected='{{ showBody ? 'false' : 'true' }}' {{- showBody ? " tabindex='-1'" }} data-action='switch-tab-pane' data-tab='reactions' data-cy='body-tab-reactions'>{{ 'Reactions'|trans }} ({{ Entity.entityData.reactions|length }})</button></li>
+        {% endif %}
+      </ul>
+      {% if showBody %}
+        <div id='mainTextPane' class='mt-2' role='tabpanel' aria-labelledby='mainTextTab'>
+          <div id='body_view' class='pt-2 ml-3 overflow-auto'>{{ body|raw }}</div>
+        </div>
+      {% endif %}
+      {% if showReactions %}
+        <div id='reactionsPane' class='mt-2 {{ showBody ? 'entity-body-pane-inactive' }}' role='tabpanel' aria-labelledby='reactionsTab'>
+          {% include 'reactions.html' %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+  {% if showBody and Entity.entityData.content_type != '2' %}
+    <hr data-scroll-btn='fa-font'
+      data-scroll-btn-label='{{ 'Main text'|trans }}'
+      data-scroll-btn-headings='body_view'
+      data-scroll-btn-top='body_view'
+      data-scroll-btn-top-label='{{ 'Top of text'|trans }}'
+      data-scroll-btn-bottom-label='{{ 'Bottom of text'|trans }}'>
+  {% else %}
+    <hr>
+  {% endif %}
+{% endif %}
 
 <section id='extraFieldsSection'>
 {# METADATA view #}
@@ -178,15 +199,6 @@
   {% if Entity.entityData.containers %}
     {% include 'storage-view-edit.html' %}
   {% endif %}
-
-  {# PERMISSIONS #}
-  <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='permissionsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Permissions'|trans }}</h3>
-  <div class='mt-2 ml-3' id='permissionsDiv' data-save-hidden='permissionsDiv'>
-    {% include('edit-permissions.html') %}
-    {% include 'view-edit-target-permissions.html' %}
-  </div>
-  <hr>
-
 
   <h3 title='{{ 'Toggle visibility'|trans }}' data-action='toggle-next' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title' tabindex='0' role='button' aria-expanded='true' aria-controls='commentsDiv'><i class='fas fa-caret-down fa-fw mr-2'></i>{{ 'Comments'|trans }} (<span id='commentsCount'>{{ Entity.entityData.comments|length }}</span>)</h3>
   <div class='mt-2' id='commentsDiv' data-count-for='commentsCount' data-save-hidden='commentsDiv'>

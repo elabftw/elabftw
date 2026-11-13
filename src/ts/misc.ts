@@ -21,6 +21,7 @@ import i18next from './i18n';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
 import { storeRecoveryData } from './recovery';
+import { readStorage } from './localStorage';
 import TomSelect from 'tom-select/base';
 import TomSelectCheckboxOptions from 'tom-select/dist/esm/plugins/checkbox_options/plugin.js';
 import TomSelectClearButton from 'tom-select/dist/esm/plugins/clear_button/plugin.js';
@@ -486,6 +487,14 @@ export async function reloadEntitiesShow(): Promise<void | Response> {
   await MathJax.typesetPromise();
 }
 
+// turn whatever a catch block received into a message we can show to the user
+export function errorMessage(error: unknown, fallback?: string): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return fallback ?? String(error);
+}
+
 export function getSafeElementById(id: string): HTMLElement {
   return document.getElementById(id)
     ?? (() => { throw new Error(`Element could not be found: '${id}'`); })();
@@ -524,6 +533,8 @@ async function fetchUsers(query: string) {
   return users.map((u) => ({
     value: `user:${u.userid}`,
     text: `${u.fullname} (${u.email})`,
+    // the permissions chips show the name only
+    fullname: u.fullname,
   }));
 }
 
@@ -537,8 +548,8 @@ function addUsersConfig(select: HTMLSelectElement, config): void {
   }
 }
 
-// selector for all {permission}_select (canread, canwrite, canbook)
-export const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
+// selects of the admin mass permissions change and the booking approvers
+const PERMISSION_SELECT_IDS = '[id$="_select_teamgroups"], [id$="_select_teams"], [id$="_select_users"]';
 
 function initTomSelect(select: HTMLSelectElement): void {
   const tsSelect = select as HTMLSelectElement & { tomselect?: TomSelect };
@@ -552,6 +563,242 @@ function initTomSelect(select: HTMLSelectElement): void {
 export function initPermissionsTomSelects(container: ParentNode = document): void {
   container.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS)
     .forEach((select) => initTomSelect(select));
+}
+
+// PERMISSIONS SEARCH: one input to add teams, user groups and users to a permission of an entry
+// the values are kind:id (team:1, teamgroup:2, user:3), the kind is shown as a tag in front of the name
+type PermissionKind = 'team' | 'teamgroup' | 'user';
+
+function permissionKind(value: string): PermissionKind {
+  return value.split(':')[0] as PermissionKind;
+}
+
+// the translated kinds are given by the template, see permissions-section.html
+function permissionKindLabel(select: HTMLSelectElement, kind: PermissionKind): string {
+  const labels: Record<PermissionKind, string | undefined> = {
+    team: select.dataset.labelTeam,
+    teamgroup: select.dataset.labelTeamgroup,
+    user: select.dataset.labelUser,
+  };
+  return labels[kind] ?? kind;
+}
+
+function renderPermissionEntry(select: HTMLSelectElement, data: { [key: string]: unknown }, escape: (s: string) => string): string {
+  const kind = permissionKind(String(data.value));
+  return `<div><span class='badge permissions-kind permissions-kind-${kind} mr-2'>${escape(permissionKindLabel(select, kind))}</span>${escape(String(data.text))}</div>`;
+}
+
+// a team, user group or user given access, in the list of a section of the permissions modal
+function makePermissionChip(select: HTMLSelectElement, value: string, text: string): HTMLLIElement {
+  const kind = permissionKind(value);
+  const li = document.createElement('li');
+  li.classList.add('permissions-chip');
+  li.dataset.value = value;
+  li.dataset.text = text;
+  // same kind tag as in the search, see renderPermissionEntry
+  const kindLabel = document.createElement('span');
+  kindLabel.classList.add('badge', 'permissions-kind', `permissions-kind-${kind}`, 'mr-2');
+  kindLabel.textContent = permissionKindLabel(select, kind);
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.classList.add('permissions-chip-remove');
+  removeBtn.dataset.removePermission = '1';
+  removeBtn.title = i18next.t('remove');
+  removeBtn.setAttribute('aria-label', `${i18next.t('remove')} ${text}`);
+  const removeIcon = document.createElement('i');
+  removeIcon.classList.add('fas', 'fa-xmark');
+  removeIcon.setAttribute('aria-hidden', 'true');
+  removeBtn.append(removeIcon);
+  li.append(kindLabel, document.createTextNode(text), removeBtn);
+  return li;
+}
+
+type PermissionsChange = 'list' | 'base';
+
+// the entries given access in a section of the permissions modal
+function getPermissionsChips(section: HTMLElement): string[] {
+  return Array.from(section.querySelectorAll<HTMLElement>('.permissions-chip[data-value]')).map(li => li.dataset.value);
+}
+
+// the request parameters for what changed in a section of the permissions modal
+export function permissionsSectionParams(section: HTMLElement, changes: PermissionsChange[]): Record<string, string> {
+  const params: Record<string, string> = {};
+  if (changes.includes('list')) {
+    params[section.dataset.param] = permissionsToJson(getPermissionsChips(section));
+  }
+  if (changes.includes('base')) {
+    params[section.dataset.baseParam] = section.dataset.baseValue;
+  }
+  return params;
+}
+
+// the saves of each permissions modal, one at a time: see savePermissionsChange
+const permissionsSaves = new WeakMap<HTMLElement, Promise<void>>();
+
+// how to show again what is saved, for a modal whose content is not the one the server rendered (compounds)
+const permissionsReloaders = new WeakMap<HTMLElement, () => Promise<void>>();
+
+export function setPermissionsReloader(modal: HTMLElement, reload: () => Promise<void>): void {
+  permissionsReloaders.set(modal, reload);
+}
+
+// the teams, user groups and users of a permission, as PermissionsHelper::translate() gives them
+export interface PermissionsCanHuman {
+  teams: Array<{ id: number; name: string }>;
+  teamgroups: Array<{ id: number; name: string; team_name: string }>;
+  users: Array<{ userid: number; fullname: string; email?: string }>;
+}
+
+// the value and text of the chips of a permission
+function permissionChips(can: PermissionsCanHuman): Array<[string, string]> {
+  return [
+    ...can.teams.map((team): [string, string] => [`team:${team.id}`, team.name]),
+    ...can.teamgroups.map((group): [string, string] => [`teamgroup:${group.id}`, `${group.team_name} - ${group.name}`]),
+    ...can.users.map((user): [string, string] => [`user:${user.userid}`, user.fullname]),
+  ];
+}
+
+export interface PermissionsSectionValue {
+  base: number;
+  // shown when the base is not offered in the menu, for instance not allowed anymore by the instance
+  baseLabel?: string;
+  can: PermissionsCanHuman;
+}
+
+// select a base in the general access menu of a section: it does not save it
+export function setPermissionsSectionBase(section: HTMLElement, base: number, fallbackLabel = ''): void {
+  section.dataset.baseValue = String(base);
+  let label = fallbackLabel;
+  section.querySelectorAll<HTMLElement>('.dropdown-item[data-value]').forEach(item => {
+    const isSelected = item.dataset.value === String(base);
+    item.classList.toggle('active', isSelected);
+    if (isSelected) {
+      label = item.textContent.trim();
+    }
+  });
+  const labelEl = section.querySelector('[data-base-label]');
+  if (labelEl) {
+    labelEl.textContent = label;
+  }
+}
+
+/**
+ * Show the permissions of another target in a permissions modal rendered empty (compounds): the base and the chips of each section,
+ * by the name of their column. With readOnly, they are shown without the means to change them.
+ */
+export function loadPermissionsModal(
+  modal: HTMLElement,
+  options: { endpoint: string; mode: 'auto' | 'manual'; readOnly?: boolean; values: Record<string, PermissionsSectionValue> },
+): void {
+  modal.dataset.permissionsEndpoint = options.endpoint;
+  modal.dataset.permissionsMode = options.mode;
+  modal.classList.toggle('permissions-readonly', options.readOnly ?? false);
+  modal.querySelectorAll<HTMLElement>('.permissions-section').forEach(section => {
+    const value = options.values[section.dataset.param];
+    if (!value) return;
+    delete section.dataset.listChanged;
+    delete section.dataset.baseChanged;
+    setPermissionsSectionBase(section, value.base, value.baseLabel);
+    section.querySelectorAll<HTMLButtonElement>('.dropdown-toggle').forEach(button => button.disabled = options.readOnly ?? false);
+    const select = section.querySelector<TomSelectElement>('select[data-permissions-search]');
+    const list = document.getElementById(select.dataset.list);
+    // the previous chips can be found again in the search
+    list.querySelectorAll<HTMLElement>('.permissions-chip[data-value]').forEach(li => {
+      select.tomselect?.addOption({ value: li.dataset.value, text: li.dataset.text });
+      li.remove();
+    });
+    permissionChips(value.can).forEach(([chipValue, text]) => {
+      select.tomselect?.removeOption(chipValue);
+      list.append(makePermissionChip(select, chipValue, text));
+    });
+  });
+}
+
+// entity and user defaults are saved right away, for the selected entries we only remember what changed: see apply-permissions-selected
+export function savePermissionsChange(section: HTMLElement, change: PermissionsChange): void {
+  const modal = section.closest<HTMLElement>('[data-permissions-endpoint]');
+  if (!modal || modal.classList.contains('permissions-readonly')) return;
+  if (modal.dataset.permissionsMode === 'manual') {
+    section.dataset[change === 'list' ? 'listChanged' : 'baseChanged'] = '1';
+    return;
+  }
+  // Each save sends the whole list: concurrent requests could finish in any order and an older list would win.
+  // The params are read when the request is sent, so a queued save always sends what the modal shows then.
+  const previous = permissionsSaves.get(modal) ?? Promise.resolve();
+  const save = previous.then(async () => {
+    // a failed save reloaded the modal: what this section showed is gone, and so is its change
+    if (!section.isConnected) return;
+    try {
+      await ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
+    } catch {
+      // the api already reported the error: show the permissions as they are saved, not as they were edited
+      const reload = permissionsReloaders.get(modal) ?? (() => reloadElements([modal.querySelector('.modal-body').id]));
+      await reload().catch(() => {});
+    }
+  });
+  permissionsSaves.set(modal, save);
+}
+
+// the select is only a search: what is given access is the list of chips under it
+function initPermissionsSearchSelect(select: TomSelectElement): void {
+  if (select.tomselect) return;
+  const section = select.closest<HTMLElement>('.permissions-section');
+  const list = document.getElementById(select.dataset.list);
+  if (!section || !list) return;
+  // what the server rendered the modal with, see permissions-section.html
+  if (list.dataset.can) {
+    list.replaceChildren(...permissionChips(JSON.parse(list.dataset.can)).map(([value, text]) => makePermissionChip(select, value, text)));
+  }
+  const wrapper = select.closest<HTMLElement>('.ts-wrapper');
+  // the typings of tom-select only take a selector for the dropdown parent
+  if (wrapper && !wrapper.id) {
+    wrapper.id = `${select.id}-wrapper`;
+  }
+
+  const ts = new TomSelect(select, {
+    dropdownParent: wrapper ? `#${wrapper.id}` : null,
+    controlInput: wrapper?.querySelector<HTMLInputElement>('input'),
+    // display many things or users will be confused what they search is not displayed right away.
+    maxOptions: 2222,
+    // teams and user groups are in the options already, users are fetched while typing
+    load: (query: string, callback) => {
+      if (!query.length) return callback();
+      fetchUsers(query)
+        .then(users => callback(users.filter(user => !getPermissionsChips(section).includes(user.value))))
+        .catch(() => callback());
+    },
+    render: {
+      option: (data, escape) => renderPermissionEntry(select, data, escape),
+    },
+    onItemAdd: (value: string) => {
+      // users are shown by their name only, without the email
+      const text = String(ts.options[value]?.fullname ?? ts.options[value]?.text ?? value);
+      // nothing stays selected in the search itself, and an entry already given access is not suggested again
+      ts.clear(true);
+      ts.removeOption(value);
+      ts.setTextboxValue('');
+      ts.close();
+      if (getPermissionsChips(section).includes(value)) return;
+      list.append(makePermissionChip(select, value, text));
+      savePermissionsChange(section, 'list');
+    },
+  });
+  ts.control.style.display = 'none';
+
+  list.addEventListener('click', (event: MouseEvent) => {
+    const btn = (event.target as HTMLElement).closest<HTMLElement>('[data-remove-permission]');
+    if (!btn) return;
+    const li = btn.closest<HTMLElement>('[data-value]');
+    // make it findable again
+    ts.addOption({ value: li.dataset.value, text: li.dataset.text });
+    li.remove();
+    savePermissionsChange(section, 'list');
+  });
+}
+
+export function initPermissionsSearch(container: ParentNode = document): void {
+  container.querySelectorAll<HTMLSelectElement>('select[data-permissions-search="1"]')
+    .forEach(select => initPermissionsSearchSelect(select));
 }
 
 function reloadTomSelects(ts: Element): void {
@@ -593,6 +840,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
     }
     currentElement.innerHTML = newElement.innerHTML;
     currentElement.querySelectorAll('[data-tom-select="1"]').forEach(ts => reloadTomSelects(ts));
+    initPermissionsSearch(currentElement);
     listenTrigger(elementId);
   });
   (new TableSorting()).init();
@@ -609,7 +857,7 @@ export async function reloadElements(elementIds: string[]): Promise<void> {
 export function adjustHiddenState(): void {
   document.querySelectorAll('[data-save-hidden]').forEach((el: HTMLElement) => {
     const localStorageKey = el.dataset.saveHidden + '-isHidden';
-    const localStorageValue = localStorage.getItem(localStorageKey);
+    const localStorageValue = readStorage(localStorageKey);
     const button = document.querySelector(`[data-toggle-target="${el.dataset.saveHidden}"]`) || el.previousElementSibling;
     if (!button) {
       return;
@@ -626,6 +874,11 @@ export function adjustHiddenState(): void {
     const isHidden = el.hasAttribute('hidden');
     toggleIcon((button as HTMLElement), isHidden);
   });
+}
+
+// the uploads are rendered again by the server: restore the collapsed state of their groups
+export function reloadUploads(): Promise<void> {
+  return reloadElements(['uploadsDiv']).then(() => adjustHiddenState());
 }
 
 // update category or status, returns the color as string
@@ -688,14 +941,33 @@ export function permissionsToJson(extra: string[]): string {
   return JSON.stringify(json);
 }
 
+// only these schemes become clickable: anything else (javascript:, data:, vbscript:...) could run code on click
+const SAFE_LINK_PROTOCOLS = ['http:', 'https:', 'ftp:', 'mailto:'];
+
+// return a normalized href if the user-provided value is a safe absolute URL, or null otherwise
+export function getSafeHref(value: string): string | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(value.trim());
+  } catch {
+    return null;
+  }
+  return SAFE_LINK_PROTOCOLS.includes(parsed.protocol) ? parsed.href : null;
+}
+
 // go over all the type: url elements and create a link dynamically
 export function generateMetadataLink(): void {
   document.querySelectorAll('[data-gen-link="true"]').forEach(el => {
+    const text = (el as HTMLSpanElement).textContent ?? '';
+    const href = getSafeHref(text);
+    // leave the element as plain text if the value isn't a safe URL
+    if (href === null) {
+      return;
+    }
     const link = document.createElement('a');
     link.classList.add('d-block');
-    const url = (el as HTMLSpanElement).innerText;
-    link.href = url;
-    link.text = url;
+    link.href = href;
+    link.textContent = text;
     el.replaceWith(link);
   });
 }
@@ -745,12 +1017,23 @@ export function replaceWithTitle(): void {
     if (el instanceof HTMLInputElement) {
       changedAttribute = 'value';
     }
+    const notFound = (): void => {
+      const message = i18next.t('resource-not-found');
+      el[changedAttribute] = el instanceof HTMLInputElement ? `${el.dataset.id} - ${message}` : message;
+      el.classList.add('color-warning');
+    };
+    // 0 is an entry that could not be found during an import, and the api would read it as "no id"
+    if (el.dataset.id === '0') {
+      notFound();
+      return;
+    }
     ApiC.getJson(`${el.dataset.endpoint}/${el.dataset.id}`, { notifOnError: 0 }).then(json => {
       // VIEW MODE (non-input): default = 'entity title'
       let value;
       const casNumber = json.cas_number ? ` - CAS: (${json.cas_number})` : '';
       const userDisplayName =
         String(json.fullname ?? '').trim() ||
+        `${json.firstname ?? ''} ${json.lastname ?? ''}`.trim() ||
         String(json.email ?? '').trim() ||
         String(json.userid ?? '');
       if (!(el instanceof HTMLInputElement)) {
@@ -768,7 +1051,7 @@ export function replaceWithTitle(): void {
         // EDIT MODE (input): default = 'id - entity title'
         switch (el.dataset.endpoint) {
         case Model.User:
-          value = `${json.userid} - ${userDisplayName}`;
+          value = `${el.dataset.id} - ${userDisplayName}`;
           break;
         case Model.Compounds:
           value = `${json.id} - ${json.name}` + casNumber;
@@ -778,10 +1061,7 @@ export function replaceWithTitle(): void {
         }
       }
       el[changedAttribute] = value;
-    }).catch(() => {
-      el[changedAttribute] = i18next.t('resource-not-found');
-      el.classList.add('color-warning');
-    });
+    }).catch(notFound);
   });
 }
 
@@ -927,9 +1207,117 @@ export function toggleEditCompound(json: object): void {
     const input = (document.getElementById(`addCompound${param}`) as HTMLInputElement);
     input.checked = json[param] === 1;
   });
-  document.getElementById('editCompoundModalSaveBtn').dataset.compoundId = json['id'];
+  const saveBtn = document.getElementById('editCompoundModalSaveBtn') as HTMLButtonElement;
+  saveBtn.dataset.compoundId = json['id'];
+  // the compound can be readable only, see Compounds::readOne()
+  if ('has_write_access' in json) {
+    saveBtn.disabled = json['has_write_access'] !== 1;
+  }
+  // don't show the molecule of a previously opened compound
+  const moleculeDiv = document.getElementById('compoundMoleculeDiv');
+  if (moleculeDiv) {
+    moleculeDiv.querySelectorAll('img').forEach(img => {
+      if (img.src.startsWith('blob:')) {
+        URL.revokeObjectURL(img.src);
+      }
+      img.remove();
+    });
+    moleculeDiv.hidden = true;
+  }
   (document.getElementById('compoundLink-pubchem') as HTMLLinkElement).href = `https://pubchem.ncbi.nlm.nih.gov/compound/${json['pubchem_cid']}`;
+  const signalWordSelect = document.getElementById('compoundInput-ghs_signal_word') as HTMLSelectElement | null;
+  if (signalWordSelect) {
+    signalWordSelect.value = json['ghs_signal_word'] ?? '';
+  }
+  renderCompoundGhsStatements(json['ghs_statements'] ?? [], json['has_write_access'] === 1);
   $('#editCompoundModal').modal('toggle');
+}
+
+export interface GhsStatement {
+  id: number;
+  code: string;
+  kind: 'H' | 'EUH' | 'P';
+  statement: string;
+  is_deprecated: number;
+}
+
+// the statements of the compound in the edit modal: hazard (H and EUH) and precautionary (P)
+export function renderCompoundGhsStatements(statements: GhsStatement[], canWrite: boolean): void {
+  const div = document.getElementById('compoundGhsDiv');
+  if (!div) {
+    return;
+  }
+  const hazardList = document.getElementById('compoundGhsList-hazard');
+  const precautionaryList = document.getElementById('compoundGhsList-precautionary');
+  hazardList.replaceChildren();
+  precautionaryList.replaceChildren();
+  statements.forEach(statement => {
+    const li = document.createElement('li');
+    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+    const text = document.createElement('span');
+    const code = document.createElement('strong');
+    code.textContent = statement.code;
+    text.append(code, ` ${statement.statement}`);
+    li.appendChild(text);
+    if (canWrite) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.classList.add('btn', 'btn-danger-ghost', 'btn-sm');
+      btn.dataset.action = 'remove-compound-ghs-statement';
+      btn.dataset.id = String(statement.id);
+      btn.title = div.dataset.removeLabel;
+      btn.setAttribute('aria-label', `${div.dataset.removeLabel} ${statement.code}`);
+      const icon = document.createElement('i');
+      icon.classList.add('fas', 'fa-xmark');
+      btn.appendChild(icon);
+      li.appendChild(btn);
+    }
+    (statement.kind === 'P' ? precautionaryList : hazardList).appendChild(li);
+  });
+  [hazardList, precautionaryList].forEach(list => {
+    if (list.childElementCount === 0) {
+      const li = document.createElement('li');
+      li.classList.add('list-group-item', 'smallgray');
+      li.textContent = div.dataset.emptyLabel;
+      list.appendChild(li);
+    }
+  });
+
+  const input = document.getElementById('compoundGhsInput') as HTMLInputElement;
+  const addBtn = div.querySelector<HTMLButtonElement>('[data-action="add-compound-ghs-statement"]');
+  input.disabled = !canWrite;
+  addBtn.disabled = !canWrite;
+  // Enter would submit the compound form
+  if (input.dataset.enterBound !== '1') {
+    input.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addBtn.click();
+      }
+    });
+    input.dataset.enterBound = '1';
+  }
+  loadGhsStatementsDatalist();
+}
+
+// the known statements for the autocomplete: the list is small and does not change, so it is loaded once
+function loadGhsStatementsDatalist(): void {
+  const datalist = document.getElementById('ghsStatementsList');
+  if (!datalist || datalist.dataset.loaded === '1') {
+    return;
+  }
+  datalist.dataset.loaded = '1';
+  ApiC.getJson<GhsStatement[]>(Model.GhsStatements).then(statements => {
+    statements.filter(statement => statement.is_deprecated !== 1).forEach(statement => {
+      const option = document.createElement('option');
+      option.value = statement.code;
+      option.textContent = statement.statement;
+      datalist.appendChild(option);
+    });
+  }).catch(() => {
+    // try again next time
+    delete datalist.dataset.loaded;
+  });
 }
 
 export function mkSpin(el: HTMLElement): string {
@@ -973,6 +1361,7 @@ export async function populateUserModal(user: Record<string, string|number>) {
   const requester = await ApiC.getJson('users/me');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const userTeams = user.teams as any;
+  const canRemoveFromTeam = Boolean(requester.is_sysadmin) || Boolean(requester.can_manage_users2teams);
   // set a dataset.userid on the modal, that's where all js code will fetch current user, instead of having to set it on every elementel.dataset.
   document.getElementById('editUserModal').dataset.userid = String(user.userid);
   // manage teams block
@@ -983,8 +1372,9 @@ export async function populateUserModal(user: Record<string, string|number>) {
     teamBadge.classList.add('user-badge', 'm-1');
     teamBadge.innerText = team.name;
     // REMOVE TEAM BUTTON
+    // only Sysadmins and users who can manage users/teams association can remove a user from a team
     // users must keep one team; requester cannot remove themselves from their current team
-    if (userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
+    if (canRemoveFromTeam && userTeams.length > 1 && (team.id !== requester.team || user.userid !== requester.userid)) {
       const removeTeamBtn = document.createElement('button');
       removeTeamBtn.type = 'button';
       removeTeamBtn.classList.add('btn', 'btn-danger-ghost', 'btn-sm', 'ml-2');
@@ -1094,18 +1484,6 @@ function generateIsSomethingElement(what: string, team: Record<string, string|nu
 // from https://www.paulirish.com/2009/random-hex-color-code-snippets/
 export function getRandomColor(): string {
   return `#${Math.floor(Math.random()*16777215).toString(16)}`;
-}
-
-export function ensureTogglableSectionIsOpen(iconId: string, divId: string): void {
-  // toggle the arrow icon
-  const iconEl = document.getElementById(iconId);
-  iconEl.classList.add('fa-caret-down');
-  iconEl.classList.remove('fa-caret-right');
-  const div = document.getElementById(divId);
-  // make sure it's not hidden
-  div.removeAttribute('hidden');
-  // and scroll page into editor view
-  div.scrollIntoView({ behavior: 'smooth' });
 }
 
 type MountedRors = {

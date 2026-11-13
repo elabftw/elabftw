@@ -13,8 +13,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Elabftw\CanSqlBuilder;
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\GhsSignalWord;
+use Elabftw\Enums\State;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
@@ -29,13 +32,20 @@ use PDO;
 use Throwable;
 
 use function _;
+use function array_filter;
 use function array_key_exists;
+use function array_keys;
 use function array_map;
+use function array_merge;
+use function array_unique;
+use function array_values;
+use function count;
 use function filter_var;
 use function implode;
 use function in_array;
 use function is_int;
 use function is_string;
+use function mb_strlen;
 use function sprintf;
 use function trim;
 
@@ -50,11 +60,57 @@ final class StorageUnits extends AbstractRest
     public const int MAX_CAPACITY = 4294967295;
 
     /**
+     * The hazard flags of a compound, for readHazards(): the GHS pictograms first, then the other labels.
+     * They are the columns of the compounds table.
+     */
+    public const array GHS_PICTOGRAM_FLAGS = array(
+        'is_explosive',
+        'is_flammable',
+        'is_oxidising',
+        'is_gas_under_pressure',
+        'is_corrosive',
+        'is_toxic',
+        'is_hazardous2health',
+        'is_serious_health_hazard',
+        'is_hazardous2env',
+    );
+
+    public const array OTHER_HAZARD_FLAGS = array(
+        'is_radioactive',
+        'is_explosive_precursor',
+        'is_cmr',
+        'is_nano',
+        'is_controlled',
+        'is_drug',
+        'is_drug_precursor',
+        'is_antibiotic',
+        'is_antibiotic_precursor',
+        'is_ed2health',
+        'is_ed2env',
+        'is_pbt',
+        'is_pmt',
+        'is_vpvb',
+        'is_vpvm',
+    );
+
+    /**
      * Tables holding real containers: a row in one of them occupies a slot. The template
      * tables are absent on purpose, as their containers are defaults copied on creation
      * rather than physical stock. Single source of truth for what "occupied" means.
      */
     private const array CONTAINER_TABLES = array('containers2items', 'containers2experiments');
+
+    // width of storage_units.name
+    private const int MAX_NAME_LENGTH = 255;
+
+    // how many levels a single import may create: keeps paths far below FULL_PATH_LENGTH
+    // and recursion far below MySQL's cte_max_recursion_depth
+    private const int MAX_IMPORT_DEPTH = 32;
+
+    // full_path is built by concatenation in recursive CTEs, where MySQL fixes the column
+    // type from the anchor member: without a wide cast it inherits VARCHAR(255) from name
+    // and any path longer than one name makes the whole (instance-wide) query fail
+    private const int FULL_PATH_LENGTH = 16383;
 
     public function __construct(public Users $requester, private bool $requireEditRights, ?int $id = null)
     {
@@ -71,65 +127,23 @@ final class StorageUnits extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        // the CTE walks upwards, so occupancy has to be counted for the requested unit
-        // (original_id) rather than for the ancestor the current row happens to be on
-        $occupancy = self::occupancySql('storage_hierarchy.original_id');
-        // Recursive CTE to find the full path of a specific id
-        $sql = "
-            WITH RECURSIVE storage_hierarchy AS (
-                -- Base case: Start with the given id
-                SELECT
-                    id,
-                    id AS original_id,
-                    name,
-                    parent_id,
-                    parent_id AS original_parent_id,
-                    capacity,
-                    CAST(name AS CHAR(1000)) AS full_path,
-                    0 AS level_depth
-                FROM
-                    storage_units
-                WHERE
-                    id = :id  -- Use the provided id as the base case
-
-                UNION
-
-                -- Recursive case: Trace the path upwards by finding parent units
-                SELECT
-                    parent.id,
-                    child.original_id,
-                    child.name,
-                    parent.parent_id,
-                    child.original_parent_id,
-                    child.capacity,
-                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR(1000)) AS full_path,
-                    child.level_depth + 1
-                FROM
-                    storage_units AS parent
-                INNER JOIN
-                    storage_hierarchy AS child ON parent.id = child.parent_id
-            )
-
-            -- Get the full path from the root to the given id
-            SELECT
-                original_id AS id,
-                name,
-                full_path,
-                original_parent_id AS parent_id,
-                capacity,
-                {$occupancy} AS occupancy,
-                level_depth
-            FROM
-                storage_hierarchy
-            ORDER BY
-                level_depth DESC LIMIT 1;  -- This ensures the path is ordered from root to the given id
-        ";
-
-        $req = $this->Db->prepare($sql);
+        $req = $this->Db->prepare(sprintf(
+            'SELECT id, name, parent_id, capacity, %s AS occupancy FROM storage_units WHERE id = :id',
+            self::occupancySql('storage_units.id'),
+        ));
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
+        $unit = $this->Db->fetch($req);
+        return array_merge($unit, $this->readPaths(array($unit['id']))[$unit['id']]);
+    }
 
-        return $this->Db->fetch($req);
+    /**
+     * The full_path of several storage units in one query, as readOne() gives it
+     * Returns an array of full_path indexed by storage unit id
+     */
+    public function readFullPaths(array $ids): array
+    {
+        return array_map(static fn(array $path): string => $path['full_path'], $this->readPaths($ids));
     }
 
     public function readCount(): array
@@ -276,11 +290,88 @@ final class StorageUnits extends AbstractRest
             containers2experiments AS c2e
         LEFT JOIN storage_units ON c2e.storage_id = storage_units.id
         LEFT JOIN experiments ON c2e.item_id = experiments.id
-        LEFT JOIN compounds2experiments ON experiments.id = c2e.item_id
+        LEFT JOIN compounds2experiments ON compounds2experiments.entity_id = experiments.id
         LEFT JOIN compounds ON compounds2experiments.compound_id = compounds.id;';
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    /**
+     * The hazards of what is stored in this location and in the locations under it, for the people who must enter it
+     * in an emergency (firefighters): the pictograms and hazard statements of the compounds of the containers.
+     * Nothing names a compound or an entry, so the read permissions of the entries do not apply: everyone can see
+     * what is dangerous in a room, whoever stored it there.
+     */
+    public function readHazards(): array
+    {
+        if ($this->requester instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
+        if ($this->id === null) {
+            throw new ImproperActionException('Missing id of the storage unit.');
+        }
+        $location = $this->readOne();
+
+        // one row per container and compound of its entry, or per container alone when its entry has no compound
+        $flags = implode(', ', array_map(
+            static fn(string $flag): string => 'compounds.' . $flag,
+            array_merge(self::GHS_PICTOGRAM_FLAGS, self::OTHER_HAZARD_FLAGS),
+        ));
+        $parts = array();
+        foreach (array('items', 'experiments') as $entityTable) {
+            $parts[] = sprintf(
+                "SELECT '%1\$s' AS entity_table, containers.id AS container_id, compounds.id AS compound_id, compounds.ghs_signal_word, %2\$s
+                FROM containers2%1\$s AS containers
+                INNER JOIN location ON (location.id = containers.storage_id)
+                INNER JOIN %1\$s AS entity ON (entity.id = containers.item_id AND entity.state != %3\$d)
+                LEFT JOIN compounds2%1\$s AS links ON (links.entity_id = entity.id)
+                LEFT JOIN compounds ON (compounds.id = links.compound_id AND compounds.state != %3\$d)",
+                $entityTable,
+                $flags,
+                State::Deleted->value,
+            );
+        }
+        $sql = 'WITH RECURSIVE location AS (
+                SELECT id FROM storage_units WHERE id = :id
+                UNION ALL
+                SELECT child.id FROM storage_units AS child INNER JOIN location ON (child.parent_id = location.id)
+            ) ' . implode(' UNION ALL ', $parts);
+        $req = $this->Db->prepare($sql);
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
+
+        $containers = array();
+        $containersWithCompound = array();
+        $compoundIds = array();
+        $hazards = array();
+        $signalWord = null;
+        foreach ($req->fetchAll() as $row) {
+            $container = $row['entity_table'] . ':' . $row['container_id'];
+            $containers[$container] = true;
+            if ($row['compound_id'] === null) {
+                continue;
+            }
+            $containersWithCompound[$container] = true;
+            $compoundIds[(int) $row['compound_id']] = true;
+            foreach (array_merge(self::GHS_PICTOGRAM_FLAGS, self::OTHER_HAZARD_FLAGS) as $flag) {
+                if ((int) $row[$flag] === 1) {
+                    $hazards[$flag] = true;
+                }
+            }
+            $signalWord = GhsSignalWord::mostSevere($signalWord, GhsSignalWord::tryFrom((string) $row['ghs_signal_word']));
+        }
+
+        return array(
+            'location' => $location,
+            'containers_count' => count($containers),
+            'containers_without_compound_count' => count($containers) - count($containersWithCompound),
+            'compounds_count' => count($compoundIds),
+            'signal_word' => $signalWord?->value,
+            'pictograms' => array_values(array_filter(self::GHS_PICTOGRAM_FLAGS, static fn(string $flag): bool => isset($hazards[$flag]))),
+            'other_hazards' => array_values(array_filter(self::OTHER_HAZARD_FLAGS, static fn(string $flag): bool => isset($hazards[$flag]))),
+            'statements' => $this->readHazardStatements(array_keys($compoundIds)),
+        );
     }
 
     public function readAllRecursive(): array
@@ -354,6 +445,9 @@ final class StorageUnits extends AbstractRest
 
     public function createImmutable(array $locations): int
     {
+        if (count($locations) > self::MAX_IMPORT_DEPTH) {
+            throw new ImproperActionException(sprintf(_('A location cannot have more than %d levels.'), self::MAX_IMPORT_DEPTH));
+        }
         $parent = null;
         $id = 0;
 
@@ -387,6 +481,7 @@ final class StorageUnits extends AbstractRest
 
     public function create(string $unitName, ?int $parentId = null, ?int $capacity = null): int
     {
+        $this->assertNameLength($unitName);
         $sql = 'INSERT INTO storage_units(parent_id, name, capacity) VALUES(:parent_id, :name, :capacity)';
         $req = $this->Db->prepare($sql);
         $req->bindParam(':parent_id', $parentId);
@@ -398,6 +493,7 @@ final class StorageUnits extends AbstractRest
 
     public function update(CommentParam $params): bool
     {
+        $this->assertNameLength($params->getContent());
         $sql = 'UPDATE storage_units SET
             name = :name
             WHERE id = :id';
@@ -506,6 +602,62 @@ final class StorageUnits extends AbstractRest
      * $idExpression. Shared so the occupancy displayed in the tree and the occupancy the
      * capacity guard enforces are the same number by construction, not by coincidence.
      */
+    /**
+     * The path from the root of each storage unit, and its depth: the recursive CTE walks up from each unit,
+     * and the deepest row of a unit has its whole path
+     *
+     * @return array<int, array{full_path: string, level_depth: int}> indexed by storage unit id
+     */
+    private function readPaths(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids), fn(int $id): bool => $id > 0)));
+        if (empty($ids)) {
+            return array();
+        }
+        $fullPathLength = self::FULL_PATH_LENGTH;
+        $sql = sprintf("
+            WITH RECURSIVE storage_hierarchy AS (
+                SELECT
+                    id AS original_id,
+                    parent_id,
+                    CAST(name AS CHAR({$fullPathLength})) AS full_path,
+                    0 AS level_depth
+                FROM
+                    storage_units
+                WHERE
+                    id IN (%s)
+
+                UNION
+
+                SELECT
+                    child.original_id,
+                    parent.parent_id,
+                    CAST(CONCAT(parent.name, ' > ', child.full_path) AS CHAR({$fullPathLength})) AS full_path,
+                    child.level_depth + 1
+                FROM
+                    storage_units AS parent
+                INNER JOIN
+                    storage_hierarchy AS child ON parent.id = child.parent_id
+            )
+            SELECT original_id, full_path, level_depth FROM (
+                SELECT
+                    original_id,
+                    full_path,
+                    level_depth,
+                    ROW_NUMBER() OVER (PARTITION BY original_id ORDER BY level_depth DESC) AS row_num
+                FROM storage_hierarchy
+            ) AS paths
+            WHERE row_num = 1", implode(', ', $ids));
+
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        $paths = array();
+        foreach ($req->fetchAll() as $row) {
+            $paths[(int) $row['original_id']] = array('full_path' => $row['full_path'], 'level_depth' => (int) $row['level_depth']);
+        }
+        return $paths;
+    }
+
     private static function occupancySql(string $idExpression): string
     {
         return implode(' + ', array_map(
@@ -643,11 +795,19 @@ final class StorageUnits extends AbstractRest
         $this->Db->execute($req);
     }
 
+    private function assertNameLength(string $unitName): void
+    {
+        if (mb_strlen($unitName) > self::MAX_NAME_LENGTH) {
+            throw new ImproperActionException(sprintf(_('Input is too long. Maximum length is %d characters.'), self::MAX_NAME_LENGTH));
+        }
+    }
+
     private function readHierarchyRows(): array
     {
         // counted in the final projection, not in the CTE: the recursion does not need it,
         // so this way it costs two indexed lookups per unit instead of two per branch
         $occupancy = self::occupancySql('storage_hierarchy.id');
+        $fullPathLength = self::FULL_PATH_LENGTH;
         $sql = "WITH RECURSIVE storage_hierarchy AS (
             -- Base case: Select all top-level units (those with no parent)
             SELECT
@@ -655,7 +815,7 @@ final class StorageUnits extends AbstractRest
                 name,
                 parent_id,
                 capacity,
-                name AS full_path,
+                CAST(name AS CHAR({$fullPathLength})) AS full_path,
                 0 AS level_depth,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = storage_units.id) AS children_count
             FROM
@@ -671,7 +831,7 @@ final class StorageUnits extends AbstractRest
                 child.name,
                 child.parent_id,
                 child.capacity,
-                CONCAT(parent.full_path, ' > ', child.name) AS full_path,
+                CAST(CONCAT(parent.full_path, ' > ', child.name) AS CHAR({$fullPathLength})) AS full_path,
                 parent.level_depth + 1,
                 (SELECT COUNT(*) FROM storage_units AS su WHERE su.parent_id = child.id) AS children_count
             FROM
@@ -696,6 +856,30 @@ final class StorageUnits extends AbstractRest
             storage_hierarchy
         ORDER BY
             storage_hierarchy.name, parent_id";
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
+    }
+
+    /**
+     * The hazard statements (H and EUH, not the precautionary ones) of these compounds, each once
+     *
+     * @param list<int> $compoundIds
+     */
+    private function readHazardStatements(array $compoundIds): array
+    {
+        if (empty($compoundIds)) {
+            return array();
+        }
+        // the ids are ints from the database: safe to inline, and there can be many
+        $sql = sprintf(
+            "SELECT DISTINCT gs.code, gs.kind, gs.statement
+            FROM compounds2ghs_statements AS c2gs
+            INNER JOIN ghs_statements AS gs ON (gs.id = c2gs.statement_id)
+            WHERE c2gs.compound_id IN (%s) AND gs.kind != 'P'
+            ORDER BY gs.kind, gs.code",
+            implode(', ', array_map('intval', $compoundIds)),
+        );
         $req = $this->Db->prepare($sql);
         $this->Db->execute($req);
         return $req->fetchAll();
@@ -761,6 +945,10 @@ final class StorageUnits extends AbstractRest
     ): string {
         $CanSqlBuilder = new CanSqlBuilder($this->requester, AccessType::Read);
         $canFilter = $CanSqlBuilder->getCanFilter();
+        // a compound has its own permissions: reading the entry is not enough to read the compounds linked to it.
+        // In the join, so the container is still listed, without the compound (and the search cannot match it)
+        $compoundCan = new CompoundPermissions($this->requester)->getCanCondition('compounds');
+        $fullPathLength = self::FULL_PATH_LENGTH;
         $selectedStorageHierarchy = $includeStorageDescendants
             ? ', selected_storage_hierarchy AS (
                 SELECT id AS storage_id
@@ -781,7 +969,7 @@ final class StorageUnits extends AbstractRest
                     su.id AS storage_id,
                     su.name AS storage_name,
                     su.parent_id,
-                    su.name AS full_path
+                    CAST(su.name AS CHAR({$fullPathLength})) AS full_path
                 FROM storage_units AS su
                 WHERE su.parent_id IS NULL -- Root-level units
 
@@ -791,7 +979,7 @@ final class StorageUnits extends AbstractRest
                     su.id AS storage_id,
                     su.name AS storage_name,
                     su.parent_id,
-                    CONCAT(parent.full_path, ' > ', su.name) AS full_path
+                    CAST(CONCAT(parent.full_path, ' > ', su.name) AS CHAR({$fullPathLength})) AS full_path
                 FROM storage_units AS su
                 INNER JOIN storage_hierarchy AS parent ON su.parent_id = parent.storage_id
             )
@@ -850,11 +1038,11 @@ final class StorageUnits extends AbstractRest
                 LEFT JOIN
                     compounds2items ON entity.id = compounds2items.entity_id
                 LEFT JOIN
-                    compounds ON compounds2items.compound_id = compounds.id
+                    compounds ON (compounds2items.compound_id = compounds.id AND %s)
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 LEFT JOIN
-                    teams ON (entity.userid = teams.id)
+                    teams ON (entity.team = teams.id)
                 LEFT JOIN
                     users AS u ON (u.userid = entity.userid)
                 WHERE
@@ -915,7 +1103,7 @@ final class StorageUnits extends AbstractRest
                 LEFT JOIN
                     compounds2experiments ON compounds2experiments.entity_id = c2e.item_id
                 LEFT JOIN
-                    compounds ON compounds2experiments.compound_id = compounds.id
+                    compounds ON (compounds2experiments.compound_id = compounds.id AND %s)
                 LEFT JOIN
                     users2teams ON (users2teams.users_id = %d AND users2teams.teams_id = %d)
                 LEFT JOIN
@@ -926,10 +1114,12 @@ final class StorageUnits extends AbstractRest
                     -- can sql AND query or storage_id
                     1=1 AND entity.state IN (1,2) AND %s %s",
             $selectedStorageHierarchy,
+            $compoundCan,
             $userid,
             $team,
             $discriminator,
             $canFilter,
+            $compoundCan,
             $userid,
             $team,
             $discriminator,

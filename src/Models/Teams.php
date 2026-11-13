@@ -203,7 +203,7 @@ final class Teams extends AbstractRest
         if (empty($onlyIds)) {
             return array();
         }
-        $sql = 'SELECT teams.name FROM teams WHERE teams.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . ' ORDER BY teams.name ASC';
+        $sql = 'SELECT teams.id, teams.name FROM teams WHERE teams.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . ' ORDER BY teams.name ASC';
         $req = $this->Db->prepare($sql);
         $this->bindVisibility($req);
         $this->Db->execute($req);

@@ -32,6 +32,10 @@
       <span class='smallgray ml-2'>{{ 'Capacity'|trans }}: <span class='hl-hover p-1 rounded malleableColumn {{ unit.capacity is null ? 'font-italic' }}' data-endpoint='storage_units' data-id='{{ unit.id }}' data-target='capacity' data-input-type='number'>{{ unit.capacity is null ? ('unset'|trans) : unit.capacity }}</span></span>
     {% endif %}
   {% endmacro %}
+  {# hazards sheet of a location, for firefighters: on the inventory page only, see MakeStorageHazardsPdf #}
+  {% macro render_hazards_button(unit, class) %}
+    <a class='{{ class }}' href='/api/v2/storage_units/{{ unit.id }}?format=pdf' target='_blank' rel='noopener' title='{{ 'List security hazards'|trans }}' aria-label='{{ 'List security hazards of %s'|trans|format(unit.name) }}' data-cy='storage-hazards-{{ unit.id }}'><i class='fas fa-fire' aria-hidden='true'></i></a>
+  {% endmacro %}
   {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false, is_move_storage=false) %}
     <ul class='list-group'>
       {% for item in items %}
@@ -55,6 +59,9 @@
                 <button type='button' class='btn btn-ghost btn-sm' data-action='move-storage' data-id='{{ item.id }}'><i class='fas fa-arrows-up-down-left-right mr-1'></i>{{ 'Move'|trans }}</button>
                 <button type='button' class='btn btn-danger-ghost btn-sm' data-id='{{ item.id }}' data-action='destroy-storage'><i class='fas fa-minus-circle mr-1'></i>{{ 'Delete %s and its children'|trans|format(item.name) }}</button>
               {% endif %}
+              {% if not is_entity and not is_move_storage %}
+                {{ _self.render_hazards_button(item, 'btn btn-ghost btn-sm') }}
+              {% endif %}
               {{ _self.render_capacity(item, storage_editable) }}
             </div>
             {% if groupedItems[item.id] is defined %}
@@ -77,12 +84,17 @@
           <i class='fas fa-location-dot mr-2'></i><span class='{{ storage_editable ? 'malleableColumn hl-hover' }} p-1 rounded font-weight-bold' data-endpoint='storage_units' data-id='{{ root.id }}' data-target='name'>{{ root.name }}</span>{{ _self.render_occupancy(root, is_full) }}
           {{ _self.render_capacity(root, storage_editable) }}
         </div>
-        {% if storage_editable %}
+        {% if storage_editable or (not is_entity and not is_move_storage) %}
           <div class='ml-auto'>
-            <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle'></i></button>
-            {# search with name instead of id for parent #}
-            <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass'></i></a>
-            <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark'></i></a>
+            {% if storage_editable %}
+              <button type='button' class='btn btn-secondary btn-sm' title='{{ 'Add children to %s'|trans|format(root.name) }}' aria-label='{{ 'Add children to %s'|trans|format(root.name) }}' data-parent-id='{{ root.id }}' data-action='add-storage-children'><i class='fas fa-plus-circle'></i></button>
+              {# search with name instead of id for parent #}
+              <a class='btn btn-secondary btn-sm' title='{{ 'Display content'|trans }}' href='?q={{ root.name }}'><i class='fas fa-magnifying-glass'></i></a>
+              <a class='btn btn-danger btn-sm' data-action='delete-storage-root' data-id='{{ root.id }}' title='{{ 'Delete'|trans }}'><i class='fas fa-xmark'></i></a>
+            {% endif %}
+            {% if not is_entity and not is_move_storage %}
+              {{ _self.render_hazards_button(root, 'btn btn-secondary btn-sm') }}
+            {% endif %}
           </div>
         {% endif %}
         {% if is_move_storage %}

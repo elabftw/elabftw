@@ -413,6 +413,38 @@ teams:
           <h2>Conclusion</h2>
           <p>Elution fractions 2 and 3 contained the strongest target-protein signal and were selected for pooling. The pooled sample can now proceed to buffer exchange and downstream characterization.</p>
 
+      - title: Links in custom fields
+        category: Dev
+        body: '<p>Experiment with a lot of custom fields: single and multiple</p>'
+        tags:
+          - eln
+          - imaging
+          - generated from yml
+        # ids 1-23 (experiments) and 1-20 (resources) of this team are the random entries, created with a random visibility:
+        # only reference the entries defined in this file (experiments from 24, resources from 21)
+        metadata: |
+          {
+            "extra_fields": {
+              "Single experiment" : {"type": "experiments", "value": 24},
+              "Multiple experiments": {"type": "experiments", "value_labels": ["MathJax", "Optimization"], "value": [24, 25], "allow_multi_values": true},
+              "Single resource": {"type": "items", "value": 23},
+              "Multiple resources": {"type": "items", "value_labels": ["Antibody", "Plasmid"], "value": [21, 22], "allow_multi_values": true},
+              "Single user": {"type": "users", "value": 1},
+              "Multiple users": {"type": "users", "value_labels": ["Toto", "Titi"], "value": [1, 2], "allow_multi_values": true},
+              "Single compound": {"type": "compounds", "value": 1},
+              "Multiple compounds": {"type": "compounds", "value_labels": ["Caffeine", "Aspirin"], "value": [1, 2], "allow_multi_values": true}
+            }
+          }
+        experiments_links:
+          - 24
+          - 25
+        items_links:
+          - 23
+          - 21
+          - 22
+        compounds_links:
+          - 1
+          - 2
 
     user_groups:
       - name: Super secret project
@@ -1721,6 +1753,8 @@ compounds:
     molecular_weight: "194.19"
     pubchem_cid: 2519
     smiles: "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+    ghs_signal_word: "Warning"
+    ghs_statements: "H302, P264, P270, P301+P312, P330, P501"
 
   - name: "Aspirin"
     molecular_formula: "C9H8O4"
@@ -1741,6 +1775,8 @@ compounds:
     molecular_weight: "162.23"
     pubchem_cid: 89594
     smiles: "CN1CCCC1C2=CN=CC=C2"
+    ghs_signal_word: "Danger"
+    ghs_statements: "H300, H310, H330, H411, P262, P264, P270, P273, P280, P301+P310, P302+P352"
 
   - name: "Ibuprofen"
     molecular_formula: "C13H18O2"

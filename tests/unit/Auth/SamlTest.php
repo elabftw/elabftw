@@ -17,6 +17,7 @@ use Elabftw\Elabftw\Authentication;
 use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\Messages;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\UnauthorizedException;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Models\Users\ExistingUser;
@@ -523,6 +524,25 @@ final class SamlTest extends TestCase
         self::assertNull($result->orcid);
     }
 
+    public function testInitialTeamSelectionTreatsEmptyNamesAsUnknown(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-empty-names@example.com';
+        $samlUserdata['User.FirstName'] = '';
+        $samlUserdata['User.LastName'] = array('');
+        unset($samlUserdata['User.team']);
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $result = $this->assertIdpResponse($samlUserdata, $config);
+
+        self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
+        self::assertSame('Unknown', $result->firstname);
+        self::assertSame('Unknown', $result->lastname);
+    }
+
     public function testInitialTeamSelectionHandlesMissingOptionalAttributeSettings(): void
     {
         $samlUserdata = $this->samlUserdata;
@@ -625,6 +645,131 @@ final class SamlTest extends TestCase
         $this->expectException(ImproperActionException::class);
 
         $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserCanSelectTeamWhenNoProvidedTeamExistsAndCreationIsDisabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-unknown-team-select@example.com';
+        $samlUserdata['User.team'] = array('SAML nonexistent team only');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_create'] = '0';
+        $config['saml_team_default'] = '-1';
+
+        $result = $this->assertIdpResponse($samlUserdata, $config);
+
+        self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
+        self::assertSame('saml-unknown-team-select@example.com', $result->email);
+    }
+
+    public function testNewUserCannotSelectTeamWhenNoProvidedTeamExistsAndSyncIsEnabled(): void
+    {
+        // with sync enabled, picking a team would only defer the failure to the next login
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-unknown-team-sync@example.com';
+        $samlUserdata['User.team'] = array('SAML nonexistent team only');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_create'] = '0';
+        $config['saml_team_default'] = '-1';
+
+        $this->expectException(ImproperActionException::class);
+
+        $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserCannotSelectTeamWhenIdpSendsNoTeamAndSyncIsEnabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-no-team-sync-select@example.com';
+        unset($samlUserdata['User.team']);
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $this->expectException(ImproperActionException::class);
+
+        $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserCannotSelectTeamWhenIdpSendsEmptyTeamValuesAndSyncIsEnabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-empty-team-values-sync@example.com';
+        $samlUserdata['User.team'] = array('', ' ');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $this->expectException(ImproperActionException::class);
+
+        $this->assertIdpResponse($samlUserdata, $config);
+    }
+
+    public function testNewUserIsNotCreatedInDefaultTeamWhenIdpSendsNoTeamAndSyncIsEnabled(): void
+    {
+        $email = 'saml-no-team-sync-default@example.com';
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = $email;
+        unset($samlUserdata['User.team']);
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_sync_teams'] = '1';
+        $config['saml_team_default'] = '2';
+
+        $rejected = false;
+        try {
+            $this->assertIdpResponse($samlUserdata, $config);
+        } catch (ImproperActionException) {
+            $rejected = true;
+        }
+        self::assertTrue($rejected);
+
+        // the account must not exist, or it would be stuck failing synchronization on every login
+        $this->expectException(ResourceNotFoundException::class);
+        ExistingUser::fromEmail($email);
+    }
+
+    public function testNewUserCanSelectTeamWhenIdpSendsEmptyTeamValues(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-empty-team-values-select@example.com';
+        $samlUserdata['User.team'] = array('', ' ');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_default'] = '-1';
+
+        $result = $this->assertIdpResponse($samlUserdata, $config);
+
+        self::assertInstanceOf(InitialTeamSelectionRequired::class, $result);
+    }
+
+    public function testNewUserUsesExistingIdpTeamWhenSelectionIsEnabledAndCreationIsDisabled(): void
+    {
+        $samlUserdata = $this->samlUserdata;
+        $samlUserdata['User.email'] = 'saml-existing-team-select-enabled@example.com';
+        $samlUserdata['User.team'] = array('Alpha');
+
+        $config = $this->configArr;
+        $config['saml_user_default'] = '1';
+        $config['saml_team_create'] = '0';
+        $config['saml_team_default'] = '-1';
+
+        $authentication = $this->assertAuthentication(
+            $this->assertIdpResponse($samlUserdata, $config),
+        );
+
+        self::assertSame(array('Alpha'), $this->getTeamNames($authentication->userid));
     }
 
     public function testTeamCreationDefaultsToEnabled(): void

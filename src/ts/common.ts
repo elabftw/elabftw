@@ -14,7 +14,8 @@ import 'bootstrap/js/src/modal.js';
 import FavTag from './FavTag.class';
 import Heartbeat from './Heartbeat.class';
 import ScrollButtons from './ScrollButtons.class';
-import { clearLocalStorage, rememberLastSelected, selectLastSelected } from './localStorage';
+import { clearLocalStorage, readStorage, rememberLastSelected, selectLastSelected, writeStorage } from './localStorage';
+import { renderReactionSummaries } from './reaction-summary';
 import {
   adjustHiddenState,
   clearForm,
@@ -29,7 +30,6 @@ import {
   makeSortableGreatAgain,
   mkSpin,
   mkSpinStop,
-  permissionsToJson,
   relativeMoment,
   reloadElements,
   replaceWithTitle,
@@ -39,13 +39,20 @@ import {
   TomSelect,
   updateEntityBody,
   updateCatStat,
-  makeMalleableColumnsGreatAgain, rebuildTomSelectOptions,
+  makeMalleableColumnsGreatAgain,
   mountRors,
   delayConfirmation,
   initPermissionsTomSelects,
-  PERMISSION_SELECT_IDS,
+  initPermissionsSearch,
+  loadPermissionsModal,
+  permissionsSectionParams,
+  savePermissionsChange,
+  setPermissionsReloader,
+  setPermissionsSectionBase,
   reloadEntitiesShow,
+  renderCompoundGhsStatements,
 } from './misc';
+import type { GhsStatement, PermissionsSectionValue } from './misc';
 import i18next from './i18n';
 import { Metadata } from './Metadata.class';
 import { DateTime } from 'luxon';
@@ -390,7 +397,7 @@ if (userPrefs.scDisabled === '0') {
 
 // SIDE PANEL STATE
 // Login and register pages do not render side panels.
-const openedSidePanel = localStorage.getItem('opened-sidepanel');
+const openedSidePanel = readStorage('opened-sidepanel');
 if (openedSidePanel === Model.FavTag && document.getElementById(FavTagC.panelId)) {
   FavTagC.toggle();
 }
@@ -450,7 +457,7 @@ const isSafari = (): boolean => {
   return true;
 };
 
-const isDismissedSafari = localStorage.getItem('dismiss_safari_warning_v1') === '1';
+const isDismissedSafari = readStorage('dismiss_safari_warning_v1') === '1';
 if (isSafari() && !isDismissedSafari) {
   document.getElementById('safariWarning').removeAttribute('hidden');
 }
@@ -458,7 +465,7 @@ if (isSafari() && !isDismissedSafari) {
 
 // generic announcement/admin announcement messages
 document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
-  if (localStorage.getItem(`dismiss_${msg.dataset.dismissKey}`) !== '1') {
+  if (readStorage(`dismiss_${msg.dataset.dismissKey}`) !== '1') {
     msg.parentElement.removeAttribute('hidden');
   }
 });
@@ -466,52 +473,7 @@ document.querySelectorAll('[data-dismiss-key]').forEach((msg: HTMLElement) => {
 makeMalleableColumnsGreatAgain();
 
 initPermissionsTomSelects();
-
-on('team-scope-change', async (el: HTMLElement) => {
-  const scope = Number(el.dataset.value);
-  const identifier = el.dataset.identifier;
-  if (!identifier) return;
-  // custom scope button for team select
-  const menu = el.parentElement;
-  if (menu) {
-    menu.querySelectorAll('.dropdown-item').forEach((item) => {
-      item.classList.remove('active');
-    });
-  }
-  el.classList.add('active');
-
-  const btn = el.closest('.btn-group')?.querySelector('button.dropdown-toggle');
-  if (btn) {
-    // clear existing content
-    btn.replaceChildren();
-    const icon = document.createElement('i');
-    icon.classList.add('fas', 'fa-fw', scope === 1 ? 'fa-user' : 'fa-globe', 'mx-1');
-    const text = document.createTextNode(scope === 1 ? i18next.t('my-teams') : i18next.t('all-teams'));
-    btn.append(text, icon);
-  }
-  let teams;
-
-  if (scope === 1) {
-    const user = await ApiC.getJson(`${Model.User}/me`);
-    teams = user.teams;
-  } else {
-    const allTeams = await ApiC.getJson('teams');
-    teams = allTeams.filter((t) => t.visible !== 0);
-  }
-  const select = document.querySelector(`#${identifier}_select_teams`) as HTMLSelectElement;
-  if (!select) return;
-  rebuildTomSelectOptions(select, {
-    options: teams.map(team => ({
-      value: `team:${team.id}`,
-      text: team.name,
-    })),
-  });
-});
-
-document.addEventListener('scope-changed', () => {
-  const permissionSelects = document.querySelectorAll<HTMLSelectElement>(PERMISSION_SELECT_IDS);
-  permissionSelects.forEach(select => rebuildTomSelectOptions(select));
-});
+initPermissionsSearch();
 
 // tom-select for team selection on login and register page, and idp selection
 ['init_team_select', 'team', 'team_selection_select', 'idp_login_select'].forEach(id =>{
@@ -777,7 +739,7 @@ on('insert-param-and-reload', async (el: HTMLElement) => {
 // used on displayMessage divs: we save the fact that it was closed
 on('save-dismiss', (el: HTMLElement) => {
   if (el.dataset.dismissKey) {
-    localStorage.setItem(`dismiss_${el.dataset.dismissKey}`, '1');
+    writeStorage(`dismiss_${el.dataset.dismissKey}`, '1');
   }
 });
 
@@ -917,64 +879,148 @@ on('clear-form', (el: HTMLElement) => {
   inputs.forEach(input => input.value = '');
 });
 
-on('save-permissions', (el: HTMLElement) => {
-  const params = {};
-  params[el.dataset.rw] = collectPermissionsFromModal(el.dataset.identifier);
-  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
-  params[baseSelect.name] = baseSelect.value;
-
-  if (el.dataset.withSelected) {
-    const checked = getFromSvelte(selectedEntities);
-    if (checked.length === 0) {
-      notify.error('nothing-selected');
-      return;
-    }
-    if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
-      return;
-    }
-    const requests = checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0}));
-    Promise.allSettled(requests).then(() => {
-      notify.success();
-      reloadEntitiesShow();
-    });
-    return;
-  }
-
-  const divId = el.dataset.identifier + 'Div';
-  // if we're editing the default read/write permissions for experiments, this data attribute will be set
-  if (el.dataset.isUserDefault) {
-    // we need to replace canread/canwrite with default_read/default_write for user attribute
-    let paramKey = 'default_read';
-    if (el.dataset.rw === 'canwrite') {
-      paramKey = 'default_write';
-    }
-    // create a new key and delete the old one
-    params[paramKey] = params[el.dataset.rw];
-    delete params[el.dataset.rw];
-    ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements([divId]));
-  } else {
-    ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements([divId]));
-  }
+// general access (base permission) dropdown of the permissions modal
+on('set-permission-base', (el: HTMLElement) => {
+  const section = el.closest<HTMLElement>('.permissions-section');
+  if (!section) return;
+  setPermissionsSectionBase(section, Number(el.dataset.value));
+  savePermissionsChange(section, 'base');
 });
 
-function collectPermissionsFromModal(identifier: string): string {
-  const teams = ($('#' + identifier + '_select_teams').val() as string[] | null) ?? [];
-  const teamgroups = ($('#' + identifier + '_select_teamgroups').val() as string[] | null) ?? [];
-  const users = ($('#' + identifier + '_select_users').val() as string[] | null) ?? [];
-  return permissionsToJson(
-    teams.concat(teamgroups).concat(users),
-  );
+// PERMISSIONS OF THE COMPOUNDS
+// the modal of a compound modal is shown instead of it, and the compound modal comes back when it is closed
+const compoundPermissionsSelector = '#compoundPermissionsModal';
+
+// where a new compound comes from: they have different default permissions, see Compounds::PUBCHEM_CANREAD_BASE
+type NewCompoundOrigin = 'manual' | 'pubchem';
+
+// the permissions chosen for the next compounds to create or import, sent with them:
+// empty if the modal was not opened for that, and the server applies the defaults of the origin
+function newCompoundPermissions(origin: NewCompoundOrigin): Record<string, string> {
+  const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
+  if (!modal || modal.dataset.forNewCompound !== origin) {
+    return {};
+  }
+  const params = {};
+  modal.querySelectorAll<HTMLElement>('.permissions-section').forEach(section => {
+    Object.assign(params, permissionsSectionParams(section, ['list', 'base']));
+  });
+  return params;
 }
 
-// change both read & write permissions in one go
-on('save-permissions-both', (el: HTMLElement) => {
-  if (!confirm(i18next.t('entity-apply-both-permissions-warning'))) {
+// once a compound is created with them, the next one starts from the defaults again
+function resetNewCompoundPermissions(): void {
+  const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
+  if (modal) {
+    delete modal.dataset.forNewCompound;
+  }
+}
+
+async function loadExistingCompoundPermissions(modal: HTMLElement, compoundId: string): Promise<void> {
+  const compound = await ApiC.getJson(`${Model.Compounds}/${compoundId}`);
+  const value = (can: string): PermissionsSectionValue => ({
+    base: compound[`${can}_base`],
+    baseLabel: compound[`${can}_base_human`],
+    can: compound[`${can}_human`],
+  });
+  loadPermissionsModal(modal, {
+    endpoint: `${Model.Compounds}/${compoundId}`,
+    mode: 'auto',
+    readOnly: compound.has_write_access !== 1,
+    values: { canread: value('canread'), canwrite: value('canwrite') },
+  });
+}
+
+on('compound-permissions', async (el: HTMLElement) => {
+  const modal = document.querySelector<HTMLElement>(compoundPermissionsSelector);
+  if (!modal) return;
+  const from = `#${el.dataset.from}`;
+  try {
+    if (el.dataset.from === 'editCompoundModal') {
+      const compoundId = getSafeElementById('editCompoundModalSaveBtn').dataset.compoundId;
+      delete modal.dataset.forNewCompound;
+      await loadExistingCompoundPermissions(modal, compoundId);
+      setPermissionsReloader(modal, () => loadExistingCompoundPermissions(modal, compoundId));
+    } else {
+      const origin: NewCompoundOrigin = el.dataset.from === 'importFromPubChemModal' ? 'pubchem' : 'manual';
+      if (modal.dataset.forNewCompound !== origin) {
+        // a new compound starts from the defaults of its origin, then keeps what was chosen until it is created:
+        // public for a compound from PubChem, restricted for one added manually
+        const empty = { teams: [], teamgroups: [], users: [] };
+        const defaultValue = (can: 'canread' | 'canwrite'): PermissionsSectionValue => {
+          if (origin === 'pubchem') {
+            const key = can === 'canread' ? 'pubchemCanreadBase' : 'pubchemCanwriteBase';
+            return { base: Number(modal.dataset[key]), baseLabel: modal.dataset[`${key}Human`], can: empty };
+          }
+          return {
+            base: Number(modal.querySelector<HTMLElement>(`.permissions-section[data-param="${can}"]`)?.dataset.defaultBase),
+            can: empty,
+          };
+        };
+        loadPermissionsModal(modal, { endpoint: '', mode: 'manual', values: { canread: defaultValue('canread'), canwrite: defaultValue('canwrite') } });
+        modal.dataset.forNewCompound = origin;
+      }
+    }
+  } catch (error) {
+    notify.error(error);
     return;
   }
-  const permissions = collectPermissionsFromModal(el.dataset.identifier);
-  const baseSelect = getSafeElementById(`${el.dataset.identifier}_select_base`) as HTMLSelectElement;
-  const params = {canread: permissions, canread_base: baseSelect.value, canwrite: permissions, canwrite_base: baseSelect.value};
-  ApiC.patch(`${entity.type}/${entity.id}`, params).then(() => reloadElements(['canreadDiv', 'canwriteDiv']));
+  // one modal at a time: bootstrap 4 does not stack them
+  modal.dataset.switching = '1';
+  onModalEventOnce(from, 'hidden', () => {
+    delete modal.dataset.switching;
+    onModalEventOnce(compoundPermissionsSelector, 'hidden', () => showModal(from));
+    showModal(compoundPermissionsSelector);
+  });
+  hideModal(from);
+});
+
+// closing the modal of a new compound (not to choose its permissions) forgets them
+['#createCompoundModal', '#importFromPubChemModal'].forEach(selector => onModalEvent(selector, 'hidden', () => {
+  if (document.querySelector<HTMLElement>(compoundPermissionsSelector)?.dataset.switching !== '1') {
+    resetNewCompoundPermissions();
+  }
+}));
+
+// permissions modal of the show page: what changed is applied to all the selected entries
+on('apply-permissions-selected', async (el: HTMLElement) => {
+  const modal = el.closest<HTMLElement>('[data-permissions-endpoint]');
+  if (!modal) return;
+  const params = {};
+  modal.querySelectorAll<HTMLElement>('.permissions-section').forEach(section => {
+    const changes: ('list' | 'base')[] = [];
+    if (section.dataset.listChanged) changes.push('list');
+    if (section.dataset.baseChanged) changes.push('base');
+    Object.assign(params, permissionsSectionParams(section, changes));
+  });
+  if (Object.keys(params).length === 0) {
+    hideModal('#permissionsModal');
+    return;
+  }
+  const checked = getFromSvelte(selectedEntities);
+  if (checked.length === 0) {
+    notify.error('nothing-selected');
+    return;
+  }
+  if (!confirm(i18next.t('multi-changes-confirm', { num: checked.length }))) {
+    return;
+  }
+  const results = await Promise.allSettled(checked.map(id => ApiC.patch(`${entity.type}/${id}`, {...params, notifOnSaved: 0, notifOnError: 0})));
+  const failedIds = checked.filter((_id, index) => results[index].status === 'rejected');
+  hideModal('#permissionsModal');
+  // render the modal again, empty: the changes of this batch must not be applied again to the next selection
+  await reloadElements(['permissionsDiv']).catch(error => notify.error(error));
+  if (failedIds.length === 0) {
+    notify.success();
+    reloadEntitiesShow();
+    return;
+  }
+  // no reload of the list here: it would remove the marks on the entries that could not be modified
+  failedIds.forEach(id => {
+    const elem = document.querySelector<HTMLElement>(`[data-entity-id="${id}"]`);
+    if (elem) elem.style.backgroundColor = 'var(--lightred)';
+  });
+  notify.warning('entity-patch-multi-warning', {count: checked.length - failedIds.length, failed: failedIds.length});
 });
 
 on('select-lang', () => {
@@ -1004,7 +1050,7 @@ on('toggle-next', (el: HTMLElement) => {
 
   // save the hidden state of the target element in localStorage
   if (targetEl.dataset.saveHidden) {
-    localStorage.setItem(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
+    writeStorage(`${targetEl.dataset.saveHidden}-isHidden`, isHidden ? '1' : '0');
   }
 
   // now deal with icon of executor element
@@ -1652,6 +1698,43 @@ export function showModalAndFocusFirstInput(modalSelector: string) {
   showModal(modalSelector);
 }
 
+export function hideModal(modalSelector: string): void {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  // bootstrap 4 ignores hide while the modal is still fading in, and it would stay open: hide it once it is shown
+  const instance = $(modal).data('bs.modal') as { _isShown?: boolean; _isTransitioning?: boolean } | undefined;
+  if (instance?._isShown && instance._isTransitioning) {
+    $(modal).one('shown.bs.modal', () => $(modal).modal('hide'));
+    return;
+  }
+  $(modal).modal('hide');
+}
+
+export function isModalShown(modalSelector: string): boolean {
+  return document.querySelector(modalSelector)?.classList.contains('show') ?? false;
+}
+
+// bootstrap 4 fires its modal events through jquery only, so native listeners never see them
+export function onModalEvent(
+  modalSelector: string,
+  event: 'show' | 'shown' | 'hide' | 'hidden',
+  handler: (event: JQuery.TriggeredEvent) => void,
+): void {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).on(`${event}.bs.modal`, handler);
+}
+
+export function onModalEventOnce(
+  modalSelector: string,
+  event: 'show' | 'shown' | 'hide' | 'hidden',
+  handler: (event: JQuery.TriggeredEvent) => void,
+): void {
+  const modal = document.querySelector<HTMLElement>(modalSelector);
+  if (!modal) return;
+  $(modal).one(`${event}.bs.modal`, handler);
+}
+
 on('update-entity-body', async (el: HTMLElement) => {
   const redirect = el.dataset.redirect === 'view';
   await updateEntityBody(redirect);
@@ -1742,10 +1825,55 @@ on('search-entity-from-compound', (el: HTMLElement) => {
   window.location.href = `${el.dataset.page}.php?${params.toString()}`;
 });
 
+on('show-compound-molecule', async (el: HTMLElement) => {
+  const target = getSafeElementById(el.dataset.target);
+  const cid = (document.getElementById('compoundInput-pubchem_cid') as HTMLInputElement).value.trim();
+  const smiles = (document.getElementById('compoundInput-smiles') as HTMLInputElement).value.trim();
+  // prefer the CID as it is the canonical PubChem depiction, fallback to SMILES for manually created compounds
+  let req: Promise<Response>;
+  if (/^\d+$/.test(cid)) {
+    req = fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/PNG`);
+  } else if (smiles) {
+    // POST so SMILES characters like / or # don't break the URL
+    req = fetch('https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/PNG', {
+      method: 'POST',
+      body: new URLSearchParams({ smiles }),
+    });
+  } else {
+    notify.error('A PubChem CID or a SMILES is required to display the molecule.');
+    return;
+  }
+  const elOldHTML = mkSpin(el);
+  try {
+    const res = await req;
+    if (!res.ok) {
+      throw new Error(`PubChem error: ${res.status} ${res.statusText}`);
+    }
+    const blob = await res.blob();
+    let img = target.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      img.classList.add('img-fluid', 'rounded', 'border', 'bg-white');
+      target.appendChild(img);
+    }
+    if (img.src.startsWith('blob:')) {
+      URL.revokeObjectURL(img.src);
+    }
+    img.src = URL.createObjectURL(blob);
+    img.alt = (document.getElementById('compoundInput-name') as HTMLInputElement).value;
+    target.hidden = false;
+  } catch (err) {
+    notify.error(err);
+  } finally {
+    mkSpinStop(el, elOldHTML);
+  }
+});
+
 on('import-compound', (el: HTMLElement) => {
   const elOldHTML = mkSpin(el);
-  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate};
+  const params = {cid: parseInt(el.dataset.cid, 10), action: Action.Duplicate, ...newCompoundPermissions('pubchem')};
   ApiC.post2location('compounds', params).then(() => {
+    // the same permissions apply to the other compounds imported from this search
     document.dispatchEvent(new CustomEvent('dataReload'));
   }).catch(err => {
     console.error(err);
@@ -1776,6 +1904,38 @@ on('create-resource-from-compound', (el: HTMLElement) => {
   });
 });
 
+// GHS STATEMENTS OF A COMPOUND: saved right away, like tags
+function reloadCompoundGhsStatements(compoundId: string): void {
+  ApiC.getJson<GhsStatement[]>(`${Model.Compounds}/${compoundId}/${Model.GhsStatements}`).then(statements => {
+    renderCompoundGhsStatements(statements, true);
+    // the codes are shown in the compounds table
+    document.dispatchEvent(new CustomEvent('dataReload'));
+  });
+}
+
+on('add-compound-ghs-statement', () => {
+  const input = getSafeElementById('compoundGhsInput') as HTMLInputElement;
+  const typed = input.value.trim();
+  if (!typed) {
+    return;
+  }
+  // codes are case-sensitive (H360FD is not H360Fd): use the exact code when only the case differs
+  const codes = Array.from(document.querySelectorAll<HTMLOptionElement>('#ghsStatementsList option')).map(option => option.value);
+  const code = codes.find(c => c === typed) ?? codes.find(c => c.toLowerCase() === typed.toLowerCase()) ?? typed;
+  const compoundId = getSafeElementById('editCompoundModalSaveBtn').dataset.compoundId;
+  ApiC.post(`${Model.Compounds}/${compoundId}/${Model.GhsStatements}`, { code }).then(() => {
+    input.value = '';
+    reloadCompoundGhsStatements(compoundId);
+  });
+});
+
+on('remove-compound-ghs-statement', (el: HTMLElement) => {
+  const compoundId = getSafeElementById('editCompoundModalSaveBtn').dataset.compoundId;
+  ApiC.delete(`${Model.Compounds}/${compoundId}/${Model.GhsStatements}/${el.dataset.id}`).then(() => {
+    reloadCompoundGhsStatements(compoundId);
+  });
+});
+
 on('save-compound', (el: HTMLElement, event: Event) => {
   event.preventDefault();
   try {
@@ -1789,8 +1949,9 @@ on('save-compound', (el: HTMLElement, event: Event) => {
       });
     } else { // create
       const form = document.getElementById('createCompoundForm') as HTMLFormElement;
-      const params = collectForm(form);
+      const params = { ...collectForm(form), ...newCompoundPermissions('manual') };
       ApiC.post2location('compounds', params).then(id => {
+        resetNewCompoundPermissions();
         ApiC.getJson(`compounds/${id}`).then((json) => {
           setTimeout(() => {
             toggleEditCompound(json);
@@ -1843,12 +2004,12 @@ on('toggle-password', (el: HTMLElement) => {
 on('stop-impersonation', () => clearLocalStorage());
 
 on('logout', () => {
-  localStorage.setItem('logout_msg', '1');
+  writeStorage('logout_msg', '1');
   window.location.href = 'app/logout.php';
 });
 
 const logoutMessageDiv = document.getElementById('logoutMessage');
-if (logoutMessageDiv  && localStorage.getItem('logout_msg')) {
+if (logoutMessageDiv  && readStorage('logout_msg')) {
   logoutMessageDiv.removeAttribute('hidden');
   clearLocalStorage();
 }
@@ -2022,6 +2183,10 @@ on('toggle-body', (el: HTMLElement) => {
     }
     // add html content
     contentDiv.innerHTML = json.body_html;
+    // the reactions are not part of the main text, but like it they are what the entry is about (absent from revisions)
+    if (Array.isArray(json.reactions) && json.reactions.length > 0) {
+      contentDiv.append(renderReactionSummaries(json.reactions, el.dataset.type, entityId));
+    }
 
     // adjust the width of the children
     // get the width of the parent. The -30 is to make it smaller than parent even with the margins
@@ -2106,7 +2271,6 @@ on('scope-change', async (el: HTMLElement) => {
   userParams[el.dataset.target] = el.dataset.value;
   await ApiC.patch('users/me', userParams);
   await handleReloads(el.dataset.reload);
-  document.dispatchEvent(new Event('scope-changed'));
 });
 
 /**

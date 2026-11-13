@@ -51,6 +51,27 @@ The Users tab allows limited modification of User accounts member of the Team. D
 
 From this page, you can also directly add a new User to your Team, if the Sysadmin allows it. The new User will need to activate the "Reset password" functionality to access their account.
 
+### Restricted users
+An Admin can mark a User of their Team as **Restricted user**. This is useful for Users that should not browse everything the Team produces, such as students or temporary members.
+
+While acting in that Team, a Restricted user only has access to:
+
+* entries they own
+* entries explicitly shared with them, as an individual User
+* entries shared with a User Group they are a member of
+
+All the other ways an entry is normally made available are ignored for them. A Restricted user will **not** see entries whose General access is set to Public, Organization or Team, and an entry shared with the whole Team does not grant them access either. This applies to read and write permissions, for Experiments, Resources and their templates.
+
+To share an entry with a Restricted user, add them by name in the Permissions window of the entry, or add them to a User Group (see the USER GROUPS tab) and share the entry with that Group.
+
+To toggle the restriction, double-click the User in the table of the Users tab, and use the "Restricted user" toggle next to the name of the Team. Restricted users are shown with a lock icon next to the Team name in the table.
+
+A few things to keep in mind:
+
+* the restriction is set **per Team**: a User can be restricted in one Team and a regular member of another Team, where they keep their usual access
+* only an Admin of the Team (or a Sysadmin) can change it: Users cannot change their own restriction, and Admins of other Teams cannot change it either
+* every change is recorded in the audit logs
+
 ## EXPORT tab
 This tab allows you to export Experiments, items, or scheduled bookings in various formats.
 

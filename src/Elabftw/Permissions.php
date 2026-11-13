@@ -150,8 +150,9 @@ final class Permissions
             return true;
         }
 
+        $teamgroupsOfUser = $this->Users->getTeamGroupIds();
         foreach ($can['teamgroups'] ?? array() as $teamgroup) {
-            if ($this->TeamGroups->isInTeamGroup($this->Users->userData['userid'], (int) $teamgroup)) {
+            if (in_array((int) $teamgroup, $teamgroupsOfUser, true)) {
                 return true;
             }
         }

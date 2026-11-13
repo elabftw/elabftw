@@ -535,7 +535,8 @@ class Eln extends AbstractZip
             return null;
         }
         try {
-            $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
+            // the values come from the archive, not from PubChem, even with a PubChem CID: they get the restricted defaults
+            $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node), fromPubChem: false);
         } catch (CompoundNotAccessibleException $e) {
             // the compound exists already and the importer cannot read it: import the entry without the link
             $this->logger->warning($e->getMessage());

@@ -306,12 +306,19 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $compound['canread_base']);
         $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
 
-        // with a PubChem CID: public
-        $id = $this->Compounds->createFromCompound(new Compound(cid: random_int(100000000, 999999999), name: 'From PubChem'));
+        // fetched from PubChem: public
+        $id = $this->Compounds->createFromCompound(new Compound(cid: random_int(100000000, 999999999), name: 'From PubChem'), fromPubChem: true);
         $this->Compounds->setId($id);
         $compound = $this->Compounds->readOne();
         $this->assertSame(Compounds::PUBCHEM_CANREAD_BASE->value, $compound['canread_base']);
         $this->assertSame(Compounds::PUBCHEM_CANWRITE_BASE->value, $compound['canwrite_base']);
+
+        // with a PubChem CID but local data, like from an ELN import: restricted
+        $id = $this->Compounds->createFromCompound(new Compound(cid: random_int(100000000, 999999999), name: 'Customized locally'));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
 
         // without one: restricted
         $id = $this->Compounds->createFromCompound(new Compound(name: 'Not from PubChem', inChIKey: strtoupper(bin2hex(random_bytes(7)))));

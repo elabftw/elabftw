@@ -113,7 +113,7 @@ final class CompoundsCsv extends AbstractCsv
                     foreach ($cids as $cid) {
                         $this->emitLog(sprintf('Importing compound with CID %d', $cid));
                         $compound = $this->PubChemImporter->fromPugView($cid);
-                        $ids[] = $this->skipIfNotAccessible(fn(): int => $this->Compounds->createFromCompound($compound));
+                        $ids[] = $this->skipIfNotAccessible(fn(): int => $this->Compounds->createFromCompound($compound, fromPubChem: true));
                     }
                 } else {
                     $ids[] = $this->skipIfNotAccessible(fn(): int => $this->createCompound($casKey, $row));

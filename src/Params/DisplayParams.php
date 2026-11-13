@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
@@ -214,11 +215,15 @@ final class DisplayParams extends BaseQueryParams
         // COMPOUND FILTER
         // use the compounds link table so only entries actually linked to the compound are returned,
         // and not entries where a compound property happens to match a text search
+        // a compound the requester cannot read matches nothing: its links must not be revealed by enumerating ids
         if (Check::id($query->getInt('compound')) !== false) {
             $this->addEntityFilterSql(sprintf(
-                ' AND entity.id IN (SELECT c2e_filter.entity_id FROM compounds2%s AS c2e_filter WHERE c2e_filter.compound_id = %d)',
+                ' AND entity.id IN (SELECT c2e_filter.entity_id FROM compounds2%s AS c2e_filter
+                    INNER JOIN compounds AS compound_filter ON (compound_filter.id = c2e_filter.compound_id)
+                    WHERE c2e_filter.compound_id = %d AND %s)',
                 $this->entityType->value,
                 $query->getInt('compound'),
+                new CompoundPermissions($this->requester)->getCanCondition('compound_filter'),
             ));
         }
 

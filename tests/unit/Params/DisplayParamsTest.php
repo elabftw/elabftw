@@ -35,7 +35,10 @@ class DisplayParamsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('entity.userid', $params->filterSql);
         // compound filter uses the link table of the entity type
         $params = new DisplayParams($user, EntityType::Items, new InputBag(array('compound' => 3)));
-        $this->assertStringContainsString('compounds2items AS c2e_filter WHERE c2e_filter.compound_id = 3', $params->filterSql);
+        $this->assertStringContainsString('compounds2items AS c2e_filter', $params->filterSql);
+        $this->assertStringContainsString('WHERE c2e_filter.compound_id = 3', $params->filterSql);
+        // and only for a compound the requester can read
+        $this->assertStringContainsString('compound_filter.userid = :userid', $params->filterSql);
         // invalid compound id is ignored
         $params = new DisplayParams($user, EntityType::Items, new InputBag(array('compound' => 'nope')));
         $this->assertStringNotContainsString('compounds2items', $params->filterSql);

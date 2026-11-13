@@ -577,10 +577,13 @@ final class Compounds extends AbstractRest
         return $id;
     }
 
-    public function createFromCompound(Compound $compound, ?array $permissions = null): int
+    /**
+     * @param bool $fromPubChem the data was fetched from PubChem by this instance: only then does the compound get the
+     * open defaults for PubChem compounds. A PubChem CID alone proves nothing: it can come with local data, like from an import.
+     */
+    public function createFromCompound(Compound $compound, ?array $permissions = null, bool $fromPubChem = false): int
     {
-        // a compound with a PubChem CID comes from PubChem: it gets the defaults for PubChem compounds
-        $permissions ??= $this->getCreatePermissions(array(), fromPubChem: $compound->cid !== null);
+        $permissions ??= $this->getCreatePermissions(array(), fromPubChem: $fromPubChem);
         return $this->create(
             canreadBase: $permissions['canread_base'],
             canwriteBase: $permissions['canwrite_base'],
@@ -677,10 +680,10 @@ final class Compounds extends AbstractRest
     private function createCompoundFromIdentifier(array $reqBody, array $permissions): int
     {
         if (!empty($reqBody['cid'])) {
-            return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']), $permissions);
+            return $this->createFromCompound($this->searchPubChem((int) $reqBody['cid']), $permissions, fromPubChem: true);
         }
         $cas = $reqBody['cas'] ?? throw new ImproperActionException('Missing pubchem_cid or cas_number');
-        return $this->createFromCompound($this->searchPubChemCas($cas)[0], $permissions);
+        return $this->createFromCompound($this->searchPubChemCas($cas)[0], $permissions, fromPubChem: true);
     }
 
     /**

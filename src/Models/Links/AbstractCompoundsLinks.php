@@ -153,23 +153,17 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         return 'compounds2experiments_templates';
     }
 
+    /**
+     * The changelog is readable by anyone who can read the entry, but the compound may be restricted:
+     * only its id is recorded, and its name and CAS number stay behind its own permissions
+     */
     private function createChangelog(Action $action = Action::Add): void
     {
-        $info = $this->getCompoundInfo();
         $verb = $action === Action::Destroy ? _('Removed') : _('Added');
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
             'compounds',
-            sprintf(_('%s link to compound: %s (CAS Number: %s) with id: %d'), $verb, $info['name'], $info['cas_number'], $this->id ?? 0),
+            sprintf(_('%s link to compound with id: %d'), $verb, $this->id ?? 0),
         ));
-    }
-
-    private function getCompoundInfo(): array
-    {
-        $sql = 'SELECT name, cas_number FROM compounds WHERE id = :id LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->fetch($req);
     }
 }

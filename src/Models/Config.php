@@ -162,6 +162,7 @@ final class Config extends AbstractRest
             ('allow_permission_useronly', '1'),
             ('admins_import_users', '0'),
             ('admins_archive_users', '1'),
+            ('admins_impersonate_users', '0'),
             ('extauth_remote_user', ''),
             ('extauth_firstname', ''),
             ('extauth_lastname', ''),

@@ -222,6 +222,11 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         if ($fullSelect) {
             // get all the columns of entity table
             $this->selectSql[] = 'entity.*';
+            // the access key gives anonymous read access to the entry: an impersonator could keep it and read the entry
+            // once the impersonation is over. Same column name after entity.* so it replaces it in the fetched row.
+            if ($this->entity->Users->impersonatorId !== null) {
+                $this->selectSql[] = 'NULL AS access_key';
+            }
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(
                 "'%s' AS page, '%s' AS type",

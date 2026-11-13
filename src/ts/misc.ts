@@ -1423,6 +1423,14 @@ export async function populateUserModal(user: Record<string, string|number>) {
       disable2faBtn.setAttribute('disabled', 'disabled');
     }
   }
+  // the server will refuse it anyway, but don't offer to impersonate ourselves or a user that cannot login
+  const impersonateUserBtn = document.getElementById('impersonateUserBtn');
+  if (impersonateUserBtn) {
+    impersonateUserBtn.removeAttribute('disabled');
+    if (user.userid === requester.userid || user.validated === 0) {
+      impersonateUserBtn.setAttribute('disabled', 'disabled');
+    }
+  }
   const validateUserBtn = document.getElementById('validateUserBtn');
   validateUserBtn.removeAttribute('disabled');
   if (user.validated !== 0) {

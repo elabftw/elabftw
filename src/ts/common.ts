@@ -2000,6 +2000,9 @@ on('toggle-password', (el: HTMLElement) => {
   input.type = attribute;
 });
 
+// the form submits normally, just don't keep UI state from the impersonated user
+on('stop-impersonation', () => clearLocalStorage());
+
 on('logout', () => {
   writeStorage('logout_msg', '1');
   window.location.href = 'app/logout.php';

@@ -210,6 +210,37 @@ class EmailTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testMassEmailSendsHtmlWithPlainTextFallback(): void
+    {
+        $body = '<p>Hello <strong>everyone</strong></p><ul><li>first point</li></ul>';
+
+        foreach (array(true, false) as $sendGrouped) {
+            $MockMailer = $this->createMock(MailerInterface::class);
+            $MockMailer->expects($this->once())
+                ->method('send')
+                ->with($this->callback(function (Memail $message): bool {
+                    $htmlBody = (string) ($message->getHtmlBody() ?? '');
+                    $plainText = (string) ($message->getTextBody() ?? '');
+                    // formatting is kept in the html part
+                    $this->assertStringContainsString('<strong>everyone</strong>', $htmlBody);
+                    $this->assertStringContainsString('<li>first point</li>', $htmlBody);
+                    // plain text fallback has the content but no html tags
+                    $this->assertStringContainsString('everyone', $plainText);
+                    $this->assertStringContainsString('first point', $plainText);
+                    $this->assertStringNotContainsString('<strong>', $plainText);
+                    return true;
+                }));
+
+            $Email = new Email($this->schemaVersionChecker, $MockMailer, $this->Logger, 'toto@yopmail.com');
+            $replyTo = new Address('sender@example.com', 'Test Sender');
+
+            $this->assertSame(
+                1,
+                $Email->massEmail(EmailTarget::Sysadmins, null, 'Rich text', $body, $replyTo, $sendGrouped),
+            );
+        }
+    }
+
     public function testNotifySysadminsTsBalance(): void
     {
         $this->assertTrue($this->Email->notifySysadminsTsBalance(12));

@@ -19,6 +19,7 @@ import { on } from './handlers';
 import { showModalAndFocusFirstInput } from './common';
 import TomSelect from 'tom-select/base';
 
+
 function updateTsFieldsVisibility(select: HTMLSelectElement) {
   const noAccountTsa = ['dfn', 'digicert', 'sectigo', 'globalsign'];
   const accountTsa = ['universign', 'dgn', 'evidency', 'deltablot', 'scimatic'];
@@ -319,6 +320,8 @@ if (window.location.pathname === '/sysconfig.php') {
     event.preventDefault();
     const form = document.getElementById('massEmailForm') as HTMLFormElement;
     const params = collectForm(form);
+    // body is in the tinymce editor, not in the textarea
+    params['body'] = tinymce.get('massBody').getContent();
     const button = (el as HTMLButtonElement);
     button.disabled = true;
     const buttonText = button.innerText;
@@ -326,6 +329,7 @@ if (window.location.pathname === '/sysconfig.php') {
     ApiC.post('instance', params).then(() => {
       button.innerText = buttonText;
       form.reset();
+      tinymce.get('massBody').setContent('');
     }).catch(() => {
       button.innerText = i18next.t('error');
       // TODO don't hardcode colors

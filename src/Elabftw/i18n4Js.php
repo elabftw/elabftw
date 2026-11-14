@@ -149,6 +149,7 @@ final class i18n4Js
             'is-admin' => _('Is Admin'),
             'is-archived' => _('Is Archived'),
             'is-owner' => _('Is Owner'),
+            'is-restricted' => _('Restricted user'),
             'is-sysadmin' => _('Is Sysadmin'),
             'item' => ngettext('Resource', 'Resources', 1),
             'item-type' => _('Resource template'),

@@ -403,7 +403,8 @@ class Users extends AbstractRest
                'name', t.name,
                'is_admin', u2t_all.is_admin,
                'is_owner', u2t_all.is_owner,
-               'is_archived', u2t_all.is_archived
+               'is_archived', u2t_all.is_archived,
+               'is_restricted', u2t_all.is_restricted
              )
            ) AS teams
 
@@ -902,7 +903,8 @@ class Users extends AbstractRest
                'name', t.name,
                'is_admin', u2t.is_admin,
                'is_owner', u2t.is_owner,
-               'is_archived', u2t.is_archived
+               'is_archived', u2t.is_archived,
+               'is_restricted', u2t.is_restricted
              )
            ) AS teams
             FROM users AS u
@@ -948,6 +950,24 @@ class Users extends AbstractRest
     public function isSysadmin(): bool
     {
         return ($this->userData['is_sysadmin'] ?? 0) === 1;
+    }
+
+    /**
+     * A user restricted in the team they are acting in only has access to entries they own
+     * or that are explicitly shared with them (user or teamgroup)
+     * Base permissions (public, organization, team, user + admins) and team-wide sharing are ignored for them
+     */
+    public function isRestricted(): bool
+    {
+        if ($this->team === null) {
+            return false;
+        }
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['id'] === $this->team) {
+                return (int) ($team['is_restricted'] ?? 0) === 1;
+            }
+        }
+        return false;
     }
 
     public function isSysadminOrExplode(): void
@@ -1011,6 +1031,21 @@ class Users extends AbstractRest
         $teamIds = array();
         foreach ($this->userData['teams'] ?? array() as $team) {
             if ((int) $team['is_archived'] === 0) {
+                $teamIds[] = (int) $team['id'];
+            }
+        }
+        return $teamIds;
+    }
+
+    /**
+     * IDs of the teams through which an entry explicitly shared with a team grants access
+     * Being restricted in a team means sharing with that team must not include this user
+     */
+    public function getTeamIdsForSharing(): array
+    {
+        $teamIds = array();
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['is_archived'] === 0 && (int) ($team['is_restricted'] ?? 0) === 0) {
                 $teamIds[] = (int) $team['id'];
             }
         }

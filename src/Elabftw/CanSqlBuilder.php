@@ -85,6 +85,10 @@ final class CanSqlBuilder
      */
     protected function canBasePubOrg(): string
     {
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->requester->isRestricted()) {
+            return '1=2';
+        }
         return sprintf(
             '%s.%s_base IN (%d, %d)',
             $this->alias,
@@ -99,6 +103,10 @@ final class CanSqlBuilder
      */
     protected function canBaseTeam(): string
     {
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->requester->isRestricted()) {
+            return '1=2';
+        }
         return sprintf(
             '(%1$s.%2$s_base = %3$d
                 AND %1$s.team = %4$d)',
@@ -115,6 +123,10 @@ final class CanSqlBuilder
      */
     protected function canBaseUser(): string
     {
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->requester->isRestricted()) {
+            return '1=2';
+        }
         return sprintf(
             '(%1$s.%2$s_base = %3$d
                 AND (%1$s.userid = :userid
@@ -140,6 +152,10 @@ final class CanSqlBuilder
      */
     protected function canBaseUserOnly(): string
     {
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->requester->isRestricted()) {
+            return '1=2';
+        }
         return sprintf(
             '(%1$s.%2$s_base = %3$d
                 AND %1$s.userid = %4$d)',
@@ -155,7 +171,11 @@ final class CanSqlBuilder
      */
     protected function canTeams(): string
     {
-        $teamsOfUser = $this->requester->getActiveTeamIds();
+        // a restricted user only gets access through ownership or explicit sharing with them or one of their teamgroups
+        if ($this->requester->isRestricted()) {
+            return '1=2';
+        }
+        $teamsOfUser = $this->requester->getTeamIdsForSharing();
         if (!empty($teamsOfUser)) {
             // grant access when the entity is explicitly shared with at least
             // one team in which the requester still has an active membership

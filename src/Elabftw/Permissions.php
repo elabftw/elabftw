@@ -66,6 +66,11 @@ final class Permissions
 
     public function getCan(BasePermissions $base, array $can): bool
     {
+        // checked before the public base: a restricted user must not see public entries either
+        if ($this->Users->isRestricted()) {
+            return $this->getCanRestricted($can);
+        }
+
         // if base permission is public, we can
         if ($base === BasePermissions::Full) {
             return true;
@@ -103,9 +108,9 @@ final class Permissions
         }
 
         // check for teams
-        // only active memberships count: an archived team must no longer grant access
+        // only active memberships count: an archived team must no longer grant access, nor a team where the user is restricted
         if (!empty($can['teams'])) {
-            $teamsOfUser = $this->Users->getActiveTeamIds();
+            $teamsOfUser = $this->Users->getTeamIdsForSharing();
             foreach ($can['teams'] as $team) {
                 if (in_array($team, $teamsOfUser, true)) {
                     return true;
@@ -126,6 +131,30 @@ final class Permissions
         // check for users
         if (in_array($this->Users->userData['userid'], $can['users'] ?? array(), true)) {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * A restricted user (e.g. a student) cannot rely on the base permission or on team-wide sharing:
+     * only ownership or an explicit sharing with them, directly or through a teamgroup, grants access
+     */
+    private function getCanRestricted(array $can): bool
+    {
+        if ($this->item['userid'] === $this->Users->userData['userid']) {
+            return true;
+        }
+
+        if (in_array($this->Users->userData['userid'], $can['users'] ?? array(), true)) {
+            return true;
+        }
+
+        $teamgroupsOfUser = $this->Users->getTeamGroupIds();
+        foreach ($can['teamgroups'] ?? array() as $teamgroup) {
+            if (in_array((int) $teamgroup, $teamgroupsOfUser, true)) {
+                return true;
+            }
         }
 
         return false;

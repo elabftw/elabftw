@@ -105,6 +105,7 @@ const t = {
     "is-admin": "Czy admin",
     "is-archived": "Zarchiwizowany?",
     "is-owner": "Jest właścicielem",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "Czy Sysadmin",
     "item": "Zasób",
     "item-type": "Szablon zasobów",

@@ -105,6 +105,7 @@ const t = {
     "is-admin": "管理員",
     "is-archived": "已封存",
     "is-owner": "是所有者",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "是系統管理員",
     "item": "實驗用資源",
     "item-type": "資源模板",

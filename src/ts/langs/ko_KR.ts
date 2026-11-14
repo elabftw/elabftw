@@ -105,6 +105,7 @@ const t = {
     "is-admin": "관리자 여부",
     "is-archived": "보관 여부",
     "is-owner": "소유자 여부",
+    "is-restricted": "Restricted user",
     "is-sysadmin": "시스템 관리자 여부",
     "item": "리소스",
     "item-type": "리소스 템플릿",

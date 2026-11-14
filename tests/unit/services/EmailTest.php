@@ -212,7 +212,7 @@ class EmailTest extends \PHPUnit\Framework\TestCase
 
     public function testMassEmailSendsHtmlWithPlainTextFallback(): void
     {
-        $body = '<p>Hello <strong>everyone</strong></p><ul><li>first point</li></ul>';
+        $body = '<p>Hello <strong>everyone</strong></p><ul><li>first point</li></ul><p>line one<br>line two</p>';
 
         foreach (array(true, false) as $sendGrouped) {
             $MockMailer = $this->createMock(MailerInterface::class);
@@ -228,6 +228,8 @@ class EmailTest extends \PHPUnit\Framework\TestCase
                     $this->assertStringContainsString('everyone', $plainText);
                     $this->assertStringContainsString('first point', $plainText);
                     $this->assertStringNotContainsString('<strong>', $plainText);
+                    // <br> line breaks are kept in the plain text
+                    $this->assertStringNotContainsString('line oneline two', $plainText);
                     return true;
                 }));
 

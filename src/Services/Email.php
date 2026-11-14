@@ -253,7 +253,8 @@ class Email
             ->keepNewLines()
             // Transformer decodes quoted-printable input unconditionally, so encode
             // raw HTML first to preserve URL query values such as "=12".
-            ->toText(quoted_printable_encode($html));
+            // keep <br> line breaks; also eat a following newline (from nl2br) to avoid doubling it
+            ->toText(quoted_printable_encode(preg_replace('/<br\s*\/?>\R?/i', "\n", $html) ?? $html));
         // <a href="url">link text</a> => link text (url)
         return preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks) ?? '';
     }

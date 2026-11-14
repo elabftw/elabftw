@@ -12,6 +12,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ApiC } from './api';
 import i18next from './i18n';
+import { readStorage, writeStorage } from './localStorage';
 
 // keep in sync with DisplayParams::MAX_EXTRA_FIELDS_COLUMNS
 export const MAX_EXTRA_FIELDS_COLUMNS = 20;
@@ -19,12 +20,12 @@ export const MAX_EXTRA_FIELDS_COLUMNS = 20;
 // prefix for the colId so these columns cannot collide with the regular ones in the stored column state
 const COL_ID_PREFIX = 'extra_field:';
 
-// the custom fields differ between experiments and resources, so the choice is stored per entity type
+// the custom fields differ between entity types, so the choice is stored per entity type
 const getStorageKey = entityType => `persistent_entities_table_extra_fields_v1_${entityType}`;
 
 export const getStoredExtraFieldsColumns = entityType => {
   try {
-    const stored = JSON.parse(localStorage.getItem(getStorageKey(entityType)) ?? '[]');
+    const stored = JSON.parse(readStorage(getStorageKey(entityType)) ?? '[]');
     if (!Array.isArray(stored)) {
       return [];
     }
@@ -35,22 +36,53 @@ export const getStoredExtraFieldsColumns = entityType => {
   }
 };
 
-export const storeExtraFieldsColumns = (entityType, names) => {
-  try {
-    localStorage.setItem(getStorageKey(entityType), JSON.stringify(names));
-  } catch {
-    // localStorage might be unavailable
+export const storeExtraFieldsColumns = (entityType, names) => writeStorage(getStorageKey(entityType), JSON.stringify(names));
+
+// custom field types holding the id of something else, their type is also the API endpoint to read it
+const REFERENCE_TYPES = ['experiments', 'items', 'users', 'compounds'];
+const REFERENCE_PAGES = { experiments: 'experiments.php', items: 'database.php' };
+
+const getUserDisplayName = json => String(json.fullname ?? '').trim()
+  || `${json.firstname ?? ''} ${json.lastname ?? ''}`.trim()
+  || String(json.userid ?? '');
+
+// labels are read through the API so permissions apply, like replaceWithTitle() does in the metadata view.
+// The promises are shared by all the cells: an id is only requested once per page load, and only for rendered cells.
+const referenceLabels = new Map();
+const fetchReferenceLabel = (type, id) => {
+  const path = `${type}/${id}`;
+  if (!referenceLabels.has(path)) {
+    referenceLabels.set(path, ApiC.getJson(path, { notifOnError: 0 })
+      .then(json => {
+        if (type === 'users') {
+          return getUserDisplayName(json);
+        }
+        return type === 'compounds' ? json.name : json.title;
+      })
+      // not found or not readable: the id is displayed instead
+      .catch(() => null));
   }
+  return referenceLabels.get(path);
 };
 
-const getPageForType = type => {
-  if (type === 'experiments') {
-    return 'experiments.php';
-  }
-  if (type === 'items') {
-    return 'database.php';
-  }
-  return null;
+const ReferenceLabel = ({ type, id }) => {
+  const [label, setLabel] = useState(null);
+  useEffect(() => {
+    // 0 is an entry that could not be found during an import
+    if (id === '0') {
+      return;
+    }
+    let active = true;
+    fetchReferenceLabel(type, id).then(result => {
+      if (active) {
+        setLabel(result || null);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [type, id]);
+  return <span title={id}>{label ?? id}</span>;
 };
 
 // render each value with the given function, separated by a comma
@@ -88,10 +120,16 @@ const ExtraFieldRenderer = ({ data, colDef }) => {
     ));
   }
 
-  // a link to an experiment or a resource holds its id
-  const page = getPageForType(field.type);
-  if (page && values.every(value => /^\d+$/.test(value))) {
-    return joinRendered(values, id => <a href={`${page}?mode=view&id=${id}`}>{id}</a>);
+  // a reference holds an id: display its label, but sort and filter on the id as only rendered cells are resolved
+  if (REFERENCE_TYPES.includes(field.type) && values.every(value => /^\d+$/.test(value))) {
+    const page = REFERENCE_PAGES[field.type];
+    return joinRendered(values, id => (page
+      ? <a href={`${page}?mode=view&id=${id}`}><ReferenceLabel type={field.type} id={id} /></a>
+      : <ReferenceLabel type={field.type} id={id} />));
+  }
+
+  if (field.type === 'email') {
+    return joinRendered(values, value => <a href={`mailto:${value}`}>{value}</a>);
   }
 
   if (field.type === 'url') {
@@ -135,6 +173,8 @@ export const extraFieldComparator = (valueA, valueB) => {
 export const makeExtraFieldColumnDef = name => ({
   colId: `${COL_ID_PREFIX}${name}`,
   headerName: name,
+  // custom field names are often long and get truncated in the header
+  headerTooltip: name,
   context: { extraFieldName: name },
   valueGetter: p => getExtraFieldValue(p.data, name),
   filterValueGetter: p => {
@@ -151,35 +191,47 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
   const [keys, setKeys] = useState(null);
   const [loadError, setLoadError] = useState(false);
   const rootRef = useRef(null);
+  const toggleRef = useRef(null);
   const searchRef = useRef(null);
 
-  // a failed request is retried the next time the picker is opened
-  useEffect(() => {
-    if (!isOpen) {
-      setLoadError(false);
-    }
-  }, [isOpen]);
-
-  // only fetch the keys the first time the picker is opened (or after a failure)
+  // fetch the keys the first time the picker is opened, and again after a failure (on retry or when reopened).
+  // A request still running when the picker closes is ignored: keys stay null and the next opening starts a new one.
   useEffect(() => {
     if (!isOpen || keys !== null || loadError) {
       return;
     }
-    const query = { limit: -1 };
-    if (entityType === 'experiments' || entityType === 'items') {
-      query.type = entityType;
-    }
-    ApiC.getJson('extra_fields_keys', query)
+    let active = true;
+    ApiC.getJson('extra_fields_keys', { limit: -1, type: entityType })
       .then(response => {
+        if (!active) {
+          return;
+        }
         setKeys(response
           .filter(entry => typeof entry.extra_fields_key === 'string' && entry.extra_fields_key.length > 0)
           .map(entry => ({ name: entry.extra_fields_key, frequency: entry.frequency })));
       })
       .catch(() => {
-        // keep keys as null so the request can be retried
-        setLoadError(true);
+        if (active) {
+          setLoadError(true);
+        }
       });
+    return () => {
+      active = false;
+    };
   }, [isOpen, keys, loadError, entityType]);
+
+  const open = () => {
+    setLoadError(false);
+    setIsOpen(true);
+  };
+
+  // focus goes back to the button when closing with the keyboard, not when clicking somewhere else
+  const close = restoreFocus => {
+    setIsOpen(false);
+    if (restoreFocus) {
+      toggleRef.current?.focus();
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -189,12 +241,12 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
 
     const closeOnOutsideClick = event => {
       if (rootRef.current && !rootRef.current.contains(event.target)) {
-        setIsOpen(false);
+        close(false);
       }
     };
     const closeOnEscape = event => {
       if (event.key === 'Escape') {
-        setIsOpen(false);
+        close(true);
       }
     };
     document.addEventListener('mousedown', closeOnOutsideClick);
@@ -236,17 +288,18 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
 
   return (
     <div className='entities-table-extra-fields dropup' ref={rootRef}>
+      {/* icon only, so its width doesn't depend on the language: the label is in the tooltip */}
       <button
+        ref={toggleRef}
         type='button'
         className='btn btn-transparent'
         aria-haspopup='true'
         aria-expanded={isOpen}
         aria-label={label}
         title={label}
-        onClick={() => setIsOpen(open => !open)}
+        onClick={() => (isOpen ? close(false) : open())}
       >
         <i className='fas fa-table-columns fa-fw' aria-hidden='true'></i>
-        <span className='d-none d-xl-inline ml-1'>{label}</span>
         {columns.length > 0 && <span className='badge badge-pill badge-secondary ml-1'>{columns.length}</span>}
       </button>
 
@@ -276,8 +329,11 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
               </li>
             )}
             {keys === null && loadError && (
-              <li className='dropdown-item-text text-muted'>
-                {i18next.t('error-fetch-request', { error: i18next.t('custom-fields') })}
+              <li className='dropdown-item-text text-muted d-flex justify-content-between align-items-center'>
+                <span>{i18next.t('error-fetch-request', { error: i18next.t('custom-fields') })}</span>
+                <button type='button' className='btn btn-sm btn-ghost ml-2' onClick={() => setLoadError(false)}>
+                  <i className='fas fa-rotate-right fa-fw mr-1' aria-hidden='true'></i>{i18next.t('refresh')}
+                </button>
               </li>
             )}
             {keys !== null && availableKeys.length === 0 && (

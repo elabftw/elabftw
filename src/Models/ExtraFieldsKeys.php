@@ -22,7 +22,6 @@ use Override;
 use PDO;
 
 use function implode;
-use function in_array;
 use function sprintf;
 
 /**
@@ -31,7 +30,7 @@ use function sprintf;
 final class ExtraFieldsKeys extends AbstractRest
 {
     /**
-     * @param ?EntityType $entityType only look in experiments or items, null means both
+     * @param ?EntityType $entityType only look in this entity type, null means experiments and items
      */
     public function __construct(
         private Users $Users,
@@ -56,10 +55,9 @@ final class ExtraFieldsKeys extends AbstractRest
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
         $sql = array();
-        $entityTypes = array(EntityType::Items, EntityType::Experiments);
-        if (in_array($this->entityType, $entityTypes, true)) {
-            $entityTypes = array($this->entityType);
-        }
+        $entityTypes = $this->entityType === null
+            ? array(EntityType::Items, EntityType::Experiments)
+            : array($this->entityType);
         foreach ($entityTypes as $entityType) {
             $sql[] = sprintf(
                 'SELECT JSON_UNQUOTE(`extra_fields_key`) AS `extra_fields_key`, COUNT(`id`) as `frequency`

@@ -399,7 +399,7 @@ abstract class AbstractEntity extends AbstractRest
         // Allow owned entries to pass the permission filter regardless of their team
         $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
         if ($displayParams->isFast()) {
-            return $this->readAllSimple($displayParams);
+            return $this->hydrateExtraFields($this->readAllSimple($displayParams), $displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         $plainQuery = trim($displayParams->getQuery()->getString('q'));
@@ -1294,11 +1294,8 @@ abstract class AbstractEntity extends AbstractRest
      */
     protected function hydrateExtraFields(array $entities, QueryParamsInterface $displayParams): array
     {
-        if (!$displayParams instanceof DisplayParams || empty($entities)) {
-            return $entities;
-        }
         $names = $displayParams->getExtraFieldsColumns();
-        if (empty($names)) {
+        if (empty($names) || empty($entities)) {
             return $entities;
         }
 
@@ -1311,8 +1308,7 @@ abstract class AbstractEntity extends AbstractRest
                 CAST(:names AS JSON),
                 \'$[*]\' COLUMNS (field_name VARCHAR(%d) PATH \'$\')
             ) AS requested
-            WHERE entity.id IN (%s)
-            HAVING field IS NOT NULL',
+            WHERE entity.id IN (%s)',
             $this->entityType->value,
             DisplayParams::MAX_EXTRA_FIELD_NAME_LENGTH,
             implode(',', $entityIds),

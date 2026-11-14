@@ -17,6 +17,7 @@ import {
   PaginationModule,
   RowSelectionModule,
   TextFilterModule,
+  TooltipModule,
   provideGlobalGridOptions,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
@@ -28,6 +29,7 @@ import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
 import i18next from './i18n';
 import { DEFAULT_AG_GRID_PAGINATION, errorMessage, getEntityTypeFromPage } from './misc';
+import { EntityType } from './interfaces';
 import { readStorage, writeStorage } from './localStorage';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
@@ -38,26 +40,28 @@ import {
   storeExtraFieldsColumns,
 } from './entities-table-extra-fields';
 
-// shared by experiments and resources before custom field columns existed, migrated on first read
-const LEGACY_COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
-// the columns differ between experiments and resources (custom fields), so the layout is stored per entity type
-const getColumnStateStorageKey = entityType => `${LEGACY_COLUMN_STATE_STORAGE_KEY}_${entityType}`;
-// the entity type is fixed by the page (experiments.php or database.php)
-const COLUMN_STATE_STORAGE_KEY = getColumnStateStorageKey(getEntityTypeFromPage(window.location));
+// the entity type is fixed by the page: experiments, resources or their templates
+const ENTITY_TYPE = getEntityTypeFromPage(window.location);
 
-// copy the layout stored with the shared key to each entity type, then drop it
+// shared by all entity types before custom field columns existed, migrated on first read
+const LEGACY_COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
+// the columns differ between entity types (custom fields), so the layout is stored per entity type
+const getColumnStateStorageKey = entityType => `${LEGACY_COLUMN_STATE_STORAGE_KEY}_${entityType}`;
+const COLUMN_STATE_STORAGE_KEY = getColumnStateStorageKey(ENTITY_TYPE);
+
+// copy the layout stored with the shared key to each entity type that shows this table, then drop it
 const migrateLegacyColumnState = () => {
-  try {
-    const legacy = localStorage.getItem(LEGACY_COLUMN_STATE_STORAGE_KEY);
-    if (legacy === null) {
-      return;
+  const legacy = readStorage(LEGACY_COLUMN_STATE_STORAGE_KEY);
+  if (legacy === null) {
+    return;
+  }
+  [EntityType.Experiment, EntityType.Item, EntityType.Template, EntityType.ItemType].forEach(entityType => {
+    const key = getColumnStateStorageKey(entityType);
+    if (readStorage(key) === null) {
+      writeStorage(key, legacy);
     }
-    ['experiments', 'items'].forEach(entityType => {
-      const key = getColumnStateStorageKey(entityType);
-      if (localStorage.getItem(key) === null) {
-        localStorage.setItem(key, legacy);
-      }
-    });
+  });
+  try {
     localStorage.removeItem(LEGACY_COLUMN_STATE_STORAGE_KEY);
   } catch {
     // localStorage might be unavailable
@@ -176,14 +180,15 @@ const EntitiesTable = ({
 }) => {
   const [rowData, setRowData] = useState([]);
   const [gridApi, setGridApi] = useState(null);
-  const entityType = useMemo(() => getEntityTypeFromPage(window.location), []);
   // columns built from custom fields, they are part of the column defs from the start
   // so the stored column state (width, order, sort) applies to them too
-  const [extraFieldsColumns, setExtraFieldsColumns] = useState(() => getStoredExtraFieldsColumns(entityType));
-  // fetchData needs the current value without being recreated, as it is used in event listeners
-  const extraFieldsColumnsRef = useRef(extraFieldsColumns);
-  // remember the last filters so adding a column refetches the same entries
+  const [extraFieldsColumns, setExtraFieldsColumns] = useState(() => getStoredExtraFieldsColumns(ENTITY_TYPE));
+  // the filters come with the event, they are kept so adding a column refetches the same entries
   const lastFilterEventRef = useRef(undefined);
+
+  useEffect(() => {
+    storeExtraFieldsColumns(ENTITY_TYPE, extraFieldsColumns);
+  }, [extraFieldsColumns]);
 
   const onGridReady = event => {
     migrateLegacyColumnState();
@@ -289,7 +294,7 @@ const EntitiesTable = ({
     [baseColumnDefs, extraFieldsColumns],
   );
 
-  const getResolvedEntityFilterParams = useCallback(event => {
+  const getResolvedEntityFilterParams = useCallback((event, columns) => {
     const params = getEntityFilterParams(event);
 
     applyStringParamFallback(params, 'order', order);
@@ -298,7 +303,7 @@ const EntitiesTable = ({
     applyStringParamFallback(params, 'related_origin', relatedOrigin);
 
     params.delete('extra_fields[]');
-    extraFieldsColumnsRef.current.forEach(name => params.append('extra_fields[]', name));
+    columns.forEach(name => params.append('extra_fields[]', name));
 
     return params;
   }, [order, sort, related, relatedOrigin]);
@@ -308,17 +313,17 @@ const EntitiesTable = ({
 
   // all the entries are loaded in the table, which does client side pagination
   // like the list (EntityList.svelte), tell the forms that changed the filters if they were rejected, see initReactionSearch() in show.ts
-  const fetchData = useCallback(async event => {
+  // columns is given when it changes, as the state is only updated on the next render
+  const fetchData = useCallback(async (event, columns = extraFieldsColumns) => {
     if (event !== undefined) {
       lastFilterEventRef.current = event;
     }
-    const params = getResolvedEntityFilterParams(lastFilterEventRef.current);
+    const params = getResolvedEntityFilterParams(lastFilterEventRef.current, columns);
     const queryString = params.toString();
     const seq = ++requestSeq.current;
 
     try {
-      const endpoint = getEntityTypeFromPage(window.location);
-      const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+      const url = queryString ? `${ENTITY_TYPE}?${queryString}` : ENTITY_TYPE;
       const entities = await ApiC.getJson(url, {notifOnError: 0});
       if (seq !== requestSeq.current) {
         return;
@@ -334,7 +339,7 @@ const EntitiesTable = ({
       window.dispatchEvent(new CustomEvent('entity-list-rejected', { detail: errorMessage(error) }));
       console.error(`Could not load entities: ${error}`);
     }
-  }, [getResolvedEntityFilterParams]);
+  }, [getResolvedEntityFilterParams, extraFieldsColumns]);
 
   const getRowId = useCallback(params => String(params.data.id), []);
 
@@ -377,24 +382,19 @@ const EntitiesTable = ({
     selectedEntities?.set(selectedIds);
   };
 
-  const updateExtraFieldsColumns = names => {
-    extraFieldsColumnsRef.current = names;
-    setExtraFieldsColumns(names);
-    storeExtraFieldsColumns(entityType, names);
-  };
-
   const addExtraFieldColumn = name => {
-    if (extraFieldsColumnsRef.current.includes(name)) {
+    if (extraFieldsColumns.includes(name)) {
       return;
     }
-    updateExtraFieldsColumns([...extraFieldsColumnsRef.current, name]);
+    const columns = [...extraFieldsColumns, name];
+    setExtraFieldsColumns(columns);
     // the values of a custom field are only sent when requested
-    fetchData();
+    fetchData(undefined, columns);
   };
 
   // no need to refetch here: the values of the removed column are simply not displayed anymore
   const removeExtraFieldColumn = name => {
-    updateExtraFieldsColumns(extraFieldsColumnsRef.current.filter(column => column !== name));
+    setExtraFieldsColumns(columns => columns.filter(column => column !== name));
   };
 
   const defaultColDef = useMemo(() => {
@@ -461,7 +461,7 @@ const EntitiesTable = ({
         <div className='entities-table-actions'>
           <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
           <ExtraFieldsColumnsPicker
-            entityType={entityType}
+            entityType={ENTITY_TYPE}
             columns={extraFieldsColumns}
             onAdd={addExtraFieldColumn}
             onRemove={removeExtraFieldColumn}
@@ -502,6 +502,8 @@ export const mountEntitiesTable = (
     RowSelectionModule,
     PaginationModule,
     TextFilterModule,
+    // headerTooltip of the custom field columns
+    TooltipModule,
   ]);
 
   if (!entitiesTableRoot) {

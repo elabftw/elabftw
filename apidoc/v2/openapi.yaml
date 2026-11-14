@@ -130,7 +130,7 @@ components:
           type: string
           maxLength: 255
       description: |
-        Names of custom fields (keys of metadata.extra_fields) to include in the response. Each entry will then have an `extra_fields_values` object, with the requested names as keys, holding the `value` (multiple values are joined with a comma), `values` (an array with each individual value), `unit` and `type` of that custom field. Entries without the custom field won't have that key. This parameter does not filter the results.
+        Names of custom fields (keys of metadata.extra_fields) to include in the response. Each entry will then have an `extra_fields_values` object, with the requested names as keys, holding the `value` (multiple values are joined with a comma), `values` (an array with each individual value), `unit` and `type` of that custom field. Entries without the custom field won't have that key. This parameter does not filter the results. It also applies with `fast`.
       examples:
         first:
           summary: Include the values of the "Concentration" and "Solvent" custom fields.
@@ -9823,10 +9823,10 @@ paths:
       - name: type
         in: query
         description: |
-          Only look for custom fields keys in experiments or in items (resources). By default, both are used.
+          Only look for custom fields keys in this entity type. By default, experiments and items (resources) are used. An unknown type is rejected.
         schema:
           type: string
-          enum: ['experiments', 'items']
+          enum: ['experiments', 'items', 'experiments_templates', 'items_types']
 
     get:
       tags: ['Custom Fields Keys']

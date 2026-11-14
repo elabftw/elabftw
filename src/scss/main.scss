@@ -2257,11 +2257,7 @@ div > .sticky-navbar {
 }
 
 .entities-table-wrapper .ag-paging-panel {
-  // reserve room for the gear (~56px with its caret) and the icon only custom fields button with its badge
+  // reserve room for the gear (~56px with its caret) and the custom fields button with its badge:
+  // both are icon only, so this width doesn't depend on the language
   padding-left: 136px;
-
-  @media (min-width: 1200px) {
-    // the label of the custom fields button is only shown on large screens
-    padding-left: 380px;
-  }
 }

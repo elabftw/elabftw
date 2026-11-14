@@ -41,8 +41,9 @@ class ExtraFieldsKeysTest extends \PHPUnit\Framework\TestCase
         // only one entity type
         $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', -1, EntityType::Experiments))->readAll());
         $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', -1, EntityType::Items))->readAll());
-        // other entity types fall back to experiments and items
+        // templates too
         $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', -1, EntityType::Templates))->readAll());
+        $this->assertIsArray((new ExtraFieldsKeys($this->Users, '', -1, EntityType::ItemsTypes))->readAll());
     }
 
     public function testReadKeysOfOneEntityType(): void

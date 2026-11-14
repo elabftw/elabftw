@@ -73,6 +73,9 @@ final class DisplayParams extends BaseQueryParams
 
     private ?ReactionSearch $ReactionSearch = null;
 
+    // names of the custom fields (metadata.extra_fields keys) to include as additional columns
+    private array $extraFieldsColumns = array();
+
     public function __construct(
         private Users $requester,
         public EntityType $entityType,
@@ -171,12 +174,10 @@ final class DisplayParams extends BaseQueryParams
         $this->skipOrderPinned = $value;
     }
 
-    /**
-     * Names of the custom fields (metadata.extra_fields keys) to include as additional columns
-     */
+    #[Override]
     public function getExtraFieldsColumns(): array
     {
-        return $this->getExtraFieldsColumnsFromQuery($this->getQuery());
+        return $this->extraFieldsColumns;
     }
 
     /**
@@ -197,6 +198,7 @@ final class DisplayParams extends BaseQueryParams
         if ($query->getInt('full') === 1) {
             $this->full = true;
         }
+        $this->extraFieldsColumns = $this->getExtraFieldsColumnsFromQuery($query);
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param

@@ -168,6 +168,15 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $found);
         $this->assertSame('12.5', ((array) reset($found)['extra_fields_values'])['Concentration']['value']);
 
+        // fast path (autocomplete)
+        $all = $this->Experiments->readAll(new DisplayParams(
+            $this->Users,
+            EntityType::Experiments,
+            new InputBag(array('fastq' => $title, 'extra_fields' => array('Concentration'))),
+        ));
+        $this->assertCount(1, $all);
+        $this->assertSame('12.5', ((array) $all[0]['extra_fields_values'])['Concentration']['value']);
+
         // without the parameter, nothing is added
         $all = $this->Experiments->readAll(new DisplayParams($this->Users, EntityType::Experiments, new InputBag(array('q' => $title))));
         $this->assertArrayNotHasKey('extra_fields_values', $all[0]);

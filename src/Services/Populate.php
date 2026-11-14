@@ -28,9 +28,11 @@ use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\LocalPasswordHash;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ApiKeys;
 use Elabftw\Models\Comments;
 use Elabftw\Models\Branding;
@@ -40,8 +42,6 @@ use Elabftw\Models\Experiments;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Items;
-use Elabftw\Models\Links\Items2ExperimentsLinks;
-use Elabftw\Models\Links\Items2ItemsLinks;
 use League\Flysystem\Filesystem as Fs;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Elabftw\Models\ItemsStatus;
@@ -74,6 +74,8 @@ use function random_bytes;
 use function sprintf;
 use function explode;
 use function shuffle;
+use function array_map;
+use function array_merge;
 
 /**
  * This is used to generate data for dev purposes
@@ -90,6 +92,10 @@ final class Populate
 
     // number of templates to generate
     private const int TEMPLATES_ITER = 6;
+
+    private const array LINK_TYPES = array('experiments_links', 'items_links', 'compounds_links');
+
+    private array $pendingLinks = array();
 
     private \Faker\Generator $faker;
 
@@ -213,24 +219,7 @@ final class Populate
                         $Tags->postAction(Action::Create, array('tag' => $tag));
                     }
                 }
-                if (isset($template['items_links'])) {
-                    foreach ($template['items_links'] as $target) {
-                        $Templates->ItemsLinks->setId($target);
-                        $Templates->ItemsLinks->postAction(Action::Create, array());
-                    }
-                }
-                if (isset($template['compounds_links'])) {
-                    $CompoundsLinks = LinksFactory::getCompoundsLinks($Templates);
-                    foreach ($template['compounds_links'] as $target) {
-
-                        // let it fail, we don't care
-                        $CompoundsLinks->setId($target);
-                        try {
-                            $CompoundsLinks->postAction(Action::Create, array());
-                        } catch (ResourceNotFoundException | ForbiddenException) {
-                        }
-                    }
-                }
+                $this->queueLinks($Templates, $template);
             }
 
             $ResourcesCategories = new ResourcesCategories($Teams);
@@ -241,7 +230,7 @@ final class Populate
                 $this->output->writeln(sprintf('├ + resource category: %s (id: %d in team: %d)', $entry['name'], $id, $teamid));
             }
 
-            // add Resources Templates (items types)
+            // ITEMS TYPES
             foreach ($team['items_types'] ?? array() as $items_types) {
                 $Admin = $this->getRandomUserInTeam($teamid, admin: 1);
                 $ItemsTypes = new ItemsTypes($Admin);
@@ -253,6 +242,8 @@ final class Populate
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     metadata: $items_types['metadata'] ?? '{}',
                 );
+                $ItemsTypes->setId($itemTypeId);
+                $this->queueLinks($ItemsTypes, $items_types);
                 $this->output->writeln(sprintf('├ + resource template: %s (id: %d in team: %d)', $items_types['name'], $itemTypeId, $teamid));
             }
 
@@ -305,37 +296,7 @@ final class Populate
                         new Comments($Experiments)->postAction(Action::Create, array('comment' => $comment));
                     }
                 }
-                if (isset($experiment['experiments_links'])) {
-                    foreach ($experiment['experiments_links'] as $target) {
-                        $Experiments->ExperimentsLinks->setId($target);
-                        // let it fail, we don't care
-                        try {
-                            $Experiments->ExperimentsLinks->postAction(Action::Create, array());
-                        } catch (ResourceNotFoundException | ForbiddenException) {
-                        }
-                    }
-                }
-                if (isset($experiment['items_links'])) {
-                    foreach ($experiment['items_links'] as $target) {
-                        $Experiments->ItemsLinks->setId($target);
-                        // let it fail, we don't care
-                        try {
-                            $Experiments->ItemsLinks->postAction(Action::Create, array());
-                        } catch (ResourceNotFoundException | ForbiddenException) {
-                        }
-                    }
-                }
-                if (isset($experiment['compounds_links'])) {
-                    $CompoundsLinks = LinksFactory::getCompoundsLinks($Experiments);
-                    foreach ($experiment['compounds_links'] as $target) {
-                        // let it fail, we don't care
-                        $CompoundsLinks->setId($target);
-                        try {
-                            $CompoundsLinks->postAction(Action::Create, array());
-                        } catch (ResourceNotFoundException | ForbiddenException) {
-                        }
-                    }
-                }
+                $this->queueLinks($Experiments, $experiment);
                 $this->output->writeln(sprintf('├ + experiment: %s (id: %d in team: %d)', $experiment['title'], $id, $teamid));
             }
 
@@ -365,29 +326,7 @@ final class Populate
                     if (isset($item['metadata'])) {
                         $Items->patch(Action::Update, array('metadata' => $item['metadata']));
                     }
-                    if (isset($item['experiments_links'])) {
-                        foreach ($item['experiments_links'] as $target) {
-                            $ExperimentsLinks = new Items2ExperimentsLinks($Items, (int) $target);
-                            $ExperimentsLinks->postAction(Action::Create, array());
-                        }
-                    }
-                    if (isset($item['items_links'])) {
-                        foreach ($item['items_links'] as $target) {
-                            $ItemsLinks = new Items2ItemsLinks($Items, (int) $target);
-                            $ItemsLinks->postAction(Action::Create, array());
-                        }
-                    }
-                    if (isset($item['compounds_links'])) {
-                        $CompoundsLinks = LinksFactory::getCompoundsLinks($Items);
-                        foreach ($item['compounds_links'] as $target) {
-                            // let it fail, we don't care
-                            $CompoundsLinks->setId($target);
-                            try {
-                                $CompoundsLinks->postAction(Action::Create, array());
-                            } catch (ResourceNotFoundException | ForbiddenException) {
-                            }
-                        }
-                    }
+                    $this->queueLinks($Items, $item);
                     $this->output->writeln(sprintf('├ + resource: %s (id: %d in team: %d)', $item['title'], $id, $teamid));
                 }
             }
@@ -442,6 +381,35 @@ final class Populate
                 ghsStatements: Compound::extractGhsCodes($compound['ghs_statements'] ?? ''),
             );
             $this->output->writeln(sprintf('├ + compound: %s (ID: %d)', $compound['name'], $id));
+        }
+        $this->createLinks();
+    }
+
+    private function queueLinks(AbstractEntity $Entity, array $config): void
+    {
+        foreach (self::LINK_TYPES as $type) {
+            $this->pendingLinks = array_merge($this->pendingLinks, array_map(fn($target): array => array($Entity, $type, (int) $target), $config[$type] ?? array()), );
+        }
+    }
+
+    private function createLinks(): void
+    {
+        foreach ($this->pendingLinks as [$Entity, $type, $target]) {
+            // entities are queued right after setId(), so id is never null here
+            $entityId = (int) $Entity->id;
+            $Links = match ($type) {
+                'experiments_links' => $Entity->ExperimentsLinks,
+                'items_links' => $Entity->ItemsLinks,
+                'compounds_links' => LinksFactory::getCompoundsLinks($Entity),
+                default => throw new ImproperActionException(sprintf('Unknown link type: %s', $type)),
+            };
+            $Links->setId((int) $target);
+            try {
+                $Links->postAction(Action::Create, array());
+                $this->output->writeln(sprintf('├ + links: %s %d → %s %d', $Entity->entityType->value, $entityId, $type, $target));
+            } catch (ResourceNotFoundException | ForbiddenException) {
+                // let it fail, we don't care
+            }
         }
     }
 

@@ -20,6 +20,9 @@ use Elabftw\Models\Config;
 use Exception;
 
 use function error_reporting;
+use function header;
+use function headers_sent;
+use function http_response_code;
 use function set_time_limit;
 use function strpos;
 
@@ -64,6 +67,10 @@ try {
     $Response->prepare($App->Request);
     $Response->send();
 } catch (Exception $e) {
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Cache-Control: private, no-store');
+    }
     $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Download error', $e)));
     $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
 }

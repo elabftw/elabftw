@@ -64,9 +64,6 @@ final class DisplayParams extends BaseQueryParams
 
     protected string $orderIsPinnedSql = 'is_pinned DESC,';
 
-    // names of the custom fields (metadata.extra_fields keys) to include as additional columns
-    private array $extraFieldsColumns = array();
-
     public function __construct(
         private Users $requester,
         public EntityType $entityType,
@@ -155,9 +152,12 @@ final class DisplayParams extends BaseQueryParams
         $this->skipOrderPinned = $value;
     }
 
+    /**
+     * Names of the custom fields (metadata.extra_fields keys) to include as additional columns
+     */
     public function getExtraFieldsColumns(): array
     {
-        return $this->extraFieldsColumns;
+        return $this->getExtraFieldsColumnsFromQuery($this->getQuery());
     }
 
     /**
@@ -239,30 +239,6 @@ final class DisplayParams extends BaseQueryParams
         $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
         // RATING FILTER
         $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
-        // CUSTOM FIELDS COLUMNS
-        $this->extraFieldsColumns = $this->getExtraFieldsColumnsFromQuery($query);
-    }
-
-    /**
-     * Read the extra_fields[] query parameter. It is lenient: invalid names are ignored
-     * instead of failing the whole listing, as they only add optional columns.
-     */
-    private function getExtraFieldsColumnsFromQuery(InputBag $query): array
-    {
-        // don't use $query->all('extra_fields') as it throws if a scalar is sent
-        $input = $query->all()['extra_fields'] ?? array();
-        if (!is_array($input)) {
-            $input = array($input);
-        }
-        $names = array();
-        foreach ($input as $name) {
-            // keys are matched as is, so no trimming here
-            if (!is_string($name) || trim($name) === '' || mb_strlen($name) > self::MAX_EXTRA_FIELD_NAME_LENGTH) {
-                continue;
-            }
-            $names[] = $name;
-        }
-        return array_slice(array_values(array_unique($names)), 0, self::MAX_EXTRA_FIELDS_COLUMNS);
     }
 
     /**
@@ -298,5 +274,27 @@ final class DisplayParams extends BaseQueryParams
         }
         // group all conditions to preserve SQL operator precedence when OR is present.
         return sprintf(' AND (%s)', implode(' OR ', $conditions));
+    }
+
+    /**
+     * Read the extra_fields[] query parameter. It is lenient: invalid names are ignored
+     * instead of failing the whole listing, as they only add optional columns.
+     */
+    private function getExtraFieldsColumnsFromQuery(InputBag $query): array
+    {
+        // don't use $query->all('extra_fields') as it throws if a scalar is sent
+        $input = $query->all()['extra_fields'] ?? array();
+        if (!is_array($input)) {
+            $input = array($input);
+        }
+        $names = array();
+        foreach ($input as $name) {
+            // keys are matched as is, so no trimming here
+            if (!is_string($name) || trim($name) === '' || mb_strlen($name) > self::MAX_EXTRA_FIELD_NAME_LENGTH) {
+                continue;
+            }
+            $names[] = $name;
+        }
+        return array_slice(array_values(array_unique($names)), 0, self::MAX_EXTRA_FIELDS_COLUMNS);
     }
 }

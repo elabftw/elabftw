@@ -263,10 +263,12 @@ class Email
         // send emails one by one
         $sentCount = 0;
         $plainSubject = self::toPlainText($subject);
+        // same content for every recipient: convert it once
+        $plainContent = self::htmlToText($content);
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, $plainSubject, '', htmlBody: $content, replyTo: $replyTo)) {
+                if ($this->sendEmail($address, $plainSubject, $plainContent, htmlBody: $content, replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }

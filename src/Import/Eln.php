@@ -701,11 +701,7 @@ class Eln extends AbstractZip
         // CATEGORY
         // a forced category belongs to the forced entity type: do not apply it to a dataset that kept its own type
         $forcedCategory = $this->entityType === null || $entityType === $this->entityType ? $this->category : null;
-        $categoryId = $forcedCategory;
-        if (isset($dataset['about']) && $forcedCategory === null) {
-            $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
-            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
-        }
+        $categoryId = $forcedCategory ?? $this->getCategoryIdFromAbout($entityType, $dataset['about'] ?? null);
 
         // CREATE ENTITY
         $entityId = $this->Entity->create();
@@ -747,7 +743,9 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->update(new EntityParams('category', $categoryId));
+                    if ($categoryId !== null) {
+                        $this->Entity->update(new EntityParams('category', $categoryId));
+                    }
                     break;
                     // COMMENTS
                 case 'comment':
@@ -1059,6 +1057,31 @@ class Eln extends AbstractZip
             );
         }
         return $changelog;
+    }
+
+    /**
+     * `about` is a single reference in eLabFTW's own exports, but other software can link several nodes there.
+     * An entity only has one category, so use the first reference that resolves to a named node.
+     */
+    private function getCategoryIdFromAbout(EntityType $entityType, mixed $about): ?int
+    {
+        if (!is_array($about)) {
+            return null;
+        }
+        $references = array_is_list($about) ? $about : array($about);
+        foreach ($references as $reference) {
+            $id = is_array($reference) ? ($reference['@id'] ?? null) : null;
+            if (!is_string($id)) {
+                continue;
+            }
+            $node = $this->getNodeFromId($id);
+            if (!is_string($node['name'] ?? null) || $node['name'] === '') {
+                continue;
+            }
+            $color = is_string($node['color'] ?? null) ? $node['color'] : null;
+            return $this->getCategoryId($entityType, $node['name'], $color);
+        }
+        return null;
     }
 
     private function attrToHtml(array $attr, string $title): string

@@ -413,6 +413,9 @@ class Eln extends AbstractZip
             return;
         }
         $Author = $this->getAuthor($dataset);
+        // `about` can hold several references (see getCategoryIdFromAbout()): keep it aside while the forced category is resolved
+        $about = $dataset['about'] ?? null;
+        unset($dataset['about']);
 
         // a .eln can contain mixed types: experiments, resources, or templates.
         $entityType = $this->getEntityType($dataset);
@@ -420,7 +423,18 @@ class Eln extends AbstractZip
         $this->Entity = $entityType->toInstance($Author, bypassReadPermission: true, bypassWritePermission: true);
 
         // CATEGORY
-        $categoryId = $this->category ?? $this->getCategoryIdFromAbout($entityType, $dataset['about'] ?? null);
+        // a forced category belongs to the forced entity type: do not apply it to a dataset that kept its own type
+        $forcedCategory = $this->entityType === null || $entityType === $this->entityType ? $this->category : null;
+        $categoryId = $forcedCategory;
+        if (isset($dataset['about']) && $forcedCategory === null) {
+            $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
+            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
+        }
+
+        if ($about !== null) {
+            $categoryId ??= $this->getCategoryIdFromAbout($entityType, $about);
+            $dataset['about'] = $about;
+        }
 
         // CREATE ENTITY
         $entityId = $this->Entity->create();

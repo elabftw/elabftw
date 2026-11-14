@@ -130,7 +130,7 @@ components:
           type: string
           maxLength: 255
       description: |
-        Names of custom fields (keys of metadata.extra_fields) to include in the response. Each entry will then have an `extra_fields_values` object, with the requested names as keys, holding the `value` (multiple values are joined with a comma), `unit` and `type` of that custom field. Entries without the custom field won't have that key. This parameter does not filter the results.
+        Names of custom fields (keys of metadata.extra_fields) to include in the response. Each entry will then have an `extra_fields_values` object, with the requested names as keys, holding the `value` (multiple values are joined with a comma), `values` (an array with each individual value), `unit` and `type` of that custom field. Entries without the custom field won't have that key. This parameter does not filter the results.
       examples:
         first:
           summary: Include the values of the "Concentration" and "Solvent" custom fields.

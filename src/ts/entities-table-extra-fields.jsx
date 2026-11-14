@@ -53,36 +53,51 @@ const getPageForType = type => {
   return null;
 };
 
+// render each value with the given function, separated by a comma
+const joinRendered = (values, render) => (
+  <span>
+    {values.map((value, index) => (
+      <React.Fragment key={index}>
+        {index > 0 && ', '}
+        {render(value)}
+      </React.Fragment>
+    ))}
+  </span>
+);
+
+const isHttpUrl = value => /^https?:\/\//i.test(value);
+
 const ExtraFieldRenderer = ({ data, colDef }) => {
   const field = data?.extra_fields_values?.[colDef.context.extraFieldName];
   if (!field || field.value === '') {
     return null;
   }
+  // the joined value is used for sorting and filtering, the individual values for display
+  const values = (Array.isArray(field.values) ? field.values : [field.value]).filter(value => value !== '');
 
   if (field.type === 'checkbox') {
     // the raw value is kept as text for the floating filter, only the display changes
-    return field.value === 'on'
-      ? <span><i className='fas fa-square-check fa-fw' aria-hidden='true'></i><span className='sr-only'>{field.value}</span></span>
-      : null;
+    if (!values.includes('on')) {
+      return null;
+    }
+    return joinRendered(values, value => (
+      <>
+        <i className={`${value === 'on' ? 'fas fa-square-check' : 'far fa-square'} fa-fw`} aria-hidden='true'></i>
+        <span className='sr-only'>{value}</span>
+      </>
+    ));
   }
 
   // a link to an experiment or a resource holds its id
   const page = getPageForType(field.type);
-  if (page && /^\d+(, \d+)*$/.test(field.value)) {
-    return (
-      <span>
-        {field.value.split(', ').map((id, index) => (
-          <React.Fragment key={id}>
-            {index > 0 && ', '}
-            <a href={`${page}?mode=view&id=${id}`}>{id}</a>
-          </React.Fragment>
-        ))}
-      </span>
-    );
+  if (page && values.every(value => /^\d+$/.test(value))) {
+    return joinRendered(values, id => <a href={`${page}?mode=view&id=${id}`}>{id}</a>);
   }
 
-  if (field.type === 'url' && /^https?:\/\//i.test(field.value)) {
-    return <a href={field.value} target='_blank' rel='noopener noreferrer'>{field.value}</a>;
+  if (field.type === 'url') {
+    return joinRendered(values, value => (isHttpUrl(value)
+      ? <a href={value} target='_blank' rel='noopener noreferrer'>{value}</a>
+      : value));
   }
 
   return <span>{field.value}{field.unit ? ` ${field.unit}` : ''}</span>;
@@ -90,17 +105,29 @@ const ExtraFieldRenderer = ({ data, colDef }) => {
 
 const getExtraFieldValue = (data, name) => data?.extra_fields_values?.[name]?.value ?? '';
 
-// sort numbers as numbers, everything else as text, and keep empty cells together
-const extraFieldComparator = (valueA, valueB) => {
+const toFiniteNumber = value => {
+  if (String(value).trim() === '') {
+    return null;
+  }
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+};
+
+// empty cells first, then numbers sorted as numbers, then everything else sorted as text
+// each group is ordered on its own so the ordering stays consistent (no cycle between numeric and text comparison)
+export const extraFieldComparator = (valueA, valueB) => {
   const a = valueA ?? '';
   const b = valueB ?? '';
   if (a === '' || b === '') {
     return a === b ? 0 : (a === '' ? -1 : 1);
   }
-  const numberA = Number(a);
-  const numberB = Number(b);
-  if (Number.isFinite(numberA) && Number.isFinite(numberB)) {
-    return numberA - numberB;
+  const numberA = toFiniteNumber(a);
+  const numberB = toFiniteNumber(b);
+  if (numberA !== null && numberB !== null) {
+    return numberA === numberB ? 0 : (numberA < numberB ? -1 : 1);
+  }
+  if (numberA !== null || numberB !== null) {
+    return numberA !== null ? -1 : 1;
   }
   return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
 };
@@ -126,9 +153,16 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
   const rootRef = useRef(null);
   const searchRef = useRef(null);
 
-  // only fetch the keys the first time the picker is opened
+  // a failed request is retried the next time the picker is opened
   useEffect(() => {
-    if (!isOpen || keys !== null) {
+    if (!isOpen) {
+      setLoadError(false);
+    }
+  }, [isOpen]);
+
+  // only fetch the keys the first time the picker is opened (or after a failure)
+  useEffect(() => {
+    if (!isOpen || keys !== null || loadError) {
       return;
     }
     const query = { limit: -1 };
@@ -142,10 +176,10 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
           .map(entry => ({ name: entry.extra_fields_key, frequency: entry.frequency })));
       })
       .catch(() => {
+        // keep keys as null so the request can be retried
         setLoadError(true);
-        setKeys([]);
       });
-  }, [isOpen, keys, entityType]);
+  }, [isOpen, keys, loadError, entityType]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -236,15 +270,18 @@ export const ExtraFieldsColumnsPicker = ({ entityType, columns, onAdd, onRemove 
 
         {!isFull && (
           <ul className='list-unstyled mb-0 entities-table-extra-fields-list'>
-            {keys === null && (
+            {keys === null && !loadError && (
               <li className='dropdown-item-text text-muted'>
                 <i className='fas fa-spinner fa-spin fa-fw mr-2' aria-hidden='true'></i>{i18next.t('loading')}
               </li>
             )}
-            {keys !== null && availableKeys.length === 0 && (
+            {keys === null && loadError && (
               <li className='dropdown-item-text text-muted'>
-                {loadError ? i18next.t('error-fetch-request', { error: i18next.t('custom-fields') }) : i18next.t('no-custom-field-found')}
+                {i18next.t('error-fetch-request', { error: i18next.t('custom-fields') })}
               </li>
+            )}
+            {keys !== null && availableKeys.length === 0 && (
+              <li className='dropdown-item-text text-muted'>{i18next.t('no-custom-field-found')}</li>
             )}
             {availableKeys.map(key => (
               <li key={key.name}>

@@ -148,8 +148,9 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         ));
         $this->assertCount(1, $all);
         $values = (array) $all[0]['extra_fields_values'];
-        $this->assertSame(array('value' => '12.5', 'unit' => 'mM', 'type' => 'number'), $values['Concentration']);
+        $this->assertSame(array('value' => '12.5', 'values' => array('12.5'), 'unit' => 'mM', 'type' => 'number'), $values['Concentration']);
         $this->assertSame('water, ethanol', $values['Solvents']['value']);
+        $this->assertSame(array('water', 'ethanol'), $values['Solvents']['values']);
         $this->assertSame('quoted', $values['with "quotes"']['value']);
         // keys are matched exactly, and missing fields are absent
         $this->assertArrayNotHasKey('concentration', $values);

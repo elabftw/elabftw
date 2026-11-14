@@ -37,7 +37,10 @@ import {
   storeExtraFieldsColumns,
 } from './entities-table-extra-fields';
 
-const COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
+// shared by experiments and resources before custom field columns existed, migrated on first read
+const LEGACY_COLUMN_STATE_STORAGE_KEY = 'persistent_entities_table_column_state_v1';
+// the columns differ between experiments and resources (custom fields), so the layout is stored per entity type
+const getColumnStateStorageKey = entityType => `${LEGACY_COLUMN_STATE_STORAGE_KEY}_${entityType}`;
 
 // allow filtering by displayed values for cells that render their raw value differently
 const yesNo = v => v === 1 ? i18next.t('yes') : i18next.t('no');
@@ -98,20 +101,36 @@ const applyNumberParamFallback = (params, param, fallback) => {
   }
 };
 
-const getStoredColumnState = () => {
+// copy the layout stored with the shared key to each entity type, then drop it
+const migrateLegacyColumnState = () => {
+  const legacy = localStorage.getItem(LEGACY_COLUMN_STATE_STORAGE_KEY);
+  if (legacy === null) {
+    return;
+  }
+  ['experiments', 'items'].forEach(entityType => {
+    const key = getColumnStateStorageKey(entityType);
+    if (localStorage.getItem(key) === null) {
+      localStorage.setItem(key, legacy);
+    }
+  });
+  localStorage.removeItem(LEGACY_COLUMN_STATE_STORAGE_KEY);
+};
+
+const getStoredColumnState = entityType => {
   try {
+    migrateLegacyColumnState();
     return JSON.parse(
-      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
+      localStorage.getItem(getColumnStateStorageKey(entityType)) ?? 'null'
     );
   } catch {
     return null;
   }
 };
 
-const storeColumnState = api => {
+const storeColumnState = (entityType, api) => {
   try {
     localStorage.setItem(
-      COLUMN_STATE_STORAGE_KEY,
+      getColumnStateStorageKey(entityType),
       JSON.stringify(api.getColumnState())
     );
   } catch {
@@ -170,9 +189,11 @@ const EntitiesTable = ({
   const extraFieldsColumnsRef = useRef(extraFieldsColumns);
   // remember the last filters so adding a column refetches the same entries
   const lastFilterEventRef = useRef(undefined);
+  // incremented on each fetch, so the response of a superseded request is ignored
+  const fetchIdRef = useRef(0);
 
   const onGridReady = event => {
-    const columnState = getStoredColumnState();
+    const columnState = getStoredColumnState(entityType);
     setGridApi(event.api);
 
     if (Array.isArray(columnState)) {
@@ -189,7 +210,7 @@ const EntitiesTable = ({
       return;
     }
 
-    storeColumnState(event.api);
+    storeColumnState(entityType, event.api);
   };
 
   const PastDateRenderer = ({ value }) => {
@@ -295,13 +316,21 @@ const EntitiesTable = ({
     }
     const params = getResolvedEntityFilterParams(lastFilterEventRef.current);
     const queryString = params.toString();
+    const fetchId = ++fetchIdRef.current;
 
     try {
       const endpoint = getEntityTypeFromPage(window.location);
       const url = queryString ? `${endpoint}?${queryString}` : endpoint;
       const entities = await ApiC.getJson(url, {notifOnError: 0});
+      // a more recent request was started (filters changed, column added): its response wins
+      if (fetchId !== fetchIdRef.current) {
+        return;
+      }
       setRowData(entities);
     } catch (error) {
+      if (fetchId !== fetchIdRef.current) {
+        return;
+      }
       console.error(`Could not load entities: ${error}`);
     }
   }, [getResolvedEntityFilterParams]);
@@ -417,7 +446,7 @@ const EntitiesTable = ({
           {...DEFAULT_AG_GRID_PAGINATION}
         />
         <div className='entities-table-actions'>
-          <AgGridTableOptions gridApi={gridApi} storageKey={COLUMN_STATE_STORAGE_KEY}/>
+          <AgGridTableOptions gridApi={gridApi} storageKey={getColumnStateStorageKey(entityType)}/>
           <ExtraFieldsColumnsPicker
             entityType={entityType}
             columns={extraFieldsColumns}

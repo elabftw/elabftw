@@ -1601,16 +1601,16 @@ abstract class AbstractEntity extends AbstractRest
     private function formatExtraFieldForTable(array $field): array
     {
         $value = $field[MetadataEnum::Value->value] ?? '';
-        if (is_array($value)) {
-            $value = implode(', ', array_map(
-                static fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
-                array_values($value),
-            ));
-        }
+        // keep the individual values for rendering (links, checkboxes), the joined text is used for sorting and filtering
+        $values = array_map(
+            static fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
+            is_array($value) ? array_values($value) : array($value),
+        );
         $type = $field[MetadataEnum::Type->value] ?? 'text';
         $unit = $field['unit'] ?? '';
         return array(
-            'value' => is_scalar($value) ? (string) $value : '',
+            'value' => implode(', ', $values),
+            'values' => $values,
             'unit' => is_scalar($unit) ? (string) $unit : '',
             'type' => is_string($type) ? $type : 'text',
         );

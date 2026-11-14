@@ -871,6 +871,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $this->fs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
             );
             $Import->import();

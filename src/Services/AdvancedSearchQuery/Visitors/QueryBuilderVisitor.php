@@ -273,12 +273,12 @@ final class QueryBuilderVisitor implements Visitor
         // Rating:       entity.rating
         // State:        entity.state
         // Status:       statust.title
+        // Tag:          tags.tag through an EXISTS subquery on tags2entity
         // Timestamped:  entity.timestamped, if entity == experiment
         // Title:        entity.title
         // Visibility:   entity.canread
 
         // SearchIn:     sets entity, not implemented!
-        // Tag and Metadata not implemented!
 
         // Call class methods dynamically to avoid many if statements.
         // This works because the parser and the Fields enum define the list of fields.
@@ -523,6 +523,37 @@ final class QueryBuilderVisitor implements Visitor
             'entity.timestamped = ',
             $searchTerm,
             PDO::PARAM_INT,
+        );
+    }
+
+    // An EXISTS subquery (instead of a join) lets several tag: terms be combined with AND,
+    // as each one is checked against all the tags of the entity, and avoids duplicated rows.
+    private function visitFieldTag(string $searchTerm, string $affix, VisitorParameters $parameters): WhereCollector
+    {
+        $paramTag = $this->getUniqueID();
+        $paramType = $this->getUniqueID();
+        return new WhereCollector(
+            sprintf(
+                'EXISTS (SELECT 1 FROM tags2entity
+                    INNER JOIN tags ON (tags.id = tags2entity.tag_id)
+                    WHERE tags2entity.item_id = entity.id
+                        AND tags2entity.item_type = %s
+                        AND tags.tag LIKE %s)',
+                $paramType,
+                $paramTag,
+            ),
+            array(
+                array(
+                    'param' => $paramType,
+                    'value' => $parameters->getEntityType(),
+                    'type' => PDO::PARAM_STR,
+                ),
+                array(
+                    'param' => $paramTag,
+                    'value' => $affix . $searchTerm . $affix,
+                    'type' => PDO::PARAM_STR,
+                ),
+            ),
         );
     }
 

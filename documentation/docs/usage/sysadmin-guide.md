@@ -205,6 +205,34 @@ In case a user lost their phone, they might need to re-initialize two factors au
   <figcaption>Disable 2FA button on user modal.</figcaption>
 </figure>
 
+#### Impersonating a user
+
+Impersonation lets you see eLabFTW exactly as a given user sees it: their dashboard, their entries (including the ones only visible to them), their teams and their settings. It is useful to help a user who reports a problem, or to check what a user can or cannot access.
+
+To start, double click the user row from the users table, and click the "Impersonate" button at the bottom of the modal window. After confirmation, you are logged in as this user and a red banner is displayed on top of every page: "You are currently impersonating ... in read-only mode". To come back to your own account, click "Logout and go back to my account" in that banner. Logging out while impersonating also ends the impersonation.
+
+Impersonation is **read-only**: nothing can be created, modified or deleted in the name of the impersonated user. Any such action is refused with an error message, and the database connection itself is read-only for the duration of the request. In addition:
+
+* entries cannot be opened in edit mode (this would lock them for other users);
+* switching teams is not possible: you stay in the team where the impersonation started;
+* secrets of the user are never revealed: private signature keys, webhook signing secrets and access keys of entries are hidden;
+* impersonation only works in the web interface: it is not possible with an API key;
+* you cannot impersonate a user while already impersonating someone, and you cannot impersonate yourself;
+* only users that can log in can be impersonated: their account must be validated, not archived and not expired in at least one team.
+
+As a Sysadmin, you can always impersonate any user of the instance. If the user is not in the team you are currently logged in, the first team where they can log in is used.
+
+Admins can also be allowed to impersonate users, with the setting "Allow Admins to impersonate users of their team" in the "Registration and authentication configuration" section of the Server tab. It is disabled by default. When enabled, an Admin will find the "Impersonate" button in the users table of their Admin Panel, with these restrictions, so that impersonating someone never grants an Admin more access than what they already have:
+
+* the user must be in the team where the Admin is currently logged in;
+* all the teams of the user must be teams where the Admin is also Admin;
+* the user cannot be a Sysadmin, an Admin (in any team), or have the right to manage users and teams;
+* the user cannot have the right to manage compounds or inventory locations, unless the Admin also has that right.
+
+These conditions are verified again on every request: if the setting is disabled, or if the impersonator loses their privileges while impersonating, the session is terminated.
+
+Every impersonation is recorded in the [audit logs](#audit-logs), with the events "Impersonation started" and "Impersonation stopped". The requester is the user who impersonated, and the target is the impersonated user.
+
 
 ## Monitoring
 

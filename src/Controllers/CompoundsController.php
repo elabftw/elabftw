@@ -12,9 +12,12 @@ declare(strict_types=1);
 
 namespace Elabftw\Controllers;
 
+use Elabftw\Elabftw\PermissionsHelper;
+use Elabftw\Models\TeamGroups;
 use Override;
 
 use function _;
+use function array_merge;
 
 final class CompoundsController extends AbstractHtmlController
 {
@@ -28,5 +31,19 @@ final class CompoundsController extends AbstractHtmlController
     protected function getPageTitle(): string
     {
         return _('Compounds');
+    }
+
+    // what the permissions modal of the compounds offers, like the one of the entries
+    #[Override]
+    protected function getData(): array
+    {
+        return array_merge(
+            parent::getData(),
+            array(
+                'allTeamgroupsArr' => new TeamGroups($this->app->Users)->readAllEverything(),
+                'teamsArr' => $this->app->Teams->readAllVisible(),
+                'visibilityArr' => new PermissionsHelper()->getAssociativeArray(),
+            ),
+        );
     }
 }

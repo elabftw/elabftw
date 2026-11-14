@@ -17,8 +17,11 @@ use Elabftw\Enums\Usergroup;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\UserParams;
 use Elabftw\Services\UsersHelper;
 use Elabftw\Traits\TestsUtilsTrait;
+
+use function array_column;
 
 class Users2TeamsTest extends \PHPUnit\Framework\TestCase
 {
@@ -80,6 +83,36 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         $this->Users2Teams->patchUser2Team(array('team' => 1, 'target' => 'is_admin', 'content' => 1), $admin2->userid);
         // and remove tata from team alpha
         $this->Users2Teams->destroy($admin2->userid, 1);
+    }
+
+    public function testRmUserFromOwnTeamAsAdminIsForbidden(): void
+    {
+        $sysadmin = new Users(1, 1);
+        $adminUserid = $sysadmin->createOne('rm-admin@example.com', array(1), new NullLocalPassword(), usergroup: Usergroup::Admin, automaticValidationEnabled: true, alertAdmin: false);
+        $targetUserid = $sysadmin->createOne('rm-target@example.com', array(1, 2), new NullLocalPassword(), automaticValidationEnabled: true, alertAdmin: false);
+        try {
+            $this->expectException(ForbiddenException::class);
+            (new Users2Teams(new Users($adminUserid, 1)))->destroy($targetUserid, 1);
+        } finally {
+            (new Users($targetUserid, 1, $sysadmin))->destroy();
+            (new Users($adminUserid, 1, $sysadmin))->destroy();
+        }
+    }
+
+    public function testRmUserFromTeamWithCanManageUsers2Teams(): void
+    {
+        $sysadmin = new Users(1, 1);
+        $managerUserid = $sysadmin->createOne('rm-manager@example.com', array(2), new NullLocalPassword(), automaticValidationEnabled: true, alertAdmin: false);
+        (new Users($managerUserid, 2, $sysadmin))->update(new UserParams('can_manage_users2teams', '1'));
+        $targetUserid = $sysadmin->createOne('rm-target2@example.com', array(1, 2), new NullLocalPassword(), automaticValidationEnabled: true, alertAdmin: false);
+        try {
+            (new Users2Teams(new Users($managerUserid, 2)))->destroy($targetUserid, 1);
+            $teams = (new UsersHelper($targetUserid))->getTeamsFromUserid();
+            $this->assertSame(array(2), array_column($teams, 'id'));
+        } finally {
+            (new Users($targetUserid, 2, $sysadmin))->destroy();
+            (new Users($managerUserid, 2, $sysadmin))->destroy();
+        }
     }
 
     public function testPatchUser2TeamGroup(): void

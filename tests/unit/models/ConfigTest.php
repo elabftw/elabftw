@@ -86,6 +86,12 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
         self::assertSame(Language::getAllHuman(), $this->Config->getAllowedUnauthenticatedLanguages());
     }
 
+    public function testPatchPdfFooterTextIsSanitized(): void
+    {
+        $result = $this->Config->patch(Action::Update, array('pdf_footer_text' => '<strong>Institute</strong><script>alert(1)</script>'));
+        self::assertSame('<strong>Institute</strong>', $result['pdf_footer_text']);
+    }
+
     public function testDecrementTsBalance(): void
     {
         $this->Config->patch(Action::Update, array('ts_balance' => 43));

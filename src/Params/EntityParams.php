@@ -38,7 +38,7 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             'content_type' => $this->getEnum(BodyContentType::class, $this->asInt())->value,
             'state' => $this->getState(),
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),
-            'is_procurable', 'book_can_overlap', 'book_is_cancellable', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
+            'is_procurable', 'requires_booking_approval', 'book_can_overlap', 'book_is_cancellable', 'book_users_can_in_past', 'is_bookable', 'canread_is_immutable', 'canwrite_is_immutable', 'hide_main_text' => $this->getBinary(),
             'qty_unit' => Check::unit($this->asString()),
             default => throw new ImproperActionException('Invalid update target.'),
         };

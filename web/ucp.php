@@ -65,6 +65,14 @@ try {
             'designation' => _('Step deadline'),
             'setting' => 'notif_step_deadline',
         ),
+        array(
+            'designation' => _('Booking request requiring your approval'),
+            'setting' => 'notif_booking_approval_requested',
+        ),
+        array(
+            'designation' => _('Booking request status updates'),
+            'setting' => 'notif_booking_approval_updated',
+        ),
     );
 
     if ($App->Users->isAdmin) {
@@ -107,10 +115,10 @@ try {
         'itemsCategoryArr' => $itemsCategoryArr,
         'isLocalAuth' => $App->Users->userData['auth_service'] === AuthMethod::Local->value,
         'teamsArr' => $App->Teams->readAllVisible(),
+        'allTeamgroupsArr' => $TeamGroups->readAllEverything(),
         'metadataGroups' => $metadataGroups,
         'mfaQRCodeImageDataUri' => $mfaQRCodeImageDataUri,
         'mfaNewSecret' => $mfaNewSecret,
-        'scopedTeamgroupsArr' => $TeamGroups->readScopedTeamgroups(),
         'notificationsSettings' => $notificationsSettings,
         'pageTitle' => _('Settings'),
         'passwordInputHelp' => $passwordComplexity->toHuman(),

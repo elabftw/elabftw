@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models\Links;
 
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
@@ -20,6 +21,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractRest;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\GhsStatements;
 use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Params\ContentParams;
@@ -28,6 +30,8 @@ use Override;
 use PDO;
 
 use function _;
+use function array_column;
+use function array_map;
 use function sprintf;
 
 /**
@@ -56,17 +60,26 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // like the links to entries, a linked compound the requester cannot read is not listed
         $sql = 'SELECT compound_id AS id, compounds.*
             FROM ' . $this->getTable() . ' AS main
             LEFT JOIN compounds ON compounds.id = main.compound_id
-            WHERE main.entity_id = :entity_id AND compounds.state IN (:state_normal, :state_archived)';
+            WHERE main.entity_id = :entity_id AND compounds.state IN (:state_normal, :state_archived)'
+            . new CompoundPermissions($this->Entity->Users)->getCanFilter('compounds');
         $req = $this->Db->prepare($sql);
         $req->bindParam(':entity_id', $this->Entity->id, PDO::PARAM_INT);
+        $req->bindParam(':userid', $this->Entity->Users->userid, PDO::PARAM_INT);
         $req->bindValue(':state_normal', State::Normal->value, PDO::PARAM_INT);
         $req->bindValue(':state_archived', State::Archived->value, PDO::PARAM_INT);
         $this->Db->execute($req);
+        $compounds = $req->fetchAll();
 
-        return $req->fetchAll();
+        // shown with the compound on the entry and in exports
+        $statements = new GhsStatements()->readForCompounds(array_column($compounds, 'id'));
+        return array_map(
+            static fn(array $compound): array => $compound + array('ghs_statements' => $statements[$compound['id']] ?? array()),
+            $compounds,
+        );
     }
 
     #[Override]
@@ -115,6 +128,7 @@ abstract class AbstractCompoundsLinks extends AbstractRest
     public function create(): int
     {
         $this->Entity->canOrExplode(AccessType::Write);
+        new CompoundPermissions($this->Entity->Users)->canOrExplodeFromId($this->id ?? 0, AccessType::Read);
         // use IGNORE to avoid failure due to a key constraint violations
         $sql = 'INSERT IGNORE INTO ' . $this->getTable() . ' (compound_id, entity_id) VALUES(:link_id, :item_id)';
         $req = $this->Db->prepare($sql);
@@ -139,23 +153,17 @@ abstract class AbstractCompoundsLinks extends AbstractRest
         return 'compounds2experiments_templates';
     }
 
+    /**
+     * The changelog is readable by anyone who can read the entry, but the compound may be restricted:
+     * only its id is recorded, and its name and CAS number stay behind its own permissions
+     */
     private function createChangelog(Action $action = Action::Add): void
     {
-        $info = $this->getCompoundInfo();
         $verb = $action === Action::Destroy ? _('Removed') : _('Added');
         $Changelog = new Changelog($this->Entity);
         $Changelog->create(new ContentParams(
             'compounds',
-            sprintf(_('%s link to compound: %s (CAS Number: %s) with id: %d'), $verb, $info['name'], $info['cas_number'], $this->id ?? 0),
+            sprintf(_('%s link to compound with id: %d'), $verb, $this->id ?? 0),
         ));
-    }
-
-    private function getCompoundInfo(): array
-    {
-        $sql = 'SELECT name, cas_number FROM compounds WHERE id = :id LIMIT 1';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $this->Db->fetch($req);
     }
 }

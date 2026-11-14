@@ -23,10 +23,12 @@ use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\MpdfProviderInterface;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Changelog;
+use Elabftw\Models\Config;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Notifications\MathjaxFailed;
 use Elabftw\Models\Notifications\PdfAppendmentFailed;
 use Elabftw\Models\Notifications\PdfGenericError;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
@@ -267,6 +269,8 @@ class MakePdf extends AbstractMakePdf
                 $this->Entity->entityData['uploads'][$key]['base64_thumbnail'] = base64_encode($storageFs->read($thumbnail));
             }
         }
+        // the entry only has reaction summaries, and the PDF cannot load their previews from the API like a page does
+        $this->Entity->entityData['reactions'] = new Reactions($this->Entity)->readFull();
 
         $Changelog = new Changelog($this->Entity);
 
@@ -296,6 +300,7 @@ class MakePdf extends AbstractMakePdf
             'isSigned' => $isSigned,
             'signedAt' => $signedAt,
             'formattedSignedAt' => $formattedSignedAt ?? '',
+            'pdfFooterText' => Config::getConfig()->configArr['pdf_footer_text'] ?? '',
             'pdfSig' => $this->requester->userData['pdf_sig'],
             'rors' => $this->getRors($this->Entity->entityData['team'], $this->Entity->entityData['userid']),
             // TODO fix for templates

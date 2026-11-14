@@ -12,8 +12,11 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\Interfaces\DataMigrationInterface;
+use Elabftw\Services\LegacyRevisionsMigration;
 use League\Flysystem\FilesystemOperator;
 use PDO;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Uid\Uuid;
 
 use function array_column;
@@ -175,6 +178,17 @@ final class Migrations
     public function getFilename(string $migration): ?string
     {
         return $this->getAvailable()[$migration] ?? null;
+    }
+
+    /**
+     * The PHP part of a migration, for data that SQL alone cannot move
+     */
+    public static function getDataStep(string $migration, OutputInterface $output): ?DataMigrationInterface
+    {
+        return match ($migration) {
+            LegacyRevisionsMigration::MIGRATION => new LegacyRevisionsMigration($output),
+            default => null,
+        };
     }
 
     public static function getDownFilename(string $filename): string

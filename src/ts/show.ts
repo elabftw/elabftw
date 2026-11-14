@@ -13,7 +13,7 @@ import {
   reloadEntitiesShow,
   TomSelect,
 } from './misc';
-import { Action, Model, LinkSubModel } from './interfaces';
+import { Action, Model, LinkSubModel, REACTION_SEARCH_PARAMS } from './interfaces';
 import 'bootstrap/js/src/modal.js';
 import i18next from './i18n';
 import { ApiC } from './api';
@@ -25,37 +25,17 @@ import { mount, unmount } from 'svelte';
 import { writable } from 'svelte/store';
 import SearchBarSv from './components/SearchBar.svelte';
 import EntityListSv from './components/EntityList.svelte';
-import $ from 'jquery';
 import { core } from './core';
-import { selectedEntities } from './common';
+import { clearEntitiesSelection, selectedEntities } from './common';
 import { on } from './handlers';
+import { initTomSelectFilters } from './tomSelectFilters';
 
-type TeamScopedTomSelect = TomSelectWithAllOptions & {
-  _showAll?: boolean;
-};
-
-type ActiveFilterControl = {
-  control: TeamScopedTomSelect;
-  param: string;
-  title: string;
-};
-
-type EntityFilterParam = 'owner' | 'category' | 'status';
-
-type EntityFilterRequestedDetail = {
-  param: EntityFilterParam;
-  value: string;
-  label?: string | null;
-};
-
-const activeFilters = document.getElementById('activeFiltersDiv');
 let debounceTimer: number | undefined;
 let entityListSvComponent: Record<string, unknown> | null = null;
 const initialUrlParams = new URLSearchParams(window.location.search);
 const initialQ = initialUrlParams.get('q') ?? '';
 initialUrlParams.delete('q');
 
-const filterControls: ActiveFilterControl[] = [];
 const searchQuery = writable(initialQ);
 const isSearchPending = writable(false);
 const entityFilters = writable(initialUrlParams);
@@ -81,20 +61,102 @@ function updateUrlFromStores(filters = get(entityFilters)): void {
 }
 
 function setEntityFilterParam(param: string, value: string): void {
+  setEntityFilterParams({ [param]: value });
+}
+
+// change several params at once, so the entries are only reloaded once
+function setEntityFilterParams(values: Record<string, string>): void {
   entityFilters.update(currentParams => {
     const nextParams = new URLSearchParams(currentParams);
 
     nextParams.delete('offset');
 
-    if (value === '') {
-      nextParams.delete(param);
-    } else {
-      nextParams.set(param, value);
+    for (const [param, value] of Object.entries(values)) {
+      if (value === '') {
+        nextParams.delete(param);
+      } else {
+        nextParams.set(param, value);
+      }
     }
 
     updateUrlFromStores(nextParams);
 
     return nextParams;
+  });
+}
+
+function initReactionSearch(): void {
+  const form = document.getElementById('reactionSearchForm') as HTMLFormElement | null;
+  if (!form) {
+    return;
+  }
+  const errorEl = document.getElementById('reactionSearchError');
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+  const structureType = field('reaction_structure_type') as HTMLSelectElement;
+  const structure = field('reaction_structure') as HTMLInputElement;
+  const exact = field('reaction_exact') as HTMLInputElement;
+  const readForm = (): Record<string, string> => {
+    const isSmarts = structureType.value === 'smarts';
+    return {
+      reaction_q: field('reaction_q').value.trim(),
+      reaction_structure: structure.value.trim(),
+      reaction_structure_type: structureType.value,
+      reaction_role: field('reaction_role').value,
+      // exact does not apply to a SMARTS pattern: do not keep it in the url either
+      reaction_exact: exact.checked && !isSmarts ? '1' : '',
+    };
+  };
+  const showStructureType = (): void => {
+    const isSmarts = structureType.value === 'smarts';
+    exact.disabled = isSmarts;
+    structure.placeholder = (isSmarts ? structure.dataset.placeholderSmarts : structure.dataset.placeholderDefault) ?? '';
+  };
+  structureType.addEventListener('change', showStructureType);
+
+  // The entries list hides rejected queries: show why the search was rejected next to its fields.
+  // Only for the request that follows a submit, so an incomplete query typed in the search bar is not reported here.
+  let awaitingResult = false;
+  window.addEventListener('entity-list-rejected', (event: CustomEvent<string>) => {
+    if (!awaitingResult) {
+      return;
+    }
+    awaitingResult = false;
+    errorEl.textContent = event.detail;
+    errorEl.hidden = false;
+  });
+  window.addEventListener('entity-list-loaded', () => {
+    awaitingResult = false;
+  });
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    errorEl.hidden = true;
+    awaitingResult = true;
+    setEntityFilterParams(readForm());
+  });
+
+  form.addEventListener('click', event => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-reaction-search-clear]');
+    if (!button) {
+      return;
+    }
+    errorEl.hidden = true;
+    const param = button.dataset.reactionSearchClear;
+    if (param === 'all') {
+      form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select').forEach(input => {
+        if (input instanceof HTMLInputElement && input.type === 'checkbox') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+      showStructureType();
+      form.querySelectorAll('#reactionSearchLinks [data-reaction-search-clear]').forEach(el => el.remove());
+      setEntityFilterParams(Object.fromEntries(REACTION_SEARCH_PARAMS.map(name => [name, ''])));
+      return;
+    }
+    button.remove();
+    setEntityFilterParam(param, '');
   });
 }
 
@@ -273,22 +335,6 @@ function syncSelectedEntitiesFromDom(): void {
   selectedEntities.set(selectedIds);
 }
 
-type TomSelectOptionLike = Record<string, unknown> & {
-  $option?: Element | null;
-};
-
-type ToggleableTomSelect = TomSelect & {
-  [key: string]: unknown;
-};
-
-type TomSelectWithAllOptions = ToggleableTomSelect & {
-  _allOptions?: TomSelectOptionLike[];
-};
-
-type AnyTS = TomSelectWithAllOptions & {
-  _showArchived?: boolean;
-};
-const bound = new WeakSet<Element>();
 
 // DOM
 document.addEventListener('DOMContentLoaded', () => {
@@ -318,6 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   preventReactiveSearchFormSubmit();
   hydrateFilterAutoControlsFromUrl();
+  initReactionSearch();
 
   // TomSelect for extra fields & owner search select
   const metakeySelect = document.getElementById('metakey');
@@ -371,93 +418,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (document.getElementById('filterOwner')) {
-    const dropdownRoot = document.getElementById('filterOwnerDropdown');
-    const menu = document.getElementById('filterOwnerMenu');
-
-    const control = new TomSelect('#filterOwner', {
-      dropdownParent: '#filterOwnerMenu',
-      maxOptions: 512,
-      plugins: {
-        dropdown_header: {
-          title: 'Users',
-          html: buildDropdownToggleHeaderHtml(i18next.t('users'), 'ts-toggle-archived', i18next.t('show-archived')),
-        },
-        remove_button: {},
-      },
-
-      onInitialize(this: AnyTS) {
-        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
-        this._showArchived = false;
-        applyToggleFilter(this, '_showArchived', isArchivedOption);
-      },
-
-      onChange(value: string | string[] | null | undefined) {
-        syncMultiSelectParam('owner', value);
-        renderActiveFilters();
-      },
-
-      render: {
-        option(data: AnyTS, escape: (s: string) => string) {
-          const optEl = data.$option as HTMLOptionElement | undefined;
-          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
-          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
-        },
-
-        item(data: AnyTS, escape: (s: string) => string) {
-          const optEl = data.$option as HTMLOptionElement | undefined;
-          const isArchived = optEl?.getAttribute('data-is-archived') === '1';
-          const icon = isArchived ? '<i class="fas fa-box-archive mr-1"></i>' : '';
-          return `<div>${icon}${escape(data.text ?? data.name ?? '')}</div>`;
-        },
-      },
-    }) as AnyTS;
-
-    filterControls.push({
-      control,
-      param: 'owner',
-      title: 'Owner',
-    });
-    hydrateTomSelectFromUrl(control, 'owner');
-    renderActiveFilters();
-
-    bindExternalFilterRequest(control, 'owner');
-
-    control.on('dropdown_open', () => {
-      bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
-        applyToggleFilter(control, '_showArchived', isArchivedOption);
-        control.open();
-      });
-    });
-
-    if (dropdownRoot) {
-      $(dropdownRoot).on('shown.bs.dropdown', function() {
-        control.open();
-
-        window.requestAnimationFrame(() => {
-          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
-          input?.focus();
-        });
-
-        bindDropdownToggle(control, '.ts-toggle-archived', '_showArchived', () => {
-          applyToggleFilter(control, '_showArchived', isArchivedOption);
-          control.open();
-        });
-      });
-
-      $(dropdownRoot).on('hide.bs.dropdown', function() {
-        control.close();
-        control.blur();
-      });
-    }
-
-    if (menu) {
-      $(menu).on('click', function(event) {
-        event.stopPropagation();
-      });
-    }
-  }
+  initTomSelectFilters({
+    entityFilters,
+    setEntityFilterParam,
+    setEntityFilterParamValues,
+    getEntityFilterParamValues,
+  });
 
   function getFilterValueFromElement(elem: HTMLElement): string {
     if (elem instanceof HTMLSelectElement) {
@@ -501,19 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         elem.value = values[0];
-      }
-    });
-  }
-
-  function hydrateTomSelectFromUrl(
-    control: TomSelectWithAllOptions,
-    param: string,
-  ): void {
-    getEntityFilterParamValues(param).forEach(value => {
-      ensureTomSelectOption(control, value, value);
-
-      if (!control.items.map(String).includes(value)) {
-        control.addItem(value, true);
       }
     });
   }
@@ -704,8 +657,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   // END SEARCH RELATED CODE
 
-  // background color for selected entities
-  const bgColor = 'var(--lightblue)';
+  function highlightEntity(box: Element, isSelected: boolean): void {
+    (box.closest('.entity') as HTMLElement).style.backgroundColor = isSelected ? 'var(--lightblue)' : '';
+  }
+
+  // the invert selection link only makes sense when something is selected
+  function syncInvertSelectionLink(): void {
+    document.querySelector('a[data-action="invert-entities-selection"]')
+      ?.toggleAttribute('hidden', get(selectedEntities).length === 0);
+  }
 
   if (document.getElementById('favtagsPanel')) {
     document.getElementById('favtagsPanel').addEventListener('keyup', event => {
@@ -824,19 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearForm(document.getElementById(el.dataset.target));
 
     if (el.dataset.target === 'multiChangesForm') {
-      selectedEntities.set([]);
-
-      document.querySelectorAll<HTMLInputElement>('[data-action="checkbox-entity"]:checked').forEach(checkbox => {
-        checkbox.checked = false;
-        (checkbox.closest('.entity') as HTMLElement).style.backgroundColor = '';
-      });
-
-      document.querySelector('a[data-action="invert-entities-selection"]')?.setAttribute('hidden', 'hidden');
-      const selectAll = document.querySelector<HTMLElement>('[data-action="toggle-select-all-entities"]');
-      if (selectAll && selectAll.dataset.target === 'unselect') {
-        selectAll.dataset.target = 'select';
-        selectAll.querySelector('i')?.classList.replace('fa-square-check', 'fa-square');
-      }
+      clearEntitiesSelection();
     }
   });
 
@@ -877,19 +825,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // CHECK AN ENTITY BOX
   on('checkbox-entity', (el: HTMLElement) => {
     syncSelectedEntitiesFromDom();
-    if ((el as HTMLInputElement).checked) {
-      (el.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
-    } else {
-      (el.closest('.entity') as HTMLElement).style.backgroundColor = '';
-    }
-    // show invert select if any checkbox is selected
-    const anyChecked = get(selectedEntities).length > 0;
-    const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]') as HTMLAnchorElement;
-    if (anyChecked) {
-      invertSelections?.removeAttribute('hidden');
-    } else {
-      invertSelections?.setAttribute('hidden', 'hidden');
-    }
+    highlightEntity(el, (el as HTMLInputElement).checked);
+    syncInvertSelectionLink();
   });
 
   // RESTORE ENTITY IN SHOW MODE
@@ -923,42 +860,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // SELECT ALL CHECKBOXES
   on('toggle-select-all-entities', (el: HTMLElement, event: Event) => {
     event.preventDefault();
-    if (el.dataset.target === 'select') {
-      // check all boxes and set background color
-      document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
-        (box as HTMLInputElement).checked = true;
-        (box.closest('.entity') as HTMLElement).style.backgroundColor = bgColor;
-      });
-      el.dataset.target = 'unselect';
-    } else {
-      document.querySelectorAll('.entity input[type=checkbox]')?.forEach(box => {
-        (box as HTMLInputElement).checked = false;
-        (box.closest('.entity') as HTMLElement).style.backgroundColor = '';
-      });
-      el.dataset.target = 'select';
-    }
+    const isSelecting = el.dataset.target === 'select';
+    document.querySelectorAll<HTMLInputElement>('.entity input[type=checkbox]').forEach(box => {
+      box.checked = isSelecting;
+      highlightEntity(box, isSelecting);
+    });
+    el.dataset.target = isSelecting ? 'unselect' : 'select';
     const icon = el.querySelector('i');
     icon.classList.toggle('fa-square');
     icon.classList.toggle('fa-square-check');
     syncSelectedEntitiesFromDom();
-    const invertSelections = document.querySelector('a[data-action="invert-entities-selection"]');
-    if (get(selectedEntities).length > 0) {
-      invertSelections?.removeAttribute('hidden');
-    } else {
-      invertSelections?.setAttribute('hidden', 'hidden');
-    }
+    syncInvertSelectionLink();
   });
 
   // INVERT SELECTION
   on('invert-entities-selection', (el: HTMLElement, event: Event) => {
     event.preventDefault();
-    document.querySelectorAll('.entity input[type=checkbox]').forEach(box => {
-      (box as HTMLInputElement).checked = !(box as HTMLInputElement).checked;
-      let newBgColor = '';
-      if ((box as HTMLInputElement).checked) {
-        newBgColor = bgColor;
-      }
-      (box.closest('.entity') as HTMLElement).style.backgroundColor = newBgColor;
+    document.querySelectorAll<HTMLInputElement>('.entity input[type=checkbox]').forEach(box => {
+      box.checked = !box.checked;
+      highlightEntity(box, box.checked);
     });
     syncSelectedEntitiesFromDom();
   });
@@ -1016,346 +936,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
   // END ACTION LISTENERS
-
-  function buildDropdownToggleHeaderHtml(
-    title: string,
-    checkboxClass: string,
-    label: string,
-  ) {
-    return (data: { headerClass: string; titleRowClass: string }) => `
-      <div class="${data.headerClass}">
-        <div class="${data.titleRowClass}" style="display:flex; align-items:center; gap:12px;">
-          <div>${title}</div>
-          <label style="margin-left:auto; display:flex; align-items:center; gap:6px; font-weight:normal;">
-            <input type="checkbox" class="${checkboxClass}">
-            ${label}
-          </label>
-        </div>
-      </div>
-    `;
-  }
-
-  function getOptionFlag(opt: TomSelectOptionLike | undefined | null, attr: string): boolean {
-    const el = opt?.$option as HTMLOptionElement | undefined;
-    const raw = el?.getAttribute(attr) ?? '0';
-    return raw === '1';
-  }
-
-  function isCurrentTeamOption(opt: TomSelectOptionLike | undefined | null): boolean {
-    return getOptionFlag(opt, 'data-current-team');
-  }
-
-  function isArchivedOption(opt: TomSelectOptionLike | undefined | null): boolean {
-    return getOptionFlag(opt, 'data-is-archived');
-  }
-
-  function applyToggleFilter(
-    control: TomSelectWithAllOptions,
-    flagKey: string,
-    hideWhenFlagFalse: (opt: TomSelectOptionLike) => boolean,
-  ) {
-    const selected = new Set(control.items.map(String));
-    const flagOn = !!control[flagKey];
-
-    if (flagOn) {
-      for (const opt of control._allOptions ?? []) control.addOption(opt);
-    } else {
-      for (const opt of control._allOptions ?? []) {
-        const id = String(opt[control.settings.valueField]);
-        if (hideWhenFlagFalse(opt) && !selected.has(id)) {
-          control.removeOption(id);
-        }
-      }
-    }
-    control.refreshOptions(false);
-  }
-
-  function applyTeamFilter(control: TeamScopedTomSelect) {
-    applyToggleFilter(control, '_showAll', (opt) => !isCurrentTeamOption(opt));
-  }
-
-  function syncMultiSelectParam(param: string, value: string | string[] | null | undefined) {
-    // Tom Select gives an array for multi-select; normalize just in case
-    const selected = Array.isArray(value) ? value : value ? [value] : [];
-
-    setEntityFilterParam(param, selected.join(','));
-  }
-
-  function bindExternalFilterRequest(
-    control: TomSelectWithAllOptions,
-    param: EntityFilterParam,
-  ): void {
-    window.addEventListener('entity-filter-requested', event => {
-      const customEvent = event as CustomEvent<EntityFilterRequestedDetail>;
-      const detail = customEvent.detail;
-
-      if (detail?.param !== param || !detail.value) {
-        return;
-      }
-
-      toggleTomSelectItem(
-        control,
-        detail.value,
-        detail.label ?? detail.value,
-      );
-    });
-  }
-
-  function ensureTomSelectOption(
-    control: TomSelectWithAllOptions,
-    value: string,
-    label: string,
-  ): void {
-    if (control.options[value]) {
-      return;
-    }
-
-    const valueField = control.settings.valueField || 'value';
-    const labelField = control.settings.labelField || 'text';
-
-    const knownOption = (control._allOptions ?? []).find(option => (
-      String(option[valueField]) === value
-    ));
-
-    if (knownOption) {
-      control.addOption(knownOption);
-    } else {
-      control.addOption({
-        [valueField]: value,
-        [labelField]: label,
-      });
-    }
-
-    control.refreshOptions(false);
-  }
-
-  function toggleTomSelectItem(
-    control: TomSelectWithAllOptions,
-    value: string,
-    label: string,
-  ): void {
-    ensureTomSelectOption(control, value, label);
-
-    if (control.items.map(String).includes(value)) {
-      control.removeItem(value);
-      return;
-    }
-
-    control.addItem(value);
-  }
-
-  function renderActiveFilters() {
-    activeFilters.replaceChildren();
-
-    for (const { control, title } of filterControls) {
-      for (const value of control.items) {
-        const option = control.options[value];
-        const labelField = control.settings.labelField || 'text';
-        const label = String(option?.[labelField] ?? value);
-
-        const chip = document.createElement('button');
-        chip.type = 'button';
-        chip.className = 'btn btn-sm btn-ghost me-2 mb-2 mr-2';
-        chip.setAttribute('aria-label', `Remove ${title}: ${label}`);
-
-        const chipText = document.createElement('span');
-        chipText.textContent = `${title}: ${label}`;
-
-        const removeIcon = document.createElement('span');
-        removeIcon.className = 'ms-1';
-        removeIcon.setAttribute('aria-hidden', 'true');
-        removeIcon.textContent = '×';
-
-        chip.append(chipText, removeIcon);
-
-        chip.addEventListener('click', () => {
-          control.removeItem(value);
-        });
-
-        activeFilters.appendChild(chip);
-      }
-    }
-
-    activeFilters.hidden = activeFilters.children.length === 0;
-  }
-
-  function bindDropdownToggle(
-    control: ToggleableTomSelect,
-    selector: string,
-    flagKey: string,
-    onToggle: (checked: boolean) => void,
-  ) {
-    const cb = control.dropdown?.querySelector(selector) as HTMLInputElement | null;
-    if (!cb) return;
-
-    // Always sync UI to current state when dropdown opens
-    cb.checked = !!control[flagKey];
-
-    // Bind once per checkbox element
-    if (bound.has(cb)) return;
-    bound.add(cb);
-
-    cb.addEventListener('change', (ev) => {
-      const checked = (ev.currentTarget as HTMLInputElement).checked;
-      control[flagKey] = checked;
-      onToggle(checked);
-    });
-  }
-
-  function bindShowAllToggle(control: TeamScopedTomSelect) {
-    bindDropdownToggle(control, '.ts-toggle-show-all', '_showAll', checked => {
-      setEntityFilterParam('scope', checked ? '3' : '');
-
-      applyTeamFilter(control);
-      control.open(); // keep it open after filtering
-    });
-  }
-
-  function initTeamScopedFilter(cfg: {
-    selectId: string;
-    dropdownId: string;
-    menuId: string;
-    title: string;
-    param: string;
-  }) {
-    const el = document.getElementById(cfg.selectId) as HTMLSelectElement | null;
-    if (!el) return;
-
-    const dropdownRoot = document.getElementById(cfg.dropdownId);
-    const menu = document.getElementById(cfg.menuId);
-
-    const control = new TomSelect(el, {
-      dropdownParent: `#${cfg.menuId}`,
-      maxOptions: 512,
-      plugins: {
-        dropdown_header: {
-          title: cfg.title,
-          html: buildDropdownToggleHeaderHtml(cfg.title, 'ts-toggle-show-all', i18next.t('show-all')),
-        },
-        remove_button: {},
-      },
-
-      onInitialize(this: TeamScopedTomSelect) {
-        this._allOptions = Object.values(this.options) as TomSelectOptionLike[];
-        this._showAll = get(entityFilters).get('scope') === '3';
-
-        applyTeamFilter(this);
-      },
-
-      onChange(value: string | string[] | null | undefined) {
-        syncMultiSelectParam(cfg.param, value);
-        renderActiveFilters();
-      },
-    }) as TeamScopedTomSelect;
-
-    control.on('dropdown_open', () => bindShowAllToggle(control));
-    filterControls.push({
-      control,
-      param: cfg.param,
-      title: cfg.title,
-    });
-    hydrateTomSelectFromUrl(control, cfg.param);
-    renderActiveFilters();
-
-    if (cfg.param === 'category' || cfg.param === 'status') {
-      bindExternalFilterRequest(control, cfg.param);
-    }
-
-    if (dropdownRoot) {
-      $(dropdownRoot).on('shown.bs.dropdown', function() {
-        control.open();
-
-        window.requestAnimationFrame(() => {
-          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
-          input?.focus();
-        });
-
-        bindShowAllToggle(control);
-      });
-    }
-
-    if (menu) {
-      $(menu).on('click', function(event) {
-        event.stopPropagation();
-      });
-    }
-
-    return control;
-  }
-
-  // category tomSelect
-  initTeamScopedFilter({
-    selectId: 'categoryFilter',
-    dropdownId: 'categoryFilterDropdown',
-    menuId: 'categoryFilterMenu',
-    title: i18next.t('categories'),
-    param: 'category',
-  });
-  // status tomSelect
-  initTeamScopedFilter({
-    selectId: 'statusFilter',
-    dropdownId: 'statusFilterDropdown',
-    menuId: 'statusFilterMenu',
-    title: i18next.t('status'),
-    param: 'status',
-  });
-
-
-  // tags tomselect
-  if (document.getElementById('tagFilter')) {
-    const dropdownRoot = document.getElementById('tagFilterDropdown');
-    const menu = document.getElementById('tagFilterMenu');
-
-    const tsTagFilter = new TomSelect('#tagFilter', {
-      dropdownParent: '#tagFilterMenu',
-
-      onChange: (value: unknown) => {
-        const selectedTags = Array.isArray(value) ? value as string[] : [];
-
-        setEntityFilterParamValues('tags[]', selectedTags);
-        renderActiveFilters();
-      },
-
-      onItemAdd() {
-        this.setTextboxValue('');
-        this.refreshOptions();
-      },
-
-      plugins: {
-        clear_button: {},
-        no_active_items: {},
-        remove_button: {},
-      },
-    }) as TomSelectWithAllOptions;
-
-    filterControls.push({
-      control: tsTagFilter,
-      param: 'tags[]',
-      title: i18next.t('tags'),
-    });
-    hydrateTomSelectFromUrl(tsTagFilter, 'tags[]');
-    renderActiveFilters();
-
-    if (dropdownRoot) {
-      $(dropdownRoot).on('shown.bs.dropdown', function() {
-        tsTagFilter.open();
-
-        window.requestAnimationFrame(() => {
-          const input = menu?.querySelector('.ts-control input') as HTMLInputElement | null;
-          input?.focus();
-        });
-      });
-
-      $(dropdownRoot).on('hide.bs.dropdown', function() {
-        tsTagFilter.close();
-        tsTagFilter.blur();
-      });
-    }
-
-    if (menu) {
-      $(menu).on('click', function(event) {
-        event.stopPropagation();
-      });
-    }
-  }
 });

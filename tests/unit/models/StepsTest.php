@@ -223,6 +223,48 @@ class StepsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    public function testToggleNotif(): void
+    {
+        $Steps = $this->Steps;
+        $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+        $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+        $step = $Steps->patch(Action::Notif, array());
+        $this->assertSame(1, (int) $step['deadline_notif']);
+        $this->assertCount(1, $this->readDeadlineNotifications($Steps));
+        // second call toggles it off
+        $step = $Steps->patch(Action::Notif, array());
+        $this->assertSame(0, (int) $step['deadline_notif']);
+        $this->assertSame(array(), $this->readDeadlineNotifications($Steps));
+    }
+
+    public function testToggleNotifWithLeftoverNotification(): void
+    {
+        $Steps = $this->Steps;
+        $Steps->setId($Steps->postAction(Action::Create, array('body' => 'deadline step')));
+        $Steps->patch(Action::Update, array('deadline' => '2030-06-10 14:00:00'));
+        $leftover = new StepDeadline(
+            $this->Experiments->Users,
+            $Steps->id,
+            $this->Experiments->id,
+            EntityType::Experiments->toPage(),
+            '2020-01-01 00:00:00',
+        );
+        $leftover->create();
+        $step = $Steps->patch(Action::Notif, array());
+        $this->assertSame(1, (int) $step['deadline_notif']);
+        $notifications = $this->readDeadlineNotifications($Steps);
+        $this->assertCount(1, $notifications);
+        $this->assertSame('2030-06-10 14:00:00', json_decode($notifications[0]['body'], true, 512, JSON_THROW_ON_ERROR)['deadline']);
+    }
+
+    public function testToggleNotifWithoutDeadline(): void
+    {
+        $Steps = $this->Steps;
+        $Steps->setId($Steps->postAction(Action::Create, array('body' => 'no deadline step')));
+        $this->expectException(ImproperActionException::class);
+        $Steps->patch(Action::Notif, array());
+    }
+
     public function testDeadlineUpdateKeepsRecipientAndIgnoresOtherEntityTypes(): void
     {
         $Steps = $this->Steps;

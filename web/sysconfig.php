@@ -12,11 +12,9 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Elabftw\Enums\AuditCategory;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Enums\PasswordComplexity;
-use Elabftw\Models\AuditLogs;
 use Elabftw\Models\AuthFail;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Idps;
@@ -30,9 +28,7 @@ use Exception;
 use GuzzleHttp\Client;
 use PDO;
 use Symfony\Component\HttpFoundation\Response;
-use ValueError;
 
-use function array_walk;
 use function _;
 use function ini_get;
 
@@ -96,19 +92,11 @@ try {
         Db::getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION),
     );
 
-    $auditLogsArr = AuditLogs::read($App->Request->query->getInt('limit', AuditLogs::DEFAULT_LIMIT), $App->Request->query->getInt('offset'));
-    array_walk($auditLogsArr, function (array &$event) {
-        try {
-            $event['category'] = AuditCategory::from($event['category'])->name;
-        } catch (ValueError) {
-        }
-    });
     $passwordComplexity = PasswordComplexity::from((int) $App->Config->configArr['password_complexity_requirement']);
     $StorageUnits = new StorageUnits($App->Users, false);
     $template = 'sysconfig.html';
     $renderArr = array(
         'Request' => $App->Request,
-        'auditLogsArr' => $auditLogsArr,
         'containersCount' => $StorageUnits->readCount(),
         'nologinUsersCount' => $AuthFail->getLockedUsersCount(),
         'lockoutDevicesCount' => $AuthFail->getLockoutDevicesCount(),

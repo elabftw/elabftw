@@ -15,17 +15,33 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Links\Compounds2ExperimentsLinks;
+use Elabftw\Models\Links\Compounds2ItemsLinks;
+use Elabftw\Models\Links\Containers2ExperimentsLinks;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
+use Elabftw\Services\HttpGetter;
+use Elabftw\Services\NullFingerprinter;
 use Elabftw\Traits\TestsUtilsTrait;
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
+use function array_fill;
 use function array_filter;
+use function array_merge;
+use function array_values;
+use function bin2hex;
+use function json_encode;
+use function random_bytes;
+use function random_int;
 use function sprintf;
+use function str_repeat;
 
 class StorageUnitsTest extends \PHPUnit\Framework\TestCase
 {
@@ -57,6 +73,21 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         // try create incorrectly
         $this->expectException(ImproperActionException::class);
         $this->StorageUnits->postAction(Action::Create, array());
+    }
+
+    public function testReadFullPaths(): void
+    {
+        $roomId = $this->StorageUnits->create('Full paths room');
+        $shelfId = $this->StorageUnits->create('Full paths shelf', $roomId);
+        $boxId = $this->StorageUnits->create('Full paths box', $shelfId);
+        $paths = $this->StorageUnits->readFullPaths(array($boxId, $roomId, $boxId, 0));
+        $this->assertCount(2, $paths);
+        foreach (array($roomId, $boxId) as $id) {
+            $this->StorageUnits->setId($id);
+            $this->assertSame($this->StorageUnits->readOne()['full_path'], $paths[$id]);
+        }
+        $this->assertSame('Full paths room > Full paths shelf > Full paths box', $paths[$boxId]);
+        $this->assertSame(array(), $this->StorageUnits->readFullPaths(array()));
     }
 
     public function testReadOne(): void
@@ -179,6 +210,33 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $resultsNumber = $this->StorageUnits->createImmutable($locations);
         // a second time to ensure we get the same number
         $this->assertEquals($resultsNumber, $this->StorageUnits->createImmutable($locations));
+    }
+
+    public function testCreateImmutableRejectsTooManyLevels(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->createImmutable(array_fill(0, 33, 'Level'));
+    }
+
+    public function testCreateRejectsTooLongName(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->StorageUnits->create(str_repeat('a', 256));
+    }
+
+    public function testHierarchyWithPathLongerThanAName(): void
+    {
+        // a path longer than storage_units.name must not break the instance-wide hierarchy queries
+        $root = str_repeat('B', 252);
+        $leafId = $this->StorageUnits->createImmutable(array($root, 'X', str_repeat('Y', 255)));
+        $expectedPath = $root . ' > X > ' . str_repeat('Y', 255);
+
+        $paths = array_column(array_merge(...array_values($this->StorageUnits->readAllRecursive())), 'full_path');
+        $this->assertContains($expectedPath, $paths);
+
+        $this->StorageUnits->setId($leafId);
+        $this->assertSame($expectedPath, $this->StorageUnits->readOne()['full_path']);
+        $this->assertIsArray($this->StorageUnits->readAllFromStorage($leafId));
     }
 
     public function testMoveToAnotherParent(): void
@@ -581,6 +639,120 @@ class StorageUnitsTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $history);
         $this->assertEquals($shelfA, (int) $history[0]['old_parent_id']);
         $this->assertEquals($shelfB, (int) $history[0]['new_parent_id']);
+    }
+
+    public function testCompoundsTheRequesterCannotReadAreHidden(): void
+    {
+        $storageId = $this->StorageUnits->create('Compound permissions room');
+        // a resource everyone can read, with a compound only its owner can read
+        $owner = $this->getUserInTeam(2);
+        $item = $this->getFreshItemWithGivenUser($owner);
+        $item->patch(Action::Update, array('canread_base' => BasePermissions::Organization->value));
+        $name = 'Hidden inventory compound ' . bin2hex(random_bytes(6));
+        $cid = random_int(900000000, 999999999);
+        $compoundId = new Compounds(new HttpGetter(new Client()), $owner, new NullFingerprinter(), false)
+            ->create(name: $name, pubchemCid: $cid, canreadBase: BasePermissions::UserOnly);
+        new Compounds2ItemsLinks($item, $compoundId)->create();
+        new Containers2ItemsLinks($item, $storageId)->createWithQuantity(1.0, 'g');
+
+        // the container is listed, without its compound
+        $rows = $this->StorageUnits->readAllFromStorage($storageId);
+        $this->assertCount(1, $rows);
+        $this->assertNull($rows[0]['pubchem_cid']);
+        // and the search does not find it by the name of the compound
+        $this->assertSame(array(), $this->StorageUnits->readAll($this->StorageUnits->getQueryParams(new InputBag(array('q' => $name)))));
+
+        // its owner sees both
+        $OwnerStorageUnits = new StorageUnits($owner, false);
+        $this->assertSame($cid, $OwnerStorageUnits->readAllFromStorage($storageId)[0]['pubchem_cid']);
+        $this->assertCount(1, $OwnerStorageUnits->readAll($OwnerStorageUnits->getQueryParams(new InputBag(array('q' => $name)))));
+    }
+
+    public function testReadEverythingJoinsTheCompoundsOfEachExperiment(): void
+    {
+        $storageId = $this->StorageUnits->create('Everything report room');
+        $Compounds = new Compounds(new HttpGetter(new Client()), new Users(1, 1), new NullFingerprinter(), false);
+        $withCompound = $this->getFreshExperiment();
+        new Compounds2ExperimentsLinks($withCompound, $Compounds->create(name: 'Everything report compound', pubchemCid: random_int(900000000, 999999999)))->create();
+        new Containers2ExperimentsLinks($withCompound, $storageId)->createWithQuantity(1.0, 'g');
+        $withoutCompound = $this->getFreshExperiment();
+        new Containers2ExperimentsLinks($withoutCompound, $storageId)->createWithQuantity(2.0, 'g');
+
+        $rows = array_values(array_filter(
+            $this->StorageUnits->readEverythingWithNoLimit(),
+            static fn(array $row): bool => $row['storage_id'] === $storageId,
+        ));
+        // one row per container: the experiment without compound is not given the compounds of the others
+        $this->assertCount(2, $rows);
+        $byEntity = array_column($rows, 'pubchem_cid', 'entity_id');
+        $this->assertNotNull($byEntity[$withCompound->id]);
+        $this->assertNull($byEntity[$withoutCompound->id]);
+    }
+
+    public function testContainersShowTheTeamOfTheirResource(): void
+    {
+        $storageId = $this->StorageUnits->create('Team of the resource room');
+        $owner = $this->getUserInTeam(2);
+        new Containers2ItemsLinks($this->getFreshItemWithGivenUser($owner), $storageId)->createWithQuantity(1.0, 'g');
+        $rows = new StorageUnits($owner, false)->readAllFromStorage($storageId);
+        $this->assertCount(1, $rows);
+        $this->assertSame(2, $rows[0]['team_id']);
+    }
+
+    public function testReadHazards(): void
+    {
+        $roomId = $this->StorageUnits->create('Hazards room');
+        $shelfId = $this->StorageUnits->create('Hazards shelf', $roomId);
+        $outsideId = $this->StorageUnits->create('Hazards outside');
+        $Compounds = new Compounds(new HttpGetter(new Client()), new Users(1, 1), new NullFingerprinter(), false);
+
+        // in the shelf: a resource and a compound that the requester cannot read, their hazards are still listed
+        $owner = $this->getUserInTeam(2);
+        $private = $this->getFreshItemWithGivenUser($owner);
+        $private->patch(Action::Update, array('canread_base' => BasePermissions::UserOnly->value));
+        $flammable = new Compounds(new HttpGetter(new Client()), $owner, new NullFingerprinter(), false)
+            ->create(name: 'hazards flammable', isFlammable: true, ghsSignalWord: GhsSignalWord::Warning, ghsStatements: array('H225'), canreadBase: BasePermissions::UserOnly);
+        new Compounds2ItemsLinks($private, $flammable)->create();
+        new Containers2ItemsLinks($private, $shelfId)->createWithQuantity(1.0, 'L');
+
+        // in the room: an experiment with a toxic compound, and a resource without compound
+        $experiment = $this->getFreshExperiment();
+        $toxic = $Compounds->create(name: 'hazards toxic', isToxic: true, ghsSignalWord: GhsSignalWord::Danger, ghsStatements: array('H301', 'P264'));
+        new Compounds2ExperimentsLinks($experiment, $toxic)->create();
+        new Containers2ExperimentsLinks($experiment, $roomId)->createWithQuantity(1.0, 'g');
+        new Containers2ItemsLinks($this->getFreshItem(), $roomId)->createWithQuantity(1.0, 'g');
+
+        // not counted: a deleted resource in the room, and a resource stored elsewhere
+        $explosive = $Compounds->create(name: 'hazards explosive', isExplosive: true, ghsStatements: array('H200'));
+        $deleted = $this->getFreshItem();
+        new Compounds2ItemsLinks($deleted, $explosive)->create();
+        new Containers2ItemsLinks($deleted, $roomId)->createWithQuantity(1.0, 'g');
+        $deleted->destroy();
+        $elsewhere = $this->getFreshItem();
+        new Compounds2ItemsLinks($elsewhere, $explosive)->create();
+        new Containers2ItemsLinks($elsewhere, $outsideId)->createWithQuantity(1.0, 'g');
+
+        $this->StorageUnits->setId($roomId);
+        $hazards = $this->StorageUnits->readHazards();
+        $this->assertSame('Hazards room', $hazards['location']['full_path']);
+        $this->assertSame(3, $hazards['containers_count']);
+        $this->assertSame(1, $hazards['containers_without_compound_count']);
+        $this->assertSame(2, $hazards['compounds_count']);
+        $this->assertSame('Danger', $hazards['signal_word']);
+        $this->assertSame(array('is_flammable', 'is_toxic'), $hazards['pictograms']);
+        $this->assertSame(array(), $hazards['other_hazards']);
+        // the precautionary statements are left out
+        $this->assertSame(array('H225', 'H301'), array_column($hazards['statements'], 'code'));
+        // nothing names what is stored
+        $this->assertStringNotContainsString('hazards flammable', (string) json_encode($hazards));
+
+        // only the shelf
+        $this->StorageUnits->setId($shelfId);
+        $this->assertSame('Warning', $this->StorageUnits->readHazards()['signal_word']);
+
+        $StorageUnitsAsAnonymous = new StorageUnits(new AnonymousUser(1), false, $roomId);
+        $this->expectException(ForbiddenException::class);
+        $StorageUnitsAsAnonymous->readHazards();
     }
 
     /**

@@ -69,6 +69,14 @@ enum Method {
   DELETE = 'DELETE',
 }
 
+// mirrors the BookingApprovalStatus php enum
+enum BookingApprovalStatus {
+  NoApproval = 0,
+  Pending = 1,
+  Approved = 2,
+  Rejected = 3,
+}
+
 enum ProcurementState {
   Pending = 10,
   Validated = 20,
@@ -126,10 +134,12 @@ enum Action {
 
 enum Model {
   Apikey = 'apikeys',
+  AuditLogs = 'audit_logs',
   Comment = 'comments',
   Compounds = 'compounds',
   Config = 'config',
   FavTag = 'favtags',
+  GhsStatements = 'ghs_statements',
   Idp = 'idps',
   IdpsSources = 'idps_sources',
   ItemsStatus = 'items_status',
@@ -217,6 +227,7 @@ interface Entity {
 
 export {
   Action,
+  BookingApprovalStatus,
   EntityType,
   SingularEntityType,
   FileType,
@@ -226,6 +237,9 @@ export {
   LinkSubModel,
   Target,
 };
+
+// query params of the reaction search in show mode, read by ReactionSearch on the server
+export const REACTION_SEARCH_PARAMS = ['reaction_q', 'reaction_structure', 'reaction_structure_type', 'reaction_exact', 'reaction_role', 'reaction_compound', 'reaction_item', 'reaction_key'];
 
 export type PasswordLabels = {
   length: string;

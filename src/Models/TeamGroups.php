@@ -14,7 +14,6 @@ namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
-use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
@@ -115,29 +114,6 @@ final class TeamGroups extends AbstractRest
         return $groups;
     }
 
-    public function readAllUser(): array
-    {
-        $sql = 'SELECT tg.id, tg.name, teams.name AS team_name
-            FROM team_groups AS tg
-            LEFT JOIN users2team_groups AS utg ON tg.id = utg.groupid
-            LEFT JOIN teams ON (tg.team = teams.id)
-            WHERE utg.userid = :userid ORDER BY teams.name, tg.name ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchAll();
-    }
-
-    public function readAllTeam(): array
-    {
-        $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name
-            FROM team_groups LEFT JOIN teams ON (team_groups.team = teams.id) WHERE team_groups.team = :team ORDER BY teams.name, team_groups.name ASC';
-        $req = $this->Db->prepare($sql);
-        $req->bindParam(':team', $this->Users->userData['team'], PDO::PARAM_INT);
-        $this->Db->execute($req);
-        return $req->fetchAll();
-    }
-
     public function readAllEverything(): array
     {
         $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name
@@ -148,16 +124,6 @@ final class TeamGroups extends AbstractRest
         $this->bindVisibility($req);
         $this->Db->execute($req);
         return $req->fetchAll();
-    }
-
-    public function readScopedTeamgroups(): array
-    {
-        $scope = Scope::from($this->Users->userData['scope_teamgroups']);
-        return match ($scope) {
-            Scope::User => $this->readAllUser(),
-            Scope::Team => $this->readAllTeam(),
-            Scope::Everything => $this->readAllEverything(),
-        };
     }
 
     /**
@@ -187,7 +153,7 @@ final class TeamGroups extends AbstractRest
         if (empty($onlyIds)) {
             return array();
         }
-        $sql = 'SELECT team_groups.name FROM team_groups
+        $sql = 'SELECT team_groups.id, team_groups.name, teams.name AS team_name FROM team_groups
             LEFT JOIN teams ON (team_groups.team = teams.id)
             WHERE team_groups.id IN (' . implode(',', $onlyIds) . ')' . $this->getVisibilitySql() . '
             ORDER BY team_groups.name ASC';

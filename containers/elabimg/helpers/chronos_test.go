@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 	_ "time/tzdata"
@@ -107,5 +110,41 @@ func TestSchedulesReturnOnShutdownWithoutRunning(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(dir, "ran")); err == nil {
 		t.Fatal("a task ran after shutdown")
+	}
+}
+
+func TestTaskLogsUnreadyDatabaseOnce(t *testing.T) {
+	dir := useScript(t, "exit \"$(cat \"$(dirname \"$0\")/code\")\"\n")
+	setCode := func(code string) {
+		if err := os.WriteFile(filepath.Join(dir, "code"), []byte(code), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	var buf bytes.Buffer
+	log.SetOutput(&buf)
+	t.Cleanup(func() { log.SetOutput(os.Stderr) })
+
+	task := &task{args: []string{"notifications:send"}, timeout: 5 * time.Second}
+	for _, code := range []string{"69", "75", "69"} {
+		setCode(code)
+		task.run(context.Background())
+	}
+	if got := strings.Count(buf.String(), "database not ready"); got != 1 {
+		t.Fatalf("logged %d times that the database is not ready, want 1:\n%s", got, buf.String())
+	}
+
+	setCode("0")
+	task.run(context.Background())
+	if !strings.Contains(buf.String(), "database is ready") {
+		t.Fatalf("recovery was not logged:\n%s", buf.String())
+	}
+
+	// other failures are still logged every time
+	buf.Reset()
+	setCode("1")
+	task.run(context.Background())
+	task.run(context.Background())
+	if got := strings.Count(buf.String(), "error: notifications:send"); got != 2 {
+		t.Fatalf("logged %d errors, want 2:\n%s", got, buf.String())
 	}
 }

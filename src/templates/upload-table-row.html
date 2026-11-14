@@ -27,9 +27,6 @@
   <td>{{ upload.filesize|default('0')|formatBytes }}</td>
   {# ACTIONS #}
   <td>
-    {% if upload.id == upload.latest_upload_id %}
-      <div id='last-uploaded-link' data-url='app/download.php?f={{ upload.long_name|e('url') }}' hidden></div>
-    {% endif %}
     <a target='_blank' href='app/download.php?f={{ upload.long_name|e('url') }}&amp;name={{ upload.real_name|e('url') }}&amp;storage={{ upload.storage }}{% if accessKey %}&amp;access_key={{ accessKey|e('url') }}{% endif %}' rel='noopener' title='{{ 'Download'|trans }}' aria-label='{{ 'Download'|trans }}' class='btn btn-ghost'>
       <i class='fas fa-download fa-fw'></i>
     </a>

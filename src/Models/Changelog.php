@@ -50,7 +50,7 @@ final class Changelog
                 return false;
             }
             /** @psalm-suppress PossiblyNullArgument */
-            $content = sprintf('Depending on your instance configuration, the change in the body is possibly recorded in the revisions. <a href="revisions.php?type=%s&amp;item_id=%d">See revisions page.</a>', $this->entity->entityType->value, $this->entity->id);
+            $content = sprintf('The change in the body is recorded in the revisions. <a href="revisions.php?type=%s&amp;item_id=%d">See revisions page.</a>', $this->entity->entityType->value, $this->entity->id);
         }
         $sql = 'INSERT INTO ' . $this->entity->entityType->value . '_changelog (entity_id, users_id, target, content) VALUES (:entity_id, :users_id, :target, :content)';
         $req = $this->Db->prepare($sql);

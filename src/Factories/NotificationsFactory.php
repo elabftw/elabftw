@@ -19,6 +19,8 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\MailableInterface;
 use Elabftw\Models\Notifications\ActionRequested;
+use Elabftw\Models\Notifications\BookingApprovalRequested;
+use Elabftw\Models\Notifications\BookingApprovalUpdated;
 use Elabftw\Models\Notifications\CommentCreated;
 use Elabftw\Models\Notifications\EventDeleted;
 use Elabftw\Models\Notifications\OnboardingEmail;
@@ -51,6 +53,8 @@ final class NotificationsFactory
             Notifications::UserCreated => new UserCreated($this->targetUser, $this->body['userid'], $this->body['team'] ?? ''),
             Notifications::UserNeedValidation => new UserNeedValidation($this->targetUser, $this->body['userid'], $this->body['team'] ?? ''),
             Notifications::StepDeadline => new StepDeadline($this->targetUser, $this->body['step_id'], $this->body['entity_id'], $this->body['entity_page'], $this->body['deadline']),
+            Notifications::BookingApprovalRequested => new BookingApprovalRequested($this->targetUser, $this->body),
+            Notifications::BookingApprovalUpdated => new BookingApprovalUpdated($this->targetUser, $this->body),
             Notifications::EventDeleted => new EventDeleted($this->targetUser, $this->body['event'], $this->body['actor'], $this->body['msg'], EmailTarget::from($this->body['target'])),
             Notifications::SelfNeedValidation => new SelfNeedValidation($this->targetUser),
             Notifications::SelfIsValidated => new SelfIsValidated($this->targetUser),

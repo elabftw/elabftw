@@ -93,6 +93,21 @@ The scheduler page loads with the selected item:
 
 You can now move on to the [Scheduler](./scheduler.md) section to see how to work with your events.
 
+### Requiring approval for bookings
+
+In the `Modify booking parameters` modal, you can enable `Require approval for bookings` and select one or more approvers. Approvers can be any user of the instance, even from another team: start typing a name or an email to search for them.
+
+When approval is required:
+
+- a new booking is created as a pending request, and the approvers receive a notification. Approvers themselves can book without approval;
+- a pending request already occupies its time slot, so other users cannot book it, even if overlapping slots are allowed;
+- approvers review requests in the `Pending approvals` tab of the Scheduler page, where they can approve or reject them, optionally with a reason. A decision on a recurring booking applies to all its pending occurrences;
+- users follow their requests in the `My booking requests` tab, where they can cancel a request that is still pending;
+- the dates and the resource of an approval-controlled booking cannot be changed, cancel it and book again instead;
+- only approved bookings (and bookings that did not require approval) appear in the booking reports.
+
+Team admins do not get the right to approve bookings unless they are selected as approvers. Disabling approval later does not change requests that are still pending.
+
 ## Making a Resource procurable
 
 Resources are not procurable by default. To enable procurement for a resource, you must configure its procurement parameters.

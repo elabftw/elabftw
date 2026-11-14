@@ -23,16 +23,27 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Scope;
+use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Links\Items2ItemsLinks;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Services\BookingApproval;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Override;
+use Throwable;
 
 use function _;
+use function json_decode;
+use function sort;
+use function array_map;
+use function array_values;
+use function is_array;
+use function is_numeric;
+use function is_string;
 
 /**
  * All about the database items
@@ -44,6 +55,67 @@ final class Items extends AbstractConcreteEntity
     protected const string FORCE_TEMPLATE_KEY = 'force_res_tpl';
 
     public EntityType $entityType = EntityType::Items;
+
+    #[Override]
+    public function readOne(): array
+    {
+        $this->entityData = parent::readOne();
+        $this->decodeApprovers($this->entityData);
+        return $this->entityData;
+    }
+
+    #[Override]
+    public function readShow(QueryParamsInterface $displayParams, bool $extended = false, string $can = 'canread'): array
+    {
+        $items = parent::readShow($displayParams, $extended, $can);
+        // decodeApprovers() works by reference and returns void: it cannot be used as an array_map() callback
+        foreach ($items as &$item) {
+            $this->decodeApprovers($item);
+        }
+        unset($item);
+        return $items;
+    }
+
+    #[Override]
+    public function patch(Action $action, array $params): array
+    {
+        if ($action === Action::Update && isset($params['requires_booking_approval'])) {
+            $this->canOrExplode(AccessType::Write);
+            $this->ExclusiveEditMode->canPatchOrExplode($action);
+            $requiresApproval = is_numeric($params['requires_booking_approval'])
+                ? BinaryValue::tryFrom((int) $params['requires_booking_approval'])
+                : null;
+            if ($requiresApproval === null) {
+                throw new ImproperActionException('Invalid requires_booking_approval value.');
+            }
+            $approvers = $params['approvers'] ?? array();
+            if (!is_array($approvers)) {
+                throw new ImproperActionException('Invalid approvers value.');
+            }
+            $approvers = array_map(
+                static fn(mixed $userid): int => is_numeric($userid) && (int) $userid > 0
+                    ? (int) $userid
+                    : throw new ImproperActionException('Invalid approver id.'),
+                array_values($approvers),
+            );
+            unset($params['requires_booking_approval'], $params['approvers'], $params['action']);
+
+            // Save booking settings and approvers together or roll back both.
+            $this->Db->beginTransaction();
+            try {
+                new BookingApproval($this->Users)->updateSettings($this, $requiresApproval->toBoolean(), $approvers);
+                if ($params) {
+                    parent::patch($action, $params);
+                }
+                $this->Db->commit();
+            } catch (Throwable $e) {
+                $this->Db->rollBack();
+                throw $e;
+            }
+            return $this->readOne();
+        }
+        return parent::patch($action, $params);
+    }
 
     #[Override]
     public function create(
@@ -210,5 +282,14 @@ final class Items extends AbstractConcreteEntity
     protected function getCreatePermissionKey(): string
     {
         return 'users_canwrite_resources';
+    }
+
+    private function decodeApprovers(array &$item): void
+    {
+        if (!isset($item['approvers']) || !is_string($item['approvers'])) {
+            return;
+        }
+        $item['approvers'] = json_decode($item['approvers'], true, flags: JSON_THROW_ON_ERROR);
+        sort($item['approvers'], SORT_NUMERIC);
     }
 }

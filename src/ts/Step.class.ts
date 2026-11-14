@@ -34,9 +34,6 @@ export default class Step {
         editor.replaceContent(editor.getContent().replace(json.body, content));
       });
     }
-    if (target === Target.Deadline && content === null) {
-      this.notifDestroy(id);
-    }
     return ApiC.patch(`${this.entity.type}/${this.entity.id}/${this.model}/${id}`, params);
   }
 

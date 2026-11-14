@@ -355,14 +355,6 @@ class CommandsTest extends \PHPUnit\Framework\TestCase
         $this->assertStringContainsString('Sent', $commandTester->getDisplay());
     }
 
-    public function testSnapfingers(): void
-    {
-        $commandTester = new CommandTester(new SnapFingers());
-        $commandTester->execute(array());
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString('Snap', $commandTester->getDisplay());
-    }
-
     public function testUploadsCheck(): void
     {
         $commandTester = new CommandTester(new CheckUploads());

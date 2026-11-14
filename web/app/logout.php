@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
+use Elabftw\AuditEvent\ImpersonationStopped;
 use Elabftw\AuditEvent\UserLogout;
 use Elabftw\Auth\Saml as SamlAuth;
 use Elabftw\Enums\AuthMethod;
@@ -36,11 +37,18 @@ require_once 'init.inc.php';
 
 $redirectUrl = '/login.php';
 
-$destroySession = function () use ($App): void {
-    if ($App->Users instanceof AuthenticatedUser) {
-        $App->Users->invalidateToken();
+// when impersonating, the user really logging out is the impersonator, not the impersonated user
+$loggedInUser = $App->Users;
+if ($App->Users instanceof AuthenticatedUser && $App->Users->impersonatorId !== null) {
+    AuditLogs::create(new ImpersonationStopped($App->Users->impersonatorId, $App->Users->userData['userid']));
+    $loggedInUser = new AuthenticatedUser($App->Users->impersonatorId);
+}
+
+$destroySession = function () use ($App, $loggedInUser): void {
+    if ($loggedInUser instanceof AuthenticatedUser) {
+        $loggedInUser->invalidateToken();
         // create an event in the audit log (only for authenticated users)
-        AuditLogs::create(new UserLogout($App->Users->userData['userid'], $App->Users->userData['userid']));
+        AuditLogs::create(new UserLogout($loggedInUser->userData['userid'], $loggedInUser->userData['userid']));
     }
 
     // kill session
@@ -67,7 +75,7 @@ $destroySession = function () use ($App): void {
 };
 
 // now if we are logged in through external auth, hit the external auth url
-if ((int) ($App->Users->userData['auth_service'] ?? 0) === AuthMethod::External->value) {
+if ((int) ($loggedInUser->userData['auth_service'] ?? 0) === AuthMethod::External->value) {
     $redirectUrl = $App->Config->configArr['logout_url'];
     if (empty($redirectUrl)) {
         $redirectUrl = '/login.php';

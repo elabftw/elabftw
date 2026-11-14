@@ -16,6 +16,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Enums\Notifications;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Notifications\BookingApprovalUpdated;
 
 use function sprintf;
 use function _;
@@ -47,6 +48,31 @@ final class Transform
                     $notif['body']['page'],
                     (int) $notif['body']['entity_id'],
                     _('New comment on your entry.'),
+                    $notif['created_at'],
+                ),
+            Notifications::BookingApprovalRequested =>
+                sprintf(
+                    '<span data-action="ack-notif" data-id="%d" data-href="scheduler.php?tab=3">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    sprintf(_('%s requested booking approval.'), htmlspecialchars($notif['body']['requester_fullname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')),
+                    $notif['created_at'],
+                ),
+            Notifications::BookingApprovalUpdated =>
+                sprintf(
+                    '<span data-action="ack-notif" data-id="%d" data-href="scheduler.php?tab=%d">%s</span>' . $relativeMoment,
+                    (int) $notif['id'],
+                    $notif['body']['tab'] ?? ($notif['body']['status'] === 'cancelled' ? 3 : 2),
+                    $notif['body']['status'] === 'cancelled'
+                        ? sprintf(
+                            _('%s cancelled a pending booking for %s.'),
+                            htmlspecialchars($notif['body']['requester_fullname'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                            htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                        )
+                        : sprintf(
+                            _('Booking request for %s: %s'),
+                            htmlspecialchars($notif['body']['item_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                            htmlspecialchars(BookingApprovalUpdated::translateStatus($notif['body']['status']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                        ),
                     $notif['created_at'],
                 ),
             Notifications::EventDeleted =>

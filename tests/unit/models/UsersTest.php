@@ -33,6 +33,7 @@ use PDO;
 
 use function bin2hex;
 use function array_column;
+use function array_keys;
 use function count;
 use function is_array;
 use function random_bytes;
@@ -280,6 +281,19 @@ class UsersTest extends \PHPUnit\Framework\TestCase
 
         // invalid ids are ignored
         $this->assertEmpty($this->Users->readNamesFromIds(array(0, -42)));
+    }
+
+    public function testReadFullnamesFromIds(): void
+    {
+        $user = $this->getUserInTeam(2);
+        $res = $user->readFullnamesFromIds(array(1, $user->getUserid()));
+        $this->assertCount(2, $res);
+        // names only, no email to mask
+        $this->assertSame(array('userid', 'fullname'), array_keys($res[0]));
+        $this->assertSame($user->userData['fullname'], array_column($res, 'fullname', 'userid')[$user->getUserid()]);
+
+        // invalid ids are ignored
+        $this->assertEmpty($this->Users->readFullnamesFromIds(array(0, -42)));
     }
 
     public function testReadAllTeamAssociationsFollowAdminImportSetting(): void

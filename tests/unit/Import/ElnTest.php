@@ -11,18 +11,26 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
+use Elabftw\Enums\ExtraFieldReference;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\Storage;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\CompoundsFactory;
+use Elabftw\Make\MakeEln;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
+use Elabftw\Params\EntityParams;
 use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
 use ZipArchive;
@@ -72,6 +80,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -93,6 +102,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -130,6 +140,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $exportsFs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
             );
             $Import->prepare();
@@ -172,6 +183,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
             category: 1,
         );
@@ -194,6 +206,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $actions = array(
@@ -237,6 +250,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -257,6 +271,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -279,6 +294,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -301,6 +317,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
         $Import->import();
@@ -328,6 +345,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $this->fs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
                 category: 1,
             );
@@ -336,6 +354,158 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         } finally {
             putenv($previous === false ? 'IMPORT_MAX_TOTAL_BYTES' : 'IMPORT_MAX_TOTAL_BYTES=' . $previous);
         }
+    }
+
+    public function testTrustedMetadataUserReference(): void
+    {
+        $Users = new Users(1, 1);
+        $uploadedFile = new UploadedFile(
+            dirname(__DIR__, 2) . '/_data/single-experiment.eln',
+            'importable.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+        $Import = new TrustedEln(
+            $Users,
+            $Users,
+            $uploadedFile,
+            $this->fs,
+            $this->logger,
+            CompoundsFactory::getCompounds($Users),
+        );
+
+        new ReflectionProperty(Eln::class, 'graph')->setValue($Import, array(
+            array('@id' => '#user', 'email' => $Users->userData['email']),
+            array('@id' => '#invalid-user'),
+        ));
+
+        $Method = new ReflectionMethod(TrustedEln::class, 'getMetadataUserReference');
+
+        // Empty reference: use the parent method.
+        $this->assertSame(0, $Method->invoke($Import, ''));
+
+        // Existing user: return their ID.
+        $this->assertSame($Users->getUserid(), $Method->invoke($Import, '#user'));
+
+        // Missing email: catch the exception and return 0.
+        $this->assertSame(0, $Method->invoke($Import, '#invalid-user'));
+    }
+
+    public function testForcedTypeKeepsTypeOfMetadataReferenceTargets(): void
+    {
+        $Import = $this->getElnForReflection(EntityType::Experiments);
+        new ReflectionProperty(Eln::class, 'graph')->setValue($Import, array(
+            array('@id' => '#pv-items', '@type' => 'PropertyValue', 'valueReference' => 'items', 'value' => array('@id' => './resource-b/')),
+            array('@id' => '#pv-multi', '@type' => 'PropertyValue', 'valueReference' => 'experiments', 'value' => array(array('@id' => './experiment-c/'))),
+            // referenced with both types: the forced type applies
+            array('@id' => '#pv-x1', '@type' => 'PropertyValue', 'valueReference' => 'items', 'value' => array('@id' => './ambiguous/')),
+            array('@id' => '#pv-x2', '@type' => 'PropertyValue', 'valueReference' => 'experiments', 'value' => array('@id' => './ambiguous/')),
+        ));
+        new ReflectionMethod(Eln::class, 'collectMetadataTargetTypes')->invoke($Import);
+        $GetEntityType = new ReflectionMethod(Eln::class, 'getEntityType');
+
+        $this->assertSame(EntityType::Items, $GetEntityType->invoke($Import, array('@id' => './resource-b/', 'genre' => 'experiment')));
+        $this->assertSame(EntityType::Experiments, $GetEntityType->invoke($Import, array('@id' => './experiment-c/')));
+        $this->assertSame(EntityType::Experiments, $GetEntityType->invoke($Import, array('@id' => './ambiguous/')));
+        $this->assertSame(EntityType::Experiments, $GetEntityType->invoke($Import, array('@id' => './not-referenced/', 'genre' => 'resource')));
+    }
+
+    public function testResolveMetadataReferencesChecksTypeAndKeepsLabelsAligned(): void
+    {
+        $Users = new Users(1, 1);
+        $Import = $this->getElnForReflection(EntityType::Experiments);
+        $Entity = new Experiments($Users);
+        $Entity->setId($Entity->create());
+        $Target = new Experiments($Users);
+        $targetId = $Target->create();
+        $Entity->update(new EntityParams('metadata', json_encode(array(
+            'extra_fields' => array(
+                'linked' => array('type' => 'experiments', 'allow_multi_values' => true, 'value' => array(123, 456), 'value_labels' => array('Control', 'Sample')),
+                'resource' => array('type' => 'items', 'value' => 789, 'value_labels' => array('Some resource')),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        new ReflectionProperty(Eln::class, 'insertedEntities')->setValue($Import, array(
+            array('item_@id' => './experiment-b/', 'id' => $targetId, 'entity_type' => EntityType::Experiments, 'users' => $Users),
+        ));
+        new ReflectionProperty(Eln::class, 'metadataReferencesToResolve')->setValue($Import, array(
+            // the first value was not exported: its label must go away with it
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'linked', 'type' => ExtraFieldReference::Experiments, 'targets' => array(1 => './experiment-b/'), 'is_multiple' => true),
+            // the target was imported as an experiment: it cannot fill an items field
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'resource', 'type' => ExtraFieldReference::Items, 'targets' => array(0 => './experiment-b/'), 'is_multiple' => false),
+        ));
+        new ReflectionMethod(Eln::class, 'resolveMetadataReferences')->invoke($Import);
+
+        $Entity = new Experiments($Users, $Entity->id);
+        $extraFields = json_decode($Entity->entityData['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+        $this->assertEquals(array($targetId), $extraFields['linked']['value']);
+        $this->assertSame(array('Sample'), $extraFields['linked']['value_labels']);
+        $this->assertEmpty($extraFields['resource']['value']);
+        $this->assertEmpty($extraFields['resource']['value_labels'] ?? null);
+    }
+
+    public function testResolveMetadataReferencesIgnoresUnknownField(): void
+    {
+        $Users = new Users(1, 1);
+        $Import = $this->getElnForReflection(null);
+        $Entity = new Experiments($Users);
+        $Entity->setId($Entity->create());
+        $metadata = json_encode(array(
+            'extra_fields' => array(
+                'known' => array('type' => 'text', 'value' => 'untouched'),
+            ),
+        ), JSON_THROW_ON_ERROR);
+        $Entity->update(new EntityParams('metadata', $metadata));
+
+        new ReflectionProperty(Eln::class, 'metadataReferencesToResolve')->setValue($Import, array(
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'absent', 'type' => ExtraFieldReference::Users, 'targets' => array(0 => ''), 'is_multiple' => false),
+        ));
+        new ReflectionMethod(Eln::class, 'resolveMetadataReferences')->invoke($Import);
+
+        $Entity = new Experiments($Users, $Entity->id);
+        $this->assertJsonStringEqualsJsonString($metadata, $Entity->entityData['metadata']);
+    }
+
+    public function testResolveMetadataReferenceToItselfIsCleared(): void
+    {
+        $Users = new Users(1, 1);
+        $Import = $this->getElnForReflection(null);
+        $Entity = new Experiments($Users);
+        $Entity->setId($Entity->create());
+        $Entity->update(new EntityParams('metadata', json_encode(array(
+            'extra_fields' => array(
+                'self' => array('type' => 'experiments', 'value' => 999999999),
+            ),
+        ), JSON_THROW_ON_ERROR)));
+
+        new ReflectionProperty(Eln::class, 'insertedEntities')->setValue($Import, array(
+            array('item_@id' => './self/', 'id' => $Entity->id, 'entity_type' => EntityType::Experiments, 'users' => $Users),
+        ));
+        // an entry cannot link to itself: the source id must not stay in the field
+        new ReflectionProperty(Eln::class, 'metadataReferencesToResolve')->setValue($Import, array(
+            array('entity_type' => EntityType::Experiments, 'id' => $Entity->id, 'users' => $Users, 'field' => 'self', 'type' => ExtraFieldReference::Experiments, 'targets' => array(0 => './self/'), 'is_multiple' => false),
+        ));
+        new ReflectionMethod(Eln::class, 'resolveMetadataReferences')->invoke($Import);
+
+        $Entity = new Experiments($Users, $Entity->id);
+        $extraFields = json_decode($Entity->entityData['metadata'], true, 512, JSON_THROW_ON_ERROR)['extra_fields'];
+        $this->assertSame('', $extraFields['self']['value']);
+    }
+
+    public function testMetadataReferencesOnlyForRecentArchives(): void
+    {
+        $Import = $this->getElnForReflection(null);
+        $Version = new ReflectionProperty(Eln::class, 'internalElnVersion');
+        $HasMetadataReferences = new ReflectionMethod(Eln::class, 'hasMetadataReferences');
+        // archives from other software have no version
+        $Version->setValue($Import, -1);
+        $this->assertFalse($HasMetadataReferences->invoke($Import));
+        // older eLabFTW archives hold database ids
+        $Version->setValue($Import, 108);
+        $this->assertFalse($HasMetadataReferences->invoke($Import));
+        $Version->setValue($Import, 109);
+        $this->assertTrue($HasMetadataReferences->invoke($Import));
     }
 
     public function testImportExperimentsMulti(): void
@@ -354,6 +524,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -377,6 +548,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -401,6 +573,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
             category: 1,
         );
@@ -423,6 +596,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -445,6 +619,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -468,6 +643,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -491,6 +667,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
@@ -514,6 +691,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
         );
         $Import->import();
         $this->assertSame(1, $Import->getInserted());
@@ -612,6 +790,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
                 $uploadedFile,
                 $this->fs,
                 $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
                 EntityType::Experiments,
             );
             $Import->import();
@@ -643,6 +822,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Experiments,
         );
 
@@ -678,11 +858,46 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             $uploadedFile,
             $this->fs,
             $this->logger,
+            CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
+    }
+
+    public function testCompoundGhsRoundTrip(): void
+    {
+        // what MakeEln writes for a compound
+        $properties = new ReflectionMethod(MakeEln::class, 'ghsToPropertyValues')->invoke(
+            new ReflectionClass(MakeEln::class)->newInstanceWithoutConstructor(),
+            array(
+                'ghs_signal_word' => 'Danger',
+                'ghs_statements' => array(
+                    array('id' => 1, 'code' => 'H225', 'kind' => 'H', 'statement' => 'Highly flammable liquid and vapour.', 'is_deprecated' => 0),
+                    array('id' => 2, 'code' => 'EUH066', 'kind' => 'EUH', 'statement' => 'Repeated exposure may cause skin dryness or cracking.', 'is_deprecated' => 0),
+                    array('id' => 3, 'code' => 'P301+P316', 'kind' => 'P', 'statement' => 'IF SWALLOWED: Get emergency medical help immediately.', 'is_deprecated' => 0),
+                ),
+            ),
+        );
+        $this->assertSame(Compound::ELN_GHS_SIGNAL_WORD, $properties[0]['propertyID']);
+        $this->assertSame(Compound::ELN_GHS_HAZARD_STATEMENT, $properties[2]['propertyID']);
+        $this->assertSame(Compound::ELN_GHS_PRECAUTIONARY_STATEMENT, $properties[3]['propertyID']);
+        // other software can add properties of its own
+        $properties[] = array('@type' => 'PropertyValue', 'propertyID' => 'Boiling point', 'value' => 'H300');
+        $properties[] = 'not a property';
+
+        $compound = new ReflectionMethod(Eln::class, 'compoundFromJsonLd')->invoke(
+            $this->getElnForReflection(EntityType::Experiments),
+            array('@id' => '#compound-1', '@type' => 'MolecularEntity', 'name' => 'Ethanol', 'additionalProperty' => $properties),
+        );
+        $this->assertSame(GhsSignalWord::Danger, $compound->ghsSignalWord);
+        $this->assertSame(array('H225', 'EUH066', 'P301+P316'), $compound->ghsStatements);
+        // nothing to export without GHS data
+        $this->assertSame(array(), new ReflectionMethod(MakeEln::class, 'ghsToPropertyValues')->invoke(
+            new ReflectionClass(MakeEln::class)->newInstanceWithoutConstructor(),
+            array('ghs_signal_word' => null),
+        ));
     }
 
     private function getExperimentFromTitle(string $title): Experiments
@@ -703,5 +918,19 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             }
         }
         $this->fail(sprintf('Could not find imported experiment with title "%s".', $title));
+    }
+
+    private function getElnForReflection(?EntityType $entityType): Eln
+    {
+        $Users = new Users(1, 1);
+        return new Eln(
+            $Users,
+            $Users,
+            new UploadedFile(dirname(__DIR__, 2) . '/_data/single-experiment.eln', 'importable.eln', null, UPLOAD_ERR_OK, true),
+            $this->fs,
+            $this->logger,
+            CompoundsFactory::getCompounds($Users),
+            $entityType,
+        );
     }
 }

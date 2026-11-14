@@ -182,7 +182,7 @@
             <label class='font-weight-bold mb-1'>{{ 'Filter group'|trans }}</label>
             <select aria-label='{{ 'Filter group'|trans }}' name='group' class='form-control filterHelper' data-filter='group'>
               <option value='' data-action='clear'>{{ 'Select group'|trans }}</option>
-              {% for group in scopedTeamgroupsArr %}
+              {% for group in allTeamgroupsArr %}
                 <option value="{{ group.name|e('html_attr') }}" {{ ('group:' ~ group.name) in (App.Request.query.get('q')|default('')) ? 'selected' : '' }}>{{ group.name }}</option>
               {% endfor %}
             </select>
@@ -218,6 +218,66 @@
   </div>
 
   {# END SEARCH BAR #}
+
+  {# REACTION SEARCH #}
+  {% set rquery = App.Request.query %}
+  {% set reactionSearchActive = rquery.get('reaction_q') or rquery.get('reaction_structure') or rquery.get('reaction_key') or rquery.get('reaction_compound') or rquery.get('reaction_item') %}
+  <details id='reactionSearch' class='mt-2' {{ reactionSearchActive ? 'open' }}>
+    <summary class='btn btn-ghost btn-sm' data-cy='reactionSearchToggle'><i class='fas fa-flask fa-fw mr-1'></i>{{ 'Search reactions'|trans }}</summary>
+    <form id='reactionSearchForm' class='form-row align-items-end mt-2' aria-label='{{ 'Search reactions'|trans }}'>
+      <div class='col-md-4 mb-2'>
+        <label for='reactionSearchText' class='font-weight-bold mb-1'>{{ 'Reaction or component'|trans }}</label>
+        <input id='reactionSearchText' name='reaction_q' type='search' class='form-control' maxlength='255' placeholder='{{ 'Title, conditions, name or formula'|trans }}' value='{{ rquery.get('reaction_q')|e('html_attr') }}' data-cy='reactionSearchText' />
+      </div>
+      <div class='col-md-4 mb-2'>
+        <label for='reactionSearchStructure' class='font-weight-bold mb-1'>{{ 'Structure'|trans }}</label>
+        {% set isSmarts = rquery.get('reaction_structure_type') == 'smarts' %}
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <select id='reactionSearchStructureType' name='reaction_structure_type' class='form-control' aria-label='{{ 'Structure notation'|trans }}' data-cy='reactionSearchStructureType'>
+              <option value=''>{{ 'SMILES or InChIKey'|trans }}</option>
+              <option value='smarts' {{- isSmarts ? ' selected' }}>SMARTS</option>
+            </select>
+          </div>
+          <input id='reactionSearchStructure' name='reaction_structure' type='search' class='form-control' maxlength='2048' spellcheck='false' autocomplete='off' placeholder='{{ isSmarts ? 'SMARTS pattern'|trans : 'SMILES or InChIKey'|trans }}' data-placeholder-smarts='{{ 'SMARTS pattern'|trans }}' data-placeholder-default='{{ 'SMILES or InChIKey'|trans }}' value='{{ rquery.get('reaction_structure')|e('html_attr') }}' data-cy='reactionSearchStructure' />
+        </div>
+      </div>
+      <div class='col-md-2 mb-2'>
+        <label for='reactionSearchRole' class='font-weight-bold mb-1'>{{ 'Role'|trans }}</label>
+        <select id='reactionSearchRole' name='reaction_role' class='form-control'>
+          <option value=''>{{ 'Any role'|trans }}</option>
+          {% for value, label in {'reactant': 'Reactant'|trans, 'reagent': 'Reagent'|trans, 'catalyst': 'Catalyst'|trans, 'solvent': 'Solvent'|trans, 'product': 'Product'|trans} %}
+            <option value='{{ value }}' {{- rquery.get('reaction_role') == value ? ' selected' }}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class='col-md-2 mb-2'>
+        <div class='form-check mb-2'>
+          {# a SMARTS pattern describes a family of structures: there is no exact match of it #}
+          <input id='reactionSearchExact' name='reaction_exact' type='checkbox' value='1' class='form-check-input' {{- rquery.get('reaction_exact') ? ' checked' }} {{- isSmarts ? ' disabled' }} />
+          <label for='reactionSearchExact' class='form-check-label'>{{ 'Exact structure'|trans }}</label>
+        </div>
+      </div>
+      {# criteria set from a link, without a field of their own: show them so they can be removed #}
+      <div class='col-12 mb-2' id='reactionSearchLinks'>
+        {% if rquery.get('reaction_key') %}
+          <button type='button' class='btn btn-sm btn-ghost mr-2' data-reaction-search-clear='reaction_key'>{{ 'Same transformation as a reaction'|trans }} <span aria-hidden='true'>&times;</span></button>
+        {% endif %}
+        {% if rquery.get('reaction_compound') %}
+          <button type='button' class='btn btn-sm btn-ghost mr-2' data-reaction-search-clear='reaction_compound'>{{ 'Linked to compound'|trans }} #{{ rquery.getInt('reaction_compound') }} <span aria-hidden='true'>&times;</span></button>
+        {% endif %}
+        {% if rquery.get('reaction_item') %}
+          <button type='button' class='btn btn-sm btn-ghost mr-2' data-reaction-search-clear='reaction_item'>{{ 'Linked to resource'|trans }} #{{ rquery.getInt('reaction_item') }} <span aria-hidden='true'>&times;</span></button>
+        {% endif %}
+      </div>
+      <div class='col-12 mb-2'>
+        <button type='submit' class='btn btn-primary' data-cy='reactionSearchSubmit'>{{ 'Search'|trans }}</button>
+        <button type='button' class='btn btn-ghost' data-reaction-search-clear='all'>{{ 'Clear'|trans }}</button>
+        <small class='text-muted ml-2'>{{ 'A SMILES finds components containing this substructure, an InChIKey finds the same molecule including its stereoisomers. Check "Exact structure" to only find the same structure. A SMARTS pattern finds the components matching it, for instance [OX2H]c for a phenol. The role applies to the structure and to linked compounds or resources.'|trans }}</small>
+      </div>
+      <p id='reactionSearchError' class='col-12 alert alert-danger' role='alert' hidden></p>
+    </form>
+  </details>
 
   {# QUERY FILTERS #}
   <div class='d-flex flex-column'>
@@ -406,7 +466,7 @@
           </option>
 
           {% for user in usersArr %}
-            <option data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- user.userid in App.Request.query.get('owner')|split(',') ? ' selected' }}>{{ user.fullname }}</option>
+            <option data-current-team='{{ user.is_current_team ?? 1 }}' data-is-archived='{{ user.is_archived_in_current_team }}' value='{{ user.userid }}' {{- user.userid in App.Request.query.get('owner')|split(',') ? ' selected' }}>{{ user.fullname }}</option>
           {% endfor %}
         </select>
       </div>
@@ -544,6 +604,9 @@
             <button data-action='patch-selected-entities' data-what='timestamp' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Timestamp the selected entities'|trans }}' title='{{ 'Timestamp the selected entities'|trans }}'>{{ 'Timestamp'|trans }}</button>
             <button data-action='patch-selected-entities' data-what='archive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Archive the selected entities'|trans }}' title='{{ 'Archive the selected entities'|trans }}'>{{ 'Archive'|trans }}</button>
             <button data-action='patch-selected-entities' data-what='unarchive' type='button' class='btn btn-secondary mr-1 mb-2' aria-label='{{ 'Unarchive the selected entities'|trans }}' title='{{ 'Unarchive the selected entities'|trans }}'>{{ 'Unarchive'|trans }}</button>
+          {% if not App.isAnonymous() %}
+            <button data-action='toggle-modal' data-target='storageModal' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Add container to selected entries'|trans }}' title='{{ 'Add container to selected entries'|trans }}'>{{ 'Add container'|trans }}</button>
+          {% endif %}
             <button data-action='toggle-modal' data-target='deleteSelectedEntitiesModal' type='button' class='btn btn-danger-ghost mr-1 mb-2' aria-label='{{ 'Delete the selected entities'|trans }}' title='{{ 'Delete the selected entities'|trans }}'>{{ 'Delete'|trans }}</button>
             <button data-action='patch-selected-entities' data-what='restore' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Restore the selected entities'|trans }}' title='{{ 'Restore the selected entities'|trans }}'>{{ 'Restore'|trans }}</button>
           </div>
@@ -569,10 +632,8 @@
                   <option value='{{ status.id }}'>{{ status.title }}</option>
               {% endfor %}
             </select>
-            {# CANREAD #}
-            <button data-action='toggle-modal' data-target='permModal-canreadSelected' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Change read permissions'|trans }}'>{{ 'Change read permissions'|trans }}</button>
-            {# CANWRITE #}
-            <button data-action='toggle-modal' data-target='permModal-canwriteSelected' type='button' class='btn btn-primary mr-1 mb-2' aria-label='{{ 'Change write permissions'|trans }}'>{{ 'Change write permissions'|trans }}</button>
+            {# PERMISSIONS #}
+            <button data-action='toggle-modal' data-target='permissionsModal' type='button' class='btn btn-primary mr-1 mb-2'><i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Change permissions'|trans }}</button>
               {% if pageName == 'database' %}
               {# CANBOOK #}
               <select aria-label='{{ 'Change book permissions'|trans }}' name='is_bookable' autocomplete='off' class='mr-1 mb-2 form-control'>
@@ -703,7 +764,7 @@
   </div>
 </div>
 {% if not App.isAnonymous() %}
-{% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canread'} %}
-{% include 'permissions-edit-modal.html' with {'withSelected': true, 'rw': 'canwrite'} %}
+{% include 'permissions-modal.html' with {context: 'selected'} %}
+{% include 'add-container-modal.html' with {'withSelected': true} %}
 {% endif %}
 {% endblock body %}

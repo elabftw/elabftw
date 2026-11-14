@@ -79,7 +79,13 @@ export class Api {
     // allow toggle notifs off by sending notifOn(Saved|Error)=0 as param
     let notifOnSaved = true;
     let notifOnError = true;
-    if (!isFormData) {
+    if (isFormData) {
+      // FormData values are strings, and the flags must not reach the server as form fields
+      notifOnSaved = params.get('notifOnSaved') !== '0';
+      notifOnError = params.get('notifOnError') !== '0';
+      params.delete('notifOnSaved');
+      params.delete('notifOnError');
+    } else {
       if (params['notifOnSaved'] === 0) {
         notifOnSaved = false;
       }

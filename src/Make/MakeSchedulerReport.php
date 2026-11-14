@@ -13,12 +13,16 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\BookingApprovalStatus;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Scheduler;
 use Override;
 
 use function date;
+use function in_array;
+use function array_filter;
+use function array_values;
 
 /**
  * Create a report of scheduler bookings
@@ -32,7 +36,11 @@ final class MakeSchedulerReport extends AbstractMakeCsv
     public function __construct(Scheduler $scheduler, ?QueryParamsInterface $queryParams = null)
     {
         $this->Db = Db::getConnection();
-        $this->rows = $scheduler->readAll($queryParams);
+        // Pending bookings block availability but are not confirmed usage.
+        $this->rows = array_values(array_filter(
+            $scheduler->readAll($queryParams),
+            static fn(array $event): bool => in_array((int) $event['approval_status'], array(BookingApprovalStatus::NoApproval->value, BookingApprovalStatus::Approved->value), true),
+        ));
         if (empty($this->rows)) {
             throw(new ImproperActionException('There are no events to report'));
         }

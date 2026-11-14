@@ -238,7 +238,7 @@ This is stored in an immutable `.zip` file, and an immutable comment is added to
 
 In eLabFTW, changes are tracked with a different granularity depending on the instance configuration and the type of change.
 
-For an Experiment or Resource, there are two concepts: the Changelog, and the Revisions. The Revisions only tracks changes of the Main text (body) of the entry. The Changelog tracks all changes, except the content of the main text, as this is handled separately by the Revisions system.
+For an Experiment or Resource, there are two concepts: the Changelog, and the Revisions. The Revisions only tracks changes of the Main text (body) of the entry: every version of the main text that is saved is kept, without limit. The Changelog tracks all changes, except the content of the main text, as this is handled separately by the Revisions system.
 
 You can access the Changelog or the Revisions through the ellipsis menu (three dots) in the top right of the page for an entry. The Revisions page allows you to compare two versions or restore a particular version of the entry.
 

@@ -9,7 +9,8 @@ import { Metadata } from './Metadata.class';
 import JSONEditor from 'jsoneditor';
 import $ from 'jquery';
 import i18next from './i18n';
-import { askFileName, ensureTogglableSectionIsOpen, reloadElements } from './misc';
+import { askFileName, reloadElements } from './misc';
+import { showTab } from './tabbed-sections';
 import { Action, FileType, Model } from './interfaces';
 import type { Entity } from './interfaces';
 import { ApiC } from './api';
@@ -87,7 +88,7 @@ export default class JsonEditorHelper {
       })
       .then(json => {
         this.editor.set(json);
-        ensureTogglableSectionIsOpen('jsonEditorIcon', 'jsonEditorDiv');
+        showTab('json', { scroll: true });
       })
       .catch(e => {
         if (e instanceof SyntaxError) {

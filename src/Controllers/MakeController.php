@@ -41,12 +41,14 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ProcurementRequests;
 use Elabftw\Models\Scheduler;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Services\MpdfProvider;
 use Elabftw\Services\MpdfQrProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use DateTimeImmutable;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
@@ -105,6 +107,7 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    CompoundsFactory::getCompounds($this->requester),
                     includeLinkedEntities: $this->shouldIncludeLinkedEntities(),
                     includeChangelog: $this->shouldIncludeChangelog(),
                 ));
@@ -118,6 +121,7 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    CompoundsFactory::getCompounds($this->requester),
                 )->getResponse();
 
             case ExportFormat::Json:
@@ -254,6 +258,10 @@ final class MakeController extends AbstractController
 
     private function makeSchedulerReport(): Response
     {
+        // bookings are internal team data: the scheduler is not available to anonymous visitors
+        if ($this->requester instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
         $defaultStart = '2018-12-23T00:00:00+01:00';
         $defaultEnd = '2119-12-23T00:00:00+01:00';
 

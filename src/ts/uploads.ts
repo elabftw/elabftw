@@ -18,7 +18,8 @@ import {
   sendSpreadsheetMessage,
 } from './spreadsheet-utils';
 import type { SpreadsheetWorkbook } from './spreadsheet-utils';
-import { adjustHiddenState, collectForm, ensureTogglableSectionIsOpen, relativeMoment, reloadElements } from './misc';
+import { adjustHiddenState, collectForm, errorMessage, relativeMoment, reloadElements } from './misc';
+import { showTab } from './tabbed-sections';
 import DOMPurify from 'dompurify';
 import { displayPlasmidViewer } from './ove';
 import { displayMoleculeViewer, get3dmol } from './3dmol';
@@ -247,7 +248,7 @@ on('xls-load-file', async (el: HTMLElement) => {
   spreadsheetUpload = { id: Number(el.dataset.uploadid), name: el.dataset.name };
   replaceSpreadsheetButton.disabled = spreadsheetSaving;
   spreadsheetDirty = false;
-  ensureTogglableSectionIsOpen('sheetEditorIcon', 'spreadsheetEditorDiv');
+  showTab('spreadsheet', { scroll: true });
 });
 
 // ARCHIVE UPLOAD
@@ -393,7 +394,7 @@ const withSpreadsheetData = async (callback: (
     if (revision !== spreadsheetRevision) return;
     await callback(workbook, revision, documentRevision);
   } catch (error) {
-    notify.error(error instanceof Error ? error.message : 'Unexpected spreadsheet error.');
+    notify.error(errorMessage(error, 'Unexpected spreadsheet error.'));
   } finally {
     spreadsheetSaving = false;
     saveSpreadsheetButton.disabled = false;
@@ -440,7 +441,7 @@ if (spreadsheetIframe) {
       spreadsheetUpload = null;
       replaceSpreadsheetButton.disabled = true;
     }
-  }).catch(error => notify.error(error instanceof Error ? error.message : 'Spreadsheet editor is not available.'));
+  }).catch(error => notify.error(errorMessage(error, 'Spreadsheet editor is not available.')));
 }
 
 window.addEventListener('beforeunload', event => {
@@ -450,7 +451,17 @@ window.addEventListener('beforeunload', event => {
 });
 
 // ACTIVATE FANCYBOX
-$('[data-fancybox]').fancybox();
+// Fancybox inserts the caption with jQuery .html(), and data-caption holds user input (file name or comment),
+// so the caption must be escaped here or it becomes active HTML once the attribute is decoded.
+// Set it on the defaults too, so elements reloaded later and opened through fancybox's delegated handler are covered.
+// Read the raw attribute: jQuery .data() would also try to parse it as JSON.
+function fancyboxCaption(this: HTMLElement | JQuery): string {
+  const caption = document.createElement('span');
+  caption.textContent = $(this).attr('data-caption') ?? '';
+  return caption.innerHTML;
+}
+(($ as unknown) as { fancybox: { defaults: { caption: unknown } } }).fancybox.defaults.caption = fancyboxCaption;
+$('[data-fancybox]').fancybox({ caption: fancyboxCaption });
 
 const uploadsDiv = document.getElementById('uploadsDiv');
 new MutationObserver(() => {

@@ -155,6 +155,9 @@ final class LoginHelper
 
     private function populateSession(): void
     {
+        // a real login always discards a previous impersonation state
+        new Impersonation($this->Session, false)->clear();
+
         // Main switch to know if we are logged in
         $this->Session->set('is_auth', 1);
 

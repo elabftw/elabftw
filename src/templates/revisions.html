@@ -2,9 +2,6 @@
 
 {% block body %}
 
-<p>{{ 'This server is configured to store %d revisions per entry maximum.'|trans|format(App.Config.configArr.max_revisions) }}
-{{ 'A change of at least %d characters is required to trigger a revision save.'|trans|format(App.Config.configArr.min_delta_revisions) }}</p>
-
 {% set query = '?mode=view&' %}
 <a href='{{ Entity.entityType.toPage ~ query }}id={{ Entity.id }}' class='btn btn-ghost'>
   <i class='fas fa-chevron-left mr-1'></i>{{ 'Go back'|trans }}

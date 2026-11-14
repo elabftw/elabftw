@@ -87,7 +87,7 @@ final class DashboardController extends AbstractHtmlController
         return array_merge(
             parent::getData(),
             array(
-                'bookingsArr' => $Scheduler->readAll(),
+                'bookingsArr' => $Scheduler->readAll(maskPending: false),
                 'itemsStatusArr' => $ItemsStatus->readAll(),
                 'experimentsArr' => $Experiments->readLatestForDashboard($DisplayParamsExp),
                 'experimentsStatusArr' => $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999)))),

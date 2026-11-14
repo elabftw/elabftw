@@ -134,6 +134,24 @@
   }
 }
 
+// entry at the end of the show page filters to bring in the options from other teams
+.ts-other-teams-option {
+  background-color: var(--firstlevel);
+  border: 0;
+  border-top: 1px solid var(--secondlevel);
+  color: var(--mediumstrong);
+  font-style: italic;
+  padding: 5px 8px;
+  text-align: left;
+  width: 100%;
+
+  &:hover,
+  &:focus {
+    background-color: var(--secondevel);
+    color: var(--strongest);
+  }
+}
+
 // let the metavalue inuput stretch to same height as metakey select
 #metavalue {
   height: auto;

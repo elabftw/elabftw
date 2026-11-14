@@ -22,6 +22,12 @@ class EnumsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray(ApiEndpoint::getCases());
     }
 
+    public function testBookingApprovalStatusSlotBlockingSqlList(): void
+    {
+        // rejected bookings must not block a time slot
+        $this->assertSame('0, 1, 2', BookingApprovalStatus::slotBlockingSqlList());
+    }
+
     public function testEntrypoint(): void
     {
         array_map(

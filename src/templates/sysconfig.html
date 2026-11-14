@@ -204,30 +204,6 @@
   </div>
 
 
-  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Revisions system configuration'|trans }}</h2>
-  <div class='pl-3'>
-    <div class='d-flex justify-content-between'>
-      <label for='max_revisions' class='col-form-label'>{{ 'Maximum number of stored revisions per entry'|trans }}</label>
-      <input class='form-control col-md-3' data-trigger='blur' data-model='config' data-target='max_revisions' type='number' min='0' max='999' value='{{ App.Config.configArr.max_revisions }}' id='max_revisions' />
-    </div>
-    <p class='smallgray'>{{ 'Setting this to a low value will help keeping the database size small. Setting this to 0 will allow infinite number of revisions stored.'|trans }}</p>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='min_delta_revisions' class='col-form-label'>{{ 'Minimum number of characters that need to be changed in order to create a new revision per entry'|trans }}</label>
-      <input class='form-control col-md-3' type='number' min='1' max='999' value='{{ App.Config.configArr.min_delta_revisions }}' data-trigger='blur' data-model='config' data-target='min_delta_revisions' id='min_delta_revisions' />
-    </div>
-    <p class='smallgray'>{{ 'Setting this to a high value will help keeping the database size small.'|trans }}</p>
-    <hr>
-
-    <div class='d-flex justify-content-between'>
-      <label for='min_days_revisions' class='col-form-label'>{{ 'Number of days between changes to automatically create a revision'|trans }}</label>
-      <input class='form-control col-md-3' type='number' min='1' max='999' value='{{ App.Config.configArr.min_days_revisions }}' data-trigger='blur' data-model='config' data-target='min_days_revisions' id='min_days_revisions' />
-    </div>
-    <p class='smallgray'>{{ 'If the last change is at least this days old, a revision will be created regardless of the minimum characters setting.'|trans }}</p>
-    <hr>
-  </div>
-
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Permissions settings'|trans }}</h2>
   <div id='permissionsSettingsDiv' class='pl-3'>
     {% for perm in permissions %}
@@ -243,6 +219,7 @@
     {% include 'binary-setting.html' with {'label': 'Admins can create local accounts'|trans, 'slug': 'admins_create_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to add existing users to their team'|trans, 'slug': 'admins_import_users'} %}
     {% include 'binary-setting.html' with {'label': 'Allow Admins to archive users'|trans, 'slug': 'admins_archive_users'} %}
+    {% include 'binary-setting.html' with {'label': 'Allow Admins to impersonate users of their team'|trans, 'slug': 'admins_impersonate_users', 'help': 'Admins will be able to see the app as a user of the team where they are Admin sees it, in read-only mode. They will see everything this user can see, including entries visible only to that user. Admins can only impersonate users who are in no other team than the ones where they are Admin, and users with elevated privileges (Admins, Sysadmins) cannot be impersonated by Admins. Sysadmins can always impersonate any user. Every impersonation is recorded in the audit logs.'|trans} %}
 
     <div class='d-flex justify-content-between'>
       <label for='user_msg_need_local_account_created' class='col-form-label'>{{ 'Message shown to user after successful external auth but local account provisioning is required'|trans }}</label>
@@ -291,6 +268,20 @@
       brandingFavicon,
       false
     ) }}
+  </div>
+
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'PDF footer'|trans }}</h2>
+  <div class='pl-3 mb-5'>
+    <label for='pdfFooterTextInput' class='mb-3'>{{ 'The following text will be added to the footer of all generated PDF files. Use it to display the name of your institution, for instance.'|trans }}</label>
+    <div class='input-group'>
+      <input class='form-control' type='text' id='pdfFooterTextInput' name='pdf_footer_text' value='{{ App.Config.configArr.pdf_footer_text|e('html_attr') }}' />
+      <div class='input-group-append'>
+        <button type='button' data-action='patch-announcement' data-operation='save' data-inputid='pdfFooterTextInput' class='btn btn-primary'>{{ 'Save'|trans }}</button>
+      </div>
+      <div class='input-group-append'>
+        <button type='button' data-action='patch-announcement' data-operation='clear' data-inputid='pdfFooterTextInput' class='btn btn-danger'>{{ 'Clear'|trans }}</button>
+      </div>
+    </div>
   </div>
 
   <h2 class='p-2 pl-3 section-title' id='existingRors'>{{ 'Research Organization Registry (ROR)'|trans }}</h2>
@@ -593,6 +584,8 @@
     <p class='smallgray'>{{ 'Force certain accounts to enable multi-factor authentication.'|trans }}</p>
     <hr>
 
+    {% include 'binary-setting.html' with {'label': 'Enforce 2FA only for local authentication'|trans, 'slug': 'enforce_mfa_local_only', 'help': 'If enabled, users logging in with another method (SAML, LDAP, external authentication) will not be forced to use 2FA. Useful when your identity provider already enforces MFA. Users that have enabled 2FA themselves will still be asked for it.'|trans} %}
+
     <div class='d-flex justify-content-between'>
       <label for='email_domain' class='col-form-label'>{{ 'Enforce a domain name for emails'|trans }}</label>
       <input id='email_domain' class='form-control col-md-3' type='text' placeholder='example.de' value='{{ App.Config.configArr.email_domain }}' data-trigger='blur' data-model='config' data-target='email_domain' />
@@ -756,7 +749,6 @@
 
     {% include 'binary-setting.html' with {'label': 'Verify TLS certificate'|trans, 'slug': 's3_exports_verify_cert'} %}
     {% include 'binary-setting.html' with {'label': 'Use S3 Path-Style endpoint'|trans, 'slug': 's3_exports_use_path_style_endpoint'} %}
-
   </div>
 </div>
 
@@ -1232,49 +1224,12 @@
 
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'Audit Logs'|trans }}</h2>
   <div class='pl-3 mb-5'>
-    <p id='auditLogsTableLabel'>{{ 'This table lists the most recent events recorded in the application and worth keeping a trace of.'|trans }}</p>
-    {# Refresh button #}
-    <div class='text-center'>
-      <button type='button' aria-label='{{ 'Refresh'|trans }}' class='btn btn-secondary btn-sm mb-2' data-action='reload-on-click' data-target='auditLogsTable'><i class='fas fa-rotate mr-1'></i>{{ 'Refresh'|trans }}</button>
-    </div>
-    {# Logs are presented in a sortable table #}
-    {% include 'filter-input-snippet.html' with {'target': 'auditLogsTable'} %}
-    <div class='table-container'>
-      <table class='table' aria-labelledby='auditLogsTableLabel' data-table-sort='true'>
-        <thead>
-          <tr>
-            <th scope='col'>{{ 'Category'|trans }}</th>
-            <th scope='col'>{{ 'Created at'|trans }}</th>
-            <th scope='col'>{{ 'Content'|trans }}</th>
-            <th scope='col'>{{ 'Actor'|trans }}</th>
-            <th scope='col'>{{ 'Target user'|trans }}</th>
-          </tr>
-        </thead>
-        <tbody id='auditLogsTable'>
-          {% for log in auditLogsArr %}
-            <tr>
-              <td>{{ log.category }}</td>
-              <td><span class='relative-moment' title='{{ log.created_at }}'></span></td>
-              <td>{{ log.body }}</td>
-              <td>
-                {%- if log.requester_userid != 0 -%}
-                  <a class='btn btn-ghost' href='?tab=3&amp;q=&amp;userid={{ log.requester_userid }}'>{{ log.requester_userid }}</a>
-                {%- else -%}
-                  <span class='p-1'>&ndash;</span>
-                {%- endif -%}
-              </td>
-              <td>
-                {%- if log.target_userid != 0 -%}
-                  <a class='btn btn-ghost' href='?tab=3&amp;q=&amp;userid={{ log.target_userid }}'>{{ log.target_userid }}</a>
-                {%- else -%}
-                  <span class='p-1'>&ndash;</span>
-                {%- endif -%}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    <p>{{ 'This table lists the most recent events recorded in the application and worth keeping a trace of.'|trans }}</p>
+    {% if App.devMode -%}
+    {# no-redundant-role: 'Redundant role "spinbutton" on <input>' on '#ag-13-input' #}
+    <!-- [html-validate-disable-block prefer-native-element, no-redundant-role, element-permitted-content] -->
+    {%- endif %}
+    <div id='audit-logs-table'></div>
   </div>
 </div>
 

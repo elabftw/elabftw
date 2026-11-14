@@ -41,6 +41,7 @@
 @include meta.load-css('autocomplete');
 @include meta.load-css('buttons');
 @include meta.load-css('charts');
+@include meta.load-css('doodle');
 @include meta.load-css('footer');
 @include meta.load-css('header');
 @include meta.load-css('star-rating');
@@ -341,7 +342,9 @@ h5 {
 }
 
 /*  MENU is below main nav */
-.tabbed-menu {
+/* entity-body-tabs reuses the look without the url driven behavior of .tabbed-menu (Tab.class.ts) */
+.tabbed-menu,
+.entity-body-tabs {
   border-bottom: 1px solid var(--firstlevel);
   line-height: 200%;
   padding: 0;
@@ -361,6 +364,13 @@ h5 {
     }
 
   }
+}
+
+/* inactive pane or collapsed section of .entity-body-tabs, see tabbed-sections.ts for why it is not display: none */
+.entity-body-pane-inactive {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 /* ALERT */
@@ -1073,6 +1083,13 @@ tr.upload-group-drop-target td {
   background-color: rgba(41, 174, 185, 0.5);
 }
 
+/* make it obvious that a step date (deadline, completion time) can be clicked to be modified */
+.step-datetime {
+  border: 1px dashed rgba(127, 127, 127, 0.6);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .hl-hover-superlight:hover {
   background-color: var(--superlight);
 
@@ -1252,6 +1269,99 @@ tr.upload-group-drop-target td {
 .elabid {
   color: var(--medium);
   overflow-wrap: break-word;
+}
+
+/* PERMISSIONS MODAL, see permissions-modal.html */
+.permissions-group-title {
+  color: var(--medium);
+  font-size: 80%;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  margin: 1rem 0 0.5rem;
+  text-transform: uppercase;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+/* a permissions modal loaded for a target the user cannot write to (compounds): what it shares, without the means to change it */
+.permissions-readonly {
+  .permissions-edit-only,
+  .permissions-chip-remove {
+    display: none;
+  }
+}
+
+.permissions-section {
+  border: 1px solid var(--firstlevel);
+  border-radius: 5px;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+.permissions-section-title {
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+.permissions-base {
+  font-size: 1.05rem;
+}
+
+.permissions-chip {
+  align-items: center;
+  background-color: var(--superlight);
+  border-radius: 1rem;
+  display: inline-flex;
+  font-size: 85%;
+  margin: 0.4rem 0.3rem 0 0;
+  padding: 0.1rem 0.6rem 0.1rem 0.2rem;
+
+  i {
+    opacity: 0.7;
+  }
+}
+
+// remove button of an editable permissions chip
+.permissions-chip-remove {
+  background: none;
+  border: 0;
+  color: inherit;
+  line-height: 1;
+  margin-left: 0.4rem;
+  padding: 0;
+
+  i {
+    margin-right: 0;
+  }
+
+  &:hover i,
+  &:focus i {
+    opacity: 1;
+  }
+}
+
+// kind of an entry in the permissions search: team, user group or user
+.permissions-kind {
+  font-size: 75%;
+  font-weight: normal;
+  min-width: 4.5rem;
+}
+
+.permissions-kind-team {
+  background-color: var(--lightblue);
+  color: var(--darkblue);
+}
+
+.permissions-kind-teamgroup {
+  background-color: var(--lightgold);
+  color: var(--darkgold);
+}
+
+.permissions-kind-user {
+  background-color: var(--superlight);
+  color: var(--mediumstrong);
 }
 
 /* TAGS */
@@ -1967,11 +2077,6 @@ input:user-invalid {
     border-radius: 4px;
     padding: 4px 8px;
   }
-}
-
-// disable touch action for doodle canvas
-#doodleCanvas {
-  touch-action: none;
 }
 
 // on sysconfig page

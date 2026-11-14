@@ -23,7 +23,6 @@ use Elabftw\Elabftw\LocalPassword;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
-use Elabftw\Enums\Messages;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Usergroup;
@@ -44,6 +43,7 @@ use Elabftw\Models\Notifications\SelfIsValidated;
 use Elabftw\Models\Notifications\SelfNeedValidation;
 use Elabftw\Models\Notifications\UserCreated;
 use Elabftw\Models\Notifications\UserNeedValidation;
+use Elabftw\Models\TeamGroups;
 use Elabftw\Models\Teams;
 use Elabftw\Models\Users2Teams;
 use Elabftw\Params\UserParams;
@@ -94,15 +94,24 @@ class Users extends AbstractRest
      */
     public ?int $apiKeyId = null;
 
+    /**
+     * Userid of the Sysadmin or Admin currently impersonating this user, if any.
+     * Only set for session based requests, it makes the session read-only (see ImpersonationGuard).
+     */
+    public ?int $impersonatorId = null;
+
+    // ids of the team groups of the user, read once per request, see getTeamGroupIds()
+    private ?array $teamGroupIds = null;
+
     public function __construct(public ?int $userid = null, public ?int $team = null, ?self $requester = null)
     {
         parent::__construct();
-        if ($team !== null && $userid !== null) {
-            $TeamsHelper = new TeamsHelper($this->team ?? 0);
-            $this->isAdmin = $TeamsHelper->isAdmin($userid);
-        }
         if ($userid !== null) {
             $this->readOneFull();
+            if ($team !== null) {
+                // the memberships come with the user data, so no need for another query like TeamsHelper::isAdmin()
+                $this->isAdmin = $this->isActiveAdminInTeam($team);
+            }
         }
         $this->requester = $requester === null ? $this : $requester;
     }
@@ -394,7 +403,8 @@ class Users extends AbstractRest
                'name', t.name,
                'is_admin', u2t_all.is_admin,
                'is_owner', u2t_all.is_owner,
-               'is_archived', u2t_all.is_archived
+               'is_archived', u2t_all.is_archived,
+               'is_restricted', u2t_all.is_restricted
              )
            ) AS teams
 
@@ -544,8 +554,16 @@ class Users extends AbstractRest
     #[Override]
     public function readOne(): array
     {
-        $this->canReadOrExplode();
         $userData = $this->readOneFull();
+        if (!$this->canReadFullProfile()) {
+            return array(
+                'firstname' => $userData['firstname'],
+                'lastname' => $userData['lastname'],
+                'fullname' => $userData['fullname'],
+                'email' => self::maskEmail($userData['email']),
+            );
+        }
+
         unset($userData['password']);
         unset($userData['password_hash']);
         unset($userData['salt']);
@@ -555,8 +573,8 @@ class Users extends AbstractRest
         if (!$this->requester->isSysadmin()) {
             unset($userData['last_login'], $userData['modified_at']);
         }
-        // keep sig_privkey in response if requester is target
-        if ($this->requester->getUserid() !== $this->getUserid()) {
+        // keep sig_privkey in response if requester is target, but never for an impersonator: it could be kept and cracked offline
+        if ($this->requester->getUserid() !== $this->getUserid() || $this->requester->impersonatorId !== null) {
             unset($userData['sig_privkey']);
         }
         return $userData;
@@ -568,7 +586,7 @@ class Users extends AbstractRest
      */
     public function readNamesFromIds(array $idArr): array
     {
-        $onlyIds = array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+        $onlyIds = self::keepValidIds($idArr);
         if (empty($onlyIds)) {
             return array();
         }
@@ -582,6 +600,22 @@ class Users extends AbstractRest
             }
             return $user;
         }, $req->fetchAll());
+    }
+
+    /**
+     * Resolve user ids into names only, in a single query: use it when the email is not needed,
+     * as readNamesFromIds() runs a query per user to know if the email must be masked
+     */
+    public function readFullnamesFromIds(array $idArr): array
+    {
+        $onlyIds = self::keepValidIds($idArr);
+        if (empty($onlyIds)) {
+            return array();
+        }
+        $sql = "SELECT userid, CONCAT(users.firstname, ' ', users.lastname) AS fullname FROM users WHERE userid IN (" . implode(',', $onlyIds) . ') ORDER BY fullname ASC';
+        $req = $this->Db->prepare($sql);
+        $this->Db->execute($req);
+        return $req->fetchAll();
     }
 
     public function isAdminSomewhere(): bool
@@ -616,9 +650,7 @@ class Users extends AbstractRest
                     }
                     // need to be admin to "import" a user in a team
                     $team = (int) ($params['team'] ?? $this->requester->userData['team']);
-                    $TeamsHelper = new TeamsHelper($team);
-                    $isAdmin = $TeamsHelper->isAdmin($this->requester->userData['userid']);
-                    if (!$hasPermission && $isAdmin === false) {
+                    if (!$hasPermission && !$this->requester->isActiveAdminInTeam($team)) {
                         throw new ForbiddenException('Only Admin can add a user to a team (where they are Admin)');
                     }
                     new Users2Teams($this->requester)->create($this->userData['userid'], $team, isValidated: $this->userData['validated'] === 1);
@@ -654,7 +686,6 @@ class Users extends AbstractRest
             Action::Validate => $this->validate(),
             default => throw new ImproperActionException('Invalid action parameter.'),
         };
-        // TODO check when admin if unreference doesn't cause issue
         return $this->readOne();
     }
 
@@ -872,7 +903,8 @@ class Users extends AbstractRest
                'name', t.name,
                'is_admin', u2t.is_admin,
                'is_owner', u2t.is_owner,
-               'is_archived', u2t.is_archived
+               'is_archived', u2t.is_archived,
+               'is_restricted', u2t.is_restricted
              )
            ) AS teams
             FROM users AS u
@@ -906,6 +938,8 @@ class Users extends AbstractRest
         $this->Db->execute($req);
 
         $this->userData = $this->Db->fetch($req);
+        // fresh user data: the team groups are read again too
+        $this->teamGroupIds = null;
         $this->userData['team'] = $this->team;
         $this->userData['teams'] = json_decode($this->userData['teams'], true, 3, JSON_THROW_ON_ERROR);
         $this->userData['default_read_base_human'] = BasePermissions::from($this->userData['default_read_base'])->toHuman();
@@ -918,10 +952,28 @@ class Users extends AbstractRest
         return ($this->userData['is_sysadmin'] ?? 0) === 1;
     }
 
+    /**
+     * A user restricted in the team they are acting in only has access to entries they own
+     * or that are explicitly shared with them (user or teamgroup)
+     * Base permissions (public, organization, team, user + admins) and team-wide sharing are ignored for them
+     */
+    public function isRestricted(): bool
+    {
+        if ($this->team === null) {
+            return false;
+        }
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['id'] === $this->team) {
+                return (int) ($team['is_restricted'] ?? 0) === 1;
+            }
+        }
+        return false;
+    }
+
     public function isSysadminOrExplode(): void
     {
         if ($this->isSysadmin() === false) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -939,13 +991,13 @@ class Users extends AbstractRest
         if ($team === $this->team) {
             return $this->isAdmin;
         }
-        return new TeamsHelper($team)->isAdminInTeam($this->userData['userid'] ?? 0);
+        return $this->isActiveAdminInTeam($team);
     }
 
     public function isAdminOrExplode(): void
     {
         if (!$this->isSysadmin() && !$this->isAdmin()) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -957,8 +1009,20 @@ class Users extends AbstractRest
     public function isSelfOrExplode(): void
     {
         if ($this->isSelf() === false) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
+    }
+
+    /**
+     * Ids of the team groups the user is in. The permission checks and the can filters of every query
+     * need them, so they are read once and kept, like the teams of the user in userData
+     */
+    public function getTeamGroupIds(): array
+    {
+        if ($this->teamGroupIds === null) {
+            $this->teamGroupIds = array_map('intval', array_column(new TeamGroups($this)->readGroupsFromUser(), 'id'));
+        }
+        return $this->teamGroupIds;
     }
 
     // Return IDs of teams where the user has an active membership
@@ -967,6 +1031,21 @@ class Users extends AbstractRest
         $teamIds = array();
         foreach ($this->userData['teams'] ?? array() as $team) {
             if ((int) $team['is_archived'] === 0) {
+                $teamIds[] = (int) $team['id'];
+            }
+        }
+        return $teamIds;
+    }
+
+    /**
+     * IDs of the teams through which an entry explicitly shared with a team grants access
+     * Being restricted in a team means sharing with that team must not include this user
+     */
+    public function getTeamIdsForSharing(): array
+    {
+        $teamIds = array();
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['is_archived'] === 0 && (int) ($team['is_restricted'] ?? 0) === 0) {
                 $teamIds[] = (int) $team['id'];
             }
         }
@@ -1012,19 +1091,9 @@ class Users extends AbstractRest
         throw new ForbiddenException('User tried to disable 2fa but is not sysadmin or same user.');
     }
 
-    private function canReadOrExplode(): void
+    private function canReadFullProfile(): bool
     {
-        // it's ourself or we are sysadmin
-        if ($this->requester->getUserid() === $this->getUserid() || $this->requester->isSysadmin()) {
-            return;
-        }
-        if (!$this->requester->isAdmin && !$this->isSelf()) {
-            throw new ForbiddenException('This endpoint requires admin privileges to access other users.');
-        }
-        // check we view user of our team, unless we are sysadmin and we can access it
-        if (!$this->requester->isAdminOf($this->getUserid())) {
-            throw new ForbiddenException('User tried to access user from other team.');
-        }
+        return $this->requester->isAdminOf($this->getUserid());
     }
 
     private function updatePassword(array $params, bool $isReset = false): bool
@@ -1079,7 +1148,7 @@ class Users extends AbstractRest
             return;
         }
         if (!$this->requester->isAdminOf($this->userData['userid']) && $action !== Action::Add) {
-            throw new ForbiddenException(Messages::InsufficientPermissions->toHuman());
+            throw new ForbiddenException();
         }
     }
 
@@ -1144,6 +1213,12 @@ class Users extends AbstractRest
         return $this->requester->isSysadmin() || $this->requester->isAdminOf($userid);
     }
 
+    // only positive integers can be user ids, and casting them makes them safe to put in an IN () clause
+    private static function keepValidIds(array $idArr): array
+    {
+        return array_values(array_filter(array_map('intval', $idArr), fn(int $id): bool => $id > 0));
+    }
+
     private static function maskEmail(string $email): string
     {
         $separatorPosition = strrpos($email, '@');
@@ -1161,5 +1236,16 @@ class Users extends AbstractRest
             default => $localPart[0] . '***' . substr($localPart, -1),
         };
         return sprintf('%s@%s', $maskedLocalPart, $domain);
+    }
+
+    // same as TeamsHelper::isAdmin(), but from the teams of userData: an archived membership does not count
+    private function isActiveAdminInTeam(int $teamId): bool
+    {
+        foreach ($this->userData['teams'] ?? array() as $team) {
+            if ((int) $team['id'] === $teamId) {
+                return (int) $team['is_admin'] === 1 && (int) $team['is_archived'] === 0;
+            }
+        }
+        return false;
     }
 }

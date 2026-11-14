@@ -47,7 +47,10 @@ $Response = new RedirectResponse($location);
 try {
     $enforceMfa = EnforceMfa::from((int) $App->Config->configArr['enforce_mfa']);
     $loginFlow = new LoginFlow(
-        new MfaPolicy($enforceMfa),
+        new MfaPolicy(
+            $enforceMfa,
+            $App->Config->configArr['enforce_mfa_local_only'] === '1',
+        ),
         new PasswordRenewalPolicy((int) $App->Config->configArr['max_password_age_days']),
         new SelectableTeamsProvider(),
         new UserLoginValidator(),

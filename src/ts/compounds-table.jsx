@@ -10,6 +10,7 @@
  * Code related to the compounds table present on the Compounds page from ag-grid
  */
 import {
+  ClientSideRowModelApiModule,
   ClientSideRowModelModule,
   CellStyleModule,
   ColumnApiModule,
@@ -26,9 +27,12 @@ import 'ag-grid-community/styles/ag-grid.css';
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ApiC } from './api';
-import { DEFAULT_AG_GRID_PAGINATION, toggleEditCompound } from './misc';
-import i18next from './i18n';
+import { getCsvDate, toCsv } from './csv';
+import { off, on } from './handlers';
+import { DEFAULT_AG_GRID_PAGINATION, saveStringAsFile, toggleEditCompound } from './misc';
 import { notify } from './notify';
+import { readStorage, writeStorage } from './localStorage';
+import i18next from './i18n';
 import { getAgGridTheme } from './theme';
 import AgGridTableOptions from './ag-grid-table-options';
 
@@ -37,6 +41,8 @@ const COLUMN_STATE_STORAGE_KEY = 'persistent_compounds_table_column_state_v1';
 provideGlobalGridOptions({ theme: 'legacy' });
 ModuleRegistry.registerModules([
   ClientSideRowModelModule,
+  // for forEachNodeAfterFilterAndSort() in exportCsv: without it, the call does nothing and the export is always empty
+  ClientSideRowModelApiModule,
   CellStyleModule,
   ColumnApiModule,
   ColumnAutoSizeModule,
@@ -46,6 +52,74 @@ ModuleRegistry.registerModules([
   QuickFilterModule,
 ]);
 
+// SINGLE SEARCH BAR
+// The text is a quick filter of the table, in the browser: every column, as it is typed.
+// A term with one of these prefixes is a structure search, done by the server:
+// smiles:CCO for the compounds containing this substructure, exact:CCO for this structure, smarts:[OX2H]c for a SMARTS pattern
+const STRUCTURE_TERM = /^(smiles|exact|smarts):(\S+)$/i;
+// the first block of an InChIKey encodes the connectivity: searching it also finds stereoisomers and other protonation states
+const INCHIKEY = /^[A-Z]{14}-[A-Z]{10}-[A-Z]$/i;
+// a structure search runs Open Babel: wait for a pause in the typing
+const STRUCTURE_SEARCH_DELAY_MS = 400;
+
+const parseSearch = query => {
+  let structure = null;
+  const text = [];
+  query.trim().split(/\s+/).filter(Boolean).forEach(term => {
+    // a prefix alone is a structure being typed: it does not filter the text
+    if (/^(smiles|exact|smarts):$/i.test(term)) {
+      return;
+    }
+    const match = term.match(STRUCTURE_TERM);
+    if (match) {
+      // only one structure is searched: the last one typed
+      structure = { type: match[1].toLowerCase(), value: match[2] };
+      return;
+    }
+    text.push(INCHIKEY.test(term) ? `${term.slice(0, 14)}-` : term);
+  });
+  return { text: text.join(' '), structure };
+};
+
+const structureSearchParams = structure => {
+  if (structure.type === 'smarts') {
+    return { search_smarts: structure.value };
+  }
+  return { search_fp_smi: structure.value, exact: structure.type === 'exact' ? '1' : '0' };
+};
+
+// the table is also mounted by the chemical editor, which searches with the drawn structure: see search-from-editor in chem-editor.ts
+// on the compounds page, the search is in the url, so it can be shared and survives a reload of the table
+const getInitialQuery = syncUrl => {
+  const editorInput = document.getElementById('substructureSearchInput');
+  if (editorInput?.value) {
+    const exact = document.getElementById('search-fp-exact')?.checked;
+    return `${exact ? 'exact' : 'smiles'}:${editorInput.value}`;
+  }
+  if (!syncUrl) {
+    return '';
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  // search_fp_smi: older links to a substructure search
+  if (urlParams.get('search_fp_smi')) {
+    const exact = ['1', 'on', 'true'].includes(urlParams.get('exact') ?? '');
+    return `${exact ? 'exact' : 'smiles'}:${urlParams.get('search_fp_smi')}`;
+  }
+  return urlParams.get('q') ?? '';
+};
+
+const storeQueryInUrl = query => {
+  const url = new URL(window.location.href);
+  url.searchParams.delete('search_fp_smi');
+  url.searchParams.delete('exact');
+  if (query.trim()) {
+    url.searchParams.set('q', query);
+  } else {
+    url.searchParams.delete('q');
+  }
+  window.history.replaceState(window.history.state, '', url);
+};
+
 const rowSelection = {
     mode: 'multiRow',
     headerCheckbox: false,
@@ -53,28 +127,38 @@ const rowSelection = {
 
 const getStoredColumnState = () => {
   try {
-    return JSON.parse(
-      localStorage.getItem(COLUMN_STATE_STORAGE_KEY) ?? 'null'
-    );
+    return JSON.parse(readStorage(COLUMN_STATE_STORAGE_KEY) ?? 'null');
   } catch {
     return null;
   }
 };
 
-const storeColumnState = api => {
-  try {
-    localStorage.setItem(
-      COLUMN_STATE_STORAGE_KEY,
-      JSON.stringify(api.getColumnState())
-    );
-  } catch {
-    // localStorage might be unavailable
+const storeColumnState = api => writeStorage(COLUMN_STATE_STORAGE_KEY, JSON.stringify(api.getColumnState()));
+
+// Export the compounds shown in the table, in their order: the text of the search bar filters them in the browser,
+// so the server cannot know which ones they are. The rows are the ones of the API, so the columns are the same as
+// in the report of all the compounds (/api/v2/reports?scope=compounds&format=csv).
+const exportCsv = api => {
+  const rows = [];
+  api.forEachNodeAfterFilterAndSort(node => {
+    if (node.data) {
+      rows.push(node.data);
+    }
+  });
+  if (rows.length === 0) {
+    notify.error('nothing-to-export');
+    return;
   }
+  saveStringAsFile(`${getCsvDate()}-compounds.elabftw.csv`, toCsv(rows), 'text/csv;charset=utf-8');
 };
 
-const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
+const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel, searchHelpId, searchPlaceholder, syncUrl }) => {
     const [rowData, setRowData] = useState([]);
     const [gridApi, setGridApi] = useState(null);
+    const [query, setQuery] = useState(() => getInitialQuery(syncUrl));
+    const search = useMemo(() => parseSearch(query), [query]);
+    const [pending, setPending] = useState(false);
+    const [structureError, setStructureError] = useState('');
     const onGridReady = (event) => {
       const columnState = getStoredColumnState();
       if (Array.isArray(columnState)) {
@@ -118,6 +202,8 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
         { field: 'is_serious_health_hazard', headerName: 'Serious health hazard' },
         { field: 'is_oxidising', headerName: 'Oxidising' },
         { field: 'is_toxic', headerName: 'Toxic' },
+        { field: 'ghs_signal_word', headerName: 'GHS signal word' },
+        { field: 'ghs_codes', headerName: 'GHS statements' },
         { field: 'is_radioactive', headerName: 'Radioactive' },
         { field: 'is_antibiotic', headerName: 'Antibiotic' },
         { field: 'is_antibiotic_precursor', headerName: 'Antibiotic precursor' },
@@ -140,31 +226,63 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
   const [showDeleted, setShowDeleted] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
 
-  // Load data on component mount and refresh on showDeleted change
+  // The rows are all the compounds, or with a structure term, the compounds matching it: searched by the server, once the
+  // typing pauses, the latest search wins. Without a limit, so that the text filtering these rows in the browser cannot miss
+  // a compound matching both, and a structure search (the chemical editor) does not download the whole database.
+  const structureKey = search.structure ? `${search.structure.type}:${search.structure.value}` : '';
   useEffect(() => {
-      fetchData();
-  }, [showDeleted]);
+    const structure = search.structure;
+    const params = { limit: 999999 };
+    if (showDeleted) {
+      params.state = 3;
+    }
+    if (structure) {
+      // an incomplete structure is expected while typing: show why it is not searched next to the bar, not as a notification
+      Object.assign(params, structureSearchParams(structure), { notifOnError: 0 });
+    }
+    let cancelled = false;
+    setStructureError('');
+    setPending(true);
+    const timer = setTimeout(() => {
+      ApiC.getJson('compounds', params)
+        .then(compounds => {
+          if (!cancelled) setRowData(compounds);
+        })
+        .catch(error => {
+          if (cancelled || !structure) return;
+          setRowData([]);
+          setStructureError(error.message);
+        })
+        .finally(() => {
+          if (!cancelled) setPending(false);
+        });
+    }, structure ? STRUCTURE_SEARCH_DELAY_MS : 0);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [showDeleted, structureKey]);
 
-  // all the compounds are loaded in the table, which does client side pagination
-  const fetchData = async () => {
-    let searchString = '';
-    if (document.getElementById('substructureSearchInput')) {
-      const subInput = document.getElementById('substructureSearchInput');
-      const urlParams = new URLSearchParams(window.location.search);
-      const exact = (document.getElementById('search-fp-exact').checked || Boolean(urlParams.get('exact'))) ? '&exact=1' : '';
-      if (subInput.value) {
-        searchString = `&search_fp_smi=${encodeURIComponent(subInput.value)}${exact}`;
-      }
+  // the text filters the table at once
+  useEffect(() => {
+    gridApi?.setGridOption('quickFilterText', search.text);
+  }, [gridApi, search.text]);
+
+  useEffect(() => {
+    if (syncUrl) {
+      storeQueryInUrl(query);
     }
-    // adding deleted flag to query
-    const deletedParam = showDeleted ? '&state=3' : '';
-    try {
-      const compounds = await ApiC.getJson(`compounds?limit=999999${searchString}${deletedParam}`);
-      setRowData(compounds);
-    } catch (error) {
-      notify.error(error);
+  }, [query]);
+
+  // the export button is in the title of the page, outside of the table: unregistered when the table is remounted
+  useEffect(() => {
+    if (!gridApi) {
+      return;
     }
-  };
+    const handler = () => exportCsv(gridApi);
+    on('get-compounds-csv', handler);
+    return () => off('get-compounds-csv', handler);
+  }, [gridApi]);
 
     const defaultColDef = useMemo(() => {
         return {
@@ -194,19 +312,33 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
       toggleEditCompound(json);
     });
   };
-  const onQuickFilterChange = (e) => {
-    gridApi.setGridOption('quickFilterText', e.target.value);
-  };
 
   return (
     <>
-      <input
-        type="text"
-        aria-label={i18next.t('search')}
-        placeholder={i18next.t('search')}
-        onChange={onQuickFilterChange}
-        className={'form-control mb-2'}
-      />
+      <div className='input-group mb-2'>
+        <div className='input-group-prepend'>
+          <span className='input-group-text' aria-hidden='true'>
+            <i className={`fas fa-fw ${pending ? 'fa-spinner fa-spin' : 'fa-magnifying-glass'}`}></i>
+          </span>
+        </div>
+        <input
+          type='search'
+          aria-label={i18next.t('search')}
+          aria-describedby={searchHelpId || undefined}
+          aria-busy={pending}
+          placeholder={searchPlaceholder || i18next.t('search')}
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className='form-control'
+          spellCheck='false'
+          autoComplete='off'
+          autoCapitalize='off'
+          data-cy='compounds-search'
+        />
+      </div>
+      {structureError && (
+        <p className='text-danger small mb-2' role='alert'>{structureError}</p>
+      )}
       <div
         className={`ag-grid-table-wrapper position-relative ${getAgGridTheme()}`}
         style={{ height: 650 }}
@@ -221,6 +353,7 @@ const GridExample = ({ canManageCompounds, deleteLabel, restoreLabel }) => {
         onColumnPinned={columnStateChanged}
         onSortChanged={columnStateChanged}
         rowSelection={rowSelection}
+        includeHiddenColumnsInQuickFilter={true}
         onCellDoubleClicked={cellDoubleClicked}
         onGridReady={onGridReady}
         onSelectionChanged={selectionChanged}
@@ -290,5 +423,8 @@ root.render(
     canManageCompounds={tableElement.dataset.canManageCompounds === '1'}
     deleteLabel={tableElement.dataset.deleteLabel}
     restoreLabel={tableElement.dataset.restoreLabel}
+    searchHelpId={tableElement.dataset.searchHelpId}
+    searchPlaceholder={tableElement.dataset.searchPlaceholder}
+    syncUrl={tableElement.dataset.syncUrl === '1'}
   />
 );

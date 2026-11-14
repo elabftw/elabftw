@@ -12,14 +12,37 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use function json_decode;
+use Elabftw\Enums\GhsSignalWord;
+
+use function array_column;
+use function array_merge;
+use function array_unique;
+use function array_values;
 use function is_array;
+use function is_string;
+use function json_decode;
+use function preg_match;
+use function preg_match_all;
+use function trim;
 
 /**
  * Representation of a chemical compound
  */
 final class Compound
 {
+    // propertyID of the GHS data of a compound in an .eln file
+    public const string ELN_GHS_SIGNAL_WORD = 'GHS signal word';
+
+    public const string ELN_GHS_HAZARD_STATEMENT = 'GHS hazard statement';
+
+    public const string ELN_GHS_PRECAUTIONARY_STATEMENT = 'GHS precautionary statement';
+
+    // H300, H360FD, EUH066, P301+P330+P331, P370+P380+P375[+P378]: what PubChem, CLP and GHS write
+    public const string GHS_CODE_REGEX = '(?:EUH|H|P)\d{3}[A-Za-z]*(?:\+(?:EUH|H|P)\d{3}[A-Za-z]*)*(?:\[\+P\d{3}\])?';
+
+    /**
+     * @param string[] $ghsStatements codes of the GHS hazard and precautionary statements
+     */
     public function __construct(
         public ?string $cas = null,
         public ?int $cid = null,
@@ -40,7 +63,20 @@ final class Compound
         public bool $isSeriousHealthHazard = false,
         public bool $isOxidising = false,
         public bool $isToxic = false,
+        public ?GhsSignalWord $ghsSignalWord = null,
+        public array $ghsStatements = array(),
     ) {}
+
+    /**
+     * The GHS statement codes found in a text, like a cell of a CSV file: "H225, H319 P210;P233"
+     *
+     * @return string[]
+     */
+    public static function extractGhsCodes(string $text): array
+    {
+        preg_match_all('/(?<![A-Za-z0-9])' . self::GHS_CODE_REGEX . '/', $text, $matches);
+        return array_values(array_unique($matches[0]));
+    }
 
     public function toArray(): array
     {
@@ -55,6 +91,8 @@ final class Compound
             'molecularWeight' => $this->molecularWeight,
             'name' => $this->name ?? $this->iupacName,
             'smiles' => $this->smiles,
+            'ghsSignalWord' => $this->ghsSignalWord?->value,
+            'ghsStatements' => $this->ghsStatements,
         );
     }
 
@@ -64,49 +102,15 @@ final class Compound
         $compound = new self();
 
         foreach ($all['Section'] as $section) {
-            // Grab the hazard symbols
+            // Grab the GHS pictograms, signal word and statements
             if ($section['TOCHeading'] === 'Safety and Hazards') {
-                foreach ($section['Section'] as $subSection) {
-                    if ($subSection['TOCHeading'] === 'Hazards Identification') {
-                        foreach ($section['Section'] as $subSection) {
-
-                            if (isset($subSection['Section'][0]['TOCHeading']) && $subSection['Section'][0]['TOCHeading'] === 'GHS Classification') {
-                                foreach ($subSection['Section'][0]['Information'] as $info) {
-                                    if (($info['Name'] ?? '') === 'Pictogram(s)') {
-                                        $markups = $info['Value']['StringWithMarkup'][0]['Markup'] ?? $info['Value']['StringWithMarkup'] ?? array();
-                                        foreach ($markups as $ghs) {
-                                            $extra = is_array($ghs) ? ($ghs['Extra'] ?? null) : $ghs;
-                                            if ($extra === 'Corrosive') {
-                                                $compound->isCorrosive = true;
-                                            }
-                                            if ($extra === 'Explosive') {
-                                                $compound->isExplosive = true;
-                                            }
-                                            if ($extra === 'Flammable') {
-                                                $compound->isFlammable = true;
-                                            }
-                                            if ($extra === 'Compressed Gas') {
-                                                $compound->isGasUnderPressure = true;
-                                            }
-                                            if ($extra === 'Environmental Hazard') {
-                                                $compound->isHazardous2env = true;
-                                            }
-                                            if ($extra === 'Irritant') {
-                                                $compound->isHazardous2health = true;
-                                            }
-                                            if ($extra === 'Health Hazard') {
-                                                $compound->isSeriousHealthHazard = true;
-                                            }
-                                            if ($extra === 'Oxidizer') {
-                                                $compound->isOxidising = true;
-                                            }
-                                            if ($extra === 'Acute Toxic') {
-                                                $compound->isToxic = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                foreach ($section['Section'] ?? array() as $subSection) {
+                    if ($subSection['TOCHeading'] !== 'Hazards Identification') {
+                        continue;
+                    }
+                    foreach ($subSection['Section'] ?? array() as $subSubSection) {
+                        if ($subSubSection['TOCHeading'] === 'GHS Classification') {
+                            $compound->addGhsClassification($subSubSection['Information'] ?? array());
                         }
                     }
                 }
@@ -193,5 +197,63 @@ final class Compound
             name: 'CID' . $cid,
             smiles: $smiles,
         );
+    }
+
+    /**
+     * PubChem lists one classification per source (ECHA C&L notifications, national lists...):
+     * everything is kept, so users can remove what does not apply to their product
+     */
+    private function addGhsClassification(array $information): void
+    {
+        $codes = array();
+        foreach ($information as $info) {
+            $strings = array_column($info['Value']['StringWithMarkup'] ?? array(), 'String');
+            switch ($info['Name'] ?? '') {
+                case 'Pictogram(s)':
+                    $this->addPictograms($info);
+                    break;
+                case 'Signal':
+                    foreach ($strings as $string) {
+                        $this->ghsSignalWord = GhsSignalWord::mostSevere($this->ghsSignalWord, GhsSignalWord::tryFrom(trim((string) $string)));
+                    }
+                    break;
+                    // one statement per string: "H300 (98.7%): Fatal if swallowed [Danger Acute toxicity, oral]"
+                case 'GHS Hazard Statements':
+                    foreach ($strings as $string) {
+                        if (is_string($string) && preg_match('/^' . self::GHS_CODE_REGEX . '/', trim($string), $matches) === 1) {
+                            $codes[] = $matches[0];
+                        }
+                    }
+                    break;
+                    // all the codes in one string: "P203, P233, P260, ..., P301+P316, ..."
+                case 'Precautionary Statement Codes':
+                    foreach ($strings as $string) {
+                        $codes = array_merge($codes, self::extractGhsCodes((string) $string));
+                    }
+                    break;
+                default:
+            }
+        }
+        $this->ghsStatements = array_values(array_unique(array_merge($this->ghsStatements, $codes)));
+    }
+
+    private function addPictograms(array $info): void
+    {
+        $markups = $info['Value']['StringWithMarkup'][0]['Markup'] ?? $info['Value']['StringWithMarkup'] ?? array();
+        foreach ($markups as $ghs) {
+            $extra = is_array($ghs) ? ($ghs['Extra'] ?? null) : $ghs;
+            match ($extra) {
+                'Corrosive' => $this->isCorrosive = true,
+                'Explosive' => $this->isExplosive = true,
+                'Flammable' => $this->isFlammable = true,
+                'Compressed Gas' => $this->isGasUnderPressure = true,
+                'Environmental Hazard' => $this->isHazardous2env = true,
+                'Irritant' => $this->isHazardous2health = true,
+                'Health Hazard' => $this->isSeriousHealthHazard = true,
+                'Oxidizer' => $this->isOxidising = true,
+                'Acute Toxic' => $this->isToxic = true,
+                default => null,
+            };
+        }
     }
 }

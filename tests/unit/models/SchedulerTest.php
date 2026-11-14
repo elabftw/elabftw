@@ -14,6 +14,7 @@ namespace Elabftw\Models;
 use DateInterval;
 use DateTime;
 use DateTimeImmutable;
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\Scope;
@@ -24,6 +25,7 @@ use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
+use PDO;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
@@ -685,7 +687,9 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
     public function testReadAllWithFilters(): void
     {
         $Items = $this->getFreshBookableItem(2);
-        $categoryId = $Items->entityData['category'];
+        // Isolate this test from events created in other resources/categories.
+        $categoryId = (new ResourcesCategories(new Teams($Items->Users, 2)))->create('Scheduler filters test');
+        $Items->patch(Action::Update, array('category' => $categoryId));
         $Scheduler = new Scheduler($Items);
 
         $title = 'The filtered event';
@@ -693,24 +697,18 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
 
         // Filtering by item id
         $q = $this->Scheduler->getQueryParams(new InputBag(array('items' => array($Items->id))));
-        $allEvents = $this->Scheduler->readAll();
         $filteredEvent = $this->Scheduler->readAll($q);
-
-        $this->assertNotEmpty($allEvents);
         $this->assertCount(1, $filteredEvent);
-        $this->assertEquals($title, $filteredEvent[0]['title_only']);
-        $this->assertEquals($Items->id, $filteredEvent[0]['items_id'], 'Item ID should match the filtered item');
+        $this->assertSame($title, $filteredEvent[0]['title_only']);
+        $this->assertSame($Items->id, (int) $filteredEvent[0]['items_id']);
 
-        // Filtering by category
-        $titleItem2 = sprintf('New Item in category %d', $categoryId);
+        // Filtering by this test's unique category
+        $titleItem2 = 'Second filtered event';
         $Scheduler->postAction(Action::Create, array('start' => $this->start, 'end' => $this->end, 'title' => $titleItem2));
-
         $qCat = $this->Scheduler->getQueryParams(new InputBag(array('category' => $categoryId)));
         $filteredCatEvents = $this->Scheduler->readAll($qCat);
-        // two events in given category now
         $this->assertCount(2, $filteredCatEvents);
-        $this->assertEquals($title, $filteredCatEvents[0]['title_only']);
-        $this->assertEquals($titleItem2, $filteredCatEvents[1]['title_only']);
+        $this->assertEqualsCanonicalizing(array($title, $titleItem2), array_column($filteredCatEvents, 'title_only'));
     }
 
     public function testPatch(): void
@@ -999,6 +997,22 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($Scheduler->destroy());
     }
 
+    public function testCannotMovePastEventToFuture(): void
+    {
+        $Scheduler = $this->getPastEventScheduler();
+        $start = new DateTimeImmutable('+2 days')->format('c');
+        $end = new DateTimeImmutable('+2 days +2 hours')->format('c');
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $start, 'end' => $end));
+    }
+
+    public function testCannotDestroyPastEvent(): void
+    {
+        $Scheduler = $this->getPastEventScheduler();
+        $this->expectException(ImproperActionException::class);
+        $Scheduler->destroy();
+    }
+
     public function testCannotBookBeyondMaximumAdvanceDays(): void
     {
         $Items = $this->getFreshBookableItem(2);
@@ -1008,6 +1022,17 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $end = new DateTime('+3 days +2 hours')->format('c');
         $this->expectException(ImproperActionException::class);
         $this->getFreshSchedulerWithEvent($Items, $start, $end);
+    }
+
+    // a completed booking from a regular user, outside of the creation grace period
+    private function getPastEventScheduler(): Scheduler
+    {
+        $Scheduler = $this->getFreshSchedulerWithEvent();
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE team_events SET start = DATE_SUB(NOW(), INTERVAL 2 DAY), end = DATE_SUB(NOW(), INTERVAL 2 DAY) + INTERVAL 2 HOUR, created_at = DATE_SUB(NOW(), INTERVAL 3 DAY) WHERE id = :id');
+        $req->bindValue(':id', $Scheduler->id, PDO::PARAM_INT);
+        $Db->execute($req);
+        return $Scheduler;
     }
 
     private function getFreshSchedulerWithEvent(?Items $Items = null, ?string $start = null, ?string $end = null): Scheduler

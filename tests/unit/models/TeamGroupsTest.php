@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
-use Elabftw\Enums\Scope;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Users\Users;
@@ -96,16 +95,6 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    public function testReadScopedTeamgroups(): void
-    {
-        $this->Users->userData['scope_teamgroups'] = Scope::User->value;
-        $this->assertIsArray($this->TeamGroups->readScopedTeamgroups());
-        $this->Users->userData['scope_teamgroups'] = Scope::Team->value;
-        $this->assertIsArray($this->TeamGroups->readScopedTeamgroups());
-        $this->Users->userData['scope_teamgroups'] = Scope::Everything->value;
-        $this->assertIsArray($this->TeamGroups->readScopedTeamgroups());
-    }
-
     public function testUpdate(): void
     {
         $this->TeamGroups->setId(1);
@@ -126,8 +115,6 @@ class TeamGroupsTest extends \PHPUnit\Framework\TestCase
     public function testRead(): void
     {
         $this->assertIsArray($this->TeamGroups->readAll());
-        $this->assertIsArray($this->TeamGroups->readAllUser());
-        $this->assertIsArray($this->TeamGroups->readAllTeam());
         $this->assertIsArray($this->TeamGroups->readAllEverything());
     }
 

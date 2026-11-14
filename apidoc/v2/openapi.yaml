@@ -218,6 +218,96 @@ components:
         enum: [0, 1]
       description: |
         Return all columns of each entry when set to 1.
+
+    ReactionQ:
+      name: reaction_q
+      in: query
+      schema:
+        type: string
+        maxLength: 255
+      description: |
+        Only entries with a reaction containing this text in its title, conditions or atmosphere, or in the name or formula of a component.
+      examples:
+        first:
+          summary: Reactions using a palladium catalyst named "Pd(PPh3)4".
+          value: Pd(PPh3)4
+
+    ReactionStructure:
+      name: reaction_structure
+      in: query
+      schema:
+        type: string
+      description: |
+        Only entries with a reaction component matching this structure, given as a SMILES or an InChIKey.
+        A SMILES finds components containing it as a substructure (fingerprint screening, it can return false positives).
+        An InChIKey finds components with the same connectivity (first block of the key).
+        Use reaction_exact to require the same structure, or reaction_structure_type to give a SMARTS pattern instead.
+      examples:
+        smiles:
+          summary: Components containing a benzene ring.
+          value: c1ccccc1
+        inchikey:
+          summary: Ethanol.
+          value: LFQSCWFLJHTTHZ-UHFFFAOYSA-N
+
+    ReactionStructureType:
+      name: reaction_structure_type
+      in: query
+      schema:
+        type: string
+        enum: [smarts]
+      description: |
+        With smarts, reaction_structure is a SMARTS pattern: only entries with a reaction component matching it.
+        reaction_exact does not apply. The candidate components are limited to 20000: narrow them with reaction_role,
+        reaction_compound or reaction_item if needed.
+      examples:
+        phenol:
+          summary: Components with a hydroxyl group on an aromatic ring.
+          value: smarts
+
+    ReactionExact:
+      name: reaction_exact
+      in: query
+      schema:
+        type: integer
+        enum: [0, 1]
+        default: 0
+      description: |
+        With reaction_structure: match the full InChIKey, or the complete fingerprint of the SMILES, instead of related structures.
+
+    ReactionRole:
+      name: reaction_role
+      in: query
+      schema:
+        type: string
+        enum: [reactant, reagent, catalyst, solvent, product]
+      description: |
+        Restrict reaction_structure, reaction_compound and reaction_item to components with this role.
+
+    ReactionCompound:
+      name: reaction_compound
+      in: query
+      schema:
+        type: integer
+      description: |
+        Only entries with a reaction component linked to this compound.
+
+    ReactionItem:
+      name: reaction_item
+      in: query
+      schema:
+        type: integer
+      description: |
+        Only entries with a reaction component linked to this resource (bottle, batch or sample).
+
+    ReactionKey:
+      name: reaction_key
+      in: query
+      schema:
+        type: string
+        pattern: '^[0-9a-f]{64}$'
+      description: |
+        Only entries with the same transformation: the reaction_key of a reaction, derived from the InChIKeys of its reactants and products.
   # end query parameters for entity
 
   requestBodies:
@@ -248,6 +338,159 @@ components:
       description: The Authorization header value must contain an API Key.
 
   schemas:
+    reaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        version:
+          type: integer
+          description: The last read version is required for PATCH.
+        title:
+          type: string
+          maxLength: 255
+        scheme:
+          type: object
+          nullable: true
+          description: Ketcher KET document.
+        rxn:
+          type: string
+          description: RXN representation of the drawing.
+        reaction_smiles:
+          type: string
+          readOnly: true
+          description: Reaction SMILES (reactants>agents>products) derived from the components on save.
+        reaction_key:
+          type: string
+          nullable: true
+          readOnly: true
+          description: SHA-256 of the sorted InChIKeys of the reactants and products, to find the same transformation (reaction_key query parameter). Null when a reactant or product has no InChIKey.
+        preview_png:
+          type: string
+          description: Base64 PNG, without a data URL prefix; maximum 1 MB encoded and 4000 pixels per dimension.
+        temperature_c:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        duration_s:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        pressure_pa:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        atmosphere:
+          type: string
+        conditions_notes:
+          type: string
+        reference_component_key:
+          type: string
+          format: uuid
+          nullable: true
+        yield_basis_component_key:
+          type: string
+          format: uuid
+          nullable: true
+        components:
+          type: array
+          maxItems: 128
+          items:
+            $ref: '#/components/schemas/reaction_component'
+    reaction_component:
+      type: object
+      properties:
+        component_key:
+          type: string
+          format: uuid
+          description: Stable within this reaction; generated when omitted on creation.
+        role:
+          type: string
+          enum:
+          - reactant
+          - reagent
+          - catalyst
+          - solvent
+          - product
+        name:
+          type: string
+        molfile:
+          type: string
+        smiles:
+          type: string
+        inchi_key:
+          type: string
+        molecular_formula:
+          type: string
+        molecular_weight:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        purity_percent:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        density_g_ml:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        concentration_mol_l:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        coefficient:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        planned_value:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        actual_value:
+          type: string
+          nullable: true
+          description: Decimal value in the documented internal unit; JSON numbers are also accepted.
+        compound_id:
+          type: integer
+          nullable: true
+        item_id:
+          type: integer
+          nullable: true
+        material_form:
+          type: string
+          enum:
+          - neat
+          - solution
+        planned_unit:
+          type: string
+          enum: [g, mg, mL, uL, mol, mmol, eq]
+        actual_unit:
+          type: string
+          enum: [g, mg, mL, uL, mol, mmol]
+        planned_basis:
+          type: string
+          enum:
+          - mass
+          - volume
+          - amount
+          - equivalents
+        actual_basis:
+          type: string
+          enum:
+          - mass
+          - volume
+          - amount
+        planned:
+          type: object
+          readOnly: true
+          description: Calculated mass_g, volume_ml, amount_mol, equivalents, theoretical_amount_mol and yield_percent;
+            unknown values are null.
+        actual:
+          type: object
+          readOnly: true
+          description: Calculated actual quantities, in the same units as planned.
+
     Error:
       type: object
       required: [code, message, description]
@@ -338,6 +581,38 @@ components:
         team_name:
           type: string
 
+    # AUDIT LOG
+    audit_log:
+      type: object
+      properties:
+        id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        category:
+          type: integer
+          description: Numerical value of the category of the event.
+        category_name:
+          type: string
+          description: Human readable name of the category of the event.
+          example: Login
+        requester_userid:
+          type: integer
+          description: Userid of the user who did the action. 0 if no user was involved.
+        requester_fullname:
+          type: string
+          nullable: true
+        target_userid:
+          type: integer
+          description: Userid of the user targeted by the action. 0 if no user was involved.
+        target_fullname:
+          type: string
+          nullable: true
+        body:
+          type: string
+          description: Description of the event.
+
     # CHANGELOG
     changelog:
       type: object
@@ -367,6 +642,34 @@ components:
     compound:
       type: object
       properties:
+        has_write_access:
+          type: integer
+          enum: [0, 1]
+          description: Only when reading one compound. 1 if the requester can modify it.
+        canread_base:
+          type: integer
+          description: |
+            Base permission for read access, like for an entry (when not given at creation: 40 for a compound imported from PubChem, 30 otherwise):
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone with an account (anonymous users never see compounds)
+          enum: [10, 20, 30, 40, 50]
+          example: 30
+        canwrite_base:
+          type: integer
+          description: Base permission for write access, same values as canread_base. Defaults to 40 for a compound imported from PubChem, and to 20 otherwise.
+          enum: [10, 20, 30, 40, 50]
+          example: 20
+        canread:
+          type: string
+          description: JSON permissions for reading the compound, on top of its base.
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+        canwrite:
+          type: string
+          description: JSON permissions for writing to the compound, on top of its base.
+          example: '{"teams": [], "users": [42], "teamgroups": []}'
         id:
           type: integer
           example: 14
@@ -555,12 +858,50 @@ components:
           example: "Alpha"
         has_fingerprint:
           type: integer
+        ghs_signal_word:
+          type: string
+          nullable: true
+          enum: ['Danger', 'Warning', null]
+        ghs_codes:
+          type: string
+          nullable: true
+          description: The codes of the GHS statements, separated by a comma.
+          example: 'H225, H319, P210, P233'
+        ghs_statements:
+          type: array
+          description: Only when reading one compound, or the compounds linked to an entry.
+          items:
+            $ref: '#/components/schemas/ghs_statement'
           enum: [0, 1]
     CompoundDuplicateRequest:
       type: object
       required:
         - action
       properties:
+        canread_base:
+          type: integer
+          description: |
+            Base permission for read access, like for an entry (40 when not given: a compound from PubChem is public data):
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone with an account (anonymous users never see compounds)
+          enum: [10, 20, 30, 40, 50]
+          example: 40
+        canwrite_base:
+          type: integer
+          description: Base permission for write access, same values as canread_base. 40 when not given.
+          enum: [10, 20, 30, 40, 50]
+          example: 40
+        canread:
+          type: string
+          description: JSON permissions for reading the compound, on top of its base.
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+        canwrite:
+          type: string
+          description: JSON permissions for writing to the compound, on top of its base.
+          example: '{"teams": [], "users": [42], "teamgroups": []}'
         action:
           type: string
           enum:
@@ -577,6 +918,30 @@ components:
     CompoundCreateRequest:
       type: object
       properties:
+        canread_base:
+          type: integer
+          description: |
+            Base permission for read access, like for an entry (30 when not given at creation):
+              - 10: Owner only
+              - 20: Owner + Admins
+              - 30: Team members
+              - 40: Everyone with an account
+              - 50: Everyone with an account (anonymous users never see compounds)
+          enum: [10, 20, 30, 40, 50]
+          example: 30
+        canwrite_base:
+          type: integer
+          description: Base permission for write access, same values as canread_base. 20 when not given at creation.
+          enum: [10, 20, 30, 40, 50]
+          example: 20
+        canread:
+          type: string
+          description: JSON permissions for reading the compound, on top of its base.
+          example: '{"teams": [4], "users": [42,32], "teamgroups": [1,5]}'
+        canwrite:
+          type: string
+          description: JSON permissions for writing to the compound, on top of its base.
+          example: '{"teams": [], "users": [42], "teamgroups": []}'
         action:
           type: string
           description: |
@@ -627,6 +992,39 @@ components:
         is_toxic:
           type: integer
           enum: [0, 1]
+        ghs_signal_word:
+          type: string
+          enum: ['Danger', 'Warning']
+        ghs_statements:
+          description: Codes of the GHS hazard and precautionary statements, as a list or a text. Unknown codes are ignored.
+          oneOf:
+            - type: array
+              items:
+                type: string
+            - type: string
+          example: ['H225', 'H319', 'P210']
+
+    # GHS STATEMENT
+    ghs_statement:
+      type: object
+      properties:
+        id:
+          type: integer
+        code:
+          type: string
+          description: Case-sensitive, as H360FD and H360Fd are different statements.
+          example: 'P301+P316'
+        kind:
+          type: string
+          enum: ['H', 'EUH', 'P']
+          description: Hazard, EU hazard or precautionary statement.
+        statement:
+          type: string
+          example: 'IF SWALLOWED: Get emergency medical help immediately.'
+        is_deprecated:
+          type: integer
+          enum: [0, 1]
+          description: A withdrawn statement is kept when imported, but cannot be added by hand.
 
     # COMMENT
     comment:
@@ -847,19 +1245,6 @@ components:
             type: string
             example: 'otconfigured@example.com'
             default: 'notconfigured@example.com'
-          max_revisions:
-            type: string
-            example: '10'
-            default: '10'
-          min_days_revisions:
-            type: string
-            example: '23'
-            default: '23'
-          min_delta_revisions:
-            description: Minimum number of characters changed required to trigger a revision save.
-            type: string
-            example: '100'
-            default: '100'
           onboarding_email_active:
             enum: [0, 1]
             type: string
@@ -886,6 +1271,11 @@ components:
             type: string
             example: 'test email subject'
             default: 'test email subject'
+          pdf_footer_text:
+            description: Custom text (limited HTML allowed) added to the footer of every generated PDF.
+            type: string
+            example: 'Institute of Example Science - Lab notebook'
+            default: ''
           privacy_policy:
             type: string
             example: ''
@@ -1429,7 +1819,7 @@ components:
           type: boolean
           default: false
           description: |
-            If "true", the action will import the files of the original entity.
+            If "true", the action will import the files of the original entity. Files linked in the main text (such as inserted images) are always copied.
         linkToOriginal:
           type: boolean
           default: true
@@ -1469,6 +1859,26 @@ components:
           type: integer
           description: Whether the event is bookable (1 = yes, 0 = no)
           example: 1
+        canapprove:
+          type: integer
+          enum: [0, 1]
+          description: Whether the authenticated user may approve this pending booking.
+        approval_status:
+          type: integer
+          enum: [0, 1, 2, 3]
+          description: 0 no approval required, 1 pending, 2 approved, 3 rejected. Overdue is a UI label for past pending events, not a stored status.
+        approved_by:
+          type: integer
+          nullable: true
+          description: User ID of the person who made the approval decision.
+        approved_at:
+          type: string
+          nullable: true
+          description: Timestamp of the approval decision.
+        approval_comment:
+          type: string
+          nullable: true
+          description: Optional decision reason.
         created_at:
           type: string
           format: date-time
@@ -1832,6 +2242,17 @@ components:
       properties:
         is_bookable:
           type: integer
+        requires_booking_approval:
+          type: integer
+          enum: [0, 1]
+          description: Require approval for new bookings. Include approvers when updating; disabling approval does not change pending requests or remove configured approvers.
+        approvers:
+          type: array
+          uniqueItems: true
+          description: Approver user IDs. Users may belong to any team or be archived or unvalidated.
+          items:
+            type: integer
+            minimum: 1
         canbook_base:
           type: number
           description: |
@@ -2015,6 +2436,11 @@ components:
           type: integer
         item_id:
           type: integer
+        parent_id:
+          type: integer
+          nullable: true
+        depth:
+          type: integer
         body:
           type: string
         body_html:
@@ -2025,6 +2451,10 @@ components:
           type: string
         userid:
           type: integer
+          nullable: true
+        fullname:
+          type: string
+          nullable: true
     # experiments_status and items_status are statuslike
     statuslike:
       type: object
@@ -2521,6 +2951,9 @@ components:
                     type: integer
                   is_archived:
                     type: integer
+                  is_restricted:
+                    type: integer
+                    description: While acting in this team, the user only sees entries they own or that are explicitly shared with them (user or teamgroup). Modified by an Admin of the team or a Sysadmin.
 
     # WEBHOOKS
     webhook:
@@ -2824,6 +3257,14 @@ x-parameterGroups:
     - $ref: '#/components/parameters/Sort'
     - $ref: '#/components/parameters/State'
     - $ref: '#/components/parameters/Full'
+    - $ref: '#/components/parameters/ReactionQ'
+    - $ref: '#/components/parameters/ReactionStructure'
+    - $ref: '#/components/parameters/ReactionStructureType'
+    - $ref: '#/components/parameters/ReactionExact'
+    - $ref: '#/components/parameters/ReactionRole'
+    - $ref: '#/components/parameters/ReactionCompound'
+    - $ref: '#/components/parameters/ReactionItem'
+    - $ref: '#/components/parameters/ReactionKey'
 
 security:
   - token:
@@ -3386,15 +3827,31 @@ paths:
     get:
       tags: ['Storage units']
       summary: Read a storage unit.
-      description: Get details of a specific storage unit including its full hierarchical path.
+      description: |
+        Get details of a specific storage unit including its full hierarchical path.
+        With `format=pdf`, get instead a sheet of the hazards stored in this unit and in the units it contains, for firefighters:
+        the GHS pictograms, signal word and hazard statements of the compounds of the containers. The compounds and entries
+        are not named, so this sheet lists the hazards of every container, readable or not.
       operationId: read-storage-unit
+      parameters:
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: ['pdf']
+          description: Get the hazards sheet of this storage unit as a PDF.
       responses:
         '200':
-          description: A storage unit.
+          description: A storage unit, or its hazards sheet with `format=pdf`.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/storage_unit'
+            application/pdf:
+              schema:
+                type: string
+                format: binary
         '401':
            $ref: '#/components/responses/Unauthorized'
         '404':
@@ -3558,13 +4015,47 @@ paths:
         '403':
            $ref: '#/components/responses/Forbidden'
 
+  # AUDIT LOGS
+  /audit_logs:
+    summary: Read audit logs
+    get:
+      tags: ['Audit logs']
+      summary: Read audit logs
+      description: |
+        Get the events recorded in the audit logs, most recent first. Only a Sysadmin can use this endpoint.
+
+        At most 10000 events are returned per request, even without a `limit` query parameter or with a higher one. Use `offset` to read older events.
+      operationId: read-audit-logs
+      parameters:
+        - in: query
+          name: limit
+          required: false
+          description: Limit the number of results. If not set or above 10000, 10000 is used.
+          schema:
+            type: integer
+          example: 120
+        - $ref: '#/components/parameters/Offset'
+      responses:
+        '200':
+          description: A list of audit log events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/audit_log'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
   # COMPOUNDS
   /compounds:
     summary: The instance level compounds database
     get:
       tags: ['Compounds']
       summary: Read compounds
-      description: Get the list of all compounds
+      description: Get the list of the compounds the requester can read
       operationId: get-compounds
       responses:
         '200':
@@ -3584,6 +4075,8 @@ paths:
         - If `action=duplicate`, import (or match) a compound from PubChem using `cid` or `cas`. If both parameters are present, only the `cid` is used.
         - Otherwise, create a compound directly from the provided fields.
         - If a compound with the same unique identifier already exists (e.g `cas_number`, `pubchem_cid`), the API will return the existing compound instead of creating a new one.
+          It is updated with the new data only if the requester can write to it. If the requester cannot read it, the request fails.
+        - The permissions of the new compound can be given with `canread_base`, `canwrite_base`, `canread` and `canwrite`, like for an entry.
       operationId: post-compounds
       requestBody:
         required: true
@@ -3648,6 +4141,121 @@ paths:
       responses:
         '204':
           description: The compound was soft-deleted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /compounds/{id}/ghs_statements:
+    summary: The GHS hazard and precautionary statements of a compound
+    parameters:
+      - name: id
+        in: path
+        description: ID of the compound
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Compounds']
+      summary: Read the GHS statements of a compound
+      operationId: get-compound-ghs-statements
+      responses:
+        '200':
+          description: The hazard (H and EUH) then precautionary (P) statements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ghs_statement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: ['Compounds']
+      summary: Add a GHS statement to a compound
+      description: The code must be in the list of `/ghs_statements`, and not withdrawn. Adding a statement twice changes nothing.
+      operationId: post-compound-ghs-statement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['code']
+              properties:
+                code:
+                  type: string
+                  example: 'H225'
+      responses:
+        '201':
+          description: The statement was added
+          headers:
+            location:
+              description: URL of the statement of the compound, with the id of the statement
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /compounds/{id}/ghs_statements/{subid}:
+    summary: A GHS statement of a compound
+    parameters:
+      - name: id
+        in: path
+        description: ID of the compound
+        required: true
+        schema:
+          type: integer
+      - name: subid
+        in: path
+        description: ID of the statement, from `/ghs_statements`
+        required: true
+        schema:
+          type: integer
+    get:
+      tags: ['Compounds']
+      summary: Read a GHS statement of a compound
+      operationId: get-compound-ghs-statement
+      responses:
+        '200':
+          description: The statement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ghs_statement'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: ['Compounds']
+      summary: Remove a GHS statement from a compound
+      operationId: delete-compound-ghs-statement
+      responses:
+        '204':
+          description: The statement was removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /ghs_statements:
+    summary: The reference list of the GHS hazard and precautionary statements
+    get:
+      tags: ['Compounds']
+      summary: Read all the GHS statements that can be added to a compound
+      description: English texts of the EU CLP regulation, and of the UN GHS for the codes CLP does not have.
+      operationId: get-ghs-statements
+      responses:
+        '200':
+          description: The statements, hazard (H and EUH) first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ghs_statement'
         '401':
           $ref: '#/components/responses/Unauthorized'
 
@@ -4484,7 +5092,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entity'
+                $ref: '#/components/schemas/item'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -5449,6 +6057,38 @@ paths:
       tags: ['Events']
       summary: Read all events in the team.
       operationId: read-events
+      parameters:
+        - name: approval_status
+          in: query
+          description: Comma-separated statuses (0 no approval, 1 pending, 2 approved, 3 rejected). Defaults to 0,1,2.
+          schema:
+            type: string
+            pattern: '^[0-3](,[0-3])*$'
+          example: '1,2,3'
+        - name: userid
+          in: query
+          description: Filter by booking owner user ID.
+          schema:
+            type: integer
+            minimum: 1
+        - name: approver
+          in: query
+          description: Filter by designated approver user ID. This does not grant approval permissions to the requester.
+          schema:
+            type: integer
+            minimum: 1
+        - name: start
+          in: query
+          description: Beginning of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          description: End of the date range (YYYY-MM-DD). Without a date range, booking filters cover all dates.
+          schema:
+            type: string
+            format: date
       responses:
         '200':
           description: A list of booked slots.
@@ -5592,6 +6232,22 @@ paths:
           application/json:
             schema:
               oneOf:
+                - type: object
+                  required: [action, target, decision]
+                  description: Approve or reject a pending request. Only its designated approvers may decide.
+                  properties:
+                    action:
+                      type: string
+                      enum: [update]
+                    target:
+                      type: string
+                      enum: [approval]
+                    decision:
+                      type: string
+                      enum: [approved, rejected]
+                    comment:
+                      type: string
+                      description: Optional reason for the decision.
                 - type: object
                   required: [target, start, end]
                   properties:
@@ -5873,6 +6529,7 @@ paths:
           description: |
             Select the scope. Instance is for sysadmins only. Team will generate report for the current team.
             If scope is `compounds_history`, you can also provide `start` and `end` (format `YYYY-MM-DD`).
+            The `compounds_history` report has one row per compound used in your experiments dated in that period: linked to the experiment (`source` is `experiment`), linked to a resource linked to it (`linked_resource`), or used as a component of one of its reactions (`reaction`, with the role, the planned and actual quantities and the reaction conditions). Each row has the identifiers, the hazard flags, the GHS signal word and the GHS statements of the compound.
           examples:
             instance:
               summary: Get instance level report
@@ -7181,7 +7838,7 @@ paths:
                       description: Target userid
                     target:
                       type: string
-                      enum: ['is_admin', 'is_owner', 'is_archived']
+                      enum: ['is_admin', 'is_owner', 'is_archived', 'is_restricted']
                       description: The attribute to modify
                     content:
                       type: integer
@@ -9025,6 +9682,7 @@ paths:
     get:
       tags: ['Revisions']
       summary: Read all revisions of that entity.
+      description: Every main text saved is a revision, newest first. Their body is only in the response for a single revision.
       operationId: read-entity-revisions
       responses:
         '200':
@@ -9038,12 +9696,24 @@ paths:
                   properties:
                     id:
                       type: integer
+                    parent_id:
+                      type: integer
+                      nullable: true
+                      description: Revision this one is stored as a change of. Null for a revision stored in full.
+                    depth:
+                      type: integer
+                      description: Number of revisions to rebuild before this one.
                     content_type:
                       type: integer
                     created_at:
                       type: string
+                    userid:
+                      type: integer
+                      nullable: true
+                      description: Null if the user was deleted.
                     fullname:
                       type: string
+                      nullable: true
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -9837,6 +10507,211 @@ paths:
       responses:
         '204':
           description: The webhook was removed.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /{entity_type}/{id}/reactions:
+    parameters:
+    - name: entity_type
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - experiments
+        - items
+        - experiments_templates
+        - items_types
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      tags:
+      - Reactions
+      operationId: read-reactions
+      summary: Read current reactions or immutable revision snapshots.
+      parameters:
+      - name: history_of
+        in: query
+        schema:
+          type: integer
+        description: Read revision snapshots of this reaction, including deleted records; scoped to the owning entry. Not available to anonymous users.
+          Snapshots have no preview_png. The entry itself (GET /{entity_type}/{id}) only has reaction summaries, without scheme, rxn, preview_png
+          and component molfile, but with has_preview.
+      responses:
+        '200':
+          description: Reaction records or revision snapshots.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags:
+      - Reactions
+      operationId: create-reaction
+      summary: Create a reaction owned by this entry.
+      description: Requires write access to an unlocked entry. No changes are made to the shared Compounds database
+        or inventory.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reaction'
+      responses:
+        '201':
+          description: Created.
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Reactions
+      operationId: calculate-reaction
+      summary: Calculate quantities without persisting changes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/reaction'
+              - type: object
+                required:
+                - action
+                properties:
+                  action:
+                    type: string
+                    enum:
+                    - calculate
+      responses:
+        '200':
+          description: Object with calculated components.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /{entity_type}/{id}/reactions/{subid}:
+    parameters:
+    - name: entity_type
+      in: path
+      required: true
+      schema:
+        type: string
+        enum:
+        - experiments
+        - items
+        - experiments_templates
+        - items_types
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    - name: subid
+      in: path
+      required: true
+      schema:
+        type: integer
+    get:
+      tags:
+      - Reactions
+      operationId: read-reaction
+      summary: Read a reaction belonging to this entry.
+      parameters:
+      - name: format
+        in: query
+        schema:
+          type: string
+          enum:
+          - binary
+        description: Get the preview image instead of the record (404 if the reaction has none).
+      responses:
+        '200':
+          description: Reaction record, or its preview with format=binary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reaction'
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags:
+      - Reactions
+      operationId: update-reaction
+      summary: Update a reaction using its last read version.
+      description: Omitted fields are retained. A supplied components array replaces the component list atomically.
+        A stale version returns 400. A revision snapshot is retained.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/reaction'
+      responses:
+        '200':
+          description: Updated reaction record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reaction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+      - Reactions
+      operationId: delete-reaction
+      summary: Soft delete a reaction, retaining its revision snapshots.
+      responses:
+        '204':
+          description: Deleted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':

@@ -39,7 +39,7 @@ final class LoginFlow
         }
         $user = new Users($authentication->userid);
 
-        if ($this->mfaPolicy->isRequired($user)) {
+        if ($this->mfaPolicy->isRequired($user, $authentication->method)) {
             return new MfaRequired($authentication);
         }
 

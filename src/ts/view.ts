@@ -13,6 +13,10 @@ import { on } from './handlers';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
 import { reloadElements } from './misc';
+import { setSectionCollapsed, showTab } from './tabbed-sections';
+import { initReactionsList } from './reaction-summary';
+
+initReactionsList();
 
 // UPDATE MALLEABLE COMMENT
 const malleableComments = new Malle({
@@ -72,9 +76,11 @@ on('scroll-to-step-in-body', (el: HTMLElement, event: Event) => {
   if (!link) {
     return;
   }
-  // expand the main text if it was collapsed
-  if (bodyView.hidden) {
-    (bodyView.previousElementSibling as HTMLElement)?.click();
+  // the main text can be behind the reactions tab, or its section collapsed
+  showTab('main');
+  const toggle = document.getElementById('entityBodyToggle');
+  if (toggle?.getAttribute('aria-expanded') === 'false') {
+    setSectionCollapsed(toggle, false);
   }
   // and any accordion containing the link
   let details = link.closest('details');

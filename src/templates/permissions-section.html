@@ -1,0 +1,125 @@
+{# one section of the permissions modal, see permissions-modal.html #}
+{# required vars: #}
+{#  - rw: canread, canwrite, canbook, canread_target or canwrite_target: for the texts and icon #}
+{#  - param and baseParam: the names of the json and base columns that are saved #}
+{#  - baseValue: current base, null when it is not known (selected entries) #}
+{#  - can: from canToHuman filter, can_base: human readable base #}
+{# optional vars: #}
+{#  - endpointIsEntity, isReadOnly, isLocked, withAnonymousLink: only for the permissions of Entity #}
+{#  - lockdown: name of the column to lock down the target permissions, only for templates #}
+{#  - idPrefix: prefix of the ids, when another permissions modal can be on the same page (compounds) #}
+{#  - groupTitleId: id of the heading of the group of sections, for the templates that have the same sections twice #}
+{# the accessible name of the section includes the modal title, so it stays unique when several permissions modals are on the same page #}
+{# twigcs use-var can #}
+{# see https://github.com/friendsoftwig/twigcs/issues/121 #}
+{% import 'permissions.macro.html' as perm %}
+{% set endpointIsEntity = endpointIsEntity|default(false) %}
+{% set isReadOnly = isReadOnly|default(false) %}
+{% set isLocked = isLocked|default(false) %}
+{% set isEditable = not isReadOnly and not isLocked %}
+{% set idPrefix = idPrefix|default('') %}
+{% set groupTitleId = groupTitleId|default('') %}
+
+<section class='permissions-section' aria-labelledby='{{ modalId }}Label {{ groupTitleId ? groupTitleId ~ ' ' }}{{ idPrefix }}permissionsTitle-{{ rw }}' data-param='{{ param }}' data-base-param='{{ baseParam }}' {%- if baseValue is not null %} data-base-value='{{ baseValue }}' data-default-base='{{ baseValue }}'{% endif %}>
+  <div class='d-flex justify-content-between align-items-center flex-wrap'>
+    <h6 class='permissions-section-title' id='{{ idPrefix }}permissionsTitle-{{ rw }}'><i class='fas fa-fw fa-{{ perm.text(rw, 'icon') }} mr-2' aria-hidden='true'></i>{{ perm.text(rw, 'label') }}</h6>
+    {% if isEditable %}
+      {# GENERAL ACCESS (base permission): same dropdown look as the scope buttons #}
+      <div class='btn-group' id='{{ idPrefix }}permissionsBase-{{ rw }}'>
+        <button class='btn btn-transparent dropdown-toggle' type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false' title='{{ 'General access'|trans }}' data-cy='{{ idPrefix }}permissions-base-{{ rw }}'>
+          <i class='fas fa-user-shield fa-fw mr-1' aria-hidden='true'></i><span class='sr-only'>{{ 'General access'|trans }}:</span>
+          <span data-base-label>
+            {%- if baseValue is null -%}
+              {{ 'Unchanged'|trans }}
+            {%- else -%}
+              {{ visibilityArr[baseValue] is defined ? visibilityArr[baseValue]|trans : can_base }}
+            {%- endif -%}
+          </span>
+        </button>
+        <div class='dropdown-menu dropdown-menu-right'>
+          <h6 class='dropdown-header'>{{ 'General access'|trans }}</h6>
+          {% for key, value in visibilityArr %}
+            <button type='button' class='btn btn-dropdown-item dropdown-item {{ baseValue is not null and baseValue == key ? 'active' }}' data-action='set-permission-base' data-value='{{ key }}'>{{ value|trans }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    {% elseif not isReadOnly %}
+      <button type='button' class='btn btn-sm btn-ghost' disabled aria-describedby='{{ idPrefix }}permissionsLocked-{{ rw }}'>
+        <i class='fas fa-fw fa-lock mr-1' aria-hidden='true'></i>{{ 'Locked'|trans }}
+      </button>
+    {% endif %}
+  </div>
+
+  {% if isEditable %}
+    <p class='smallgray mb-1 permissions-edit-only'>{{ 'Give access to more teams, user groups or users:'|trans }}</p>
+    {# a single search for teams, user groups and users: see initPermissionsSearch in misc.ts #}
+    {% set selectedTeams = can.teams|column('id') %}
+    {% set selectedTeamgroups = can.teamgroups|column('id') %}
+    <div class='ts-wrapper permissions-edit-only'>
+      {% if App.devMode -%}<!-- [html-validate-disable-block prefer-native-element] -->{%- endif %}
+      <select id='{{ idPrefix }}{{ rw }}_permissions_search' multiple class='form-control' autocomplete='off'
+        aria-label='{{ 'Search for teams, user groups or users'|trans }}'
+        data-permissions-search='1'
+        data-label-team='{{ 'Team'|trans }}'
+        data-label-teamgroup='{{ 'User group'|trans }}'
+        data-label-user='{{ 'User'|trans }}'
+        data-list='{{ idPrefix }}{{ rw }}PermissionsList'
+        data-cy='{{ idPrefix }}permissions-search-{{ rw }}'>
+        {# users are searched through the api #}
+        {% for team in teamsArr|default([]) %}
+          {% if team.id not in selectedTeams %}
+            <option value='team:{{ team.id }}'>{{ team.name }}</option>
+          {% endif %}
+        {% endfor %}
+        {% for group in allTeamgroupsArr|default([]) %}
+          {% if group.id not in selectedTeamgroups %}
+            <option value='teamgroup:{{ group.id }}'>{{ group.team_name }} - {{ group.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <input type='text' class='form-control' id='{{ idPrefix }}{{ rw }}-permissions-search-input' placeholder='{{ 'Search for teams, user groups or users'|trans }}' aria-label='{{ 'Search for teams, user groups or users'|trans }}'>
+    </div>
+    {# what is added on top of the general access: the chips are rendered, added and removed by initPermissionsSearch #}
+    <ul class='list-unstyled d-flex flex-wrap mb-0' id='{{ idPrefix }}{{ rw }}PermissionsList' aria-label='{{ perm.text(rw, 'label') }}'
+      data-can='{{ {
+        teams: can.teams|map(team => {id: team.id, name: team.name}),
+        teamgroups: can.teamgroups|map(group => {id: group.id, name: group.name, team_name: group.team_name}),
+        users: can.users|map(user => {userid: user.userid, fullname: user.fullname}),
+      }|json_encode }}'></ul>
+  {% else %}
+    {{ perm.details(idPrefix ~ rw ~ 'Div', can, can_base, 'mt-2') }}
+  {% endif %}
+
+  {% if isLocked %}
+    <p class='smallgray mt-2 mb-0' id='{{ idPrefix }}permissionsLocked-{{ rw }}'><i class='fas fa-fw fa-lock mr-1' aria-hidden='true'></i>{{ 'Locked down by the template: only an Admin can change it.'|trans }}</p>
+  {% endif %}
+
+  {# ANONYMOUS SHARING LINK #}
+  {% if endpointIsEntity and withAnonymousLink|default(false) and isEditable and App.Config.configArr.anon_users %}
+    <div class='mt-3'>
+      <div class='custom-control custom-checkbox'>
+        <input type='checkbox' class='custom-control-input' id='readAccessCheckbox' data-action='toggle-anonymous-access' autocomplete='off' {{ Entity.entityData.access_key ? 'checked' }}>
+        <label class='custom-control-label' for='readAccessCheckbox'>{{ 'Allow read access for anonymous users'|trans }}</label>
+      </div>
+      <div {{ not Entity.entityData.access_key ? 'hidden' }} id='anonymousAccessUrlDiv' class='mt-2'>
+        <div class='input-group'>
+          <div class='input-group-prepend'>
+            <button title='{{ 'Copy to clipboard'|trans }}' aria-label='{{ 'Copy to clipboard'|trans }}' class='btn btn-ghost' type='button' data-action='copy-to-clipboard' data-target='anonymousAccessUrlInput'><i class='fas fa-clone' aria-hidden='true'></i></button>
+          </div>
+          <input type='url' class='form-control' readonly id='anonymousAccessUrlInput' value='{{ Entity.entityData.sharelink }}' aria-label='{{ 'Anonymous access link'|trans }}'>
+        </div>
+        <p class='smallgray mb-0'>{{ 'Anyone following this link can access this entry.'|trans }}</p>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if endpointIsEntity and lockdown is defined %}
+    <div class='d-flex align-items-center mt-2'>
+      <label class='switch ucp-align mb-0'>
+        <input type='checkbox' autocomplete='off' data-trigger='change' data-model='{{ Entity.entityType.value ~ '/' ~ Entity.id }}' data-target='{{ lockdown }}' {{ Entity.entityData[lockdown] ? 'checked="checked"' }} id='{{ lockdown }}'>
+        <span class='slider'></span>
+      </label>
+      <label for='{{ lockdown }}' class='col-form-label ml-2 smallgray'>{{ perm.text(rw, 'lockdownLabel') }}</label>
+    </div>
+  {% endif %}
+</section>

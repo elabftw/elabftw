@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace Elabftw\Tests\Services;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Models\Reactions;
 use Elabftw\Services\EntityPruner;
 use Elabftw\Traits\TestsUtilsTrait;
 use PHPUnit\Framework\TestCase;
 
+use function array_column;
+use function array_map;
 use function date;
+use function intval;
+use function sprintf;
 use function strtotime;
 
 class EntityPrunerTest extends TestCase
@@ -42,6 +48,48 @@ class EntityPrunerTest extends TestCase
         // Verify Exp2 is still there (soft deleted)
         $req->execute(array(':id' => $id2));
         $this->assertNotEmpty($req->fetchAll());
+    }
+
+    public function testCleanupRemovesOwnedReactions(): void
+    {
+        $Exp = $this->getFreshExperiment();
+        $reactionId = new Reactions($Exp)->postAction(Action::Create, array(
+            'title' => 'Pruned',
+            'components' => array(array('name' => 'Starting material', 'actual_value' => 1)),
+        ));
+        $Exp->destroy();
+
+        $this->assertSame(1, new EntityPruner(EntityType::Experiments, array($Exp->id))->cleanup());
+
+        $Db = Db::getConnection();
+        foreach (array('reactions' => 'id', 'reaction_components' => 'reaction_id', 'reaction_revisions' => 'reaction_id') as $table => $column) {
+            $req = $Db->prepare(sprintf('SELECT 1 FROM %s WHERE %s = :id', $table, $column));
+            $req->execute(array(':id' => $reactionId));
+            $this->assertEmpty($req->fetchAll(), $table);
+        }
+    }
+
+    public function testCleanupRemovesDeletedReactionsOfKeptEntries(): void
+    {
+        $Exp = $this->getFreshExperiment();
+        $data = array('title' => 'Kept', 'components' => array(array('name' => 'Starting material', 'actual_value' => 1)));
+        $deletedId = new Reactions($Exp)->postAction(Action::Create, $data);
+        $keptId = new Reactions($Exp)->postAction(Action::Create, $data);
+        new Reactions($Exp, $deletedId)->destroy();
+        $Other = $this->getFreshExperiment();
+        $otherId = new Reactions($Other)->postAction(Action::Create, $data);
+        new Reactions($Other, $otherId)->destroy();
+
+        // the entry is not deleted: nothing is pruned, only its deleted reaction is removed
+        $this->assertSame(0, new EntityPruner(EntityType::Experiments, array($Exp->id))->cleanup());
+
+        $req = Db::getConnection()->prepare('SELECT id FROM reactions WHERE id IN (:deleted, :kept, :other)');
+        $req->execute(array(':deleted' => $deletedId, ':kept' => $keptId, ':other' => $otherId));
+        $remaining = array_map(intval(...), array_column($req->fetchAll(), 'id'));
+        $this->assertNotContains($deletedId, $remaining);
+        $this->assertContains($keptId, $remaining);
+        // outside of the id filter
+        $this->assertContains($otherId, $remaining);
     }
 
     public function testCleanupTeamFilter(): void

@@ -16,6 +16,8 @@ enum AuditCategory: int
 {
     case Login = 10;
     case Logout = 11;
+    case ImpersonationStarted = 12;
+    case ImpersonationStopped = 13;
     case AccountCreated = 20;
     case AccountValidated = 21;
     case AccountArchived = 22;
@@ -33,4 +35,5 @@ enum AuditCategory: int
     case SignatureKeysCreated = 100;
     case SignatureCreated = 101;
     case ActionRequested = 102;
+    case BookingApprovalDecision = 103;
 }

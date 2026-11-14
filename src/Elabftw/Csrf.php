@@ -53,7 +53,8 @@ final class Csrf
     public function validate(): void
     {
         // safe methods are not checked (GET, HEAD, OPTIONS, TRACE), same for api requests or the reset password page
-        if ($this->Request->isMethodSafe() ||
+        // the real method is used: X-HTTP-Method-Override would make a POST look like a GET and skip the check
+        if ($this->isRealMethodSafe() ||
             $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ResetPasswordController.php' ||
             $this->Request->server->get('SCRIPT_NAME') === '/app/controllers/ApiController.php') {
             return;
@@ -63,6 +64,11 @@ final class Csrf
             // an invalid csrf token is most likely the result of an expired session
             throw new UnauthorizedException();
         }
+    }
+
+    private function isRealMethodSafe(): bool
+    {
+        return $this->Request->isMethodSafe() && $this->Request->getMethod() === $this->Request->getRealMethod();
     }
 
     private function getRequestToken(): string

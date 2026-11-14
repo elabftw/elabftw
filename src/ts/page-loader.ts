@@ -11,12 +11,10 @@
  */
 const mode = new URLSearchParams(window.location.search).get('mode');
 import { core } from './core';
+import { initChemistryLoader } from './chem-loader';
 
 if (document.getElementById('ketcher-root')) {
-  void import(
-    /* webpackChunkName: 'chem-editor' */
-    './chem-editor'
-  );
+  initChemistryLoader();
 }
 
 if (document.getElementById('syc-root')) {
@@ -51,6 +49,13 @@ if (window.location.pathname === '/sysconfig.php') {
   void import(
     /* webpackChunkName: 'sysconfig' */
     './sysconfig'
+  );
+}
+
+if (document.getElementById('audit-logs-table')) {
+  void import(
+    /* webpackChunkName: 'audit-logs-table' */
+    './audit-logs-table'
   );
 }
 

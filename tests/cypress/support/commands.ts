@@ -26,29 +26,47 @@
 
 import { DateTime } from 'luxon';
 
+// name of the cookie used to keep the csrf token alongside the cached session
+const csrfCookieName = 'cypress_csrf';
+// set the domain explicitly because the page is about:blank while cy.session runs
+const cookieDomain = new URL(Cypress.config('baseUrl')).hostname;
+
+// log in once per user (and per spec) and restore the cached cookies on subsequent calls
+// see https://docs.cypress.io/api/commands/session
 Cypress.Commands.add('login', (email = 'toto@yopmail.com', password = 'totototototo') => {
-  cy.request('/login.php')
-    .its('body')
-    .then(body => {
-      const $html = Cypress.$(body);
-      const csrf: string = $html.filter('meta[name="csrf-token"]').attr('content');
-      cy.request({
-        method: 'POST',
-        url: '/app/controllers/LoginController.php',
-        failOnStatusCode: false, // don't fail so we can make assertions
-        form: true, // we are submitting a regular form body
-        body: {
-          email: email,
-          password: password,
-          auth_type: 'local',
-          rememberme: 'on',
-          csrf: csrf,
-        },
-      }).then(resp => {
-        expect(resp.status).to.eq(200);
-        return cy.wrap(csrf);
+  cy.session(['login', email], () => {
+    cy.request('/login.php')
+      .its('body')
+      .then(body => {
+        const $html = Cypress.$(body);
+        const csrf: string = $html.filter('meta[name="csrf-token"]').attr('content');
+        cy.request({
+          method: 'POST',
+          url: '/app/controllers/LoginController.php',
+          failOnStatusCode: false, // don't fail so we can make assertions
+          form: true, // we are submitting a regular form body
+          body: {
+            email: email,
+            password: password,
+            auth_type: 'local',
+            rememberme: 'on',
+            csrf: csrf,
+          },
+        }).then(resp => {
+          expect(resp.status).to.eq(200);
+          // the csrf token is bound to the php session: store it in a cookie so it is cached and restored with the session
+          cy.setCookie(csrfCookieName, csrf, { domain: cookieDomain });
+        });
       });
-    });
+  }, {
+    // a test might have logged out (destroying the server side session): in that case, log in again
+    validate() {
+      cy.request({ url: '/app/controllers/HeartBeat.php', failOnStatusCode: false })
+        .its('status')
+        .should('eq', 200);
+    },
+  });
+  return cy.getCookie(csrfCookieName, { domain: cookieDomain }).then(cookie => cookie?.value);
 });
 Cypress.Commands.add('getExperimentId', () => {
   return cy

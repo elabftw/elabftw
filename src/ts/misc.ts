@@ -528,8 +528,8 @@ function configTomSelect(select: HTMLSelectElement) {
 }
 
 // fetch users and return in an id - username (email) format
-async function fetchUsers(query: string) {
-  const users = await ApiC.getJson(`users/?q=${encodeURIComponent(query)}`);
+async function fetchUsers(query: string, onlyActive = false) {
+  const users = await ApiC.getJson(`users/?q=${encodeURIComponent(query)}${onlyActive ? '&onlyActive=1' : ''}`);
   return users.map((u) => ({
     value: `user:${u.userid}`,
     text: `${u.fullname} (${u.email})`,
@@ -763,7 +763,8 @@ function initPermissionsSearchSelect(select: TomSelectElement): void {
     // teams and user groups are in the options already, users are fetched while typing
     load: (query: string, callback) => {
       if (!query.length) return callback();
-      fetchUsers(query)
+      // archived users cannot be given access, so don't suggest them
+      fetchUsers(query, true)
         .then(users => callback(users.filter(user => !getPermissionsChips(section).includes(user.value))))
         .catch(() => callback());
     },

@@ -59,6 +59,12 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
 
     private const string CAFFEINE_CAS = '58-08-2';
 
+    // theobromine is not in the populate config, so it is never linked to anything
+    private const string THEOBROMINE_CAS = '83-67-0';
+
+    // theophylline is not in the populate config either, so it can be deleted and restored
+    private const string THEOPHYLLINE_CAS = '58-55-9';
+
     private Compounds $Compounds;
 
     private HttpGetter $httpGetter;
@@ -68,6 +74,12 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
 
     // smiles for cid 2519
     private string $smilesCaf = 'CN1C=NC2=C1C(=O)N(C(=O)N2C)C';
+
+    // smiles for cid 5429
+    private string $smilesTheobromine = 'CN1C=NC2=C1C(=O)NC(=O)N2C';
+
+    // smiles for cid 2153
+    private string $smilesTheophylline = 'CN1C2=C(C(=O)N(C1=O)C)NC=N2';
 
     // the json response of fingerprinter for the smiles of cid 3345
     private string $fpResponse = '{"data": [128, 67108864, 0, 524288, 2148007936, 4194304, 0, 2, 16, 35840, 512, 0, 1, 0, 0, 4194304, 0, 1, 0, 67272704, 1073745920, 0, 1048576, 64, 1024, 64, 0, 0, 32, 0, 16777216, 0]}';
@@ -87,10 +99,11 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateSearchAndDestroy(): void
     {
+        // don't use a compound from the populate config: create() is an upsert and these ones are linked, so they cannot be destroyed
         $compoundId = $this->Compounds->create(
-            casNumber: self::CAFFEINE_CAS,
-            pubchemCid: 2519,
-            smiles: $this->smilesCaf,
+            casNumber: self::THEOBROMINE_CAS,
+            pubchemCid: 5429,
+            smiles: $this->smilesTheobromine,
         );
         $this->Compounds->setId($compoundId);
         $this->assertIsArray($this->Compounds->readAll());
@@ -196,9 +209,9 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
 
     public function testRestoreCompound(): void
     {
-        // create a compound
+        // create a compound that populate does not link, as a linked one cannot be deleted
         $Compound = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter(), false);
-        $compoundId = $this->Compounds->create(casNumber: self::CAFFEINE_CAS, pubchemCid: 2519, smiles: $this->smilesCaf);
+        $compoundId = $this->Compounds->create(casNumber: self::THEOPHYLLINE_CAS, pubchemCid: 2153, smiles: $this->smilesTheophylline);
         $Compound->setId($compoundId);
         $compound = $Compound->readOne();
         $this->assertEquals(State::Normal->value, $compound['state']);
@@ -207,7 +220,7 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compound->patch(Action::Update, array('state' => State::Deleted->value));
 
         // restore it
-        $restoredCompoundId = $Compound->create(casNumber: self::CAFFEINE_CAS, pubchemCid: 2519, smiles: $this->smilesCaf);
+        $restoredCompoundId = $Compound->create(casNumber: self::THEOPHYLLINE_CAS, pubchemCid: 2153, smiles: $this->smilesTheophylline);
         $Compound->setId($restoredCompoundId);
         $restoredCompound = $Compound->readOne();
         $this->assertEquals(State::Normal->value, $restoredCompound['state']);

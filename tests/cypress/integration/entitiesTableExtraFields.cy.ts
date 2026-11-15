@@ -39,7 +39,8 @@ describe('Custom fields as columns in table mode', () => {
 
     // the new columns are appended after the regular ones, out of view: the grid only renders the visible columns
     cy.get('.ag-body-horizontal-scroll-viewport').scrollTo('right', { ensureScrollable: false });
-    cy.get(`.ag-header-cell[col-id="${colId}"]`).should('exist').click();
+    // the floating filter below the header is also an .ag-header-cell with the same col-id: click the label of the sortable one
+    cy.get(`.ag-header-cell-sortable[col-id="${colId}"] .ag-header-cell-label`).should('have.length', 1).click();
     cy.get(`.ag-row[row-index="0"] .ag-cell[col-id="${colId}"]`).should('have.text', '3');
     cy.get(`.ag-row[row-index="1"] .ag-cell[col-id="${colId}"]`).should('have.text', '1e2');
     cy.get(`.ag-row[row-index="2"] .ag-cell[col-id="${colId}"]`).should('have.text', '2x');

@@ -29,31 +29,6 @@ export class Api {
     return this.get(query, params).then(resp => resp.json());
   }
 
-  // fetch a binary file from a GET request, and make client download it
-  async getBlob(query: string, filename: string): Promise<void> {
-    this.get(query).then(async resp => {
-      const disposition = resp.headers.get('Content-Disposition');
-      if (disposition && disposition.includes('filename=')) {
-        const filenameMatch = disposition.match(/filename="(.+)"/);
-        if (filenameMatch.length > 1) {
-          filename = filenameMatch[1];
-        }
-      }
-      return resp.blob().then(blob => ({ blob, filename }));
-    }).then(({ blob, filename }) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }).catch(error => {
-      notify.error('error-fetch-request', { error });
-    });
-  }
-
   patch(query: string, params: ApiParams = {}): Promise<Response> {
     return this.send(Method.PATCH, query, params);
   }
@@ -119,11 +94,12 @@ export class Api {
 
     return fetch(`api/v2/${query}${urlParams}`, options).then(async response => {
       if (response.status !== this.getOkStatusFromMethod(method)) {
-        return response.json().then(json => {
-          const error = new Error(json.message || json.description) as Error & { status?: number };
-          error.status = response.status;
-          throw error;
-        });
+        // body can be empty or HTML (e.g. from a reverse proxy), so fall back to the HTTP status
+        const json = await response.json().catch(() => null);
+        const message = json?.message || json?.description || `HTTP ${response.status} ${response.statusText}`.trim();
+        const error = new Error(message) as Error & { status?: number };
+        error.status = response.status;
+        throw error;
       }
       return response;
     }).then(response => {

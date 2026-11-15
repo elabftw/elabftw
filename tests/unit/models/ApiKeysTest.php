@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use DateTimeImmutable;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
 use Elabftw\Exceptions\ImproperActionException;
@@ -97,14 +98,31 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
 
     public function testExpiredApiKeyIsRejected(): void
     {
-        $this->ApiKeys->postAction(Action::Create, array(
+        $today = new DateTimeImmutable('today');
+        $id = $this->ApiKeys->postAction(Action::Create, array(
             'name' => 'expired api key',
-            'valid_until' => '2000-01-01',
+            'valid_until' => $today->format('Y-m-d'),
         ));
         $apiKey = $this->ApiKeys->getApiPath();
+        // A key remains valid through the end of its valid_until date.
+        $this->assertIsArray($this->ApiKeys->readFromApiKey($apiKey));
+
+        $req = $this->Db->prepare('UPDATE api_keys SET valid_until = :valid_until WHERE id = :id');
+        $req->bindValue(':valid_until', '2000-01-01');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $this->Db->execute($req);
 
         $this->expectException(UnauthorizedException::class);
         $this->ApiKeys->readFromApiKey($apiKey);
+    }
+
+    public function testPastValidUntilIsRejected(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->ApiKeys->postAction(Action::Create, array(
+            'name' => 'past date key',
+            'valid_until' => '2000-01-01',
+        ));
     }
 
     public function testInvalidValidUntilFormatIsRejected(): void
@@ -227,6 +245,7 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         }
         $this->assertIsArray($knownKey);
         $this->assertSame(1, $knownKey['can_write']);
+        $this->assertArrayHasKey('valid_until', $knownKey);
     }
 
     public function testDestroyKeyOnCascade(): void

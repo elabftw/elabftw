@@ -5,10 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { DateTime } from 'luxon';
 import {
   collectForm,
   reloadElements,
   saveStringAsFile,
+  serverTimezone,
 } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
@@ -66,12 +68,7 @@ const apikeyExpirationSelect = document.getElementById('apikeyExpiration') as HT
 const apikeyValidUntilInput = document.getElementById('apikeyValidUntil') as HTMLInputElement | null;
 
 function getFutureDateString(days: number): string {
-  const target = new Date();
-  target.setDate(target.getDate() + days);
-  const yyyy = target.getFullYear();
-  const mm = String(target.getMonth() + 1).padStart(2, '0');
-  const dd = String(target.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+  return DateTime.now().setZone(serverTimezone()).plus({ days }).toFormat('yyyy-MM-dd');
 }
 
 apikeyExpirationSelect?.addEventListener('change', () => {

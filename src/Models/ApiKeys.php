@@ -149,6 +149,7 @@ final class ApiKeys extends AbstractRest
 
     public function create(string $name, int $canwrite, ?string $validUntil = null): int
     {
+        $validUntil = $this->validateValidUntil($validUntil);
         $this->key = $this->generateKey();
         return $this->insert(Filter::title($name), $canwrite, $this->getTokenHash($this->key), $validUntil);
     }
@@ -161,7 +162,7 @@ final class ApiKeys extends AbstractRest
             INNER JOIN users AS u ON u.userid = ak.userid
             INNER JOIN users2teams AS u2t ON u2t.users_id = ak.userid AND u2t.teams_id = ak.team
             WHERE ak.token_hash = :token_hash
-                AND IFNULL(ak.valid_until, \'3000-01-01\') > NOW()
+                AND IFNULL(ak.valid_until, \'3000-01-01\') >= CURDATE()
                 AND u.validated = 1
                 AND IFNULL(u.valid_until, \'3000-01-01\') > NOW()
                 AND u2t.is_archived = 0
@@ -191,7 +192,7 @@ final class ApiKeys extends AbstractRest
             INNER JOIN users AS u ON u.userid = ak.userid
             INNER JOIN users2teams AS u2t ON u2t.users_id = ak.userid AND u2t.teams_id = ak.team
             WHERE ak.id = :id AND ak.hash IS NOT NULL
-                AND IFNULL(ak.valid_until, \'3000-01-01\') > NOW()
+                AND IFNULL(ak.valid_until, \'3000-01-01\') >= CURDATE()
                 AND u.validated = 1
                 AND IFNULL(u.valid_until, \'3000-01-01\') > NOW()
                 AND u2t.is_archived = 0
@@ -250,6 +251,9 @@ final class ApiKeys extends AbstractRest
         $date = DateTimeImmutable::createFromFormat('!Y-m-d', $validUntil);
         if ($date === false || $date->format('Y-m-d') !== $validUntil) {
             throw new ImproperActionException(_('Expiration date must use the YYYY-MM-DD format.'));
+        }
+        if ($date < new DateTimeImmutable('today')) {
+            throw new ImproperActionException(_('Expiration date cannot be in the past.'));
         }
         return $validUntil;
     }

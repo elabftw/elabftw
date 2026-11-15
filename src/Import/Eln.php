@@ -108,7 +108,7 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
-    /** @var list<array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> */
+    /** @var array<string, array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> keyed by entity and field, to gather the values of a multi-value field */
     private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
@@ -416,8 +416,9 @@ class Eln extends AbstractZip
         // keep the original position of each value: value_labels are matched to values by index
         $targetAtIds = array();
         foreach (is_array($value) && array_is_list($value) ? $value : array($value) as $index => $reference) {
-            if (is_array($reference) && is_string($reference['@id'] ?? null)) {
-                $targetAtIds[$offset + $index] = $reference['@id'];
+            $atId = is_array($reference) ? ($reference['@id'] ?? null) : null;
+            if (is_string($atId)) {
+                $targetAtIds[$offset + $index] = $atId;
             } elseif ($type === ExtraFieldReference::Users) {
                 // the user was not exported as a Person node: keep the value, as an unknown user
                 $targetAtIds[$offset + $index] = '';

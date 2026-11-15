@@ -13,13 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Controllers\DownloadController;
-use Elabftw\Enums\Messages;
 use Elabftw\Enums\Storage;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Config;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 use function error_reporting;
+use function header;
+use function headers_sent;
+use function http_response_code;
 use function set_time_limit;
 use function strpos;
 
@@ -64,6 +68,17 @@ try {
     $Response->prepare($App->Request);
     $Response->send();
 } catch (Exception $e) {
-    $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Download error', $e)));
-    $App->Session->getFlashBag()->add('ko', Messages::GenericError->toHuman());
+    // an empty 200 would look like a successful download of an empty file
+    $code = $e instanceof AppException ? $e->getHttpCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+    // a streamed response may already have sent its headers: nothing can be changed then
+    if (!headers_sent()) {
+        http_response_code($code);
+        header('Cache-Control: private, no-store');
+    }
+    if ($e instanceof AppException) {
+        // client errors are logged as notices, server errors as errors
+        $e->emitLog($App->Log, (int) ($App->Session->get('userid') ?? -1));
+    } else {
+        $App->Log->error('', array(array('userid' => $App->Session->get('userid')), array('Download error', $e)));
+    }
 }

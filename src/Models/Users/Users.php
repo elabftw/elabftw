@@ -364,7 +364,10 @@ class Users extends AbstractRest
             $archived = 'AND u2t_all.is_archived = 1';
         }
         if ($onlyActive) {
-            $archived = 'AND u2t_all.is_archived = 0';
+            // when filtering on a team, the user must be active in that team, not just in any team
+            $archived = $teamId > 0
+                ? 'AND u2t_filter.is_archived = 0'
+                : 'AND u2t_all.is_archived = 0';
         }
 
         $admins = '';
@@ -521,6 +524,7 @@ class Users extends AbstractRest
             $team,
             $Request->query->getBoolean('onlyAdmins'),
             $Request->query->getBoolean('onlyArchived'),
+            $Request->query->getBoolean('onlyActive'),
         );
         $isSysadmin = $this->requester->isSysadmin();
         $removeKeys = array('auth_service', 'created_at', 'orgid', 'has_mfa_enabled', 'validated', 'valid_until', 'is_sysadmin', 'teams');

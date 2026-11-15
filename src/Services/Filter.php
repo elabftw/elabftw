@@ -85,7 +85,7 @@ final class Filter
 
     public static function firstLetter(string $input): string
     {
-        $key = $input[0];
+        $key = $input[0] ?? '';
         if (ctype_alpha($key)) {
             return $key;
         }

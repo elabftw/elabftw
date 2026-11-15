@@ -112,6 +112,7 @@ final class AppAnonymousSessionTest extends TestCase
     {
         $Config = new ReflectionClass(Config::class)->newInstanceWithoutConstructor();
         $Config->configArr = array(
+            'admins_impersonate_users' => '0',
             'anon_users' => '0',
             'autologout_time' => '0',
             'lang' => 'en_GB',

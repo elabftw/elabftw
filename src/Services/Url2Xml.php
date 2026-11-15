@@ -15,6 +15,9 @@ namespace Elabftw\Services;
 use DOMDocument;
 use Elabftw\Exceptions\ImproperActionException;
 
+use function libxml_clear_errors;
+use function libxml_use_internal_errors;
+
 /**
  * Fetch XML data from an URL and convert to DOMDocument
  */
@@ -28,7 +31,14 @@ final class Url2Xml
         if (empty($xml)) {
             throw new ImproperActionException('Could not get XML content!');
         }
-        $res = $this->dom->loadXML($xml);
+        // invalid xml from a remote server must not emit PHP warnings: we throw instead
+        $useInternalErrors = libxml_use_internal_errors(true);
+        try {
+            $res = $this->dom->loadXML($xml);
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($useInternalErrors);
+        }
         if (!$res) {
             throw new ImproperActionException('Could not load XML content!');
         }

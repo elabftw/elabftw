@@ -27,6 +27,7 @@ class CsrfTest extends \PHPUnit\Framework\TestCase
     {
         $Request = Request::create('/', 'GET');
         $Csrf = new Csrf($Request);
+        $this->expectNotToPerformAssertions();
         $Csrf->validate();
     }
 
@@ -64,6 +65,7 @@ class CsrfTest extends \PHPUnit\Framework\TestCase
         $Request = Request::create('/', 'POST', array('csrf' => 'fake-token'));
         $Csrf = new Csrf($Request);
         $Csrf->setToken('fake-token');
+        $this->expectNotToPerformAssertions();
         $Csrf->validate();
     }
 }

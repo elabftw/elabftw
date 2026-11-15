@@ -13,6 +13,7 @@ namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Traits\TestsUtilsTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use ZipStream\ZipStream;
 
 use function dirname;
@@ -24,6 +25,8 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 
     private MakeStreamZip $Make;
 
+    private ZipStream&MockObject $Zip;
+
     protected function setUp(): void
     {
         $user = $this->getRandomUserInTeam(1);
@@ -32,8 +35,8 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
             $this->getFreshExperimentWithGivenUser($user),
             $this->getFreshItemWithGivenUser($user),
         );
-        $Zip = $this->createMock(ZipStream::class);
-        $this->Make = new MakeStreamZip($Zip, $user, $targets);
+        $this->Zip = $this->createMock(ZipStream::class);
+        $this->Make = new MakeStreamZip($this->Zip, $user, $targets);
     }
 
     public function testGetFileName(): void
@@ -43,6 +46,7 @@ class MakeStreamZipTest extends \PHPUnit\Framework\TestCase
 
     public function testGetZipExp(): void
     {
+        $this->Zip->expects($this->once())->method('finish');
         $this->Make->getStreamZip();
     }
 

@@ -468,10 +468,14 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
 
     public function testReadAll(): void
     {
+        $mock = new MockHandler(array(
+            new Response(200, array(), Storage::FIXTURES->getStorage()->getFs()->read('cid-3345.json')),
+        ));
+        $Compounds = new Compounds(new HttpGetter(new Client(array('handler' => HandlerStack::create($mock)))), new Users(1, 1), new NullFingerprinter(), false);
         $queryParams = array('search_pubchem_cid' => '3345');
         $req = new Request($queryParams);
-        $q = $this->Compounds->getQueryParams($req->query);
-        $this->assertIsArray($this->Compounds->readAll($q));
+        $q = $Compounds->getQueryParams($req->query);
+        $this->assertSame('Fentanyl', $Compounds->readAll($q)['name']);
 
         $mock = new MockHandler(array(
             new Response(200, array(), $this->fpResponse),

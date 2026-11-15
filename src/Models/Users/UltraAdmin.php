@@ -30,6 +30,8 @@ final class UltraAdmin extends Users
         $this->userData['scope_experiments_templates'] = 3;
         $this->userData['scope_items'] = 3;
         $this->userData['scope_items_types'] = 3;
+        $this->userData['can_manage_compounds'] = 1;
+        $this->userData['can_manage_inventory_locations'] = 1;
         $this->isAdmin = true;
     }
 

@@ -80,9 +80,9 @@ class Users2TeamsTest extends \PHPUnit\Framework\TestCase
         // add tata to team alpha
         $this->Users2Teams->addUserToTeams($admin2->userid, array(1));
         // make tata Admin in Alpha
-        $this->Users2Teams->patchUser2Team(array('team' => 1, 'target' => 'is_admin', 'content' => 1), $admin2->userid);
+        $this->assertSame(1, $this->Users2Teams->patchUser2Team(array('team' => 1, 'target' => 'is_admin', 'content' => 1), $admin2->userid));
         // and remove tata from team alpha
-        $this->Users2Teams->destroy($admin2->userid, 1);
+        $this->assertIsArray($this->Users2Teams->destroy($admin2->userid, 1));
     }
 
     public function testRmUserFromOwnTeamAsAdminIsForbidden(): void

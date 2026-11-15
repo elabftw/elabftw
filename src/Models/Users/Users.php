@@ -1104,7 +1104,7 @@ class Users extends AbstractRest
     {
         // a sysadmin or reset password page request doesn't need to provide the current password
         if (!$this->requester->isSysadmin() && $isReset === false) {
-            $this->checkCurrentPasswordOrExplode($params['current_password']);
+            $this->checkCurrentPasswordOrExplode($params['current_password'] ?? null);
         }
         if (empty($params['password'])) {
             throw new ImproperActionException('New password must be provided by "password" parameter.');

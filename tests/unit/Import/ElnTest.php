@@ -32,17 +32,20 @@ use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
+use Stringable;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\InputBag;
 use ZipArchive;
 
 use function array_column;
+use function array_filter;
 use function dirname;
 use function getenv;
 use function json_decode;
 use function json_encode;
 use function putenv;
 use function sprintf;
+use function str_contains;
 use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
@@ -589,17 +592,24 @@ class ElnTest extends \PHPUnit\Framework\TestCase
             true,
         );
 
+        $errors = array();
+        $logger = $this->createStub(LoggerInterface::class);
+        $logger->method('error')->willReturnCallback(function (string|Stringable $message) use (&$errors): void {
+            $errors[] = (string) $message;
+        });
         $Import = new Eln(
             new Users(1, 1),
             new Users(1, 1),
             $uploadedFile,
             $this->fs,
-            $this->logger,
+            $logger,
             CompoundsFactory::getCompounds(new Users(1, 1)),
             EntityType::Items,
             category: 1,
         );
         $Import->import();
+        // the file is still imported, but the mismatch is logged
+        $this->assertNotEmpty(array_filter($errors, static fn(string $error): bool => str_contains($error, 'has incorrect sha256 sum')));
     }
 
     public function testImportBeforeV5(): void

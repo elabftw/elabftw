@@ -65,6 +65,15 @@ on('regenerate-sigkeys', (_, event: Event) => {
 const apikeyExpirationSelect = document.getElementById('apikeyExpiration') as HTMLSelectElement | null;
 const apikeyValidUntilInput = document.getElementById('apikeyValidUntil') as HTMLInputElement | null;
 
+function getFutureDateString(days: number): string {
+  const target = new Date();
+  target.setDate(target.getDate() + days);
+  const yyyy = target.getFullYear();
+  const mm = String(target.getMonth() + 1).padStart(2, '0');
+  const dd = String(target.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 apikeyExpirationSelect?.addEventListener('change', () => {
   if (!apikeyValidUntilInput) {
     return;
@@ -72,12 +81,7 @@ apikeyExpirationSelect?.addEventListener('change', () => {
   const isCustom = apikeyExpirationSelect.value === 'custom';
   apikeyValidUntilInput.hidden = !isCustom;
   if (isCustom) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const yyyy = tomorrow.getFullYear();
-    const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-    const dd = String(tomorrow.getDate()).padStart(2, '0');
-    apikeyValidUntilInput.min = `${yyyy}-${mm}-${dd}`;
+    apikeyValidUntilInput.min = getFutureDateString(1);
   } else {
     apikeyValidUntilInput.value = '';
     apikeyValidUntilInput.style.borderColor = '';
@@ -90,8 +94,12 @@ function resolveApikeyValidUntil(): string | null | false {
     return null;
   }
   if (mode === 'custom') {
+    const minDate = getFutureDateString(1);
+    if (apikeyValidUntilInput) {
+      apikeyValidUntilInput.min = minDate;
+    }
     const customDate = apikeyValidUntilInput?.value;
-    if (!customDate) {
+    if (!customDate || customDate < minDate || !apikeyValidUntilInput?.checkValidity()) {
       notify.error('check-required');
       if (apikeyValidUntilInput) {
         apikeyValidUntilInput.style.borderColor = 'red';
@@ -107,12 +115,7 @@ function resolveApikeyValidUntil(): string | null | false {
   if (Number.isNaN(days) || days <= 0) {
     return null;
   }
-  const target = new Date();
-  target.setDate(target.getDate() + days);
-  const yyyy = target.getFullYear();
-  const mm = String(target.getMonth() + 1).padStart(2, '0');
-  const dd = String(target.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
+  return getFutureDateString(days);
 }
 
 on('create-apikey', () => {

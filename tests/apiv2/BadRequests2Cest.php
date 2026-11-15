@@ -30,4 +30,12 @@ class BadRequests2Cest
         $I->sendPUT('/experiments/1');
         $I->seeResponseCodeIs(HttpCode::METHOD_NOT_ALLOWED); // 405
     }
+
+    public function badExtraFieldsKeysTypeTest(Apiv2Tester $I)
+    {
+        $I->wantTo('Request custom fields keys of an unknown entity type');
+        $I->haveHttpHeader('Authorization', 'apiKey4Test');
+        $I->sendGET('/extra_fields_keys?type=item');
+        $I->seeResponseCodeIs(HttpCode::BAD_REQUEST); // 400
+    }
 }

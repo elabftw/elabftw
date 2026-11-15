@@ -50,4 +50,7 @@ interface QueryParamsInterface
     public function setSkipOrderPinned(bool $value): void;
 
     public function isFull(): bool;
+
+    /** Names of the custom fields (metadata.extra_fields keys) to add to each entry, as extra_fields_values */
+    public function getExtraFieldsColumns(): array;
 }

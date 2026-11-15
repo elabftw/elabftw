@@ -147,7 +147,7 @@ class TimestampUtils
             return false;
         }
 
-        $this->runProcess(array(
+        $command = array(
             'openssl',
             'ts',
             '-verify',
@@ -159,9 +159,12 @@ class TimestampUtils
             $this->tsResponse->tokenPath,
             '-CAfile',
             $this->tsConfig['ts_chain'],
-            '-untrusted',
-            $this->tsConfig['ts_cert'],
-        ));
+        );
+        if (($this->tsConfig['ts_cert'] ?? '') !== '') {
+            $command[] = '-untrusted';
+            $command[] = $this->tsConfig['ts_cert'];
+        }
+        $this->runProcess($command);
         return true;
     }
 }

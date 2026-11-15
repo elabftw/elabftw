@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Auth;
 
 use Elabftw\Elabftw\Db;
+use Elabftw\Enums\AuthMethod;
 use Elabftw\Enums\EnforceMfa;
 use Elabftw\Models\Users\Users;
 use PDO;
@@ -39,14 +40,14 @@ final class MfaPolicyTest extends TestCase
         $this->setMfaSecret('configured-secret');
 
         self::assertTrue(
-            new MfaPolicy(EnforceMfa::Disabled)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::Disabled)->isRequired(new Users(1), AuthMethod::Local),
         );
     }
 
     public function testEveryoneRequiresMfa(): void
     {
         self::assertTrue(
-            new MfaPolicy(EnforceMfa::Everyone)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::Everyone)->isRequired(new Users(1), AuthMethod::Local),
         );
     }
 
@@ -54,12 +55,12 @@ final class MfaPolicyTest extends TestCase
     {
         $this->setSysadmin(1);
         self::assertTrue(
-            new MfaPolicy(EnforceMfa::SysAdmins)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::SysAdmins)->isRequired(new Users(1), AuthMethod::Local),
         );
 
         $this->setSysadmin(0);
         self::assertFalse(
-            new MfaPolicy(EnforceMfa::SysAdmins)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::SysAdmins)->isRequired(new Users(1), AuthMethod::Local),
         );
     }
 
@@ -67,19 +68,50 @@ final class MfaPolicyTest extends TestCase
     {
         $this->setTeamAdmin(1);
         self::assertTrue(
-            new MfaPolicy(EnforceMfa::Admins)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::Admins)->isRequired(new Users(1), AuthMethod::Local),
         );
 
         $this->setTeamAdmin(0);
         self::assertFalse(
-            new MfaPolicy(EnforceMfa::Admins)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::Admins)->isRequired(new Users(1), AuthMethod::Local),
         );
     }
 
     public function testDisabledPolicyDoesNotRequireMfa(): void
     {
         self::assertFalse(
-            new MfaPolicy(EnforceMfa::Disabled)->isRequired(new Users(1)),
+            new MfaPolicy(EnforceMfa::Disabled)->isRequired(new Users(1), AuthMethod::Local),
+        );
+    }
+
+    public function testLocalOnlyPolicyEnforcesMfaForLocalAuth(): void
+    {
+        self::assertTrue(
+            new MfaPolicy(EnforceMfa::Everyone, true)->isRequired(new Users(1), AuthMethod::Local),
+        );
+    }
+
+    public function testLocalOnlyPolicySkipsMfaForOtherAuthMethods(): void
+    {
+        $Policy = new MfaPolicy(EnforceMfa::Everyone, true);
+        self::assertFalse($Policy->isRequired(new Users(1), AuthMethod::Saml));
+        self::assertFalse($Policy->isRequired(new Users(1), AuthMethod::Ldap));
+        self::assertFalse($Policy->isRequired(new Users(1), AuthMethod::External));
+    }
+
+    public function testLocalOnlyPolicyStillRequiresMfaWithExistingSecret(): void
+    {
+        $this->setMfaSecret('configured-secret');
+
+        self::assertTrue(
+            new MfaPolicy(EnforceMfa::Everyone, true)->isRequired(new Users(1), AuthMethod::Saml),
+        );
+    }
+
+    public function testEnforcementAppliesToAllAuthMethodsByDefault(): void
+    {
+        self::assertTrue(
+            new MfaPolicy(EnforceMfa::Everyone)->isRequired(new Users(1), AuthMethod::Saml),
         );
     }
 

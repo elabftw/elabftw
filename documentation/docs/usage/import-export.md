@@ -238,6 +238,11 @@ To also import locations/containers with quantity and units, use columns:
 - `quantity`: this should be a number corresponding to the quantity stored at the location
 - `unit`: this should be a value such as μg, mg, g, kg, mL, L
 
+The GHS safety information of a compound can be given with these columns. When importing from PubChem, it comes from PubChem instead:
+
+- `ghs_signal_word`: `Danger` or `Warning`
+- `ghs_statements`: the codes of the hazard and precautionary statements, separated by commas or spaces. For example: "H225, H319, P210, P305+P351+P338". Codes are case-sensitive (H360FD is not H360Fd), and unknown codes are ignored.
+
 Other columns such as `inchi`, `smiles`, `molecularweight`, `molecularformula` will also match and be imported to the compound.
 
 Supported CSV columns: `cas`, `chebi_id`, `chembl_id`, `dea_number`, `drugbank_id`, `dsstox_id`, `ec_number`, `hmdb_id`, `inchi`, `inchikey`, `iupacname`, `is_antibiotic`, `is_antibiotic_precursor`, `is_cmr`, `is_controlled`, `is_corrosive`, `is_drug`, `is_drug_precursor`, `is_explosive`, `is_explosive_precursor`, `is_flammable`, `is_gas_under_pressure`, `is_hazardous2env`, `is_hazardous2health`, `is_nano`, `is_oxidising`, `is_radioactive`, `is_serious_health_hazard`, `is_toxic`, `is_ed2health`, `is_ed2env`, `is_pbt`, `is_pmt`, `is_vpvb`, `is_vpvm`, `kegg_id`, `metabolomics_wb_id`, `molecularformula`, `molecularweight`, `name`, `nci_code`, `nikkaji_number`, `pharmgkb_id`, `pharos_ligand_id`, `pubchemcid`, `rxcui`, `smiles`, `unii`, `wikidata`, `wikipedia`.

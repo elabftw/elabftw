@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Commands;
 
-use Elabftw\Models\Fingerprints;
+use Elabftw\Models\CompoundsFingerprints;
 use Elabftw\Services\OpenBabelFingerprinter;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -44,7 +44,7 @@ final class FingerprintCompounds extends Command
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $Fingerprints = new Fingerprints();
+        $Fingerprints = new CompoundsFingerprints();
         $compounds = $Fingerprints->getSmilesMissingFp((bool) $input->getOption('force'));
         $output->writeln(sprintf('Found %d compounds to process...', count($compounds)));
         if (count($compounds) === 0) {
@@ -68,7 +68,7 @@ final class FingerprintCompounds extends Command
                     $output->writeln(sprintf('Skipping compound with ID: %d (invalid fingerprint payload).', $compound['id']));
                     continue;
                 }
-                new Fingerprints($compound['id'])->upsert($fp['data']);
+                new CompoundsFingerprints($compound['id'])->upsert($fp['data']);
             } catch (Throwable $e) {
                 $output->writeln(sprintf('Error: %s', $e->getMessage()));
                 // continue with next compound

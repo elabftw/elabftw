@@ -15,6 +15,7 @@ Here are the main changes:
 - container volumes change
 - container user configuration change
 - container certificates paths
+- MySQL 8.4 authentication options, if upgrading the database image too
 
 Note: this guide assumes usage of `docker compose`, with hints related to `podman/quadlets` (podman is another container engine and quadlets are systemd-managed container unit files). For other deployments, you will need to adapt the changes to your context.
 
@@ -34,6 +35,12 @@ cp /etc/elabftw.yml /etc/elabftw.yml.v5.bak
 ~~~
 
 Obviously, make sure your data backups are also functional and recent before attempting upgrade. But that is valid for any upgrade.
+
+## MySQL 8.4 authentication options
+
+If you also upgrade MySQL from 8.0 to 8.4, remove the obsolete `--default-authentication-plugin=mysql_native_password` option from the MySQL service's `command:` entry. MySQL 8.4 no longer accepts this option and disables the deprecated `mysql_native_password` plugin by default.
+
+For existing database accounts that still use that plugin, follow [Fix authentication issues after upgrading from MySQL 8.0 to 8.4](../../usage/sysadmin-guide.md#fix-authentication-issues-after-upgrading-from-mysql-80-to-84). The guide explains how to temporarily enable the plugin with `--mysql-native-password=ON`, migrate the affected accounts to `caching_sha2_password`, and remove the compatibility option afterward. Keep any unrelated server options already present in `command:`.
 
 ## Creating a dedicated user
 

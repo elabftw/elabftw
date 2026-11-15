@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Interfaces;
 
 use Elabftw\Enums\EntityType;
+use PDOStatement;
 use Symfony\Component\HttpFoundation\InputBag;
 
 interface QueryParamsInterface
@@ -41,9 +42,15 @@ interface QueryParamsInterface
 
     public function getFilterSql(): string;
 
+    /** Bind the values of getFilterSql() on the statement that contains it */
+    public function bindFilterValues(PDOStatement $req): void;
+
     public function getSkipOrderPinned(): bool;
 
     public function setSkipOrderPinned(bool $value): void;
 
     public function isFull(): bool;
+
+    /** Names of the custom fields (metadata.extra_fields keys) to add to each entry, as extra_fields_values */
+    public function getExtraFieldsColumns(): array;
 }

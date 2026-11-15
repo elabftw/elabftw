@@ -13,14 +13,17 @@ declare(strict_types=1);
 namespace Elabftw\Elabftw;
 
 use Elabftw\Exceptions\DatabaseErrorException;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use PDO;
 use PDOException;
 use PDOStatement;
 
+use function _;
 use function hash;
 use function hrtime;
 use function json_encode;
+use function preg_match;
 use function preg_replace;
 use function round;
 use function trim;
@@ -43,6 +46,13 @@ final class Db
 
     // total number of queries
     private int $nq = 0;
+
+    /**
+     * When true, only statements that read are allowed. It is the last line of defense for a read-only session
+     * (impersonation): whatever request reaches the models, nothing can be written.
+     * The flag lives in this object, never in the MySQL connection, so it cannot leak to another request through a persistent connection.
+     */
+    private bool $readOnly = false;
 
     /**
      * Construct of a singleton is private
@@ -107,6 +117,7 @@ final class Db
      */
     public function prepare(string $sql): PDOStatement
     {
+        $this->assertCanRun($sql);
         $this->nq++;
         return $this->connection->prepare($sql);
     }
@@ -156,6 +167,7 @@ final class Db
      */
     public function q(string $sql): PDOStatement
     {
+        $this->assertCanRun($sql);
         $startedAt = hrtime(true);
         try {
             $res = $this->connection->query($sql);
@@ -181,6 +193,16 @@ final class Db
     public function lastInsertId(): int
     {
         return (int) $this->connection->lastInsertId();
+    }
+
+    public function setReadOnly(bool $readOnly): void
+    {
+        $this->readOnly = $readOnly;
+    }
+
+    public function isReadOnly(): bool
+    {
+        return $this->readOnly;
     }
 
     /**
@@ -241,5 +263,23 @@ final class Db
             $logger = App::getDefaultLogger();
             $logger->debug($entry);
         }
+    }
+
+    private function assertCanRun(string $sql): void
+    {
+        if (!$this->readOnly || $this->isReadQuery($sql)) {
+            return;
+        }
+        throw new ForbiddenException(_('This session is read-only: nothing can be modified.'));
+    }
+
+    private function isReadQuery(string $sql): bool
+    {
+        if (preg_match('/^[\s(]*(SELECT|SHOW|EXPLAIN|DESCRIBE)\b/i', $sql) === 1) {
+            return true;
+        }
+        // a common table expression can also precede a write: WITH ... UPDATE/DELETE/INSERT
+        return preg_match('/^[\s(]*WITH\b/i', $sql) === 1
+            && preg_match('/\b(INSERT|UPDATE|DELETE|REPLACE)\b/i', $sql) !== 1;
     }
 }

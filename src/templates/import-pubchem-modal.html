@@ -53,6 +53,10 @@
       </div>
 
       <div class='modal-footer'>
+        {# PERMISSIONS: chosen before the compounds are imported, sent with them #}
+        <button type='button' title='{{ 'Permissions'|trans }}' aria-label='{{ 'Permissions'|trans }}' class='btn btn-ghost mr-auto' data-action='compound-permissions' data-from='importFromPubChemModal' data-cy='compound-permissions-import'>
+          <i class='fas fa-share-nodes fa-fw mr-1' aria-hidden='true'></i>{{ 'Permissions'|trans }}
+        </button>
         <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Close'|trans }}</button>
       </div>
     </div>

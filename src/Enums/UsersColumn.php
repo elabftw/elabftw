@@ -68,7 +68,6 @@ enum UsersColumn: string
     case ScopeItems = 'scope_items';
     case ScopeItemsTypes = 'scope_items_types';
     case ScopeExperimentsTemplates = 'scope_experiments_templates';
-    case ScopeTeamgroups = 'scope_teamgroups';
     case ScFavorite = 'sc_favorite';
     case SchedulerLayout = 'scheduler_layout';
     case ScSearch = 'sc_search';

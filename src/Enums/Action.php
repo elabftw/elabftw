@@ -21,6 +21,7 @@ enum Action: string
     case Bloxberg = 'bloxberg';
     case ClearLockedOutDevices = 'clearlockedoutdevices';
     case Create = 'create';
+    case Calculate = 'calculate';
     case CreateFromString = 'createfromstring';
     case CreateSigkeys = 'createsigkeys';
     case Destroy = 'destroy';

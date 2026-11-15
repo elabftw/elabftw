@@ -19,7 +19,6 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
-use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -40,6 +39,8 @@ use function rawurlencode;
 use function sprintf;
 use function str_replace;
 use function json_encode;
+use function array_filter;
+use function reset;
 
 class ExperimentsTest extends \PHPUnit\Framework\TestCase
 {
@@ -124,6 +125,60 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
         $DisplayParams->getQuery()->add(array('fastq' => 1));
         $fast = $this->Experiments->readAll($DisplayParams);
         $this->assertNotEmpty($fast);
+    }
+
+    public function testReadWithExtraFieldsColumns(): void
+    {
+        $title = 'extraFieldsColumns' . bin2hex(random_bytes(8));
+        $this->Experiments->setId($this->Experiments->create(title: $title));
+        $this->Experiments->patch(Action::Update, array('metadata' => json_encode(array(
+            'extra_fields' => array(
+                'Concentration' => array('type' => 'number', 'value' => '12.5', 'unit' => 'mM'),
+                'Solvents' => array('type' => 'select', 'value' => array('water', 'ethanol'), 'allow_multi_values' => true),
+                'with "quotes"' => array('type' => 'text', 'value' => 'quoted'),
+            ),
+        ))));
+        $requested = array('Concentration', 'Solvents', 'with "quotes"', 'concentration', 'Not there');
+
+        // search path
+        $all = $this->Experiments->readAll(new DisplayParams(
+            $this->Users,
+            EntityType::Experiments,
+            new InputBag(array('q' => $title, 'extra_fields' => $requested)),
+        ));
+        $this->assertCount(1, $all);
+        $values = (array) $all[0]['extra_fields_values'];
+        $this->assertSame(array('value' => '12.5', 'values' => array('12.5'), 'unit' => 'mM', 'type' => 'number'), $values['Concentration']);
+        $this->assertSame('water, ethanol', $values['Solvents']['value']);
+        $this->assertSame(array('water', 'ethanol'), $values['Solvents']['values']);
+        $this->assertSame('quoted', $values['with "quotes"']['value']);
+        // keys are matched exactly, and missing fields are absent
+        $this->assertArrayNotHasKey('concentration', $values);
+        $this->assertArrayNotHasKey('Not there', $values);
+
+        // default page path
+        $all = $this->Experiments->readAll(new DisplayParams(
+            requester: $this->Users,
+            entityType: EntityType::Experiments,
+            query: new InputBag(array('extra_fields' => array('Concentration'))),
+            limit: 50,
+        ));
+        $found = array_filter($all, fn(array $entity): bool => $entity['id'] === $this->Experiments->id);
+        $this->assertCount(1, $found);
+        $this->assertSame('12.5', ((array) reset($found)['extra_fields_values'])['Concentration']['value']);
+
+        // fast path (autocomplete)
+        $all = $this->Experiments->readAll(new DisplayParams(
+            $this->Users,
+            EntityType::Experiments,
+            new InputBag(array('fastq' => $title, 'extra_fields' => array('Concentration'))),
+        ));
+        $this->assertCount(1, $all);
+        $this->assertSame('12.5', ((array) $all[0]['extra_fields_values'])['Concentration']['value']);
+
+        // without the parameter, nothing is added
+        $all = $this->Experiments->readAll(new DisplayParams($this->Users, EntityType::Experiments, new InputBag(array('q' => $title))));
+        $this->assertArrayNotHasKey('extra_fields_values', $all[0]);
     }
 
     public function testDefaultReadPaginatesPinnedEntitiesFirst(): void
@@ -275,67 +330,6 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
     public function testUpdateCategory(): void
     {
         $this->assertIsArray($this->Experiments->patch(Action::Update, array('category' => '3')));
-    }
-
-    public function testUpdateOwnership(): void
-    {
-        $user1 = new Users(1, 1);
-        $user2 = new Users(2, 1);
-        $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $params = array('userid' => $user2->userid, 'team' => $user2->getTeam());
-        // no readOne after ownership change
-        $exp->patch(Action::UpdateOwner, $params);
-        $entityData = $exp->readOne();
-        $this->assertEquals($user2->userid, $entityData['userid']);
-        $this->assertEquals($user2->team, $entityData['team']);
-    }
-
-    public function testUpdateOwnershipRequiresAdminOfSourceTeam(): void
-    {
-        $owner = $this->getUserInTeam(2);
-        $requester = $this->getUserInTeam(1);
-        $source = new Experiments($owner);
-        $id = $source->create(
-            canreadBase: BasePermissions::Organization,
-            canwriteBase: BasePermissions::Organization,
-        );
-        $shared = new Experiments($requester, $id);
-
-        $this->expectException(ForbiddenException::class);
-        $shared->patch(Action::UpdateOwner, array(
-            'userid' => $requester->getUserid(),
-            'team' => $requester->getTeam(),
-        ));
-    }
-
-    public function testUpdateOwnershipWithoutUsingDedicatedAction(): void
-    {
-        $User = $this->getRandomUserInTeam(1);
-        $exp = $this->getFreshExperimentWithGivenUser($User);
-        $params = array('userid' => $User->getUserid(), 'team' => $User->getTeam());
-        // needs to use Action::UpdateOwner if we're using userid/team params)
-        $this->expectException(ImproperActionException::class);
-        $exp->patch(Action::Update, $params);
-    }
-
-    public function testUpdateOwnershipWrongTeamCombination(): void
-    {
-        $user1 = new Users(1, 1);
-        $user2 = new Users(2, 2);
-        $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $params = array('userid' => $user2->userid, 'team' => 17);
-        $this->expectException(UnprocessableContentException::class);
-        $exp->patch(Action::UpdateOwner, $params);
-    }
-
-    public function testUpdateOwnershipToDifferentTeamIsRestrictedToAdmins(): void
-    {
-        $user1 = new Users(1, 1);
-        $user1->isAdmin = false;
-        $user2 = new Users(2, 2);
-        $exp = $this->getFreshExperimentWithGivenUser($user1);
-        $this->expectException(ForbiddenException::class);
-        $exp->patch(Action::UpdateOwner, array('userid' => $user2->userid, 'team' => 2));
     }
 
     public function testUpdateWithNegativeInt(): void

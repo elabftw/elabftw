@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use DateTimeImmutable;
 use Elabftw\AuditEvent\SignatureCreated;
 use Elabftw\Elabftw\AccessPermissions;
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\EntitySqlBuilder;
@@ -122,6 +123,8 @@ use function strlen;
 use function hash_equals;
 use function preg_replace_callback;
 use function rawurlencode;
+use function is_scalar;
+use function array_values;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -159,16 +162,27 @@ abstract class AbstractEntity extends AbstractRest
 
     private bool $readAfterPatch = true;
 
-    public function __construct(public Users $Users, public ?int $id = null, public ?bool $bypassReadPermission = false, public ?bool $bypassWritePermission = false)
-    {
+    // set by readOneFull(): readOne() then gives the reactions with their drawings instead of their summaries
+    private bool $withFullReactions = false;
+
+    /**
+     * @param bool $withChangelog false to skip reading the changelog in readOne(): it grows with every save, and the entry pages
+     * do not display it (the changelog mode reads it on its own)
+     */
+    public function __construct(
+        public Users $Users,
+        public ?int $id = null,
+        public ?bool $bypassReadPermission = false,
+        public ?bool $bypassWritePermission = false,
+        public bool $withChangelog = true,
+    ) {
         parent::__construct();
 
         $this->ExperimentsLinks = LinksFactory::getExperimentsLinks($this);
         $this->ItemsLinks = LinksFactory::getItemsLinks($this);
         $this->Uploads = new Uploads($this);
         $this->ExclusiveEditMode = new ExclusiveEditMode($this);
-        // perform check here once instead of in canreadorexplode to avoid making the same query over and over by child entities
-        $this->isReadOnly = $this->ExclusiveEditMode->isActive();
+        // readOne() also sets isReadOnly if another user has the entry in exclusive edit mode
         $this->setId($id);
     }
 
@@ -385,7 +399,7 @@ abstract class AbstractEntity extends AbstractRest
         // Allow owned entries to pass the permission filter regardless of their team
         $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
         if ($displayParams->isFast()) {
-            return $this->readAllSimple($displayParams);
+            return $this->hydrateExtraFields($this->readAllSimple($displayParams), $displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         $plainQuery = trim($displayParams->getQuery()->getString('q'));
@@ -416,7 +430,10 @@ abstract class AbstractEntity extends AbstractRest
             $EntitySqlBuilder instanceof EntitySqlBuilder
             && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds, $withUploads)
         ) {
-            return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
+            return $this->hydrateExtraFields(
+                $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can),
+                $displayParams,
+            );
         }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
@@ -453,13 +470,14 @@ abstract class AbstractEntity extends AbstractRest
 
         $req = $this->Db->prepare($sql);
         $req->bindParam(':userid', $this->Users->userData['userid'], PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
 
         $this->bindExtendedValues($req);
         $this->Db->execute($req);
 
         $entities = $req->fetchAll();
 
-        return $this->hydrateTags($entities);
+        return $this->hydrateExtraFields($this->hydrateTags($entities), $displayParams);
     }
 
     /**
@@ -512,6 +530,7 @@ abstract class AbstractEntity extends AbstractRest
         $req = $this->Db->prepare($sql);
         $userid = $this->Users->getUserid();
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
         $this->Db->execute($req);
         return $req->fetchAll();
     }
@@ -711,13 +730,16 @@ abstract class AbstractEntity extends AbstractRest
         $this->canOrExplode(AccessType::Read);
         $this->entityData['steps'] = new Steps($this)->readAll();
         $this->entityData['step_groups'] = new StepGroups($this)->readAll();
+        // summaries only, unless for readOneFull(): this runs on every read of the entry, including the response to each autosave
+        $Reactions = new Reactions($this);
+        $this->entityData['reactions'] = $this->withFullReactions ? $Reactions->readFull() : $Reactions->readSummaries();
         $this->entityData['experiments_links'] = $this->ExperimentsLinks->readAll();
         $this->entityData['items_links'] = $this->ItemsLinks->readAll();
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
-        $this->entityData['changelog'] = new Changelog($this)->readAll();
+        $this->entityData['changelog'] = $this->withChangelog ? new Changelog($this)->readAll() : array();
         $this->entityData['comments'] = new Comments($this)->readAll();
         $this->entityData['page'] = mb_substr($this->entityType->toPage(), 0, -4);
         $CompoundsLinks = LinksFactory::getCompoundsLinks($this);
@@ -757,6 +779,10 @@ abstract class AbstractEntity extends AbstractRest
         }
         $exclusiveEditMode = $this->ExclusiveEditMode->readOne();
         $this->entityData['exclusive_edit_mode'] = empty($exclusiveEditMode) ? null : $exclusiveEditMode;
+        // reuse the row we just read instead of querying it again with isActive()
+        if ($this->ExclusiveEditMode->isActiveFromData($exclusiveEditMode)) {
+            $this->isReadOnly = true;
+        }
         $this->entityData['created_from_type_human'] = EntityType::fromInt($this->entityData['created_from_type'])?->toGenre();
         $this->entityData['canread_base_human'] = BasePermissions::from($this->entityData['canread_base'])->toHuman();
         $this->entityData['canwrite_base_human'] = BasePermissions::from($this->entityData['canwrite_base'])->toHuman();
@@ -773,11 +799,21 @@ abstract class AbstractEntity extends AbstractRest
 
     public function readOneFull(): array
     {
-        $base = $this->readOne();
-        // anonymous users cannot access revisions
-        $base['revisions'] = $this->Users instanceof AnonymousUser
+        // a full export carries what is needed to draw and edit the reactions again
+        $this->withFullReactions = true;
+        try {
+            $base = $this->readOne();
+        } finally {
+            $this->withFullReactions = false;
+        }
+        // anonymous users cannot access revisions, including reaction revisions
+        $isAnonymous = $this->Users instanceof AnonymousUser;
+        $base['revisions'] = $isAnonymous
             ? array()
             : new BodyRevisions($this)->readAll();
+        $base['reaction_history'] = $isAnonymous
+            ? array()
+            : new Reactions($this)->readAllHistory();
         // we want to include ALL uploaded files
         $base['uploads'] = (new Uploads($this))->readAll(
             $this->getQueryParams(new InputBag(array('state' => '1,2,3')))
@@ -821,11 +857,32 @@ abstract class AbstractEntity extends AbstractRest
         $req->bindParam(':userid', $this->Users->userid, PDO::PARAM_INT);
         $req->bindParam(':teamid', $this->Users->team, PDO::PARAM_INT);
         $req->bindValue(':query', '%' . $displayParams->getFastq() . '%');
+        $displayParams->bindFilterValues($req);
         if ($intQuery > 0) {
             $req->bindValue(':intQuery', $intQuery, PDO::PARAM_INT);
         }
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    /**
+     * Whether the requester may transfer ownership of this entry, before looking at the destination
+     * Also used by the view to decide if the transfer button is enabled, so both stay in sync.
+     * Admin rights in another team must not grant anything here: only the entry team matters.
+     */
+    public function canTransferOwnership(): bool
+    {
+        // anonymous readers of public entries have no userid to compare with
+        if ($this->Users instanceof AnonymousUser) {
+            return false;
+        }
+        $entryTeam = (int) $this->entityData['team'];
+        // the owner must be logged in the entry team, so the destination check in updateOwnership() applies to that team
+        $isOwnerInEntryTeam = (int) $this->entityData['userid'] === $this->Users->getUserid()
+            && $entryTeam === $this->Users->getTeam();
+        return $isOwnerInEntryTeam
+            || $this->Users->isSysadmin()
+            || $this->Users->isAdminOfTeam($entryTeam);
     }
 
     // Check if we have the permission to read/write or throw an exception
@@ -1139,6 +1196,7 @@ abstract class AbstractEntity extends AbstractRest
         LinksFactory::getCompoundsLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         LinksFactory::getContainersLinks($linkEntity)->duplicate($sourceId, $newId, fromTemplate: $fromTemplate, toTemplate: $toTemplate);
         $stepsMap = new Steps($sourceEntity)->duplicate($fresh, $sourceId, $newId);
+        new Reactions($sourceEntity)->duplicate($fresh);
         // step links in the body point at the source entry and its steps: point them at the copy
         $body = (string) $fresh->entityData['body'];
         if ($stepsMap !== array() && str_contains($body, 'highlightstep')) {
@@ -1241,6 +1299,56 @@ abstract class AbstractEntity extends AbstractRest
             $entity['tags'] = implode('|', $tagData['tags']);
             $entity['tags_id'] = implode(',', $tagData['tags_id']);
             $entity['tags_decoded'] = $tagData['tags_decoded'];
+        }
+        unset($entity);
+
+        return $entities;
+    }
+
+    /**
+     * Add the values of the custom fields requested with extra_fields[] to each entity,
+     * so they can be displayed as additional columns in the show mode table.
+     * The requested names are turned into a generated JSON_TABLE, so they are bound as a parameter
+     * and matched exactly against the keys of metadata.extra_fields (JSON paths are case sensitive).
+     * This runs on the already selected entities, so it doesn't change filtering, ordering or permissions.
+     */
+    protected function hydrateExtraFields(array $entities, QueryParamsInterface $displayParams): array
+    {
+        $names = $displayParams->getExtraFieldsColumns();
+        if (empty($names) || empty($entities)) {
+            return $entities;
+        }
+
+        $entityIds = array_map(static fn(array $entity): int => (int) $entity['id'], $entities);
+        $sql = sprintf(
+            'SELECT entity.id, requested.field_name,
+                JSON_EXTRACT(entity.metadata, CONCAT(\'$.extra_fields.\', JSON_QUOTE(requested.field_name))) AS field
+            FROM %s AS entity
+            JOIN JSON_TABLE(
+                CAST(:names AS JSON),
+                \'$[*]\' COLUMNS (field_name VARCHAR(%d) PATH \'$\')
+            ) AS requested
+            WHERE entity.id IN (%s)',
+            $this->entityType->value,
+            DisplayParams::MAX_EXTRA_FIELD_NAME_LENGTH,
+            implode(',', $entityIds),
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':names', json_encode($names, JSON_THROW_ON_ERROR));
+        $this->Db->execute($req);
+
+        $valuesById = array();
+        foreach ($req->fetchAll() as $row) {
+            $field = json_decode((string) $row['field'], true);
+            if (!is_array($field)) {
+                continue;
+            }
+            $valuesById[(int) $row['id']][(string) $row['field_name']] = $this->formatExtraFieldForTable($field);
+        }
+
+        foreach ($entities as &$entity) {
+            // cast to object so it is always a JSON object, even if empty or with numeric keys
+            $entity['extra_fields_values'] = (object) ($valuesById[(int) $entity['id']] ?? array());
         }
         unset($entity);
 
@@ -1517,9 +1625,31 @@ abstract class AbstractEntity extends AbstractRest
         $req = $this->Db->prepare($sql);
         $userid = $this->Users->getUserid();
         $req->bindParam(':userid', $userid, PDO::PARAM_INT);
+        $displayParams->bindFilterValues($req);
         $this->Db->execute($req);
 
         return $this->hydrateTags($req->fetchAll());
+    }
+
+    /**
+     * Flatten an extra field into something a table cell can display, sort and filter
+     */
+    private function formatExtraFieldForTable(array $field): array
+    {
+        $value = $field[MetadataEnum::Value->value] ?? '';
+        // keep the individual values for rendering (links, checkboxes), the joined text is used for sorting and filtering
+        $values = array_map(
+            static fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
+            is_array($value) ? array_values($value) : array($value),
+        );
+        $type = $field[MetadataEnum::Type->value] ?? 'text';
+        $unit = $field['unit'] ?? '';
+        return array(
+            'value' => implode(', ', $values),
+            'values' => $values,
+            'unit' => is_scalar($unit) ? (string) $unit : '',
+            'type' => is_string($type) ? $type : 'text',
+        );
     }
 
     private function addSimpleQueryBindValues(string $query): void
@@ -1628,14 +1758,13 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwnership(int $userid, int $destinationTeam): void
     {
-        $sourceTeamHelper = new TeamsHelper((int) $this->entityData['team']);
-        if (!$this->Users->isSysadmin() && !$sourceTeamHelper->isAdminInTeam($this->Users->getUserid())) {
+        if (!$this->canTransferOwnership()) {
             throw new ForbiddenException(_(
-                'Only an administrator of the entity team can transfer ownership.'
+                'Only the owner or an administrator of the entity team can transfer ownership.'
             ));
         }
 
-        // non-admins cannot transfer outside their own team
+        // non-admins cannot transfer outside their own team: together with canTransferOwnership(), this keeps owners within the entry team
         if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
             throw new ForbiddenException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }
@@ -1771,12 +1900,14 @@ abstract class AbstractEntity extends AbstractRest
             FROM compounds2%2$s AS c2e_search
             INNER JOIN compounds AS cmp_search
                 ON cmp_search.id = c2e_search.compound_id
-            WHERE %3$s
+            WHERE (%3$s)%4$s
         ) AS search_ids
             ON search_ids.id = entity.id',
             $this->getEntitySimpleQuerySql($query, $this->entityType->value),
             $this->entityType->value,
             $this->getCompoundsSimpleQuerySql($query),
+            // only find an entry from the compounds the requester can read
+            new CompoundPermissions($this->Users)->getCanFilter('cmp_search'),
         );
     }
 

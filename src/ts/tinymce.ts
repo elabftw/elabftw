@@ -349,8 +349,8 @@ export function getTinymceBaseConfig(page: string): object {
           return;
         }
         // grab experiments and items
-        const expjson = ApiC.getJson(`${EntityType.Experiment}?limit=12&scope=3&fastq=${query}`);
-        const itemjson = ApiC.getJson(`${EntityType.Item}?limit=12&scope=3&fastq=${query}`);
+        const expjson = ApiC.getJson(EntityType.Experiment, { limit: 12, scope: 3, fastq: query });
+        const itemjson = ApiC.getJson(EntityType.Item, { limit: 12, scope: 3, fastq: query });
         // and merge them into one
         Promise.all([expjson, itemjson]).then(values => {
           process(values[0].concat(values[1]));
@@ -407,12 +407,14 @@ export function getTinymceBaseConfig(page: string): object {
       // set default line height to 1 (is 1.4 for some reason)
       editor.on('init', () => {
         // doing this will give focus to the editor, which is OK for entities but on admin page it's not wanted, so avoid it
+        // init ends after the page is usable: do not take the focus from what the user already focused
         if (page !== 'admin' && page !== 'sysconfig') {
-          editor.execCommand('lineheight', false, '1');
+          editor.execCommand('lineheight', false, '1', { skip_focus: document.activeElement !== document.body });
         }
         // recalculate after the initial layout to avoid an oversized editor. See #7301.
+        // a layout change must not move the focus into the editor
         if (page === 'edit' && editor.plugins.autoresize) {
-          window.requestAnimationFrame(() => editor.execCommand('mceAutoResize'));
+          window.requestAnimationFrame(() => editor.execCommand('mceAutoResize', false, undefined, { skip_focus: true }));
         }
       });
       // Take over image pastes: when the clipboard also has html (e.g. "Copy Image" in a browser), tinymce

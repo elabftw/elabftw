@@ -22,7 +22,9 @@ use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExtraFieldReference;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\CompoundNotAccessibleException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
@@ -32,6 +34,7 @@ use Elabftw\Models\Comments;
 use Elabftw\Models\Compounds;
 use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\Tags;
 use Elabftw\Models\Changelog;
 use Elabftw\Models\UploadGroups;
@@ -54,6 +57,7 @@ use function array_filter;
 use function array_find;
 use function array_intersect_key;
 use function array_is_list;
+use function array_merge;
 use function array_values;
 use function basename;
 use function is_array;
@@ -65,6 +69,7 @@ use function strtr;
 use function _;
 use function array_key_exists;
 use function count;
+use function ctype_digit;
 use function date;
 use function explode;
 use function filter_var;
@@ -72,10 +77,13 @@ use function in_array;
 use function is_string;
 use function is_numeric;
 use function json_encode;
+use function ksort;
 use function parse_str;
 use function parse_url;
 use function str_replace;
 use function str_starts_with;
+use function strlen;
+use function substr;
 use function ucfirst;
 use function usort;
 
@@ -100,7 +108,7 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
-    /** @var list<array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> */
+    /** @var array<string, array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> keyed by entity and field, to gather the values of a multi-value field */
     private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
@@ -389,31 +397,56 @@ class Eln extends AbstractZip
      */
     private function queueMetadataReference(array $node): void
     {
-        $type = ExtraFieldReference::tryFrom((string) ($node['valueReference'] ?? ''));
+        $type = $this->getMetadataReferenceType($node);
         $value = $node['value'] ?? null;
         if ($type === null || empty($value)) {
             return;
         }
+        $field = (string) $node['propertyID'];
         $isMultiple = is_array($value) && array_is_list($value);
+        $offset = 0;
+        // a multi-value field is exported as one PropertyValue per value: "<field>.<index>" as propertyID, and the field as name
+        $name = $node['name'] ?? null;
+        if (is_string($name) && str_starts_with($field, $name . '.') && ctype_digit(substr($field, strlen($name) + 1))) {
+            $offset = (int) substr($field, strlen($name) + 1);
+            $field = $name;
+            $value = array($value);
+            $isMultiple = true;
+        }
         // keep the original position of each value: value_labels are matched to values by index
         $targetAtIds = array();
-        foreach ($isMultiple ? $value : array($value) as $index => $reference) {
-            if (is_array($reference) && is_string($reference['@id'] ?? null)) {
-                $targetAtIds[$index] = $reference['@id'];
+        foreach (is_array($value) && array_is_list($value) ? $value : array($value) as $index => $reference) {
+            $atId = is_array($reference) ? ($reference['@id'] ?? null) : null;
+            if (is_string($atId)) {
+                $targetAtIds[$offset + $index] = $atId;
             } elseif ($type === ExtraFieldReference::Users) {
                 // the user was not exported as a Person node: keep the value, as an unknown user
-                $targetAtIds[$index] = '';
+                $targetAtIds[$offset + $index] = '';
             }
         }
-        $this->metadataReferencesToResolve[] = array(
+        // the values of a multi-value field come from several PropertyValue nodes: gather them
+        $key = sprintf('%s:%d:%s', $this->Entity->entityType->value, (int) $this->Entity->id, $field);
+        if (isset($this->metadataReferencesToResolve[$key])) {
+            $this->metadataReferencesToResolve[$key]['targets'] += $targetAtIds;
+            return;
+        }
+        $this->metadataReferencesToResolve[$key] = array(
             'entity_type' => $this->Entity->entityType,
             'id' => (int) $this->Entity->id,
             'users' => $this->Entity->Users,
-            'field' => (string) $node['propertyID'],
+            'field' => $field,
             'type' => $type,
             'targets' => $targetAtIds,
             'is_multiple' => $isMultiple,
         );
+    }
+
+    /**
+     * The type of the extra field: in additionalType, or in valueReference for archives made before it moved there
+     */
+    private function getMetadataReferenceType(array $node): ?ExtraFieldReference
+    {
+        return ExtraFieldReference::tryFrom((string) ($node['additionalType'] ?? $node['valueReference'] ?? ''));
     }
 
     private function resolveMetadataReferences(): void
@@ -421,6 +454,8 @@ class Eln extends AbstractZip
         $insertedIds = array_column($this->insertedEntities, 'id', 'item_@id');
         $insertedTypes = array_column($this->insertedEntities, 'entity_type', 'item_@id');
         foreach ($this->metadataReferencesToResolve as $ref) {
+            // the nodes of a multi-value field can come in any order
+            ksort($ref['targets']);
             $targetIds = array();
             foreach ($ref['targets'] as $index => $targetAtId) {
                 $targetId = match ($ref['type']) {
@@ -498,7 +533,7 @@ class Eln extends AbstractZip
             if (($node['@type'] ?? null) !== 'PropertyValue') {
                 continue;
             }
-            $entityType = match (ExtraFieldReference::tryFrom((string) ($node['valueReference'] ?? ''))) {
+            $entityType = match ($this->getMetadataReferenceType($node)) {
                 ExtraFieldReference::Experiments => EntityType::Experiments,
                 ExtraFieldReference::Items => EntityType::Items,
                 default => null,
@@ -530,7 +565,14 @@ class Eln extends AbstractZip
         if (($node['@type'] ?? null) !== 'MolecularEntity') {
             return null;
         }
-        $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node));
+        try {
+            // the values come from the archive, not from PubChem, even with a PubChem CID: they get the restricted defaults
+            $compoundId = $this->Compounds->createFromCompound($this->compoundFromJsonLd($node), fromPubChem: false);
+        } catch (CompoundNotAccessibleException $e) {
+            // the compound exists already and the importer cannot read it: import the entry without the link
+            $this->logger->warning($e->getMessage());
+            return null;
+        }
         $this->insertedCompounds[$id] = $compoundId;
         return $compoundId;
     }
@@ -555,6 +597,7 @@ class Eln extends AbstractZip
                 }
             }
         }
+        [$ghsSignalWord, $ghsStatements] = $this->ghsFromPropertyValues($node);
         $str = static fn(mixed $value): ?string => is_string($value) && $value !== '' ? $value : null;
         return new Compound(
             cas: $str($casNumber),
@@ -566,7 +609,32 @@ class Eln extends AbstractZip
             smiles: $str($node['smiles'] ?? null),
             molecularFormula: $str($node['molecularFormula'] ?? null),
             molecularWeight: is_numeric($node['molecularWeight'] ?? null) ? (float) $node['molecularWeight'] : null,
+            ghsSignalWord: $ghsSignalWord,
+            ghsStatements: $ghsStatements,
         );
+    }
+
+    /**
+     * Only the codes are read: the texts come from the reference list of this instance
+     *
+     * @return array{0: ?GhsSignalWord, 1: string[]}
+     */
+    private function ghsFromPropertyValues(array $node): array
+    {
+        $signalWord = null;
+        $codes = array();
+        $properties = is_array($node['additionalProperty'] ?? null) ? $node['additionalProperty'] : array();
+        foreach ($properties as $property) {
+            if (!is_array($property) || !is_string($property['value'] ?? null)) {
+                continue;
+            }
+            match ($property['propertyID'] ?? null) {
+                Compound::ELN_GHS_SIGNAL_WORD => $signalWord = GhsSignalWord::tryFrom($property['value']),
+                Compound::ELN_GHS_HAZARD_STATEMENT, Compound::ELN_GHS_PRECAUTIONARY_STATEMENT => $codes = array_merge($codes, Compound::extractGhsCodes($property['value'])),
+                default => null,
+            };
+        }
+        return array($signalWord, $codes);
     }
 
     private function getChangelogLinkReplacements(): array
@@ -664,11 +732,7 @@ class Eln extends AbstractZip
         // CATEGORY
         // a forced category belongs to the forced entity type: do not apply it to a dataset that kept its own type
         $forcedCategory = $this->entityType === null || $entityType === $this->entityType ? $this->category : null;
-        $categoryId = $forcedCategory;
-        if (isset($dataset['about']) && $forcedCategory === null) {
-            $categoryNode = $this->getNodeFromId($dataset['about']['@id']);
-            $categoryId = $this->getCategoryId($entityType, $categoryNode['name'], $categoryNode['color']);
-        }
+        $categoryId = $forcedCategory ?? $this->getCategoryIdFromAbout($entityType, $dataset['about'] ?? null);
 
         // CREATE ENTITY
         $entityId = $this->Entity->create();
@@ -710,7 +774,9 @@ class Eln extends AbstractZip
             switch ($attributeName) {
                 // CATEGORY
                 case 'about':
-                    $this->Entity->update(new EntityParams('category', $categoryId));
+                    if ($categoryId !== null) {
+                        $this->Entity->update(new EntityParams('category', $categoryId));
+                    }
                     break;
                     // COMMENTS
                 case 'comment':
@@ -820,6 +886,20 @@ class Eln extends AbstractZip
                         if (!empty($tag)) {
                             $Tags->create(new TagParam($this->transformIfNecessary($tag)), true);
                         }
+                    }
+                    break;
+                case 'https://www.elabftw.net/ns#reactions':
+                    $reactions = $value['@value'] ?? array();
+                    if (!is_array($reactions)) {
+                        $this->logger->warning('Invalid reaction shape: not an array!');
+                        break;
+                    }
+                    foreach ($reactions as $reaction) {
+                        if (!is_array($reaction)) {
+                            $this->logger->warning('Invalid reaction shape: not an array!');
+                            continue;
+                        }
+                        new Reactions($this->Entity)->import($reaction);
                     }
                     break;
                 case 'compounds_links':
@@ -1008,6 +1088,31 @@ class Eln extends AbstractZip
             );
         }
         return $changelog;
+    }
+
+    /**
+     * `about` is a single reference in eLabFTW's own exports, but other software can link several nodes there.
+     * An entity only has one category, so use the first reference that resolves to a named node.
+     */
+    private function getCategoryIdFromAbout(EntityType $entityType, mixed $about): ?int
+    {
+        if (!is_array($about)) {
+            return null;
+        }
+        $references = array_is_list($about) ? $about : array($about);
+        foreach ($references as $reference) {
+            $id = is_array($reference) ? ($reference['@id'] ?? null) : null;
+            if (!is_string($id)) {
+                continue;
+            }
+            $node = $this->getNodeFromId($id);
+            if (!is_string($node['name'] ?? null) || $node['name'] === '') {
+                continue;
+            }
+            $color = is_string($node['color'] ?? null) ? $node['color'] : null;
+            return $this->getCategoryId($entityType, $node['name'], $color);
+        }
+        return null;
     }
 
     private function attrToHtml(array $attr, string $title): string

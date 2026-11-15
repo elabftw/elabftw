@@ -12,9 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
+use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Links\Compounds2ExperimentsLinks;
+use Elabftw\Models\Users\AnonymousUser;
+use Elabftw\Models\Users\Users;
+use Elabftw\Params\DisplayParams;
 use Elabftw\Services\HttpGetter;
 use Elabftw\Services\NullFingerprinter;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -22,7 +29,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Symfony\Component\HttpFoundation\InputBag;
 
+use function array_column;
+use function bin2hex;
+use function random_bytes;
 use function sprintf;
 
 class CompoundsLinksTest extends \PHPUnit\Framework\TestCase
@@ -50,5 +61,50 @@ class CompoundsLinksTest extends \PHPUnit\Framework\TestCase
         // create with invalid action
         $this->expectException(ImproperActionException::class);
         $Links->postAction(Action::Disable2fa, array());
+    }
+
+    public function testCompoundTheUserCannotRead(): void
+    {
+        $owner = $this->getUserInTeam(2);
+        $httpGetter = new HttpGetter(new Client(array('handler' => HandlerStack::create(new MockHandler(array(new Response(200, array(), 'nothing')))))));
+        $compoundId = new Compounds($httpGetter, $owner, new NullFingerprinter(), false)
+            ->create(name: 'Private compound', canreadBase: BasePermissions::UserOnly, canwriteBase: BasePermissions::UserOnly);
+        $Entity = $this->getFreshExperiment();
+        $this->assertNotSame($owner->userid, $Entity->Users->userid);
+
+        // it cannot be linked
+        try {
+            new Compounds2ExperimentsLinks($Entity, $compoundId)->postAction(Action::Create, array());
+            $this->fail('Linked a compound the user cannot read');
+        } catch (ForbiddenException) {
+            $this->addToAssertionCount(1);
+        }
+
+        // and like the links to entries, it is not listed if it is linked anyway (by someone who could read it)
+        $req = Db::getConnection()->prepare('INSERT INTO compounds2experiments (entity_id, compound_id) VALUES (:entity, :compound)');
+        $req->execute(array(':entity' => $Entity->id, ':compound' => $compoundId));
+        $this->assertNotContains($compoundId, array_column(new Compounds2ExperimentsLinks($Entity)->readAll(), 'id'));
+        $this->assertContains($compoundId, array_column(new Compounds2ExperimentsLinks(new Experiments($owner, $Entity->id, bypassReadPermission: true))->readAll(), 'id'));
+    }
+
+    public function testAnonymousUserDoesNotSeeCompounds(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Entity->patch(Action::Update, array('canread_base' => BasePermissions::Full->value));
+        $name = 'anoncompound' . bin2hex(random_bytes(8));
+        $compoundId = new Compounds(new HttpGetter(new Client()), $Entity->Users, new NullFingerprinter(), false)
+            ->create(name: $name, canreadBase: BasePermissions::Full);
+        new Compounds2ExperimentsLinks($Entity, $compoundId)->postAction(Action::Create, array());
+        $search = static fn(Users $user): array => array_column(
+            new Experiments($user)->readAll(new DisplayParams($user, EntityType::Experiments, new InputBag(array('q' => $name)))),
+            'id',
+        );
+
+        // a user finds the entry from its compound
+        $this->assertContains($Entity->id, $search($Entity->Users));
+        // an anonymous user can read the entry, but not the compound, even with a public base: not on the entry, not in a search
+        $Anonymous = new AnonymousUser(1);
+        $this->assertNotContains($Entity->id, $search($Anonymous));
+        $this->assertSame(array(), new Compounds2ExperimentsLinks(new Experiments($Anonymous, $Entity->id))->readAll());
     }
 }

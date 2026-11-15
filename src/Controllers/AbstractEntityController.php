@@ -25,12 +25,15 @@ use Elabftw\Enums\RequestableAction;
 use Elabftw\Enums\Sort;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Interfaces\ControllerInterface;
+use Elabftw\Models\AbstractConcreteEntity;
 use Elabftw\Models\AbstractEntity;
+use Elabftw\Models\Changelog;
 use Elabftw\Models\Config;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\FavTags;
 use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
+use Elabftw\Models\Reactions;
 use Elabftw\Models\RequestActions;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\TeamGroups;
@@ -61,10 +64,6 @@ abstract class AbstractEntityController implements ControllerInterface
     // is the main category of current entity type, can be experimentsCategoryArr or itemsCategoryArr
     protected array $categoryArr = array();
 
-    protected array $experimentsStatusArr = array();
-
-    protected array $itemsStatusArr = array();
-
     protected array $statusArr = array();
 
     protected array $visibilityArr = array();
@@ -77,22 +76,14 @@ abstract class AbstractEntityController implements ControllerInterface
 
     protected array $currencyArr = array();
 
-    protected array $scopedTeamgroupsArr = array();
-
     public function __construct(protected App $App, protected AbstractEntity $Entity)
     {
-        $TeamGroups = new TeamGroups($this->Entity->Users);
         $PermissionsHelper = new PermissionsHelper();
         $this->visibilityArr = $PermissionsHelper->getAssociativeArray();
         $this->classificationArr = Classification::getAssociativeArray();
         $this->meaningArr = Meaning::getAssociativeArray();
         $this->requestableActionArr = RequestableAction::getAssociativeArray();
         $this->currencyArr = Currency::getAssociativeArray();
-        $this->scopedTeamgroupsArr = $TeamGroups->readScopedTeamgroups();
-        $ExperimentsStatus = new ExperimentsStatus($App->Teams);
-        $this->experimentsStatusArr = $ExperimentsStatus->readAll($ExperimentsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
-        $ItemsStatus = new ItemsStatus($this->App->Teams);
-        $this->itemsStatusArr = $ItemsStatus->readAll($ItemsStatus->getQueryParams(new InputBag(array('limit' => 9999))));
     }
 
     #[Override]
@@ -144,7 +135,7 @@ abstract class AbstractEntityController implements ControllerInterface
             'favTagsArr' => $favTagsArr,
             'pageTitle' => $this->getPageTitle(),
             'requestActionsArr' => $UserRequestActions->readAllFull(),
-            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'teamsArr' => $this->App->Teams->readAllVisible(),
             // get all the tags for the top search bar
             'tagsArrForSelect' => $TeamTags->readAll(),
@@ -193,6 +184,11 @@ abstract class AbstractEntityController implements ControllerInterface
      */
     protected function view(): Response
     {
+        // opened with its access key (the page bypasses the read permission for it): the reaction previews cannot be loaded
+        // from the API, which needs a session and checks the usual permissions, so they come with the page, see reaction-summary.ts
+        if ($this->Entity->bypassReadPermission && !empty($this->Entity->entityData['reactions'])) {
+            $this->Entity->entityData['reactions'] = new Reactions($this->Entity)->addPreviews($this->Entity->entityData['reactions']);
+        }
         $RequestActions = new RequestActions($this->App->Users, $this->Entity);
         // the mode parameter is for the uploads tpl
         $renderArr = array(
@@ -206,10 +202,10 @@ abstract class AbstractEntityController implements ControllerInterface
             'mode' => 'view',
             'hideTitle' => true,
             'teamsArr' => $this->App->Teams->readAllVisible(),
-            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
+            'storageUnitsArr' => $this->getStorageUnitsArr(),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
             'visibilityArr' => $this->visibilityArr,
         );
@@ -264,11 +260,14 @@ abstract class AbstractEntityController implements ControllerInterface
             'pageTitle' => $this->getPageTitle(),
             'statusArr' => $this->statusArr,
             'teamsArr' => $this->App->Teams->readAllVisible(),
-            'teamTagsArr' => $TeamTags->readAll($baseQueryParams),
-            'scopedTeamgroupsArr' => $this->scopedTeamgroupsArr,
+            'suggestedTagsArr' => $TeamTags->readSuggestions(
+                array_column($this->Entity->entityData['tags_decoded'], 'tag'),
+                $baseQueryParams->getQuery()->getString('q'),
+            ),
+            'allTeamgroupsArr' => $this->readAllTeamgroups(),
             'meaningArr' => $this->meaningArr,
             'requestableActionArr' => $this->requestableActionArr,
-            'storageUnitsArr' => new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive(),
+            'storageUnitsArr' => $this->getStorageUnitsArr(),
             'templatesArr' => $Templates->readAllSimple($DisplayParamsTemplates),
             'itemsTemplatesArr' => $ItemsTypes->readAllSimple($DisplayParamsItemsTypes),
             'usersArr' => $this->App->Users->readAllActiveFromTeam(),
@@ -281,13 +280,42 @@ abstract class AbstractEntityController implements ControllerInterface
         return $Response;
     }
 
+    /**
+     * The whole storage hierarchy is only rendered for the move container modal, that is reached from
+     * the containers of an entry that can be edited. The add container modal loads it from the api.
+     * When the first container is added, the page is fetched again to reload the tree, so it appears then.
+     */
+    protected function getStorageUnitsArr(): array
+    {
+        if (!$this->Entity instanceof AbstractConcreteEntity
+            || $this->Entity->isReadOnly
+            || empty($this->Entity->entityData['containers'])
+        ) {
+            return array();
+        }
+        return new StorageUnits($this->App->Users, Config::getConfig()->configArr['inventory_require_edit_rights'] === '1')->readAllRecursive();
+    }
+
+    // only the statuses of the entity type of the page are needed, see the child controllers
+    protected function readAllStatus(ExperimentsStatus | ItemsStatus $Status): array
+    {
+        return $Status->readAll($Status->getQueryParams(new InputBag(array('limit' => 9999))));
+    }
+
+    // the permissions modal and the user groups filter list every user group the user can see
+    protected function readAllTeamgroups(): array
+    {
+        return new TeamGroups($this->Entity->Users)->readAllEverything();
+    }
+
     protected function changelog(): Response
     {
         // check permissions
         $this->Entity->canOrExplode(AccessType::Read);
 
         $renderArr = array(
-            'changes' => $this->Entity->entityData['changelog'],
+            // the entry pages read the entry without its changelog
+            'changes' => new Changelog($this->Entity)->readAll(),
             'Entity' => $this->Entity,
         );
 

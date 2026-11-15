@@ -12,6 +12,7 @@ import { Action, Model } from './interfaces';
 import $ from 'jquery';
 import { notify } from './notify';
 import { core } from './core';
+import { clearLocalStorage } from './localStorage';
 import './users-table';
 
 document.getElementById('container')?.addEventListener('click', async (event) => {
@@ -32,7 +33,7 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
       if (el.dataset.checkArchived === '1') {
         // look for an archived user with the same email address
         const matchedArchivedUsers = [];
-        const archivedUsers = await ApiC.getJson(`users?onlyArchived=1&q=${values['email']}`);
+        const archivedUsers = await ApiC.getJson('users', { onlyArchived: 1, q: values['email'] });
         archivedUsers.forEach(user => {
           if (user.email === values['email']) {
             matchedArchivedUsers.push(user);
@@ -40,6 +41,8 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
         });
         if (matchedArchivedUsers.length > 0) {
           const archivedUsersFoundList = (document.getElementById('archivedUsersFoundList') as HTMLUListElement);
+          // clear results from a previous search
+          archivedUsersFoundList.replaceChildren();
           matchedArchivedUsers.forEach(user => {
             const archivedUser = document.createElement('li');
             archivedUser.textContent = `${user.fullname} (${user.email})`;
@@ -150,6 +153,32 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
       $('#editUserModal').modal('toggle');
       clearForm(form);
     });
+
+  // IMPERSONATE USER
+  } else if (el.matches('[data-action="impersonate-user"]')) {
+    if (!userid || !confirm(el.dataset.confirm)) {
+      return;
+    }
+    // a regular form POST so the server can change the session and redirect us
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = '/app/controllers/ImpersonationController.php';
+    form.hidden = true;
+    const fields = {
+      csrf: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+      action: 'start',
+      userid: userid,
+    };
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    clearLocalStorage();
+    form.submit();
 
   // DESTROY USER
   } else if (el.matches('[data-action="destroy-user"]')) {

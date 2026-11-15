@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Params;
 
+use Elabftw\Elabftw\CompoundPermissions;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\FilterableColumn;
@@ -22,15 +23,23 @@ use Elabftw\Enums\State;
 use Elabftw\Models\Tags2Entity;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\Check;
+use Elabftw\Services\ReactionSearch;
 use Override;
+use PDOStatement;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function explode;
+use function str_starts_with;
 use function sprintf;
 use function trim;
 use function implode;
 use function strtolower;
 use function array_unique;
+use function array_slice;
+use function array_values;
+use function is_array;
+use function is_string;
+use function mb_strlen;
 
 /**
  * This class holds the values for limit, offset, order and sort
@@ -38,6 +47,12 @@ use function array_unique;
  */
 final class DisplayParams extends BaseQueryParams
 {
+    // how many custom fields can be requested as additional columns at once
+    public const int MAX_EXTRA_FIELDS_COLUMNS = 20;
+
+    // custom fields keys are stored in a VARCHAR(255) column of the generated JSON_TABLE
+    public const int MAX_EXTRA_FIELD_NAME_LENGTH = 255;
+
     public string $filterSql = '';
 
     // the search from the top right search bar on experiments/database
@@ -52,6 +67,14 @@ final class DisplayParams extends BaseQueryParams
     public ?EntityType $relatedOrigin = null;
 
     protected string $orderIsPinnedSql = 'is_pinned DESC,';
+
+    // the filters only on the columns of the entry table: what a query without the joins of the listing can apply, see getReactionSearch()
+    private string $entityFilterSql = '';
+
+    private ?ReactionSearch $ReactionSearch = null;
+
+    // names of the custom fields (metadata.extra_fields keys) to include as additional columns
+    private array $extraFieldsColumns = array();
 
     public function __construct(
         private Users $requester,
@@ -71,7 +94,11 @@ final class DisplayParams extends BaseQueryParams
 
     public function appendFilterSql(FilterableColumn $column, int $value): void
     {
-        $this->filterSql .= sprintf(' AND %s = %d', $column->value, $value);
+        $sql = sprintf(' AND %s = %d', $column->value, $value);
+        $this->filterSql .= $sql;
+        if (str_starts_with($column->value, 'entity.')) {
+            $this->entityFilterSql .= $sql;
+        }
     }
 
     #[Override]
@@ -132,13 +159,25 @@ final class DisplayParams extends BaseQueryParams
     #[Override]
     public function getFilterSql(): string
     {
-        return $this->filterSql;
+        return $this->filterSql . $this->getReactionSearch()->getFilterSql();
+    }
+
+    #[Override]
+    public function bindFilterValues(PDOStatement $req): void
+    {
+        $this->getReactionSearch()->bindValues($req);
     }
 
     #[Override]
     public function setSkipOrderPinned(bool $value): void
     {
         $this->skipOrderPinned = $value;
+    }
+
+    #[Override]
+    public function getExtraFieldsColumns(): array
+    {
+        return $this->extraFieldsColumns;
     }
 
     /**
@@ -159,6 +198,7 @@ final class DisplayParams extends BaseQueryParams
         if ($query->getInt('full') === 1) {
             $this->full = true;
         }
+        $this->extraFieldsColumns = $this->getExtraFieldsColumnsFromQuery($query);
 
         // SCOPE FILTER
         // default scope is the user setting, but can be overridden by query param
@@ -184,6 +224,7 @@ final class DisplayParams extends BaseQueryParams
             $tags = $query->all('tags');
             $Tags2Entity = new Tags2Entity($this->requester, $this->entityType);
             $this->filterSql = Tools::getIdFilterSql($Tags2Entity->getEntitiesIdFromTags('tag', $tags, $scope));
+            $this->entityFilterSql = $this->filterSql;
         }
 
         // RELATED FILTER
@@ -195,31 +236,55 @@ final class DisplayParams extends BaseQueryParams
         // COMPOUND FILTER
         // use the compounds link table so only entries actually linked to the compound are returned,
         // and not entries where a compound property happens to match a text search
+        // a compound the requester cannot read matches nothing: its links must not be revealed by enumerating ids
         if (Check::id($query->getInt('compound')) !== false) {
-            $this->filterSql .= sprintf(
-                ' AND entity.id IN (SELECT c2e_filter.entity_id FROM compounds2%s AS c2e_filter WHERE c2e_filter.compound_id = %d)',
+            $this->addEntityFilterSql(sprintf(
+                ' AND entity.id IN (SELECT c2e_filter.entity_id FROM compounds2%s AS c2e_filter
+                    INNER JOIN compounds AS compound_filter ON (compound_filter.id = c2e_filter.compound_id)
+                    WHERE c2e_filter.compound_id = %d AND %s)',
                 $this->entityType->value,
                 $query->getInt('compound'),
-            );
+                new CompoundPermissions($this->requester)->getCanCondition('compound_filter'),
+            ));
         }
 
         // Note: we use getString() and not getInt() because values can be string separated (1,5)
         // CATEGORY FILTER
         // cat is for backward compatibility
-        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('cat'));
-        $this->filterSql .= $this->getSqlIn('entity.category', $query->getString('category'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.category', $query->getString('cat')));
+        $this->addEntityFilterSql($this->getSqlIn('entity.category', $query->getString('category')));
         // BOOKABLE
-        $this->filterSql .= $this->getSqlIn('entity.is_bookable', $query->getString('bookable'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.is_bookable', $query->getString('bookable')));
         // STATUS FILTER
-        $this->filterSql .= $this->getSqlIn('entity.status', $query->getString('status'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.status', $query->getString('status')));
         // OWNER (USERID) FILTER
-        $this->filterSql .= $this->getSqlIn('entity.userid', $query->getString('owner'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.userid', $query->getString('owner')));
         // LOCK FILTER: 0 or 1, use getInt()
-        $this->filterSql .= $this->getSqlIn('entity.locked', $query->getString('locked'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.locked', $query->getString('locked')));
         // TIMESTAMPED FILTER, same as lock
-        $this->filterSql .= $this->getSqlIn('entity.timestamped', $query->getString('timestamped'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.timestamped', $query->getString('timestamped')));
         // RATING FILTER
-        $this->filterSql .= $this->getSqlIn('entity.rating', $query->getString('rating'));
+        $this->addEntityFilterSql($this->getSqlIn('entity.rating', $query->getString('rating')));
+    }
+
+    /**
+     * Built on first use only: DisplayParams are also built from the request when reading a single entry,
+     * and that must not validate the reaction search
+     */
+    private function getReactionSearch(): ReactionSearch
+    {
+        return $this->ReactionSearch ??= new ReactionSearch(
+            $this->entityType,
+            $this->getQuery(),
+            requester: $this->requester,
+            entityScopeSql: $this->entityFilterSql . $this->getStatesSql('entity'),
+        );
+    }
+
+    private function addEntityFilterSql(string $sql): void
+    {
+        $this->filterSql .= $sql;
+        $this->entityFilterSql .= $sql;
     }
 
     /**
@@ -255,5 +320,27 @@ final class DisplayParams extends BaseQueryParams
         }
         // group all conditions to preserve SQL operator precedence when OR is present.
         return sprintf(' AND (%s)', implode(' OR ', $conditions));
+    }
+
+    /**
+     * Read the extra_fields[] query parameter. It is lenient: invalid names are ignored
+     * instead of failing the whole listing, as they only add optional columns.
+     */
+    private function getExtraFieldsColumnsFromQuery(InputBag $query): array
+    {
+        // don't use $query->all('extra_fields') as it throws if a scalar is sent
+        $input = $query->all()['extra_fields'] ?? array();
+        if (!is_array($input)) {
+            $input = array($input);
+        }
+        $names = array();
+        foreach ($input as $name) {
+            // keys are matched as is, so no trimming here
+            if (!is_string($name) || trim($name) === '' || mb_strlen($name) > self::MAX_EXTRA_FIELD_NAME_LENGTH) {
+                continue;
+            }
+            $names[] = $name;
+        }
+        return array_slice(array_values(array_unique($names)), 0, self::MAX_EXTRA_FIELDS_COLUMNS);
     }
 }

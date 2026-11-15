@@ -1,8 +1,6 @@
 <section id='spreadsheetEditor' aria-label='{{ 'Spreadsheet Editor'|trans }}'>
-  <h3 data-action='toggle-next' data-scroll-btn='fa-file-excel' data-scroll-btn-label='{{ 'Spreadsheet editor'|trans }}' data-toggle-target='spreadsheetEditorDiv' data-opened-icon='fa-caret-down' data-closed-icon='fa-caret-right' class='d-inline togglable-section-title mt-2' tabindex='0' role='button' aria-expanded='false' aria-controls='spreadsheetEditorDiv'>
-    <i id='sheetEditorIcon' class='fas fa-caret-right fa-fw mr-2'></i>{{ 'Spreadsheet Editor'|trans }}
-  </h3>
-  <div id='spreadsheetEditorDiv' class='m-2' hidden data-save-hidden='spreadsheetEditorDiv'>
+  {# visibility is handled by the Editors tabs in edit.html #}
+  <div id='spreadsheetEditorDiv' class='m-2'>
   <div class='d-flex justify-content-between align-items-center'>
     <span hidden id='spreadsheetEditorUnsavedChanges'>{{ 'You have unsaved changes'|trans|msg('warning', false) }}</span>
     <div class='ml-auto mb-2'>
@@ -23,4 +21,3 @@
     <iframe id='spreadsheetIframe' title='{{ 'Spreadsheet Editor'|trans }}' src='/spreadsheet.html' sandbox='allow-scripts allow-downloads allow-modals'></iframe>
   </div>
 </section>
-<hr>

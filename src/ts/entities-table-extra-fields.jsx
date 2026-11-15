@@ -70,6 +70,7 @@ const ReferenceLabel = ({ type, id }) => {
   useEffect(() => {
     // 0 is an entry that could not be found during an import
     if (id === '0') {
+      setLabel(null);
       return;
     }
     let active = true;

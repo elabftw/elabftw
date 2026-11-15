@@ -42,6 +42,8 @@ if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
     docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 fi
 # RUN TESTS
+# phpunit writes its cache, the coverage reports and the error_log (see phpunit.xml.dist) in there
+docker exec -it elabtmp mkdir -p tests/_output
 # coverage reports are written in tests/_output
 COVERAGE_ARGS=(--coverage-text --only-summary-for-coverage-text --coverage-html tests/_output/coverage --coverage-clover tests/_output/coverage.xml)
 if [ "${1:-}" = "unit" ]; then

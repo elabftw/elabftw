@@ -30,6 +30,8 @@
 
     <php>
         <ini name="memory_limit" value="1024M"/>
+        <!-- the app logger (monolog ErrorLogHandler) writes with error_log(): keep it out of the phpunit output -->
+        <ini name="error_log" value="tests/_output/php-errors.log"/>
     </php>
 
     <!-- files reported in code coverage, which is only collected when a coverage option is passed -->

@@ -30,7 +30,7 @@ use Elabftw\Models\Notifications\UserNeedValidation;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use PDO;
 use RuntimeException;
@@ -259,6 +259,6 @@ class EmailNotificationsTest extends \PHPUnit\Framework\TestCase
         $stub->method('sendEmail')->willReturn(true);
         $EmailNotifications = new EmailNotifications($stub);
         // valid ones
-        $EmailNotifications->sendEmails(new ConsoleOutput());
+        $EmailNotifications->sendEmails(new NullOutput());
     }
 }

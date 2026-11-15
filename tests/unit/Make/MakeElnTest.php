@@ -101,4 +101,28 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('Second value', $nodes['Multi field.1']['value']);
         $this->assertArrayNotHasKey('alternateName', $nodes['Multi field.1']);
     }
+
+    public function testMetadataToJsonLdWithReferences(): void
+    {
+        $metadata = json_encode(array('extra_fields' => array(
+            'Experiment' => array('type' => 'experiments', 'value' => 3),
+            'Experiments' => array('type' => 'experiments', 'value' => array(4, 3), 'value_labels' => array('Four', 'Three'), 'allow_multi_values' => true),
+            'Not exported' => array('type' => 'items', 'value' => 3),
+        )), JSON_THROW_ON_ERROR);
+        $references = array(
+            'experiments' => array(3 => array('@id' => './experiment-3/')),
+        );
+        $res = new ReflectionMethod($this->Make, 'metadataToJsonLd')->invoke($this->Make, $metadata, $references);
+        $nodes = array_column($res['nodes'], null, 'propertyID');
+
+        $this->assertSame(array('@id' => './experiment-3/'), $nodes['Experiment']['value']);
+        $this->assertSame('experiments', $nodes['Experiment']['additionalType']);
+        // a value that could not be exported keeps its database id
+        $this->assertSame(4, $nodes['Experiments.0']['value']);
+        $this->assertSame('Four', $nodes['Experiments.0']['alternateName']);
+        $this->assertSame(array('@id' => './experiment-3/'), $nodes['Experiments.1']['value']);
+        $this->assertSame('Experiments', $nodes['Experiments.1']['name']);
+        // only references of the type of the field are used
+        $this->assertSame(3, $nodes['Not exported']['value']);
+    }
 }

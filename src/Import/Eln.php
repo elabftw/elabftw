@@ -69,6 +69,7 @@ use function strtr;
 use function _;
 use function array_key_exists;
 use function count;
+use function ctype_digit;
 use function date;
 use function explode;
 use function filter_var;
@@ -76,10 +77,13 @@ use function in_array;
 use function is_string;
 use function is_numeric;
 use function json_encode;
+use function ksort;
 use function parse_str;
 use function parse_url;
 use function str_replace;
 use function str_starts_with;
+use function strlen;
+use function substr;
 use function ucfirst;
 use function usort;
 
@@ -104,7 +108,7 @@ class Eln extends AbstractZip
 
     private array $linksToCreate = array();
 
-    /** @var list<array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> */
+    /** @var array<string, array{entity_type: EntityType, id: int, users: Users, field: string, type: ExtraFieldReference, targets: array<int, string>, is_multiple: bool}> keyed by entity and field, to gather the values of a multi-value field */
     private array $metadataReferencesToResolve = array();
 
     private array $insertedEntities = array();
@@ -393,31 +397,56 @@ class Eln extends AbstractZip
      */
     private function queueMetadataReference(array $node): void
     {
-        $type = ExtraFieldReference::tryFrom((string) ($node['valueReference'] ?? ''));
+        $type = $this->getMetadataReferenceType($node);
         $value = $node['value'] ?? null;
         if ($type === null || empty($value)) {
             return;
         }
+        $field = (string) $node['propertyID'];
         $isMultiple = is_array($value) && array_is_list($value);
+        $offset = 0;
+        // a multi-value field is exported as one PropertyValue per value: "<field>.<index>" as propertyID, and the field as name
+        $name = $node['name'] ?? null;
+        if (is_string($name) && str_starts_with($field, $name . '.') && ctype_digit(substr($field, strlen($name) + 1))) {
+            $offset = (int) substr($field, strlen($name) + 1);
+            $field = $name;
+            $value = array($value);
+            $isMultiple = true;
+        }
         // keep the original position of each value: value_labels are matched to values by index
         $targetAtIds = array();
-        foreach ($isMultiple ? $value : array($value) as $index => $reference) {
-            if (is_array($reference) && is_string($reference['@id'] ?? null)) {
-                $targetAtIds[$index] = $reference['@id'];
+        foreach (is_array($value) && array_is_list($value) ? $value : array($value) as $index => $reference) {
+            $atId = is_array($reference) ? ($reference['@id'] ?? null) : null;
+            if (is_string($atId)) {
+                $targetAtIds[$offset + $index] = $atId;
             } elseif ($type === ExtraFieldReference::Users) {
                 // the user was not exported as a Person node: keep the value, as an unknown user
-                $targetAtIds[$index] = '';
+                $targetAtIds[$offset + $index] = '';
             }
         }
-        $this->metadataReferencesToResolve[] = array(
+        // the values of a multi-value field come from several PropertyValue nodes: gather them
+        $key = sprintf('%s:%d:%s', $this->Entity->entityType->value, (int) $this->Entity->id, $field);
+        if (isset($this->metadataReferencesToResolve[$key])) {
+            $this->metadataReferencesToResolve[$key]['targets'] += $targetAtIds;
+            return;
+        }
+        $this->metadataReferencesToResolve[$key] = array(
             'entity_type' => $this->Entity->entityType,
             'id' => (int) $this->Entity->id,
             'users' => $this->Entity->Users,
-            'field' => (string) $node['propertyID'],
+            'field' => $field,
             'type' => $type,
             'targets' => $targetAtIds,
             'is_multiple' => $isMultiple,
         );
+    }
+
+    /**
+     * The type of the extra field: in additionalType, or in valueReference for archives made before it moved there
+     */
+    private function getMetadataReferenceType(array $node): ?ExtraFieldReference
+    {
+        return ExtraFieldReference::tryFrom((string) ($node['additionalType'] ?? $node['valueReference'] ?? ''));
     }
 
     private function resolveMetadataReferences(): void
@@ -425,6 +454,8 @@ class Eln extends AbstractZip
         $insertedIds = array_column($this->insertedEntities, 'id', 'item_@id');
         $insertedTypes = array_column($this->insertedEntities, 'entity_type', 'item_@id');
         foreach ($this->metadataReferencesToResolve as $ref) {
+            // the nodes of a multi-value field can come in any order
+            ksort($ref['targets']);
             $targetIds = array();
             foreach ($ref['targets'] as $index => $targetAtId) {
                 $targetId = match ($ref['type']) {
@@ -502,7 +533,7 @@ class Eln extends AbstractZip
             if (($node['@type'] ?? null) !== 'PropertyValue') {
                 continue;
             }
-            $entityType = match (ExtraFieldReference::tryFrom((string) ($node['valueReference'] ?? ''))) {
+            $entityType = match ($this->getMetadataReferenceType($node)) {
                 ExtraFieldReference::Experiments => EntityType::Experiments,
                 ExtraFieldReference::Items => EntityType::Items,
                 default => null,

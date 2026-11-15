@@ -60,4 +60,19 @@ describe('download.php', () => {
       });
     });
   });
+
+  for (const query of ['storage=999&f=synthetic.txt', 'f=%00']) {
+    it(`returns a client error instead of an empty successful download for ${query}`, () => {
+      cy.request({
+        url: `/app/download.php?${query}`,
+        failOnStatusCode: false,
+        retryOnStatusCodeFailure: false,
+      }).then(response => {
+        expect(response.status).to.eq(400);
+        expect(response.body).to.eq('');
+        expect(response.headers['cache-control']).to.contain('no-store');
+        expect(response.headers).not.to.have.property('content-disposition');
+      });
+    });
+  }
 });

@@ -83,6 +83,16 @@ Glossary: Experiments, Resources, and their templates are all **Entities**. In c
   - Throw as soon as something goes wrong instead of returning `bool`.
   - Don't catch exceptions in models, only in controllers.
 
+## Tests
+
+- Get users and entities from `Elabftw\Traits\TestsUtilsTrait` (`src/Traits/TestsUtilsTrait.php`) instead of
+  building them inline in a test: e.g. `getRegularUserInTeam()`, `getFreshAdminInTeam()`,
+  `getFreshEntityWithGivenUser()`, and the `entityTypes()` / `concreteEntityTypes()` data providers.
+- If a test needs a kind of user or entity the trait doesn't provide yet, add a helper to the trait
+  rather than a private method in the test class, so other tests can reuse it.
+- Helpers that write to the database (promoting a user, changing a membership) must run inside a
+  transaction that the test rolls back in `tearDown()`.
+
 ## Git
 
 - Branch from `master`; PRs target `master`.

@@ -865,6 +865,26 @@ abstract class AbstractEntity extends AbstractRest
         return $req->fetchAll();
     }
 
+    /**
+     * Whether the requester may transfer ownership of this entry, before looking at the destination
+     * Also used by the view to decide if the transfer button is enabled, so both stay in sync.
+     * Admin rights in another team must not grant anything here: only the entry team matters.
+     */
+    public function canTransferOwnership(): bool
+    {
+        // anonymous readers of public entries have no userid to compare with
+        if ($this->Users instanceof AnonymousUser) {
+            return false;
+        }
+        $entryTeam = (int) $this->entityData['team'];
+        // the owner must be logged in the entry team, so the destination check in updateOwnership() applies to that team
+        $isOwnerInEntryTeam = (int) $this->entityData['userid'] === $this->Users->getUserid()
+            && $entryTeam === $this->Users->getTeam();
+        return $isOwnerInEntryTeam
+            || $this->Users->isSysadmin()
+            || $this->Users->isAdminOfTeam($entryTeam);
+    }
+
     // Check if we have the permission to read/write or throw an exception
     public function canOrExplode(AccessType $rw): void
     {
@@ -1738,14 +1758,13 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwnership(int $userid, int $destinationTeam): void
     {
-        $sourceTeamHelper = new TeamsHelper((int) $this->entityData['team']);
-        if (!$this->Users->isSysadmin() && !$sourceTeamHelper->isAdminInTeam($this->Users->getUserid())) {
+        if (!$this->canTransferOwnership()) {
             throw new ForbiddenException(_(
-                'Only an administrator of the entity team can transfer ownership.'
+                'Only the owner or an administrator of the entity team can transfer ownership.'
             ));
         }
 
-        // non-admins cannot transfer outside their own team
+        // non-admins cannot transfer outside their own team: together with canTransferOwnership(), this keeps owners within the entry team
         if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
             throw new ForbiddenException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }

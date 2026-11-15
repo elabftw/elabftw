@@ -61,15 +61,13 @@
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "codeception/codeception": "^5.0.12",
+    "phpunit/phpunit": "^13.4",
     "pyrech/composer-changelogs": "^2.0.0",
     "friendsofphp/php-cs-fixer": "^3.0.0",
-    "codeception/module-db": "^3.1.0",
-    "codeception/module-asserts": "^3.0.0",
-    "codeception/module-rest": "^3.2.0",
-    "codeception/module-phpbrowser": "^3.0",
     "friendsoftwig/twigcs": "^6.2",
     "phpstan/phpstan": "^2.1",
+    "symfony/css-selector": "^8.1",
+    "symfony/dom-crawler": "^8.1",
     "vimeo/psalm": "^6.5.1"
   },
   "autoload": {
@@ -95,10 +93,7 @@
     ],
     "psalm": "./vendor/bin/psalm --no-progress -c=src/tools/psalm.xml",
     "psalm-clear-cache": "./vendor/bin/psalm --clear-cache -c=src/tools/psalm.xml",
-    "phpstan": [
-      "@putenv PHP_INI_SCAN_DIR=:src/tools",
-      "php ./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon"
-    ]
+    "phpstan": "@php ./vendor/bin/phpstan analyse --no-progress --memory-limit 4G -c src/tools/phpstan.neon"
   },
   "config": {
     "allow-plugins": {

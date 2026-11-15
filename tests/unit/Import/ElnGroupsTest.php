@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
 use Elabftw\Enums\Action;

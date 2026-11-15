@@ -15,6 +15,7 @@ use Elabftw\Elabftw\App;
 use Elabftw\Elabftw\BuildInfo;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Notifications;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ValueError;
 
 use function sprintf;
@@ -28,9 +29,7 @@ class TransformTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("<input type='hidden' name='csrf' value='$token' />", $input);
     }
 
-    /**
-     * @dataProvider notifProvider
-     */
+    #[DataProvider('notifProvider')]
     public function testNotif(array $input, string $expected): void
     {
         $this->assertEquals($expected, Transform::notif($input));

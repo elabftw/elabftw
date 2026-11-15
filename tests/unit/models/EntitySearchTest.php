@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;

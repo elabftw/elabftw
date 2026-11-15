@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;

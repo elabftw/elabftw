@@ -27,6 +27,7 @@ use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
 use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionMethod;
@@ -108,9 +109,7 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @dataProvider unsafeArchivePathProvider
-     */
+    #[DataProvider('unsafeArchivePathProvider')]
     public function testRejectUnsafeArchivePath(string $unsafePath): void
     {
         $exportsFs = Storage::EXPORTS->getStorage()->getFs();

@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Elabftw;
 
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Elabftw\Exceptions\ForbiddenException;
 use PHPUnit\Framework\TestCase;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Elabftw\Import;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function getenv;
@@ -12,9 +13,7 @@ use function putenv;
 
 class ZipLimitsTest extends TestCase
 {
-    /**
-     * @dataProvider invalidLimitProvider
-     */
+    #[DataProvider('invalidLimitProvider')]
     public function testRejectsInvalidEnvironmentValue(string $value): void
     {
         $previous = getenv('IMPORT_MAX_TOTAL_BYTES');

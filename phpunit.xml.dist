@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PHPUnit configuration for eLabFTW
+  https://www.elabftw.net
+
+  Run from the repository root: vendor/bin/phpunit
+  The unit tests expect a populated database: see tests/run.sh
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         cacheDirectory="tests/_output/cache"
+         colors="true"
+         stderr="true"
+         failOnWarning="true"
+         failOnNotice="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true">
+    <!--
+      stderr: nothing reaches stdout, so headers are never "already sent" and the setcookie() calls
+      in the tested code don't emit warnings.
+      failOnWarning/failOnNotice: a PHP warning or notice in tested code fails the run.
+    -->
+    <testsuites>
+        <testsuite name="unit">
+            <directory>tests/unit</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <ini name="memory_limit" value="1024M"/>
+    </php>
+
+    <!-- files reported in code coverage, which is only collected when a coverage option is passed -->
+    <source>
+        <include>
+            <directory suffix=".php">src/AuditEvent</directory>
+            <directory suffix=".php">src/Auth</directory>
+            <directory suffix=".php">src/Commands</directory>
+            <directory suffix=".php">src/Controllers</directory>
+            <directory suffix=".php">src/Elabftw</directory>
+            <directory suffix=".php">src/Enums</directory>
+            <directory suffix=".php">src/Exceptions</directory>
+            <directory suffix=".php">src/Factories</directory>
+            <directory suffix=".php">src/Hash</directory>
+            <directory suffix=".php">src/Import</directory>
+            <directory suffix=".php">src/Interfaces</directory>
+            <directory suffix=".php">src/Make</directory>
+            <directory suffix=".php">src/Models</directory>
+            <directory suffix=".php">src/Params</directory>
+            <directory suffix=".php">src/Services</directory>
+            <directory suffix=".php">src/Storage</directory>
+            <directory suffix=".php">src/Traits</directory>
+        </include>
+        <exclude>
+            <file>src/Commands/PopulateDatabase.php</file>
+            <file>src/Commands/GenI18n4Js.php</file>
+        </exclude>
+    </source>
+</phpunit>

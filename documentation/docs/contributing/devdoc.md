@@ -138,7 +138,7 @@ When working on the code, it is best to have `yarn watchjs` running so changes t
 
 ## Tests
 
-The tests run on the Codeception framework for unit and api tests.
+The unit tests run with [PHPUnit](https://phpunit.de/). They need a populated database, so use the yarn scripts below: they start temporary containers and run `vendor/bin/phpunit` inside.
 
 ~~~bash
 yarn unit # will run the unit tests

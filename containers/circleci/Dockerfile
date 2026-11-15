@@ -12,5 +12,5 @@ COPY ./tests /elabftw/tests
 COPY ./eslint.config.mjs /elabftw
 COPY ./.php-cs-fixer.dist.php /elabftw
 COPY ./.stylelintrc.json /elabftw
-COPY ./codeception.yml /elabftw
+COPY ./phpunit.xml.dist /elabftw
 COPY ./cypress.config.ts /elabftw

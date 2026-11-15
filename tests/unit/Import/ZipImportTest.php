@@ -10,6 +10,7 @@ use League\Flysystem\FilesystemOperator;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnableToWriteFile;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -40,9 +41,7 @@ class ZipImportTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider limitProvider
-     */
+    #[DataProvider('limitProvider')]
     public function testRejectsArchiveBeforeWriting(ZipLimits $limits, array $members, string $message): void
     {
         $fs = $this->createMock(FilesystemOperator::class);
@@ -65,9 +64,7 @@ class ZipImportTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider smallMemberSizeProvider
-     */
+    #[DataProvider('smallMemberSizeProvider')]
     public function testSmallMembersAreExemptFromCompressionRatioLimit(int $size): void
     {
         $fs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -94,9 +91,7 @@ class ZipImportTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider unsafeFileIdProvider
-     */
+    #[DataProvider('unsafeFileIdProvider')]
     public function testRejectsUnsafeFileIdBeforeReadingStorage(string $id): void
     {
         foreach (array(Eln::class, TrustedEln::class) as $class) {
@@ -156,9 +151,7 @@ class ZipImportTest extends TestCase
         $this->assertSame(array(), $fs->listContents('', true)->toArray());
     }
 
-    /**
-     * @dataProvider invalidTrustedArchiveProvider
-     */
+    #[DataProvider('invalidTrustedArchiveProvider')]
     public function testTrustedImportStillValidatesArchive(array $members, string $message): void
     {
         $fs = $this->createMock(FilesystemOperator::class);
@@ -180,9 +173,7 @@ class ZipImportTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider metadataProvider
-     */
+    #[DataProvider('metadataProvider')]
     public function testInvalidMetadataDoesNotExtractAttachments(array $members, ZipLimits $limits): void
     {
         $fs = $this->createMock(FilesystemOperator::class);
@@ -288,9 +279,7 @@ class ZipImportTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider streamingLimitProvider
-     */
+    #[DataProvider('streamingLimitProvider')]
     public function testStreamingLimitsAreIndependentOfPreflight(ZipLimits $limits): void
     {
         $fs = new Filesystem(new InMemoryFilesystemAdapter());

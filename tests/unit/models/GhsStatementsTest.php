@@ -12,7 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\HttpGetter;

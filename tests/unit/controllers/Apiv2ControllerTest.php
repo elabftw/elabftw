@@ -26,6 +26,7 @@ use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +38,7 @@ use function array_unique;
 use function array_values;
 use function basename;
 use function json_decode;
+use function json_encode;
 use function sprintf;
 use function str_replace;
 
@@ -395,6 +397,128 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $Controller->canWrite = true;
         $res = $Controller->getResponse();
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
+    public function testInvalidHttpMethod(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Controller = new Apiv2Controller(
+            $Entity->Users,
+            Request::create(
+                sprintf('/%s%d', $Entity->getApiPath(), $Entity->id),
+                'PUT',
+                server: array('CONTENT_TYPE' => 'application/json'),
+            ),
+        );
+        $Controller->canWrite = true;
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_METHOD_NOT_ALLOWED, $res->getStatusCode());
+        self::assertSame('GET, POST, DELETE, PATCH', $res->headers->get('Allow'));
+    }
+
+    public function testInvalidExtraFieldsKeysType(): void
+    {
+        // the valid value is "items"
+        $Controller = new Apiv2Controller($this->getRandomUserInTeam(1), Request::create('/api/v2/extra_fields_keys?type=item'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+        self::assertStringStartsWith('Invalid type parameter.', json_decode((string) $res->getContent(), true)['message']);
+    }
+
+    public function testInvalidFormat(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Controller = new Apiv2Controller(
+            $Entity->Users,
+            Request::create(sprintf('/%s%d?format=docx', $Entity->getApiPath(), $Entity->id)),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+        self::assertStringStartsWith('Incorrect value for format parameter.', json_decode((string) $res->getContent(), true)['message']);
+    }
+
+    #[DataProvider('provideExportFormats')]
+    public function testExportFormats(string $format): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Controller = new Apiv2Controller(
+            $Entity->Users,
+            Request::create(sprintf('/%s%d?format=%s', $Entity->getApiPath(), $Entity->id, $format)),
+        );
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode(), (string) $res->getContent());
+    }
+
+    public static function provideExportFormats(): array
+    {
+        return array(
+            'csv' => array('csv'),
+            'eln' => array('eln'),
+            'pdf' => array('pdf'),
+            'pdfa' => array('pdfa'),
+            'qrpdf' => array('qrpdf'),
+            'zip' => array('zip'),
+        );
+    }
+
+    public function testPatchEntity(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Controller = new Apiv2Controller(
+            $Entity->Users,
+            Request::create(
+                sprintf('/%s%d', $Entity->getApiPath(), $Entity->id),
+                'PATCH',
+                server: array('CONTENT_TYPE' => 'application/json'),
+                content: json_encode(
+                    array('title' => 'new title', 'date' => '20191231', 'body' => 'new body', 'metadata' => '{"foo":1}'),
+                    JSON_THROW_ON_ERROR,
+                ),
+            ),
+        );
+        $Controller->canWrite = true;
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $json = json_decode((string) $res->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('new title', $json['title']);
+        self::assertSame('2019-12-31', $json['date']);
+        self::assertSame('new body', $json['body']);
+        self::assertSame('{"foo": 1}', $json['metadata']);
+    }
+
+    public function testPostInvalidActionOnEntity(): void
+    {
+        $Entity = $this->getFreshExperiment();
+        $Controller = new Apiv2Controller(
+            $Entity->Users,
+            Request::create(
+                sprintf('/%s%d', $Entity->getApiPath(), $Entity->id),
+                'POST',
+                server: array('CONTENT_TYPE' => 'application/json'),
+                // a valid action, but not one that can be POSTed to an entity
+                content: json_encode(array('action' => Action::Bloxberg->value), JSON_THROW_ON_ERROR),
+            ),
+        );
+        $Controller->canWrite = true;
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+        self::assertSame('Invalid action parameter.', json_decode((string) $res->getContent(), true)['message']);
+    }
+
+    public function testGetInstance(): void
+    {
+        $Controller = new Apiv2Controller(new Users(1, 1), Request::create('/api/v2/instance'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+        self::assertSame('No GET action for this endpoint!', json_decode((string) $res->getContent(), true)['message']);
+    }
+
+    public function testGetIdps(): void
+    {
+        $Controller = new Apiv2Controller(new Users(1, 1), Request::create('/api/v2/idps'));
+        $res = $Controller->getResponse();
+        self::assertSame(Response::HTTP_OK, $res->getStatusCode());
+        self::assertIsArray(json_decode((string) $res->getContent(), true));
     }
 
     public function testCreateApiKeyReturnsRawTokenInLocation(): void

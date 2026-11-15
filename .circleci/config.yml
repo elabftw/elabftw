@@ -171,15 +171,13 @@ jobs:
       - start_mysql
       - populate_db
       - run:
-          name: Run API v2 tests
-          command: docker exec elabtmp php vendor/bin/codecept run apiv2
-      - run:
           name: Run unit tests with coverage
           command: |
-            docker exec elabtmp php vendor/bin/codecept run unit \
-              --coverage \
-              --coverage-xml=coverage.xml \
-              --coverage-html=coverage
+            docker exec elabtmp php vendor/bin/phpunit \
+              --coverage-text \
+              --only-summary-for-coverage-text \
+              --coverage-clover tests/_output/coverage.xml \
+              --coverage-html tests/_output/coverage
 
             docker exec elabtmp test -f /elabftw/tests/_output/coverage.xml
             docker exec elabtmp \

@@ -62,6 +62,59 @@ on('regenerate-sigkeys', (_, event: Event) => {
     });
 });
 
+const apikeyExpirationSelect = document.getElementById('apikeyExpiration') as HTMLSelectElement | null;
+const apikeyValidUntilInput = document.getElementById('apikeyValidUntil') as HTMLInputElement | null;
+
+apikeyExpirationSelect?.addEventListener('change', () => {
+  if (!apikeyValidUntilInput) {
+    return;
+  }
+  const isCustom = apikeyExpirationSelect.value === 'custom';
+  apikeyValidUntilInput.hidden = !isCustom;
+  if (isCustom) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const yyyy = tomorrow.getFullYear();
+    const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+    const dd = String(tomorrow.getDate()).padStart(2, '0');
+    apikeyValidUntilInput.min = `${yyyy}-${mm}-${dd}`;
+  } else {
+    apikeyValidUntilInput.value = '';
+    apikeyValidUntilInput.style.borderColor = '';
+  }
+});
+
+function resolveApikeyValidUntil(): string | null | false {
+  const mode = apikeyExpirationSelect?.value ?? 'never';
+  if (mode === 'never') {
+    return null;
+  }
+  if (mode === 'custom') {
+    const customDate = apikeyValidUntilInput?.value;
+    if (!customDate) {
+      notify.error('check-required');
+      if (apikeyValidUntilInput) {
+        apikeyValidUntilInput.style.borderColor = 'red';
+      }
+      return false;
+    }
+    if (apikeyValidUntilInput) {
+      apikeyValidUntilInput.style.borderColor = '';
+    }
+    return customDate;
+  }
+  const days = parseInt(mode, 10);
+  if (Number.isNaN(days) || days <= 0) {
+    return null;
+  }
+  const target = new Date();
+  target.setDate(target.getDate() + days);
+  const yyyy = target.getFullYear();
+  const mm = String(target.getMonth() + 1).padStart(2, '0');
+  const dd = String(target.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 on('create-apikey', () => {
   // clear any previous new key message
   const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
@@ -72,8 +125,13 @@ on('create-apikey', () => {
     nameInput.style.borderColor = 'red';
     return;
   }
+  nameInput.style.borderColor = '';
+  const validUntil = resolveApikeyValidUntil();
+  if (validUntil === false) {
+    return;
+  }
   const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value, 10);
-  ApiC.post(`${Model.Apikey}`, {name: content, canwrite: canwrite}).then(resp => {
+  ApiC.post(`${Model.Apikey}`, {name: content, canwrite: canwrite, valid_until: validUntil}).then(resp => {
     const location = resp.headers.get('location').split('/');
     reloadElements(['apiTable']);
     const newkeyInputGroup = document.getElementById('newApiKeyInputGroup');

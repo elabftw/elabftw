@@ -95,6 +95,27 @@ class ApiKeysTest extends \PHPUnit\Framework\TestCase
         $this->ApiKeys->readFromApiKey(str_repeat('0', 32));
     }
 
+    public function testExpiredApiKeyIsRejected(): void
+    {
+        $this->ApiKeys->postAction(Action::Create, array(
+            'name' => 'expired api key',
+            'valid_until' => '2000-01-01',
+        ));
+        $apiKey = $this->ApiKeys->getApiPath();
+
+        $this->expectException(UnauthorizedException::class);
+        $this->ApiKeys->readFromApiKey($apiKey);
+    }
+
+    public function testInvalidValidUntilFormatIsRejected(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->ApiKeys->postAction(Action::Create, array(
+            'name' => 'invalid date key',
+            'valid_until' => 'not-a-date',
+        ));
+    }
+
     public function testExpiredUserKeyIsRejected(): void
     {
         $this->ApiKeys->postAction(Action::Create, array('name' => 'expired user key'));

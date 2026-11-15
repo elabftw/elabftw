@@ -487,6 +487,22 @@
     </div>
     <hr>
 
+    <div class='d-flex justify-content-between'>
+      <label for='apikeyExpiration' class='col-form-label'>{{ 'Valid until'|trans }}</label>
+      <div class='col-md-3 p-0'>
+        <select id='apikeyExpiration' autocomplete='off' class='form-control'>
+          <option value='7'>7 {{ 'days'|trans }}</option>
+          <option value='30' selected>30 {{ 'days'|trans }}</option>
+          <option value='60'>60 {{ 'days'|trans }}</option>
+          <option value='90'>90 {{ 'days'|trans }}</option>
+          <option value='custom'>{{ 'Custom'|trans }}</option>
+          <option value='never'>{{ 'No expiration'|trans }}</option>
+        </select>
+        <input id='apikeyValidUntil' type='date' class='form-control mt-2' aria-label='{{ 'Valid until'|trans }}' hidden />
+      </div>
+    </div>
+    <hr>
+
     <div class='mt-4 text-center'>
       <button type='button' data-action='create-apikey' class='btn btn-primary'>{{ 'Generate an API Key'|trans }}</button>
     </div>
@@ -502,6 +518,7 @@
         <th scope='col'>{{ 'Permissions'|trans }}</th>
         <th scope='col'>{{ 'Creation date'|trans }}</th>
         <th scope='col'>{{ 'Last used'|trans }}</th>
+        <th scope='col'>{{ 'Valid until'|trans }}</th>
         <th scope='col'><span class='sr-only'>{{ 'Action'|trans }}</span></th>
       </tr>
     </thead>
@@ -513,6 +530,7 @@
           <td data-label='{{ 'Permissions'|trans }}'>{{ key.can_write ? 'Read/Write'|trans : 'Read Only'|trans }}</td>
           <td data-label='{{ 'Creation date'|trans }}'><span class='relative-moment' title='{{ key.created_at }}'></span></td>
           <td data-label='{{ 'Last used'|trans }}'><span class='relative-moment' title='{{ key.last_used_at|default('never'|trans) }}'></span></td>
+          <td data-label='{{ 'Valid until'|trans }}'>{{ key.valid_until|default('No expiration'|trans) }}</td>
           <td><span class='sr-only'>{{ 'Action'|trans }}</span><button type='button' class='btn btn-danger-ghost' data-action='destroy-apikey' title='{{ 'Delete'|trans }}' aria-label='{{ 'Delete'|trans }}' data-apikeyid='{{ key.id }}'><i class='fas fa-trash-alt fa-fw'></i></button></td>
         </tr>
       {% endfor %}

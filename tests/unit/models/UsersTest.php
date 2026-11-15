@@ -93,6 +93,24 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray($this->Users->readFromQuery('Toto', 1, false, false));
     }
 
+    public function testReadFromQueryOnlyActiveInGivenTeam(): void
+    {
+        $Db = Db::getConnection();
+        $Db->beginTransaction();
+        try {
+            $email = 'titi@yopmail.com';
+            $userid = $this->getUserIdFromEmail($email);
+            // active in team 1, archived in team 2
+            $this->setTeamMembership($userid, 1);
+            $this->setTeamMembership($userid, 2, isArchived: 1);
+            $this->assertCount(1, $this->Users->readFromQuery($email, 1, onlyActive: true));
+            $this->assertCount(0, $this->Users->readFromQuery($email, 2, onlyActive: true));
+            $this->assertCount(1, $this->Users->readFromQuery($email, 0, onlyActive: true));
+        } finally {
+            $Db->rollBack();
+        }
+    }
+
     public function testUpdateAccount(): void
     {
         // A user SHOULD NOT be able to update their own address (under default settings)

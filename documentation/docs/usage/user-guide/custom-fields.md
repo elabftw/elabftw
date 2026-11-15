@@ -65,7 +65,7 @@ Then click save and the generated input will accept only numbers, and a dropdown
 
 ## Advanced use
 
-Keep in mind that what the builder menu will do for you is simply create some JSON code and store it in the `metadata` attribute of the entry. You are free to edit this JSON code from the editor.
+Keep in mind that what the builder menu will do for you is simply create some JSON code and store it in the `metadata` attribute of the entry. You are free to edit this JSON code from the editor, in the **JSON** tab of the **Editors** section.
 
 <figure>
   <img src="/img/json-editor-mode.png" alt="json-editor-mode" />

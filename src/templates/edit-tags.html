@@ -14,21 +14,9 @@
     <details closed class='suggested-tags' data-cy='tagsMenu'>
       <summary>{{ 'Suggested tags'|trans }}</summary>
       <div id='tags_div_suggestedtags_{{ Entity.id }}' class='suggested-tags-popover'>
-        {% set filteredTags = [] %}
-        {% for tag in teamTagsArr %}
-          {% set tagFound = false %}
-          {% for attachedTag in attachedTags %}
-            {% if tag.tag == attachedTag.tag %}
-              {% set tagFound = true %}
-            {% endif %}
-          {% endfor %}
-          {% if not tagFound %}
-            {% set filteredTags = filteredTags|merge([tag]) %}
-          {% endif %}
-        {% endfor %}
-
-        {% for tag in filteredTags|slice(0, 101) %}
-          <button class='btn tag margin-1px opacity-8 lh-normal border-0 {{- loop.last ? ' mr-2' }} {{- tag.is_favorite ? ' favorite' }}' data-action='add-suggested-tag' data-tagid='{{ tag.tag_id }}' type='button'>{{ tag.tag }}</button>
+        {# the tags of the team not on the entry yet, see TeamTags::readSuggestions() #}
+        {% for tag in suggestedTagsArr %}
+          <button class='btn tag margin-1px opacity-8 lh-normal border-0 {{- loop.last ? ' mr-2' }} {{- tag.is_favorite ? ' favorite' }}' data-action='add-suggested-tag' type='button'>{{ tag.tag }}</button>
         {%- endfor -%}
       </div>
     </details>

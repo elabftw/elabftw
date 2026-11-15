@@ -123,6 +123,73 @@ You can use the filters to reduce clutter on the scheduler view and look for spe
   <figcaption>Filtering by owner.</figcaption>
 </figure>
 
+## Booking requests
+
+Some bookable resources require approval before a reservation is confirmed. Approval is configured separately for each resource by selecting individual approvers in its [booking parameters](./resources.md#requiring-approval-for-bookings).
+
+### Submitting a booking request
+
+When you book a resource that requires approval, your reservation is created with the **Pending approval** status instead of being approved immediately. The pending event remains visible in the calendar and blocks the selected time slot.
+
+<figure>
+  <img src="/img/booking-pending-calendar.webp" alt="Pending booking in calendar" />
+  <figcaption>Reserved time slot in the calendar.</figcaption>
+</figure>
+
+### Tracking or cancelling your requests
+
+The `My booking requests` tab lists your own requests and their approval status. You can cancel a request while it is still pending. Once an approver has made a decision, its status changes to **Approved** or **Rejected**.
+
+<figure>
+  <img src="/img/booking-my-requests.webp" alt="My booking requests" />
+  <figcaption>My booking requests.</figcaption>
+</figure>
+
+Pending requests whose start time has passed are marked as overdue.
+
+<figure>
+  <img src="/img/booking-overdue.webp" alt="Booking overdue" />
+  <figcaption>The status of my bookings.</figcaption>
+</figure>
+
+If you are one of the resource's designated approvers, your own booking is approved immediately and does not require another approver's decision.
+
+:::tip
+
+For bookings subject to approval, you cannot directly change the reserved resource or the start and end times. Cancel the booking and create another request if you need a different resource or time slot.
+:::
+
+### Reviewing booking requests
+
+Designated approvers can review requests from the `Pending approvals` tab on the Scheduler page:
+
+1. Open the Scheduler and select `Pending approvals`.
+2. Find the request for the relevant resource and requester.
+3. Choose `Approve` to confirm the reservation, or `Reject` to refuse it. You may add a comment, for example to explain a rejection.
+
+<figure>
+  <img src="/img/pending-approvals.webp" alt="Pending approvals" />
+  <figcaption>Pending approvals.</figcaption>
+</figure>
+
+:::info
+
+A decision on a **recurring booking** applies to all occurrences of that request that are still pending.
+:::
+
+### Notifications and audit trail
+
+When a request is submitted, approvers receive a notification that a booking is waiting for review, and the requester is informed that the reservation is pending. After an approval or rejection, the requester and approvers receive a status update. In-app notifications and email delivery follow each user's notification preferences and the instance's email configuration.
+
+Approval decisions record the approver, the date and the decision, and are also tracked in the audit log. A rejection can include an explanatory comment.
+
+:::note
+
+Disabling approval for a resource does not retroactively change requests that are already pending. Booking reports include approved reservations and reservations that never required approval, not pending or rejected requests.
+:::
+
+Notification preferences can be customized from the User Control Panel, where users can enable or disable in-app and email notifications for booking requests and status updates.
+
 ## Adjusting permissions
 
 When a Resource is bookable, a new permission appears: "Can book":

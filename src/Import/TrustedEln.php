@@ -68,6 +68,21 @@ final class TrustedEln extends Eln
         return $Author;
     }
 
+    #[Override]
+    protected function getMetadataUserReference(string $personId): ?int
+    {
+        // no Person node was exported for this user: nothing to create
+        if ($personId === '') {
+            return parent::getMetadataUserReference($personId);
+        }
+        try {
+            return $this->getOrCreateUser($personId)->getUserid();
+        } catch (ImproperActionException $e) {
+            $this->logger->warning(sprintf('Could not create user %s: %s', $personId, $e->getMessage()));
+            return self::UNKNOWN_USERID;
+        }
+    }
+
     private function getOrCreateUser(string $personId): Users
     {
         $person = $this->getNodeFromId($personId);

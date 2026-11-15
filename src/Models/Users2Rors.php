@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Override;
@@ -28,6 +29,8 @@ final class Users2Rors extends Abstract2Rors
         private readonly int $userid,
         bool $canwrite = false,
         ?string $ror = null,
+        // affiliations are only visible to whoever can see the full profile of that user
+        private readonly bool $canread = true,
     ) {
         parent::__construct($canwrite, $ror);
     }
@@ -41,6 +44,7 @@ final class Users2Rors extends Abstract2Rors
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        $this->canreadOrExplode();
         return $this->selectAll($this->userid);
     }
 
@@ -52,6 +56,7 @@ final class Users2Rors extends Abstract2Rors
     #[Override]
     public function readOne(): array
     {
+        $this->canreadOrExplode();
         $sql = 'SELECT * FROM users2rors WHERE users_id = :users_id AND ror = :ror';
         $req = $this->Db->prepare($sql);
         $req->bindValue(':users_id', $this->userid, PDO::PARAM_INT);
@@ -86,6 +91,13 @@ final class Users2Rors extends Abstract2Rors
         return 1;
     }
 
+    private function canreadOrExplode(): void
+    {
+        if (!$this->canread) {
+            throw new ForbiddenException();
+        }
+    }
+
     private function selectAll(int $userid): array
     {
         $sql = 'SELECT * FROM users2rors WHERE users_id = :users_id ORDER BY created_at ASC';
@@ -93,6 +105,5 @@ final class Users2Rors extends Abstract2Rors
         $req->bindValue(':users_id', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $req->fetchAll();
-
     }
 }

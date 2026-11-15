@@ -8,12 +8,15 @@
 import {
   escapeRegExp,
   getNewIdFromPostRequest,
-  reloadElements,
+  reloadUploads,
   updateEntityBody,
 } from './misc';
 import { Target, Model, Action } from './interfaces';
 import './doodle';
+import './tabbed-sections';
+import { initReactionsList } from './reaction-summary';
 import { getEditor } from './Editor.class';
+import tinymce from 'tinymce/tinymce';
 import DOMPurify from 'dompurify';
 import { ApiC } from './api';
 import { Uploader } from './uploader';
@@ -21,6 +24,23 @@ import { getRecoveryData, removeRecoveryData } from './recovery';
 import { entity } from './getEntity';
 import { on } from './handlers';
 import { enableMarkdownImagePaste } from './pasteImage';
+
+initReactionsList();
+
+// the main text tab can be shown without a scroll or resize, so let tinymce update its height and sticky toolbar now
+document.addEventListener('tab-shown', (event: CustomEvent<string>) => {
+  const editor = tinymce.activeEditor;
+  if (event.detail !== 'main' || !editor) {
+    return;
+  }
+  window.requestAnimationFrame(() => {
+    if (editor.plugins.autoresize) {
+      // a layout change must not move the focus into the editor
+      editor.execCommand('mceAutoResize', false, undefined, { skip_focus: true });
+    }
+    window.dispatchEvent(new Event('scroll'));
+  });
+});
 
 // remove exclusive edit mode when leaving the page
 window.onbeforeunload = function() {
@@ -130,29 +150,6 @@ on('get-next-custom-id', (el: HTMLElement) => {
   }).finally(() => button.disabled = false);
 });
 
-on('annotate-image', (el: HTMLElement) => {
-  // show doodle canvas
-  const doodleDiv = document.getElementById('doodleDiv');
-  doodleDiv.removeAttribute('hidden');
-  doodleDiv.scrollIntoView({behavior: 'smooth'});
-  // adjust caret icon
-  const doodleDivIcon = document.getElementById('doodleDivIcon');
-  doodleDivIcon.classList.remove('fa-caret-right');
-  doodleDivIcon.classList.add('fa-caret-down');
-
-  const context: CanvasRenderingContext2D = (document.getElementById('doodleCanvas') as HTMLCanvasElement).getContext('2d');
-  const img = new Image();
-  // set src attribute to image path
-  img.addEventListener('load', function() {
-    // make canvas bigger than image
-    context.canvas.width = (this as HTMLImageElement).width * 2;
-    context.canvas.height = (this as HTMLImageElement).height * 2;
-    // add image to canvas
-    context.drawImage(img, (this as HTMLImageElement).width / 2, (this as HTMLImageElement).height / 2);
-  });
-  img.src = `app/download.php?storage=${el.dataset.storage}&f=${el.dataset.path}`;
-});
-
 on('import-link-body', (el: HTMLElement) => {
   // this is in this file and not in steps-links-edit because here `editor`
   // exists and is reachable
@@ -255,7 +252,7 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
       method: 'POST',
       body: formData,
     }).then(resp => {
-      reloadElements(['uploadsDiv']);
+      void reloadUploads();
       // return early if longName is not found in body
       if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
         && (editorCurrentContent.indexOf(searchPrefixMd + formElement.dataset.longName) === -1)

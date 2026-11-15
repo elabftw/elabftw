@@ -1,0 +1,41 @@
+/**
+ * @author Nicolas CARPi / Deltablot
+ * @copyright 2026 Nicolas CARPi
+ * @see https://www.elabftw.net Official website
+ * @license AGPL-3.0
+ * @package elabftw
+ */
+
+/* image editor canvas in edit.html, with its resize handle in the bottom right corner, see doodle.ts */
+.doodle-canvas-frame {
+  display: inline-block;
+  line-height: 0;
+  position: relative;
+}
+
+.doodle-resize-handle {
+  background: linear-gradient(135deg, transparent 0 50%, var(--secondlevel) 50% 60%, transparent 60% 72%, var(--secondlevel) 72% 82%, transparent 82%);
+  border: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+  height: 18px;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  touch-action: none;
+  width: 18px;
+
+  &:focus-visible {
+    outline: 2px solid var(--primary);
+  }
+}
+
+/* image editor toolbar in edit.html: keep space between the rows when it wraps */
+.doodle-toolbar {
+  row-gap: 0.5rem;
+}
+
+/* disable touch action for doodle canvas */
+#doodleCanvas {
+  touch-action: none;
+}

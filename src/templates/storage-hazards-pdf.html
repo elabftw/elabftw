@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+{# hazards sheet of a storage location, for firefighters: see MakeStorageHazardsPdf #}
+{# no compound or entry is named here: see StorageUnits::readHazards() #}
+<html lang='en'>
+  <head>
+    <title>{{ 'Hazards'|trans }}</title>
+    <style>
+      {{ css|raw }}
+      body { font-size: 11pt; }
+      .hazards-banner { border: 3mm solid #c00000; padding: 4mm; text-align: center; }
+      .hazards-title { color: #c00000; font-size: 26pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+      .hazards-location { font-size: 18pt; font-weight: bold; margin: 2mm 0 0 0; }
+      .hazards-signal-word { font-size: 36pt; font-weight: bold; text-align: center; text-transform: uppercase; margin: 5mm 0; }
+      .hazards-signal-danger { color: #c00000; }
+      .hazards-signal-warning { color: #b36b00; }
+      .hazards-pictograms { width: 100%; margin: 4mm 0; }
+      .hazards-pictograms td { width: 33%; text-align: center; vertical-align: top; padding: 3mm; font-size: 12pt; font-weight: bold; }
+      .hazards-section { font-size: 14pt; font-weight: bold; border-bottom: 0.5mm solid #000; margin: 6mm 0 2mm 0; }
+      .hazards-statements { width: 100%; border-collapse: collapse; }
+      .hazards-statements td { padding: 1mm 2mm; border-bottom: 0.2mm solid #999; vertical-align: top; }
+      .hazards-code { font-weight: bold; white-space: nowrap; width: 18mm; }
+      .hazards-note { font-size: 9pt; color: #444; }
+    </style>
+    {{ useCjk ? '<style>body, td { font-family:sun-extA; }</style>' }}
+  </head>
+  <body>
+    <htmlpagefooter name='footer'>
+      <div class='footer-block footer'>
+        <table class='noborder' role='presentation' style='width: 100%;'>
+          <tr>
+            <td class='noborder' style='text-align: left; vertical-align: middle;'>
+              {{ 'Hazards recorded in eLabFTW for this location when this sheet was made: check the inventory for later changes.'|trans }}
+              <p>{{ 'Up to date information can be fetched by scanning this QR Code'|trans }}:<br>{{ url }}</p>
+              <p style='font-size:6pt;'>{{ 'File generated on'|trans }} {DATE d-m-Y} {DATE H:i} — {PAGENO} / {nbpg}</p>
+            </td>
+            <td class='noborder' style='width: 25mm; text-align: right; vertical-align: middle;'>
+              {# use raw here as this is an mpdf special tag and the url needs to be passed unmodified #}
+              <barcode code='{{ url|raw }}' type='QR' class='barcode' size='0.8' error='M' />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </htmlpagefooter>
+    <sethtmlpagefooter name='footer' value='on' />
+
+    {% set pictogramsLabels = {
+      'is_explosive': {'code': '01', 'label': 'Explosive'|trans},
+      'is_flammable': {'code': '02', 'label': 'Flammable'|trans},
+      'is_oxidising': {'code': '03', 'label': 'Oxidising'|trans},
+      'is_gas_under_pressure': {'code': '04', 'label': 'Gas under pressure'|trans},
+      'is_corrosive': {'code': '05', 'label': 'Corrosive'|trans},
+      'is_toxic': {'code': '06', 'label': 'Toxic'|trans},
+      'is_hazardous2health': {'code': '07', 'label': 'Hazardous to health'|trans},
+      'is_serious_health_hazard': {'code': '08', 'label': 'Serious Health Hazard'|trans},
+      'is_hazardous2env': {'code': '09', 'label': 'Hazardous to environment'|trans},
+    } %}
+    {% set otherLabels = {
+      'is_radioactive': 'Radioactive'|trans,
+      'is_explosive_precursor': 'Explosive precursor'|trans,
+      'is_cmr': 'Carcinogenic, mutagenic and reprotoxic'|trans,
+      'is_nano': 'Nanomaterial'|trans,
+      'is_controlled': 'Controlled substance'|trans,
+      'is_drug': 'Drug'|trans,
+      'is_drug_precursor': 'Drug precursor'|trans,
+      'is_antibiotic': 'Antibiotic'|trans,
+      'is_antibiotic_precursor': 'Antibiotic precursor'|trans,
+      'is_ed2health': 'Endocrine disruptor for human health'|trans,
+      'is_ed2env': 'Endocrine disruptor for the environment'|trans,
+      'is_pbt': 'Persistent, bioaccumulative and toxic'|trans,
+      'is_pmt': 'Persistent, mobile and toxic'|trans,
+      'is_vpvb': 'Very persistent and very bioaccumulative'|trans,
+      'is_vpvm': 'Very persistent and very mobile'|trans,
+    } %}
+
+    <div class='hazards-banner'>
+      <p class='hazards-title'>{{ 'Hazards stored here'|trans }}</p>
+      <p class='hazards-location'>{{ hazards.location.full_path }}</p>
+    </div>
+
+    {% if hazards.signal_word %}
+      <p class='hazards-signal-word {{ hazards.signal_word == 'Danger' ? 'hazards-signal-danger' : 'hazards-signal-warning' }}'>{{ hazards.signal_word|trans }}</p>
+    {% endif %}
+
+    {% if hazards.pictograms is not empty %}
+      <table class='hazards-pictograms'>
+        {% for row in hazards.pictograms|batch(3) %}
+          <tr>
+            {% for flag in row %}
+              <td>
+                <img src='{{ ghsImagesPath }}/GHS{{ pictogramsLabels[flag].code }}.svg' alt='{{ pictogramsLabels[flag].label }}' style='width: 40mm; height: 40mm;' /><br>
+                {{ pictogramsLabels[flag].label }}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+
+    {% if hazards.other_hazards is not empty %}
+      <p class='hazards-section'>{{ 'Other hazards'|trans }}</p>
+      <p style='font-size: 13pt; font-weight: bold;'>{{ hazards.other_hazards|map(flag => otherLabels[flag])|join(' — ') }}</p>
+    {% endif %}
+
+    {% if hazards.statements is not empty %}
+      <p class='hazards-section'>{{ 'Hazard statements'|trans }}</p>
+      <table class='hazards-statements'>
+        {% for statement in hazards.statements %}
+          <tr>
+            <td class='hazards-code'>{{ statement.code }}</td>
+            <td>{{ statement.statement }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+
+    {% if hazards.pictograms is empty and hazards.other_hazards is empty and hazards.statements is empty %}
+      <p class='hazards-section'>{{ 'No hazard recorded'|trans }}</p>
+      <p>{{ 'No compound stored in this location has a recorded hazard.'|trans }}</p>
+    {% endif %}
+
+    <p class='hazards-section'>{{ 'Contents'|trans }}</p>
+    <p>
+      {{ 'Containers stored in this location and in the locations it contains: %d.'|trans|format(hazards.containers_count) }}<br>
+      {{ 'Distinct compounds in these containers: %d.'|trans|format(hazards.compounds_count) }}
+    </p>
+    {% if hazards.containers_without_compound_count > 0 %}
+      <p><strong>{{ 'Containers whose content is not linked to a compound, so their hazards are unknown: %d.'|trans|format(hazards.containers_without_compound_count) }}</strong></p>
+    {% endif %}
+    <p class='hazards-note'>{{ 'The hazards come from the compounds linked to the stored resources and experiments. A compound without recorded hazards does not appear here.'|trans }}</p>
+  </body>
+</html>

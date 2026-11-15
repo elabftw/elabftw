@@ -48,6 +48,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use DateTimeImmutable;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Models\Instance2Rors;
 use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
@@ -106,6 +107,7 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    CompoundsFactory::getCompounds($this->requester),
                     includeLinkedEntities: $this->shouldIncludeLinkedEntities(),
                     includeChangelog: $this->shouldIncludeChangelog(),
                 ));
@@ -119,6 +121,7 @@ final class MakeController extends AbstractController
                     new Instance2Rors(),
                     new Teams2Rors($this->requester->getTeam(), false),
                     new Users2Rors($this->requester->getUserid(), false),
+                    CompoundsFactory::getCompounds($this->requester),
                 )->getResponse();
 
             case ExportFormat::Json:

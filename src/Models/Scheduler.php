@@ -233,12 +233,12 @@ final class Scheduler extends AbstractRest
      * The api controller doesn't know what kind of read we want
      */
     #[Override]
-    public function readOne(): array
+    public function readOne(?QueryParamsInterface $queryParams = null): array
     {
         if ($this->id !== null) {
             return $this->readOneEvent();
         }
-        return $this->read();
+        return $this->read($queryParams);
     }
 
     /**
@@ -711,9 +711,11 @@ final class Scheduler extends AbstractRest
 
     /**
      * Return an array with events for this item
+     * Supports the eventOwner query parameter, like readAll()
      */
-    private function read(): array
+    private function read(?QueryParamsInterface $queryParams = null): array
     {
+        $eventOwner = $queryParams?->getQuery()->getInt('eventOwner') ?? 0;
         // the title of the event is title + Firstname Lastname of the user who booked it
         // the color is used by fullcalendar for the bg color of the event
         $boundSelects = $this->getBoundSelects();
@@ -737,10 +739,12 @@ final class Scheduler extends AbstractRest
             WHERE team_events.item = :item
                 AND team_events.start <= :end
                 AND team_events.end >= :start
-                AND team_events.approval_status IN (%s)",
+                AND team_events.approval_status IN (%s)
+                %s",
             $boundSelects['experiment'],
             $boundSelects['item_link'],
             BookingApprovalStatus::slotBlockingSqlList(),
+            $eventOwner > 0 ? 'AND team_events.userid = :ownerid' : '',
         );
 
         $req = $this->Db->prepare($sql);
@@ -749,6 +753,9 @@ final class Scheduler extends AbstractRest
         $req->bindValue(':end', $this->normalizeDate($this->end, true));
         $req->bindValue(':userid', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
         $req->bindValue(':requester', $this->Items->Users->userData['userid'], PDO::PARAM_INT);
+        if ($eventOwner > 0) {
+            $req->bindValue(':ownerid', $eventOwner, PDO::PARAM_INT);
+        }
         $this->Db->execute($req);
 
         return array_map(

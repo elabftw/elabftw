@@ -14,6 +14,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Models\Experiments;
+use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\Templates;
 use Override;
 
@@ -30,7 +31,7 @@ final class ExperimentsController extends AbstractEntityController
         parent::__construct($app, $entity);
 
         $this->categoryArr = $app->experimentsCategoryArr;
-        $this->statusArr = $this->experimentsStatusArr;
+        $this->statusArr = $this->readAllStatus(new ExperimentsStatus($app->Teams));
     }
 
     #[Override]

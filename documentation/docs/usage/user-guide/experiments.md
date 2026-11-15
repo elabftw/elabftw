@@ -202,24 +202,10 @@ You can list all Experiments with a given Tag by clicking on the Tag or searchin
 </figure>
 
 ## Permissions
-The "Visibility" and "Can write" menus allow you to control who can access and change a given entry.
-
-<figure>
-  <img src="/img/user-permissions.webp" alt="permissions" />
-  <figcaption>Permissions.</figcaption>
-</figure>
-
-Click the `Plus` icon to view, add, or remove permissions. A modal window will open:
-
-<figure>
-  <img src="/img/user-permissions-modal.webp" alt="permissions edit modal" />
-  <figcaption>Permissions edition modal window.</figcaption>
-</figure>
-
-Select a base permission to extend or restrict the current settings, and optionally, add permissions to entire teams, teamgroups, or individual users.
+The **Permissions** button (share icon) of the toolbar opens a window to control who can view and edit a given entry. Each permission has a **General access** setting in its top right corner, and a search input to add entire teams, user groups, or individual users. The changes are saved as soon as they are made.
 
 :::warning
-The permissions are **additive** on the base permission. Make sure to set a restrictive base permission if you do not wish to share an entry, and then **add** teams, teamgroups or users accordingly.
+The permissions are **additive** on the general access. Make sure to set a restrictive general access if you do not wish to share an entry, and then **add** teams, teamgroups or users accordingly.
 :::
 
 ## Main text
@@ -340,7 +326,9 @@ When a new Experiment or Resource is created from that template, the locked step
 
 ## Spreadsheet Editor
 
-With version 5.3 comes a new spreadsheet editor, present in the edit page of an entry. It lets users display and manipulate tabular data directly inside eLabFTW, with support for common spreadsheet operations and formula calculations (e.g. CSV / XLSX import-export, cell arithmetic, SUM, ROW, etc.).
+With version 5.3 comes a new spreadsheet editor, present in the edit page of an entry, in the **Spreadsheet** tab of the **Editors** section. It lets users display and manipulate tabular data directly inside eLabFTW, with support for common spreadsheet operations and formula calculations (e.g. CSV / XLSX import-export, cell arithmetic, SUM, ROW, etc.).
+
+The **Image** and **JSON** tabs of the same section hold the drawing tool and the JSON editor. The selected tab is remembered. In the **Image** tab, use **Load attachment** to draw on an image already attached to the entry, or **Upload image** to attach a new image and load it in the editor at once.
 
 <figure>
   <img src="/img/spreadsheet-editor.webp" alt="spreadsheet editor" />

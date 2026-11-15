@@ -21,6 +21,7 @@ use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Services\Check;
 use Symfony\Component\HttpFoundation\InputBag;
 use Override;
+use PDOStatement;
 
 use function array_map;
 use function explode;
@@ -100,7 +101,16 @@ class BaseQueryParams implements QueryParamsInterface
     }
 
     #[Override]
+    public function bindFilterValues(PDOStatement $req): void {}
+
+    #[Override]
     public function setSkipOrderPinned(bool $value): void {}
+
+    #[Override]
+    public function getExtraFieldsColumns(): array
+    {
+        return array();
+    }
 
     #[Override]
     public function getQuery(): InputBag

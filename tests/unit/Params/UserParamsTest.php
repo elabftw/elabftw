@@ -86,4 +86,17 @@ class UserParamsTest extends \PHPUnit\Framework\TestCase
         $params = new UserParams('default_write_base', 10);
         $this->assertSame(10, $params->getContent());
     }
+
+    public function testBookingApprovalNotificationPreferences(): void
+    {
+        foreach (array(
+            'notif_booking_approval_requested',
+            'notif_booking_approval_requested_email',
+            'notif_booking_approval_updated',
+            'notif_booking_approval_updated_email',
+        ) as $target) {
+            $this->assertSame('0', (new UserParams($target, '0'))->getContent());
+            $this->assertSame('1', (new UserParams($target, '1'))->getContent());
+        }
+    }
 }

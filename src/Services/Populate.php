@@ -28,7 +28,6 @@ use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
 use Elabftw\Exceptions\ForbiddenException;
-use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\LocalPasswordHash;
@@ -74,8 +73,6 @@ use function random_bytes;
 use function sprintf;
 use function explode;
 use function shuffle;
-use function array_map;
-use function array_merge;
 
 /**
  * This is used to generate data for dev purposes
@@ -93,8 +90,7 @@ final class Populate
     // number of templates to generate
     private const int TEMPLATES_ITER = 6;
 
-    private const array LINK_TYPES = array('experiments_links', 'items_links', 'compounds_links');
-
+    // each entry is array(links object, description for output)
     private array $pendingLinks = array();
 
     private \Faker\Generator $faker;
@@ -385,28 +381,32 @@ final class Populate
         $this->createLinks();
     }
 
+    /**
+     * Links are created at the very end, once every possible target (including compounds) exists
+     */
     private function queueLinks(AbstractEntity $Entity, array $config): void
     {
-        foreach (self::LINK_TYPES as $type) {
-            $this->pendingLinks = array_merge($this->pendingLinks, array_map(fn($target): array => array($Entity, $type, (int) $target), $config[$type] ?? array()), );
+        $factories = array(
+            'experiments_links' => LinksFactory::getExperimentsLinks(...),
+            'items_links' => LinksFactory::getItemsLinks(...),
+            'compounds_links' => LinksFactory::getCompoundsLinks(...),
+        );
+        foreach ($factories as $type => $factory) {
+            foreach ($config[$type] ?? array() as $target) {
+                $this->pendingLinks[] = array(
+                    $factory($Entity, (int) $target),
+                    sprintf('%s %d → %s %d', $Entity->entityType->value, $Entity->id ?? 0, $type, $target),
+                );
+            }
         }
     }
 
     private function createLinks(): void
     {
-        foreach ($this->pendingLinks as [$Entity, $type, $target]) {
-            // entities are queued right after setId(), so id is never null here
-            $entityId = (int) $Entity->id;
-            $Links = match ($type) {
-                'experiments_links' => $Entity->ExperimentsLinks,
-                'items_links' => $Entity->ItemsLinks,
-                'compounds_links' => LinksFactory::getCompoundsLinks($Entity),
-                default => throw new ImproperActionException(sprintf('Unknown link type: %s', $type)),
-            };
-            $Links->setId((int) $target);
+        foreach ($this->pendingLinks as [$Links, $description]) {
             try {
                 $Links->postAction(Action::Create, array());
-                $this->output->writeln(sprintf('├ + links: %s %d → %s %d', $Entity->entityType->value, $entityId, $type, $target));
+                $this->output->writeln(sprintf('├ + links: %s', $description));
             } catch (ResourceNotFoundException | ForbiddenException) {
                 // let it fail, we don't care
             }

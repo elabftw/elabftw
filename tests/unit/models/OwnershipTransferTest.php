@@ -22,6 +22,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
 use PDO;
 use PHPUnit\Framework\TestCase;
@@ -35,6 +36,7 @@ use function sprintf;
  *
  * Roles are set up explicitly inside a rolled-back transaction instead of relying on fixture data,
  * so every test knows exactly which flags (owner, admin, sysadmin, archived) the actors have.
+ * Actors are AuthenticatedUser like real logged in users: Organization visibility only applies to them.
  */
 final class OwnershipTransferTest extends TestCase
 {
@@ -115,7 +117,7 @@ final class OwnershipTransferTest extends TestCase
             'owner in entry team' => $owner,
             'owner logged in another team' => (function () use ($owner): Users {
                 $this->setMembership($owner->getUserid(), self::OTHER_TEAM, isAdmin: 1);
-                return new Users($owner->getUserid(), self::OTHER_TEAM);
+                return new AuthenticatedUser($owner->getUserid(), self::OTHER_TEAM);
             })(),
             'writer of entry team' => $this->regularUser(self::SOURCE_TEAM),
             'admin of entry team' => $this->adminUser(self::SOURCE_TEAM),
@@ -209,7 +211,7 @@ final class OwnershipTransferTest extends TestCase
         $owner = $this->regularUser(self::SOURCE_TEAM);
         $entity = $this->createEntity($type, $owner);
         $this->setMembership($owner->getUserid(), self::OTHER_TEAM, isAdmin: $isAdminThere);
-        $ownerElsewhere = new Users($owner->getUserid(), self::OTHER_TEAM);
+        $ownerElsewhere = new AuthenticatedUser($owner->getUserid(), self::OTHER_TEAM);
         self::assertSame((bool) $isAdminThere, $ownerElsewhere->isAdmin);
         $target = $this->regularUser($destinationTeam);
 
@@ -276,7 +278,7 @@ final class OwnershipTransferTest extends TestCase
     // read back as the new owner: the previous owner or the requester may have lost read access
     private function assertOwnedBy(EntityType $type, int $id, Users $expectedOwner, int $expectedTeam): void
     {
-        $entityData = $type->toInstance(new Users($expectedOwner->getUserid(), $expectedTeam), $id)->readOne();
+        $entityData = $type->toInstance(new AuthenticatedUser($expectedOwner->getUserid(), $expectedTeam), $id)->readOne();
         self::assertSame($expectedOwner->getUserid(), (int) $entityData['userid']);
         self::assertSame($expectedTeam, (int) $entityData['team']);
     }
@@ -291,7 +293,7 @@ final class OwnershipTransferTest extends TestCase
 
     private function regularUser(int $team): Users
     {
-        $user = new Users($this->pickUserId($team), $team);
+        $user = new AuthenticatedUser($this->pickUserId($team), $team);
         self::assertFalse($user->isAdmin);
         self::assertFalse($user->isSysadmin());
         return $user;
@@ -301,7 +303,7 @@ final class OwnershipTransferTest extends TestCase
     {
         $userid = $this->pickUserId($team);
         $this->setMembership($userid, $team, isAdmin: 1);
-        $user = new Users($userid, $team);
+        $user = new AuthenticatedUser($userid, $team);
         self::assertTrue($user->isAdmin);
         self::assertFalse($user->isSysadmin());
         return $user;
@@ -314,7 +316,7 @@ final class OwnershipTransferTest extends TestCase
         $req = $this->Db->prepare('UPDATE users SET is_sysadmin = 1 WHERE userid = :userid');
         $req->bindValue(':userid', $userid, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $user = new Users($userid, $team);
+        $user = new AuthenticatedUser($userid, $team);
         self::assertTrue($user->isSysadmin());
         return $user;
     }

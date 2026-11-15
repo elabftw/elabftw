@@ -22,6 +22,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
@@ -83,6 +84,7 @@ final class OwnershipTransferTest extends TestCase
             'admin of entry team' => true,
             'admin of another team' => false,
             'sysadmin' => true,
+            'anonymous reader' => false,
         );
         $cases = array();
         foreach (self::entityTypes() as [$type]) {
@@ -98,8 +100,8 @@ final class OwnershipTransferTest extends TestCase
     {
         $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
         $excluded = array($owner->getUserid());
-        // visible across teams so every role can load the entry
-        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Organization);
+        // visible to everyone, anonymous included, so every role can load the entry
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Full);
         $requester = match ($role) {
             'owner in entry team' => $owner,
             'owner logged in another team' => $this->ownerLoggedInOtherTeam($owner, isAdminThere: 1),
@@ -107,6 +109,7 @@ final class OwnershipTransferTest extends TestCase
             'admin of entry team' => $this->getFreshAdminInTeam(self::SOURCE_TEAM, $excluded),
             'admin of another team' => $this->getFreshAdminInTeam(self::OTHER_TEAM, $excluded),
             'sysadmin' => $this->getFreshSysadminInTeam(self::SOURCE_TEAM, $excluded),
+            'anonymous reader' => new AnonymousUser(self::SOURCE_TEAM),
             default => self::fail(sprintf('Unknown role: %s', $role)),
         };
 

@@ -872,6 +872,10 @@ abstract class AbstractEntity extends AbstractRest
      */
     public function canTransferOwnership(): bool
     {
+        // anonymous readers of public entries have no userid to compare with
+        if ($this->Users instanceof AnonymousUser) {
+            return false;
+        }
         $entryTeam = (int) $this->entityData['team'];
         // the owner must be logged in the entry team, so the destination check in updateOwnership() applies to that team
         $isOwnerInEntryTeam = (int) $this->entityData['userid'] === $this->Users->getUserid()

@@ -123,6 +123,8 @@ use function strlen;
 use function hash_equals;
 use function preg_replace_callback;
 use function rawurlencode;
+use function is_scalar;
+use function array_values;
 
 use const JSON_HEX_APOS;
 use const JSON_THROW_ON_ERROR;
@@ -397,7 +399,7 @@ abstract class AbstractEntity extends AbstractRest
         // Allow owned entries to pass the permission filter regardless of their team
         $this->alwaysShowOwned = ($this->Users->userData['always_show_owned'] ?? 0) === 1;
         if ($displayParams->isFast()) {
-            return $this->readAllSimple($displayParams);
+            return $this->hydrateExtraFields($this->readAllSimple($displayParams), $displayParams);
         }
         // (extended) search (block must be before the call to getReadSqlBeforeWhere so extendedValues is filled)
         $plainQuery = trim($displayParams->getQuery()->getString('q'));
@@ -428,7 +430,10 @@ abstract class AbstractEntity extends AbstractRest
             $EntitySqlBuilder instanceof EntitySqlBuilder
             && $this->canUseDefaultReadFastPath($displayParams, $extended, $searchJoinSql, $withCompounds, $withUploads)
         ) {
-            return $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can);
+            return $this->hydrateExtraFields(
+                $this->readShowDefaultPage($displayParams, $EntitySqlBuilder, $displayFilterSql, $can),
+                $displayParams,
+            );
         }
         $sql = $EntitySqlBuilder->getReadSqlBeforeWhere(
             $extended,
@@ -472,7 +477,7 @@ abstract class AbstractEntity extends AbstractRest
 
         $entities = $req->fetchAll();
 
-        return $this->hydrateTags($entities);
+        return $this->hydrateExtraFields($this->hydrateTags($entities), $displayParams);
     }
 
     /**
@@ -858,6 +863,26 @@ abstract class AbstractEntity extends AbstractRest
         }
         $this->Db->execute($req);
         return $req->fetchAll();
+    }
+
+    /**
+     * Whether the requester may transfer ownership of this entry, before looking at the destination
+     * Also used by the view to decide if the transfer button is enabled, so both stay in sync.
+     * Admin rights in another team must not grant anything here: only the entry team matters.
+     */
+    public function canTransferOwnership(): bool
+    {
+        // anonymous readers of public entries have no userid to compare with
+        if ($this->Users instanceof AnonymousUser) {
+            return false;
+        }
+        $entryTeam = (int) $this->entityData['team'];
+        // the owner must be logged in the entry team, so the destination check in updateOwnership() applies to that team
+        $isOwnerInEntryTeam = (int) $this->entityData['userid'] === $this->Users->getUserid()
+            && $entryTeam === $this->Users->getTeam();
+        return $isOwnerInEntryTeam
+            || $this->Users->isSysadmin()
+            || $this->Users->isAdminOfTeam($entryTeam);
     }
 
     // Check if we have the permission to read/write or throw an exception
@@ -1280,6 +1305,56 @@ abstract class AbstractEntity extends AbstractRest
         return $entities;
     }
 
+    /**
+     * Add the values of the custom fields requested with extra_fields[] to each entity,
+     * so they can be displayed as additional columns in the show mode table.
+     * The requested names are turned into a generated JSON_TABLE, so they are bound as a parameter
+     * and matched exactly against the keys of metadata.extra_fields (JSON paths are case sensitive).
+     * This runs on the already selected entities, so it doesn't change filtering, ordering or permissions.
+     */
+    protected function hydrateExtraFields(array $entities, QueryParamsInterface $displayParams): array
+    {
+        $names = $displayParams->getExtraFieldsColumns();
+        if (empty($names) || empty($entities)) {
+            return $entities;
+        }
+
+        $entityIds = array_map(static fn(array $entity): int => (int) $entity['id'], $entities);
+        $sql = sprintf(
+            'SELECT entity.id, requested.field_name,
+                JSON_EXTRACT(entity.metadata, CONCAT(\'$.extra_fields.\', JSON_QUOTE(requested.field_name))) AS field
+            FROM %s AS entity
+            JOIN JSON_TABLE(
+                CAST(:names AS JSON),
+                \'$[*]\' COLUMNS (field_name VARCHAR(%d) PATH \'$\')
+            ) AS requested
+            WHERE entity.id IN (%s)',
+            $this->entityType->value,
+            DisplayParams::MAX_EXTRA_FIELD_NAME_LENGTH,
+            implode(',', $entityIds),
+        );
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':names', json_encode($names, JSON_THROW_ON_ERROR));
+        $this->Db->execute($req);
+
+        $valuesById = array();
+        foreach ($req->fetchAll() as $row) {
+            $field = json_decode((string) $row['field'], true);
+            if (!is_array($field)) {
+                continue;
+            }
+            $valuesById[(int) $row['id']][(string) $row['field_name']] = $this->formatExtraFieldForTable($field);
+        }
+
+        foreach ($entities as &$entity) {
+            // cast to object so it is always a JSON object, even if empty or with numeric keys
+            $entity['extra_fields_values'] = (object) ($valuesById[(int) $entity['id']] ?? array());
+        }
+        unset($entity);
+
+        return $entities;
+    }
+
     protected function hydrateTag(array $entity): array
     {
         unset($entity['metadata_search']);
@@ -1556,6 +1631,27 @@ abstract class AbstractEntity extends AbstractRest
         return $this->hydrateTags($req->fetchAll());
     }
 
+    /**
+     * Flatten an extra field into something a table cell can display, sort and filter
+     */
+    private function formatExtraFieldForTable(array $field): array
+    {
+        $value = $field[MetadataEnum::Value->value] ?? '';
+        // keep the individual values for rendering (links, checkboxes), the joined text is used for sorting and filtering
+        $values = array_map(
+            static fn(mixed $item): string => is_scalar($item) ? (string) $item : '',
+            is_array($value) ? array_values($value) : array($value),
+        );
+        $type = $field[MetadataEnum::Type->value] ?? 'text';
+        $unit = $field['unit'] ?? '';
+        return array(
+            'value' => implode(', ', $values),
+            'values' => $values,
+            'unit' => is_scalar($unit) ? (string) $unit : '',
+            'type' => is_string($type) ? $type : 'text',
+        );
+    }
+
     private function addSimpleQueryBindValues(string $query): void
     {
         if ($this->hasShortFulltextToken($query)) {
@@ -1662,14 +1758,13 @@ abstract class AbstractEntity extends AbstractRest
 
     private function updateOwnership(int $userid, int $destinationTeam): void
     {
-        $sourceTeamHelper = new TeamsHelper((int) $this->entityData['team']);
-        if (!$this->Users->isSysadmin() && !$sourceTeamHelper->isAdminInTeam($this->Users->getUserid())) {
+        if (!$this->canTransferOwnership()) {
             throw new ForbiddenException(_(
-                'Only an administrator of the entity team can transfer ownership.'
+                'Only the owner or an administrator of the entity team can transfer ownership.'
             ));
         }
 
-        // non-admins cannot transfer outside their own team
+        // non-admins cannot transfer outside their own team: together with canTransferOwnership(), this keeps owners within the entry team
         if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
             throw new ForbiddenException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }

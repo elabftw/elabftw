@@ -107,6 +107,12 @@ class BaseQueryParams implements QueryParamsInterface
     public function setSkipOrderPinned(bool $value): void {}
 
     #[Override]
+    public function getExtraFieldsColumns(): array
+    {
+        return array();
+    }
+
+    #[Override]
     public function getQuery(): InputBag
     {
         return $this->query ?? new InputBag();

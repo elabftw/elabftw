@@ -45,6 +45,7 @@ use RuntimeException;
 use function array_push;
 use function ksort;
 use function array_column;
+use function array_is_list;
 use function array_key_exists;
 use function array_key_first;
 use function array_merge;
@@ -57,6 +58,7 @@ use function hash;
 use function hash_file;
 use function implode;
 use function in_array;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function random_bytes;
@@ -504,8 +506,8 @@ class MakeEln extends AbstractMakeEln
         if (empty($metadata[Metadata::ExtraFields->value])) {
             return $res;
         }
-        // now add one for all the extra fields
-        foreach ($metadata[Metadata::ExtraFields->value] as $name => $props) {
+        // now add one (or several for multi-value fields) for all the extra fields
+        foreach ($this->flattenExtraFields($metadata[Metadata::ExtraFields->value]) as [$name, $fieldName, $valueLabel, $props]) {
             if (!array_key_exists('value', $props)) {
                 $props['value'] = null;
             } elseif ($props['value'] === '') {
@@ -519,7 +521,6 @@ class MakeEln extends AbstractMakeEln
             $pv['@type'] = 'PropertyValue';
             $pv['@id'] = $id;
             $pv['propertyID'] = $name;
-            $pv['valueReference'] = $props['type'];
             $pv['value'] = $props['value'] ?? '';
             // replace the database ids by references to nodes of the crate, when they could be exported
             $referenceType = ExtraFieldReference::tryFrom((string) ($props['type'] ?? ''));
@@ -540,7 +541,46 @@ class MakeEln extends AbstractMakeEln
             if (!empty($props['unit'])) {
                 $pv['unitText'] = $props['unit'];
             }
+            $pv['name'] = $fieldName;
+            // the type of the extra field (text, number, email, ...). valueReference is meant to point to a related node, not hold a type string
+            if (!empty($props['type'])) {
+                $pv['additionalType'] = $props['type'];
+            }
+            if ($valueLabel !== null) {
+                $pv['alternateName'] = $valueLabel;
+            }
             $res['nodes'][] = $pv;
+        }
+        return $res;
+    }
+
+    /**
+     * A multi-value field is exported as one PropertyValue per value, with ".0", ".1", ... appended to the propertyID
+     * see "Nested metadata" in https://github.com/TheELNConsortium/TheELNFileFormat/blob/master/SPECIFICATION.md
+     *
+     * @return list<array{0: string, 1: string, 2: ?string, 3: array}> propertyID, field name, value label, field holding a single value
+     */
+    protected function flattenExtraFields(array $extraFields): array
+    {
+        $res = array();
+        foreach ($extraFields as $name => $props) {
+            $name = (string) $name;
+            $value = $props['value'] ?? null;
+            if (!is_array($value)) {
+                $res[] = array($name, $name, null, $props);
+                continue;
+            }
+            if (!array_is_list($value) || empty($value)) {
+                $props['value'] = null;
+                $res[] = array($name, $name, null, $props);
+                continue;
+            }
+            $labels = $props['value_labels'] ?? array();
+            foreach ($value as $index => $subValue) {
+                $label = is_array($labels) && isset($labels[$index]) && is_string($labels[$index]) && $labels[$index] !== '' ? $labels[$index] : null;
+                $props['value'] = is_scalar($subValue) ? $subValue : null;
+                $res[] = array(sprintf('%s.%d', $name, $index), $name, $label, $props);
+            }
         }
         return $res;
     }

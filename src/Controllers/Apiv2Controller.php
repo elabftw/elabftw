@@ -103,6 +103,7 @@ use Override;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\Transport;
 
+use function array_map;
 use function dirname;
 use function implode;
 use function in_array;
@@ -282,11 +283,11 @@ final class Apiv2Controller extends AbstractApiController
             $containersCount = $this->Model->countContainersForEntity();
             return array('has_containers' => $containersCount > 0, 'containers_count' => $containersCount);
         }
+        $queryParams = $this->Model->getQueryParams($this->Request->query);
         // events nested under an entity must stay scoped to that entity, not every readable resource
         if ($this->Model instanceof Scheduler && $this->hasSubmodel) {
-            return $this->Model->readOne();
+            return $this->Model->readOne($queryParams);
         }
-        $queryParams = $this->Model->getQueryParams($this->Request->query);
         return $this->Model->readAll($queryParams);
     }
 
@@ -388,6 +389,7 @@ final class Apiv2Controller extends AbstractApiController
                 $this->requester,
                 trim($this->Request->query->getString('q')),
                 $this->Request->query->getInt('limit'),
+                $this->getExtraFieldsKeysEntityType(),
             ),
             ApiEndpoint::FavTags => new FavTags($this->requester, $this->id),
             ApiEndpoint::GhsStatements => new GhsStatements(),
@@ -405,6 +407,23 @@ final class Apiv2Controller extends AbstractApiController
                 ? new AnonymousUser($this->requester->getTeam())
                 : new Users($this->id, $this->requester->getTeam(), $this->requester),
         };
+    }
+
+    /**
+     * The optional type parameter of extra_fields_keys: an empty value means experiments and items
+     */
+    private function getExtraFieldsKeysEntityType(): ?EntityType
+    {
+        $type = $this->Request->query->getString('type');
+        if ($type === '') {
+            return null;
+        }
+        return EntityType::tryFrom($type) ?? throw new ImproperActionException(
+            sprintf(
+                'Invalid type parameter. Must be one of: %s',
+                implode(', ', array_map(static fn(EntityType $case): string => $case->value, EntityType::cases())),
+            ),
+        );
     }
 
     private function getEmail(): Email

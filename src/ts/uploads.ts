@@ -269,6 +269,9 @@ on('destroy-upload', (el: HTMLElement) => {
 
 on('toggle-modal', async (el: HTMLElement) => {
   if (el.dataset.target !== 'plainTextModal') return;
+  // the modal is reused: don't show the previous file under the new title while this one loads
+  const plainTextContentDiv = document.getElementById('plainTextContentDiv');
+  plainTextContentDiv.replaceChildren();
   // set the title for modal window
   document.getElementById('plainTextModalLabel').textContent = el.dataset.name;
   // get the file content
@@ -287,7 +290,6 @@ on('toggle-modal', async (el: HTMLElement) => {
   const response = await fetch(
     `app/download.php?${params.toString()}`,
   );
-  const plainTextContentDiv = document.getElementById('plainTextContentDiv');
   if (el.dataset.ext === 'md') {
     plainTextContentDiv.innerHTML = DOMPurify.sanitize(await marked(await response.text()), { USE_PROFILES: { html: true }, FORBID_TAGS: ['style', 'script', 'iframe', 'form'] });
   } else if (el.dataset.ext === 'json') {

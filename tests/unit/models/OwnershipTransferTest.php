@@ -24,11 +24,10 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Users\Users;
+use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
-use function array_map;
-use function implode;
 use function sprintf;
 
 /**
@@ -36,39 +35,26 @@ use function sprintf;
  *
  * Roles are set up explicitly inside a rolled-back transaction instead of relying on fixture data,
  * so every test knows exactly which flags (owner, admin, sysadmin, archived) the actors have.
- * Actors are AuthenticatedUser like real logged in users: Organization visibility only applies to them.
  */
 final class OwnershipTransferTest extends TestCase
 {
+    use TestsUtilsTrait;
+
     private const int SOURCE_TEAM = 1;
 
     private const int OTHER_TEAM = 2;
 
     private Db $Db;
 
-    /** @var list<int> users already picked in the current test */
-    private array $picked = array();
-
     protected function setUp(): void
     {
         $this->Db = Db::getConnection();
         $this->Db->beginTransaction();
-        $this->picked = array();
     }
 
     protected function tearDown(): void
     {
         $this->Db->rollBack();
-    }
-
-    public static function entityTypes(): array
-    {
-        return array(
-            'experiments' => array(EntityType::Experiments),
-            'resources' => array(EntityType::Items),
-            'experiments templates' => array(EntityType::Templates),
-            'resources templates' => array(EntityType::ItemsTypes),
-        );
     }
 
     /**
@@ -77,10 +63,10 @@ final class OwnershipTransferTest extends TestCase
     public static function ownerInOtherTeamContext(): array
     {
         $cases = array();
-        foreach (self::entityTypes() as $name => [$type]) {
-            $cases[$name . ', member there, within entry team'] = array($type, 0, self::SOURCE_TEAM);
-            $cases[$name . ', admin there, within entry team'] = array($type, 1, self::SOURCE_TEAM);
-            $cases[$name . ', admin there, into that team'] = array($type, 1, self::OTHER_TEAM);
+        foreach (self::entityTypes() as [$type]) {
+            $cases[$type->value . ', member there, within entry team'] = array($type, 0, self::SOURCE_TEAM);
+            $cases[$type->value . ', admin there, within entry team'] = array($type, 1, self::SOURCE_TEAM);
+            $cases[$type->value . ', admin there, into that team'] = array($type, 1, self::OTHER_TEAM);
         }
         return $cases;
     }
@@ -99,9 +85,9 @@ final class OwnershipTransferTest extends TestCase
             'sysadmin' => true,
         );
         $cases = array();
-        foreach (self::entityTypes() as $name => [$type]) {
+        foreach (self::entityTypes() as [$type]) {
             foreach ($roles as $role => $expected) {
-                $cases[$name . ', ' . $role] = array($type, $role, $expected);
+                $cases[$type->value . ', ' . $role] = array($type, $role, $expected);
             }
         }
         return $cases;
@@ -110,19 +96,17 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('transferButtonCases')]
     public function testCanTransferOwnership(EntityType $type, string $role, bool $expected): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $excluded = array($owner->getUserid());
         // visible across teams so every role can load the entry
-        $entity = $this->createEntity($type, $owner, BasePermissions::Organization);
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Organization);
         $requester = match ($role) {
             'owner in entry team' => $owner,
-            'owner logged in another team' => (function () use ($owner): Users {
-                $this->setMembership($owner->getUserid(), self::OTHER_TEAM, isAdmin: 1);
-                return new AuthenticatedUser($owner->getUserid(), self::OTHER_TEAM);
-            })(),
-            'writer of entry team' => $this->regularUser(self::SOURCE_TEAM),
-            'admin of entry team' => $this->adminUser(self::SOURCE_TEAM),
-            'admin of another team' => $this->adminUser(self::OTHER_TEAM),
-            'sysadmin' => $this->sysadminUser(self::SOURCE_TEAM),
+            'owner logged in another team' => $this->ownerLoggedInOtherTeam($owner, isAdminThere: 1),
+            'writer of entry team' => $this->getRegularUserInTeam(self::SOURCE_TEAM, $excluded),
+            'admin of entry team' => $this->getFreshAdminInTeam(self::SOURCE_TEAM, $excluded),
+            'admin of another team' => $this->getFreshAdminInTeam(self::OTHER_TEAM, $excluded),
+            'sysadmin' => $this->getFreshSysadminInTeam(self::SOURCE_TEAM, $excluded),
             default => self::fail(sprintf('Unknown role: %s', $role)),
         };
 
@@ -132,10 +116,10 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testOwnerCanTransferWithinTeam(EntityType $type): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
-        $target = $this->regularUser(self::SOURCE_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
         // owner-only visibility: the transfer must not rely on any permission other than ownership
-        $entity = $this->createEntity($type, $owner, BasePermissions::UserOnly);
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::UserOnly);
         $uploadId = $entity->Uploads->createFromString(FileFromString::Json, 'owned.json', '{}');
 
         $entity->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::SOURCE_TEAM));
@@ -147,9 +131,10 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testSourceTeamAdminCanTransferWithinTeam(EntityType $type): void
     {
-        $entity = $this->createEntity($type, $this->regularUser(self::SOURCE_TEAM));
-        $target = $this->regularUser(self::SOURCE_TEAM);
-        $admin = $this->adminUser(self::SOURCE_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        $admin = $this->getFreshAdminInTeam(self::SOURCE_TEAM, array($owner->getUserid(), $target->getUserid()));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $type->toInstance($admin, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::SOURCE_TEAM));
 
@@ -159,9 +144,10 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testSourceTeamAdminCanTransferAcrossTeams(EntityType $type): void
     {
-        $entity = $this->createEntity($type, $this->regularUser(self::SOURCE_TEAM));
-        $target = $this->regularUser(self::OTHER_TEAM);
-        $admin = $this->adminUser(self::SOURCE_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $admin = $this->getFreshAdminInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        $target = $this->getRegularUserInTeam(self::OTHER_TEAM, array($owner->getUserid(), $admin->getUserid()));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $type->toInstance($admin, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::OTHER_TEAM));
 
@@ -171,10 +157,12 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testSysadminCanTransferWithinTeam(EntityType $type): void
     {
-        $entity = $this->createEntity($type, $this->regularUser(self::SOURCE_TEAM));
-        $target = $this->regularUser(self::SOURCE_TEAM);
-        $sysadmin = $this->sysadminUser(self::SOURCE_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        $sysadmin = $this->getFreshSysadminInTeam(self::SOURCE_TEAM, array($owner->getUserid(), $target->getUserid()));
+        // only the sysadmin flag can authorize this transfer
         self::assertFalse($sysadmin->isAdmin);
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $type->toInstance($sysadmin, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::SOURCE_TEAM));
 
@@ -184,9 +172,9 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testWriteAccessDoesNotGrantTransfer(EntityType $type): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
-        $entity = $this->createEntity($type, $owner);
-        $writer = $type->toInstance($this->regularUser(self::SOURCE_TEAM), $entity->id);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
+        $writer = $type->toInstance($this->getRegularUserInTeam(self::SOURCE_TEAM, array($owner->getUserid())), $entity->id);
         // make sure the request is refused for the right reason
         $writer->canOrExplode(AccessType::Write);
 
@@ -197,9 +185,9 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testOwnerCannotTransferAcrossTeams(EntityType $type): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
-        $entity = $this->createEntity($type, $owner);
-        $target = $this->regularUser(self::OTHER_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::OTHER_TEAM, array($owner->getUserid()));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $this->expectException(ForbiddenException::class);
         $entity->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::OTHER_TEAM));
@@ -208,12 +196,11 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('ownerInOtherTeamContext')]
     public function testOwnerLoggedInAnotherTeamCannotTransfer(EntityType $type, int $isAdminThere, int $destinationTeam): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
-        $entity = $this->createEntity($type, $owner);
-        $this->setMembership($owner->getUserid(), self::OTHER_TEAM, isAdmin: $isAdminThere);
-        $ownerElsewhere = new AuthenticatedUser($owner->getUserid(), self::OTHER_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam($destinationTeam, array($owner->getUserid()));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
+        $ownerElsewhere = $this->ownerLoggedInOtherTeam($owner, $isAdminThere);
         self::assertSame((bool) $isAdminThere, $ownerElsewhere->isAdmin);
-        $target = $this->regularUser($destinationTeam);
 
         $this->expectException(ForbiddenException::class);
         $type->toInstance($ownerElsewhere, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => $destinationTeam));
@@ -222,14 +209,14 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testOwnerCannotTransferEntryLockedBySomeoneElse(EntityType $type): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
-        $entity = $this->createEntity($type, $owner);
-        $locker = $this->adminUser(self::SOURCE_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        $locker = $this->getFreshAdminInTeam(self::SOURCE_TEAM, array($owner->getUserid(), $target->getUserid()));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
         $req = $this->Db->prepare(sprintf('UPDATE %s SET locked = 1, lockedby = :lockedby WHERE id = :id', $type->value));
         $req->bindValue(':lockedby', $locker->getUserid(), PDO::PARAM_INT);
         $req->bindValue(':id', $entity->id, PDO::PARAM_INT);
         $this->Db->execute($req);
-        $target = $this->regularUser(self::SOURCE_TEAM);
 
         $this->expectException(ForbiddenException::class);
         $type->toInstance($owner, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::SOURCE_TEAM));
@@ -238,9 +225,10 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testTargetMustBelongToDestinationTeam(EntityType $type): void
     {
-        $entity = $this->createEntity($type, $this->regularUser(self::SOURCE_TEAM));
-        $outsider = $this->regularUser(self::OTHER_TEAM);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $outsider = $this->getRegularUserInTeam(self::OTHER_TEAM, array($owner->getUserid()));
         self::assertNotContains(self::SOURCE_TEAM, $outsider->getActiveTeamIds());
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $this->expectException(UnprocessableContentException::class);
         $entity->patch(Action::UpdateOwner, array('userid' => $outsider->getUserid(), 'team' => self::SOURCE_TEAM));
@@ -249,9 +237,10 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testTargetMustNotBeArchivedInDestinationTeam(EntityType $type): void
     {
-        $entity = $this->createEntity($type, $this->regularUser(self::SOURCE_TEAM));
-        $archivedId = $this->pickUserId(self::SOURCE_TEAM);
-        $this->setMembership($archivedId, self::SOURCE_TEAM, isArchived: 1);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $archivedId = $this->getRegularUserInTeam(self::SOURCE_TEAM, array($owner->getUserid()))->getUserid();
+        $this->setTeamMembership($archivedId, self::SOURCE_TEAM, isArchived: 1);
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $this->expectException(UnprocessableContentException::class);
         $entity->patch(Action::UpdateOwner, array('userid' => $archivedId, 'team' => self::SOURCE_TEAM));
@@ -260,19 +249,18 @@ final class OwnershipTransferTest extends TestCase
     #[DataProvider('entityTypes')]
     public function testOwnershipCannotChangeThroughRegularUpdate(EntityType $type): void
     {
-        $owner = $this->regularUser(self::SOURCE_TEAM);
-        $entity = $this->createEntity($type, $owner);
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $this->expectException(ImproperActionException::class);
         $entity->patch(Action::Update, array('userid' => $owner->getUserid(), 'team' => self::SOURCE_TEAM));
     }
 
-    private function createEntity(EntityType $type, Users $owner, BasePermissions $base = BasePermissions::Team): AbstractEntity
+    // the same person, now logged in OTHER_TEAM
+    private function ownerLoggedInOtherTeam(Users $owner, int $isAdminThere): AuthenticatedUser
     {
-        $entity = $type->toInstance($owner);
-        $id = $entity->create(canreadBase: $base, canwriteBase: $base);
-        $entity->setId($id);
-        return $entity;
+        $this->setTeamMembership($owner->getUserid(), self::OTHER_TEAM, isAdmin: $isAdminThere);
+        return new AuthenticatedUser($owner->getUserid(), self::OTHER_TEAM);
     }
 
     // read back as the new owner: the previous owner or the requester may have lost read access
@@ -289,78 +277,5 @@ final class OwnershipTransferTest extends TestCase
         $req->bindValue(':id', $uploadId, PDO::PARAM_INT);
         $this->Db->execute($req);
         return (int) $req->fetchColumn();
-    }
-
-    private function regularUser(int $team): Users
-    {
-        $user = new AuthenticatedUser($this->pickUserId($team), $team);
-        self::assertFalse($user->isAdmin);
-        self::assertFalse($user->isSysadmin());
-        return $user;
-    }
-
-    private function adminUser(int $team): Users
-    {
-        $userid = $this->pickUserId($team);
-        $this->setMembership($userid, $team, isAdmin: 1);
-        $user = new AuthenticatedUser($userid, $team);
-        self::assertTrue($user->isAdmin);
-        self::assertFalse($user->isSysadmin());
-        return $user;
-    }
-
-    // a sysadmin without admin rights in the team, so only the sysadmin flag can authorize the transfer
-    private function sysadminUser(int $team): Users
-    {
-        $userid = $this->pickUserId($team);
-        $req = $this->Db->prepare('UPDATE users SET is_sysadmin = 1 WHERE userid = :userid');
-        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $user = new AuthenticatedUser($userid, $team);
-        self::assertTrue($user->isSysadmin());
-        return $user;
-    }
-
-    /**
-     * Pick an active, validated user with no special role in the team, different from those already picked in this test
-     */
-    private function pickUserId(int $team): int
-    {
-        $exclude = $this->picked === array() ? '' : sprintf(
-            'AND u2t.users_id NOT IN (%s)',
-            implode(',', array_map(intval(...), $this->picked)),
-        );
-        $sql = sprintf('SELECT u2t.users_id FROM users2teams AS u2t
-            INNER JOIN users AS u ON u.userid = u2t.users_id
-            WHERE u2t.teams_id = :team
-                AND u2t.is_admin = 0
-                AND u2t.is_archived = 0
-                AND u.is_sysadmin = 0
-                AND u.validated = 1
-                AND (u.valid_until IS NULL OR u.valid_until > NOW())
-                %s
-            ORDER BY u2t.users_id LIMIT 1', $exclude);
-        $req = $this->Db->prepare($sql);
-        $req->bindValue(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $userid = $req->fetchColumn();
-        self::assertNotFalse($userid, sprintf('Not enough regular users in team %d for this test.', $team));
-        $this->picked[] = (int) $userid;
-        return (int) $userid;
-    }
-
-    // create or overwrite the membership so pre-existing flags (e.g. an archived membership) cannot leak into the test
-    private function setMembership(int $userid, int $team, int $isAdmin = 0, int $isArchived = 0): void
-    {
-        $req = $this->Db->prepare('INSERT IGNORE INTO users2teams (users_id, teams_id) VALUES (:userid, :team)');
-        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-        $req->bindValue(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
-        $req = $this->Db->prepare('UPDATE users2teams SET is_admin = :is_admin, is_archived = :is_archived WHERE users_id = :userid AND teams_id = :team');
-        $req->bindValue(':is_admin', $isAdmin, PDO::PARAM_INT);
-        $req->bindValue(':is_archived', $isArchived, PDO::PARAM_INT);
-        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
-        $req->bindValue(':team', $team, PDO::PARAM_INT);
-        $this->Db->execute($req);
     }
 }

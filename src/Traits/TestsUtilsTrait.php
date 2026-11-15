@@ -14,8 +14,11 @@ namespace Elabftw\Traits;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\NullLocalPassword;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\Usergroup;
+use Elabftw\Exceptions\ResourceNotFoundException;
+use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Users\AuthenticatedUser;
 use Elabftw\Models\Experiments;
@@ -29,7 +32,10 @@ use PDO;
 use function array_rand;
 use function array_map;
 use function bin2hex;
+use function implode;
+use function intval;
 use function random_bytes;
+use function sprintf;
 
 trait TestsUtilsTrait
 {
@@ -73,6 +79,87 @@ trait TestsUtilsTrait
         return new AuthenticatedUser($selected['users_id'], $team);
     }
 
+    /**
+     * An active and validated user of the team, with no admin or sysadmin rights
+     * Pass the users already used by the test to get a different one.
+     *
+     * @param list<int> $excludedUserids
+     */
+    protected function getRegularUserInTeam(int $team, array $excludedUserids = array()): AuthenticatedUser
+    {
+        $exclude = $excludedUserids === array() ? '' : sprintf(
+            'AND u2t.users_id NOT IN (%s)',
+            implode(',', array_map(intval(...), $excludedUserids)),
+        );
+        $sql = sprintf('SELECT u2t.users_id FROM users2teams AS u2t
+            INNER JOIN users AS u ON u.userid = u2t.users_id
+            WHERE u2t.teams_id = :team
+                AND u2t.is_admin = 0
+                AND u2t.is_archived = 0
+                AND u.is_sysadmin = 0
+                AND u.validated = 1
+                AND (u.valid_until IS NULL OR u.valid_until > NOW())
+                %s
+            ORDER BY u2t.users_id LIMIT 1', $exclude);
+        $Db = Db::getConnection();
+        $req = $Db->prepare($sql);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $Db->execute($req);
+        $userid = $req->fetchColumn();
+        if ($userid === false) {
+            throw new ResourceNotFoundException(sprintf('Not enough regular users in team %d.', $team));
+        }
+        return new AuthenticatedUser((int) $userid, $team);
+    }
+
+    /**
+     * A regular user promoted to admin of the team, so they are admin there and nowhere else by construction
+     * Writes to the database: use it inside a transaction that is rolled back.
+     *
+     * @param list<int> $excludedUserids
+     */
+    protected function getFreshAdminInTeam(int $team, array $excludedUserids = array()): AuthenticatedUser
+    {
+        $userid = $this->getRegularUserInTeam($team, $excludedUserids)->getUserid();
+        $this->setTeamMembership($userid, $team, isAdmin: 1);
+        return new AuthenticatedUser($userid, $team);
+    }
+
+    /**
+     * A regular user promoted to sysadmin, without admin rights in the team
+     * Writes to the database: use it inside a transaction that is rolled back.
+     *
+     * @param list<int> $excludedUserids
+     */
+    protected function getFreshSysadminInTeam(int $team, array $excludedUserids = array()): AuthenticatedUser
+    {
+        $userid = $this->getRegularUserInTeam($team, $excludedUserids)->getUserid();
+        $Db = Db::getConnection();
+        $req = $Db->prepare('UPDATE users SET is_sysadmin = 1 WHERE userid = :userid');
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $Db->execute($req);
+        return new AuthenticatedUser($userid, $team);
+    }
+
+    /**
+     * Add the user to the team or overwrite their flags there, so leftovers (e.g. an archived membership) cannot leak into a test
+     * Writes to the database: use it inside a transaction that is rolled back.
+     */
+    protected function setTeamMembership(int $userid, int $team, int $isAdmin = 0, int $isArchived = 0): void
+    {
+        $Db = Db::getConnection();
+        $req = $Db->prepare('INSERT IGNORE INTO users2teams (users_id, teams_id) VALUES (:userid, :team)');
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $Db->execute($req);
+        $req = $Db->prepare('UPDATE users2teams SET is_admin = :is_admin, is_archived = :is_archived WHERE users_id = :userid AND teams_id = :team');
+        $req->bindValue(':is_admin', $isAdmin, PDO::PARAM_INT);
+        $req->bindValue(':is_archived', $isArchived, PDO::PARAM_INT);
+        $req->bindValue(':userid', $userid, PDO::PARAM_INT);
+        $req->bindValue(':team', $team, PDO::PARAM_INT);
+        $Db->execute($req);
+    }
+
     protected function getUserIdFromEmail(string $email): int
     {
         $Db = Db::getConnection();
@@ -95,6 +182,18 @@ trait TestsUtilsTrait
     {
         $Entity = new Experiments($users);
         $id = $Entity->create();
+        $Entity->setId($id);
+        return $Entity;
+    }
+
+    /**
+     * A fresh entity of any type owned by the given user
+     * With $base, both read and write base permissions are set to it, otherwise the model defaults apply.
+     */
+    protected function getFreshEntityWithGivenUser(EntityType $type, Users $users, ?BasePermissions $base = null): AbstractEntity
+    {
+        $Entity = $type->toInstance($users);
+        $id = $base === null ? $Entity->create() : $Entity->create(canreadBase: $base, canwriteBase: $base);
         $Entity->setId($id);
         return $Entity;
     }

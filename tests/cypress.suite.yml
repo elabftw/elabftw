@@ -1,8 +1,0 @@
-actor: CypressTester
-coverage:
-    enabled: true
-    remote_context_options:
-        ssl:
-            verify_peer: false
-            verify_peer_name: false
-            allow_self_signed: true

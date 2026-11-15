@@ -21,7 +21,5 @@ docker image rm elabftw/elabimg:edge
 docker image rm elabftw/elabtmp:edge
 docker image rm elab-cypress
 
-# Remove codecept files as they can cause errors between changes
-docker exec -it elabftw vendor/bin/codecept clean
-
+# Remove test output (coverage reports, phpunit cache)
 rm -rfv tests/_output

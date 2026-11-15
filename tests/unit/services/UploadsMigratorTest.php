@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use Elabftw\Enums\Storage;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\NullOutput;
 
 class UploadsMigratorTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,7 +22,7 @@ class UploadsMigratorTest extends \PHPUnit\Framework\TestCase
         // create a non-persistent filesystem stored in memory
         $sourceFs = Storage::LOCAL->getStorage()->getFs();
         $targetFs = Storage::MEMORY->getStorage()->getFs();
-        $UploadsMigrator = new UploadsMigrator(new ConsoleOutput(), $sourceFs, $targetFs);
+        $UploadsMigrator = new UploadsMigrator(new NullOutput(), $sourceFs, $targetFs);
         // number of uploads will be random each run
         $this->assertIsInt($UploadsMigrator->migrate());
     }

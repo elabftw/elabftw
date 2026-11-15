@@ -26,7 +26,7 @@ class Xml2IdpsTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetIdpsFromDomNoEntityDescriptor(): void
     {
-        $content = '<?xml version="1.0" encoding="UTF-8"?><elab:Ftw></elab:Ftw>';
+        $content = '<?xml version="1.0" encoding="UTF-8"?><elab:Ftw xmlns:elab="https://www.elabftw.net"></elab:Ftw>';
         $dom = new DOMDocument();
         $dom->loadXML($content);
         $Xml2Idps = new Xml2Idps($dom);

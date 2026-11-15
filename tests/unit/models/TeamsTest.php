@@ -93,6 +93,7 @@ class TeamsTest extends \PHPUnit\Framework\TestCase
     public function testCanWriteOrExplodeAsAdmin(): void
     {
         $Teams = new Teams($this->getUserInTeam(1, 1));
+        $this->expectNotToPerformAssertions();
         $Teams->canWriteOrExplode();
     }
 

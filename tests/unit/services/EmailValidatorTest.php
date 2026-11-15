@@ -22,7 +22,7 @@ class EmailValidatorTest extends \PHPUnit\Framework\TestCase
     public function testValidEmail(): void
     {
         $EmailValidator = new EmailValidator('blah@example.com');
-        $EmailValidator->validate();
+        $this->assertSame('blah@example.com', $EmailValidator->validate());
     }
 
     public function testDomainIsEmptyString(): void
@@ -65,7 +65,7 @@ class EmailValidatorTest extends \PHPUnit\Framework\TestCase
     public function testAllowedDomain(): void
     {
         $EmailValidator = new EmailValidator('yolololol@yopmail.com', false, 'yopmail.com');
-        $EmailValidator->validate();
+        $this->assertSame('yolololol@yopmail.com', $EmailValidator->validate());
     }
 
     public function testAllowedWildcardDomain(): void

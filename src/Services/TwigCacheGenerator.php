@@ -19,6 +19,7 @@ use RuntimeException;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function dirname;
+use function file_exists;
 use function is_dir;
 use function mkdir;
 use function sprintf;
@@ -41,7 +42,8 @@ final class TwigCacheGenerator
     {
         if (
             !is_dir($this->twigCacheDir)
-            && !mkdir($this->twigCacheDir, 0o770, true)
+            // a file in the way: mkdir() would only warn
+            && (file_exists($this->twigCacheDir) || !mkdir($this->twigCacheDir, 0o770, true))
             && !is_dir($this->twigCacheDir)
         ) {
             throw new RuntimeException(sprintf(

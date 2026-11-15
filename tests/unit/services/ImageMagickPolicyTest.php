@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Services;
 
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Imagick;
 use ImagickException;
 use ImagickPixel;

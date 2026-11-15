@@ -44,7 +44,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $fixturesFs = Storage::FIXTURES->getStorage();
         $fileName = 'example.png';
-        $this->Entity->Uploads->create(new CreateUploadFromLocalFile($fileName, $fixturesFs->getPath() . '/' . $fileName));
+        $this->assertIsInt($this->Entity->Uploads->create(new CreateUploadFromLocalFile($fileName, $fixturesFs->getPath() . '/' . $fileName)));
         $this->Entity->Uploads->duplicate($this->Entity);
     }
 
@@ -64,7 +64,7 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $fixturesFs = Storage::FIXTURES->getStorage();
         $fileName = 'example.txt';
-        $this->Entity->Uploads->create(new CreateUploadFromLocalFile('example.pdf', $fixturesFs->getPath() . '/' . $fileName));
+        $this->assertIsInt($this->Entity->Uploads->create(new CreateUploadFromLocalFile('example.pdf', $fixturesFs->getPath() . '/' . $fileName)));
     }
 
     public function testCreatePngFromString(): void
@@ -137,6 +137,8 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
     {
         $id = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('some-file.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
         $this->Entity->Uploads->setId($id);
+        // readBinary() closes one output buffer: give it its own
+        ob_start();
         $this->assertInstanceOf(Response::class, $this->Entity->Uploads->readBinary());
     }
 

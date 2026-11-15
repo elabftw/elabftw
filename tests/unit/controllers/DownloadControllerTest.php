@@ -14,7 +14,7 @@ namespace Elabftw\Controllers;
 use Aws\CommandInterface;
 use Aws\Result;
 use Aws\S3\S3Client;
-use Codeception\Attribute\DataProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;

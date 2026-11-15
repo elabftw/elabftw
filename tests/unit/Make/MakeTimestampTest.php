@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Make;
 
 use Elabftw\Elabftw\CreateUploadFromLocalFile;
+use Elabftw\Elabftw\FsTools;
 use Elabftw\Elabftw\TimestampResponse;
 use Elabftw\Enums\ExportFormat;
 use Elabftw\Enums\State;
@@ -19,8 +20,11 @@ use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Services\TimestampUtils;
 use Elabftw\Traits\TestsUtilsTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
+use function copy;
 use function dirname;
+use function file_put_contents;
 
 class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 {
@@ -99,11 +103,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         );
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
-        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
-        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
-        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
-        $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
+        $this->assertIsInt($this->saveTimestamp($Maker, 'Oct 17 05:12:18 2021 GMT'));
     }
 
     public function testDigicertTimestamp(): void
@@ -117,16 +117,13 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 
-        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
-        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
-        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 05:12:18 2021 GMT');
-        $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
+        $this->assertIsInt($this->saveTimestamp($Maker, 'Oct 17 05:12:18 2021 GMT'));
     }
 
     public function testUniversignTimestamp(): void
     {
         $config = array(
+            'ts_limit' => '0',
             'ts_login' => 'fakelogin@example.com',
             // create a fake encrypted password
             'ts_password' => 'fakepassword',
@@ -140,11 +137,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 
-        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
-        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
-        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
-        $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
+        $this->assertIsInt($this->saveTimestamp($Maker, 'Oct 17 13:37:42.666 2021 GMT'));
     }
 
     public function testGlobalSign(): void
@@ -160,7 +153,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testDgn(): void
     {
-        $config = array();
+        $config = array('ts_limit' => '0');
         $config['ts_login'] = 'fakelogin@example.com';
         // create a fake encrypted password
         $config['ts_password'] = 'fakepassword';
@@ -189,7 +182,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker = new MakeUniversignTimestamp(
             new Users(1, 1),
             $this->getFreshExperiment(),
-            array(),
+            array('ts_limit' => '0'),
             $this->dataFormat,
         );
         $this->expectException(ImproperActionException::class);
@@ -198,7 +191,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testUniversignTimestampNoPassword(): void
     {
-        $config = array('ts_login' => 'some-login');
+        $config = array('ts_limit' => '0', 'ts_login' => 'some-login');
         $Maker = new MakeUniversignTimestamp(
             new Users(1, 1),
             $this->getFreshExperiment(),
@@ -211,7 +204,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
 
     public function testUniversignTimestampBadResponseTime(): void
     {
-        $config = array();
+        $config = array('ts_limit' => '0');
 
         $config['ts_login'] = 'fakelogin@example.com';
         $config['ts_password'] = 'fakepassword';
@@ -233,6 +226,7 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
     public function testEvidencyTimestamp(): void
     {
         $config = array(
+            'ts_limit' => '0',
             'ts_login' => 'SomeProjectId',
             'ts_password' => 'abc123',
         );
@@ -246,16 +240,13 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 
-        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
-        $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
-        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
-        $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
+        $this->assertIsInt($this->saveTimestamp($Maker, 'Oct 17 13:37:42.666 2021 GMT'));
     }
 
     public function testDeltablotTimestamp(): void
     {
         $config = array(
+            'ts_limit' => '0',
             'ts_login' => 'gentilrequin',
             'ts_password' => 'abc123',
         );
@@ -269,10 +260,22 @@ class MakeTimestampTest extends \PHPUnit\Framework\TestCase
         $Maker->generateData();
         $this->assertIsArray($Maker->getTimestampParameters());
 
-        /** @var \Elabftw\Elabftw\TimestampResponse&\PHPUnit\Framework\MockObject\MockObject $tsResponseMock */
+        $this->assertIsInt($this->saveTimestamp($Maker, 'Oct 17 13:37:42.666 2021 GMT'));
+    }
+
+    /**
+     * saveTimestamp() zips the data and token files of the response, so they must exist
+     */
+    private function saveTimestamp(AbstractMakeTrustedTimestamp $Maker, string $responseTime): int
+    {
+        /** @var TimestampResponse&MockObject $tsResponseMock */
         $tsResponseMock = $this->getMockBuilder(TimestampResponse::class)->getMock();
-        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn('Oct 17 13:37:42.666 2021 GMT');
-        $zipName = $Maker->getFileName();
-        $this->assertIsInt($Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($zipName, $this->dataPath . 'example.zip', $this->comment, 1, State::Archived)));
+        $tsResponseMock->method('getTimestampFromResponseFile')->willReturn($responseTime);
+        file_put_contents($tsResponseMock->dataPath, 'data');
+        file_put_contents($tsResponseMock->tokenPath, 'token');
+        // work on a copy: the archive is modified
+        $zipPath = FsTools::getCacheFile();
+        copy($this->dataPath . 'example.zip', $zipPath);
+        return $Maker->saveTimestamp($tsResponseMock, new CreateUploadFromLocalFile($Maker->getFileName(), $zipPath, $this->comment, 1, State::Archived));
     }
 }

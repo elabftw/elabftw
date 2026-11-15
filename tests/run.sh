@@ -42,7 +42,10 @@ if [ "${SKIP_POPULATE:-0}" -ne 1 ]; then
     docker exec -it elabtmp bin/init db:populate src/tools/populate-config.yml.dist -y --fast
 fi
 # RUN TESTS
-# when trying to use a bash variable to hold the skip api options, I ran into issues that this option doesn't exist, so the command is entirely duplicated instead
+# phpunit writes its cache, the coverage reports and the error_log (see phpunit.xml.dist) in there
+docker exec -it elabtmp mkdir -p tests/_output
+# coverage reports are written in tests/_output
+COVERAGE_ARGS=(--coverage-text --only-summary-for-coverage-text --coverage-html tests/_output/coverage --coverage-clover tests/_output/coverage.xml)
 if [ "${1:-}" = "unit" ]; then
     # Remove "unit" from the list of arguments, we are going to allow multiple arguments (test files) so this one should be excluded from the list.
     shift
@@ -53,17 +56,13 @@ if [ "${1:-}" = "unit" ]; then
         # Loop through each test file and run it individually
         for TEST_FILE in "${TEST_FILES[@]}"; do
           echo "Running test: $TEST_FILE"
-          # verbose flag allows to see fwrite debug statements
-          docker exec -it elabtmp php vendor/bin/codecept run "$TEST_FILE" --verbose --skip apiv2 --skip cypress
+          docker exec -it elabtmp php vendor/bin/phpunit "$TEST_FILE"
         done
     else
         echo "Running all unit tests."
         # Run all tests if no file is specified
-        docker exec -it elabtmp php vendor/bin/codecept run --verbose --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
+        docker exec -it elabtmp php vendor/bin/phpunit "${COVERAGE_ARGS[@]}"
     fi
-elif [ "${1:-}" = "api" ]; then
-        echo "Running apiv2 tests."
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress
 # acceptance with cypress
 elif [ "${1:-}" = "cy" ]; then
     if [ -z "$(docker images -q elab-cypress 2>/dev/null)" ]; then
@@ -83,9 +82,8 @@ elif [ "${1:-}" = "cy" ]; then
     docker cp elab-cypress:/home/node/tests/cypress/videos/. ./tests/cypress/videos
     docker cp elab-cypress:/home/node/tests/cypress/screenshots/. ./tests/cypress/screenshots
 else
-    # run unit with coverage and api without coverage
-    docker exec -it elabtmp php vendor/bin/codecept run --skip apiv2 --skip cypress --coverage --coverage-html --coverage-xml
-    docker exec -it elabtmp php vendor/bin/codecept run --skip unit --skip cypress
+    # run unit tests with coverage
+    docker exec -it elabtmp php vendor/bin/phpunit "${COVERAGE_ARGS[@]}"
 fi
 
 # all tests succeeded, display a koala

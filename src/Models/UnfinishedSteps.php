@@ -20,8 +20,12 @@ use Elabftw\Models\Users\Users;
 use Override;
 use PDO;
 
-use function explode;
+use function array_map;
+use function json_decode;
 use function sprintf;
+use function usort;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Read the unfinished steps of items or experiments to display in to-do list.
@@ -51,12 +55,12 @@ final class UnfinishedSteps extends AbstractRest
 
     private function getSteps(EntityType $model): array
     {
-        $sql = 'SELECT entity.id, entity.title, stepst.finished, stepst.steps_body, stepst.steps_id
+        // JSON_ARRAYAGG has no length limit, unlike GROUP_CONCAT (group_concat_max_len), and bodies can contain any character
+        $sql = 'SELECT entity.id, entity.title, stepst.steps
             FROM ' . $model->value . " as entity
             CROSS JOIN (
-                SELECT item_id, finished,
-                GROUP_CONCAT(entity_steps.body ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_body,
-                GROUP_CONCAT(entity_steps.id ORDER BY entity_steps.ordering SEPARATOR '|') AS steps_id
+                SELECT item_id,
+                JSON_ARRAYAGG(JSON_OBJECT('id', entity_steps.id, 'body', entity_steps.body, 'ordering', entity_steps.ordering)) AS steps
                 FROM " . $model->value . '_steps as entity_steps
                 WHERE finished = 0 GROUP BY item_id
             ) AS stepst ON (stepst.item_id = entity.id)';
@@ -86,15 +90,11 @@ final class UnfinishedSteps extends AbstractRest
     private function cleanUpResult(array $res): array
     {
         foreach ($res as &$entity) {
-            $stepIDs = explode('|', $entity['steps_id']);
-            $stepsBodies = explode('|', $entity['steps_body']);
-
-            $entitySteps = array();
-            foreach ($stepIDs as $key => $stepID) {
-                $entitySteps[] = array($stepID, $stepsBodies[$key]);
-            }
-            $entity['steps'] = $entitySteps;
-            unset($entity['steps_body'], $entity['steps_id'], $entity['finished']);
+            $steps = json_decode($entity['steps'], true, 512, JSON_THROW_ON_ERROR);
+            // JSON_ARRAYAGG doesn't take an ORDER BY
+            usort($steps, static fn(array $a, array $b): int => array($a['ordering'], $a['id']) <=> array($b['ordering'], $b['id']));
+            // keep the previous output format: list of [id (as string), body]
+            $entity['steps'] = array_map(static fn(array $step): array => array((string) $step['id'], $step['body'] ?? ''), $steps);
         }
 
         return $res;

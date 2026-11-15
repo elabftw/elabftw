@@ -17,6 +17,7 @@ use Elabftw\Models\Teams2Rors;
 use Elabftw\Models\Users2Rors;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use ZipStream\ZipStream;
 use ReflectionMethod;
@@ -30,6 +31,8 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
 
     private MakeEln $Make;
 
+    private ZipStream&MockObject $Zip;
+
     protected function setUp(): void
     {
         $targets = array(
@@ -38,10 +41,10 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
             $this->getFreshItem(),
         );
         $Users = new Users(1, 1);
-        $Zip = $this->createMock(ZipStream::class);
+        $this->Zip = $this->createMock(ZipStream::class);
         $this->Make = new MakeEln(
             $this->createMock(LoggerInterface::class),
-            $Zip,
+            $this->Zip,
             $Users,
             $targets,
             new Instance2Rors(),
@@ -58,6 +61,7 @@ class MakeElnTest extends \PHPUnit\Framework\TestCase
 
     public function testGetElnExp(): void
     {
+        $this->Zip->expects($this->once())->method('finish');
         $this->Make->getStreamZip();
     }
 

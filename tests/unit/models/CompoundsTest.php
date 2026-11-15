@@ -12,11 +12,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use Elabftw\Elabftw\Compound;
+use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Interfaces\FingerprinterInterface;
+use Elabftw\Interfaces\SmartsMatcherInterface;
 use Elabftw\Models\Links\Compounds2ExperimentsLinks;
 use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
@@ -27,7 +32,24 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use PDO;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+
+use function array_column;
+use function array_fill;
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function array_search;
+use function bin2hex;
+use function json_decode;
+use function random_bytes;
+use function random_int;
+use function sprintf;
+use function str_repeat;
+use function strtoupper;
+use function substr;
 
 class CompoundsTest extends \PHPUnit\Framework\TestCase
 {
@@ -117,6 +139,15 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('PJMPHNIQZUBGLI-UHFFFAOYSA-N', $compound['inchi_key']);
         $this->assertEquals($this->smiles, $compound['smiles']);
         $this->assertEquals(self::FENTANYL_CAS, $compound['cas_number']);
+        // the GHS classification of PubChem
+        $this->assertSame('Danger', $compound['ghs_signal_word']);
+        $codes = array_column($compound['ghs_statements'], 'code');
+        $this->assertContains('H300', $codes);
+        $this->assertContains('P301+P316', $codes);
+        $this->assertSame('IF SWALLOWED: Get emergency medical help immediately.', $compound['ghs_statements'][array_search('P301+P316', $codes, true)]['statement']);
+        // a compound from PubChem is public by default
+        $this->assertSame(Compounds::PUBCHEM_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::PUBCHEM_CANWRITE_BASE->value, $compound['canwrite_base']);
         // test with a user without can_manage_compounds
         $user = $this->getRandomUserInTeam(2);
         $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter(), false);
@@ -126,6 +157,35 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $Compounds = new Compounds($this->httpGetter, $user, new NullFingerprinter(), true);
         $this->expectException(ForbiddenException::class);
         $Compounds->postAction(Action::Create, array());
+    }
+
+    public function testCreateWithGhs(): void
+    {
+        $id = $this->Compounds->postAction(Action::Create, array(
+            'name' => 'Flammable compound',
+            'inchi_key' => substr(strtoupper(bin2hex(random_bytes(14))), 0, 27),
+            'ghs_signal_word' => 'Warning',
+            // the unknown code is ignored
+            'ghs_statements' => 'P210, H226 H999',
+        ));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame('Warning', $compound['ghs_signal_word']);
+        $this->assertSame(array('H226', 'P210'), array_column($compound['ghs_statements'], 'code'));
+        // a list of codes works too
+        $id = $this->Compounds->postAction(Action::Create, array(
+            'name' => 'Another flammable compound',
+            'inchi_key' => substr(strtoupper(bin2hex(random_bytes(14))), 0, 27),
+            'ghs_statements' => array('H226', 'P210'),
+        ));
+        $this->Compounds->setId($id);
+        $this->assertSame(array('H226', 'P210'), array_column($this->Compounds->readOne()['ghs_statements'], 'code'));
+        $this->assertNull($this->Compounds->readOne()['ghs_signal_word']);
+        // the signal word can be changed and removed
+        $this->assertSame('Danger', $this->Compounds->patch(Action::Update, array('ghs_signal_word' => 'Danger'))['ghs_signal_word']);
+        $this->assertNull($this->Compounds->patch(Action::Update, array('ghs_signal_word' => ''))['ghs_signal_word']);
+        $this->expectException(ImproperActionException::class);
+        $this->Compounds->patch(Action::Update, array('ghs_signal_word' => 'Maybe'));
     }
 
     public function testPostActionBadParam(): void
@@ -166,6 +226,208 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $linker->postAction(Action::Create, array());
         $this->expectException(ImproperActionException::class);
         $this->Compounds->destroy();
+    }
+
+    public function testCompoundOfAReactionCannotBeDeleted(): void
+    {
+        $compoundId = $this->Compounds->create(name: 'In a reaction', inchiKey: substr(strtoupper(bin2hex(random_bytes(14))), 0, 27));
+        $this->Compounds->setId($compoundId);
+        new Reactions($this->getFreshExperiment())->postAction(Action::Create, array(
+            'title' => 'Uses the compound',
+            'components' => array(array('name' => 'In a reaction', 'compound_id' => $compoundId)),
+        ));
+        // neither from the delete action nor by changing its state: the reaction could not be saved again
+        foreach (array(fn() => $this->Compounds->destroy(), fn() => $this->Compounds->patch(Action::Update, array('state' => State::Deleted->value))) as $delete) {
+            try {
+                $delete();
+                $this->fail('Deleted a compound used in a reaction');
+            } catch (ImproperActionException) {
+                $this->addToAssertionCount(1);
+            }
+        }
+        $this->assertSame(State::Normal->value, $this->Compounds->readOne()['state']);
+        // other states are still allowed
+        $this->assertSame(State::Archived->value, $this->Compounds->patch(Action::Update, array('state' => State::Archived->value))['state']);
+    }
+
+    public function testPermissions(): void
+    {
+        // only the owner can read and write it
+        $owner = $this->getUserInTeam(2);
+        // a logged in user, as Organization access is only for them, see Permissions::getCan()
+        $other = $this->getUserInTeam(1);
+        $this->assertNotSame($other->userid, $owner->userid);
+        $OwnerCompounds = new Compounds($this->httpGetter, $owner, new NullFingerprinter(), false);
+        $inchiKey = substr(strtoupper(bin2hex(random_bytes(14))), 0, 27);
+        $id = $OwnerCompounds->create(name: 'Private compound', inchiKey: $inchiKey, canreadBase: BasePermissions::UserOnly, canwriteBase: BasePermissions::UserOnly);
+        $OwnerCompounds->setId($id);
+        $this->assertSame(1, $OwnerCompounds->readOne()['has_write_access']);
+
+        $OtherCompounds = new Compounds($this->httpGetter, $other, new NullFingerprinter(), false, $id);
+        $this->assertNotContains($id, array_column($OtherCompounds->readAll($OtherCompounds->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
+        $this->assertForbidden(fn() => $OtherCompounds->readOne());
+        $this->assertForbidden(fn() => $OtherCompounds->patch(Action::Update, array('name' => 'Renamed')));
+        $this->assertForbidden(fn() => $OtherCompounds->destroy());
+        // the identifiers are unique: the other user cannot add it again nor use it
+        try {
+            $OtherCompounds->create(name: 'Same compound', inchiKey: $inchiKey);
+            $this->fail('Created a compound with the identifier of a compound it cannot read');
+        } catch (ImproperActionException) {
+            $this->addToAssertionCount(1);
+        }
+
+        // shared for reading only
+        $OwnerCompounds->patch(Action::Update, array('canread' => sprintf('{"teams": [], "teamgroups": [], "users": [%d]}', $other->userid)));
+        $compound = $OtherCompounds->readOne();
+        $this->assertSame(0, $compound['has_write_access']);
+        $this->assertSame($other->userid, $compound['canread_human']['users'][0]['userid']);
+        $this->assertContains($id, array_column($OtherCompounds->readAll($OtherCompounds->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
+        $this->assertForbidden(fn() => $OtherCompounds->patch(Action::Update, array('name' => 'Renamed')));
+        // adding it again gives the existing one, unchanged
+        $this->assertSame($id, $OtherCompounds->create(name: 'Renamed', inchiKey: $inchiKey));
+        $this->assertSame('Private compound', $OwnerCompounds->readOne()['name']);
+
+        // and for writing
+        $OwnerCompounds->patch(Action::Update, array('canwrite_base' => BasePermissions::Organization->value));
+        $this->assertSame('Renamed', $OtherCompounds->patch(Action::Update, array('name' => 'Renamed'))['name']);
+    }
+
+    public function testDefaultPermissions(): void
+    {
+        $this->assertSame(BasePermissions::Organization, Compounds::PUBCHEM_CANREAD_BASE);
+        $this->assertSame(BasePermissions::Organization, Compounds::PUBCHEM_CANWRITE_BASE);
+        $this->assertSame(BasePermissions::Team, Compounds::DEFAULT_CANREAD_BASE);
+        $this->assertSame(BasePermissions::User, Compounds::DEFAULT_CANWRITE_BASE);
+
+        // added manually: restricted, like an experiment
+        $id = $this->Compounds->postAction(Action::Create, array('name' => 'Sensitive compound'));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
+
+        // fetched from PubChem: public
+        $id = $this->Compounds->createFromCompound(new Compound(cid: random_int(100000000, 999999999), name: 'From PubChem'), fromPubChem: true);
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(Compounds::PUBCHEM_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::PUBCHEM_CANWRITE_BASE->value, $compound['canwrite_base']);
+
+        // with a PubChem CID but local data, like from an ELN import: restricted
+        $id = $this->Compounds->createFromCompound(new Compound(cid: random_int(100000000, 999999999), name: 'Customized locally'));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $compound['canread_base']);
+        $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
+
+        // without one: restricted
+        $id = $this->Compounds->createFromCompound(new Compound(name: 'Not from PubChem', inChIKey: strtoupper(bin2hex(random_bytes(7)))));
+        $this->Compounds->setId($id);
+        $this->assertSame(Compounds::DEFAULT_CANREAD_BASE->value, $this->Compounds->readOne()['canread_base']);
+    }
+
+    public function testCreateWithPermissions(): void
+    {
+        $id = $this->Compounds->postAction(Action::Create, array(
+            'name' => 'Shared with a team',
+            'canread_base' => BasePermissions::User->value,
+            'canread' => '{"teams": [2], "teamgroups": [], "users": []}',
+        ));
+        $this->Compounds->setId($id);
+        $compound = $this->Compounds->readOne();
+        $this->assertSame(BasePermissions::User->value, $compound['canread_base']);
+        $this->assertSame(Compounds::DEFAULT_CANWRITE_BASE->value, $compound['canwrite_base']);
+        $this->assertSame(array(2), json_decode($compound['canread'], true)['teams']);
+
+        $this->expectException(ImproperActionException::class);
+        $this->Compounds->postAction(Action::Create, array('name' => 'Invalid', 'canread' => '{"teams": "all"}'));
+    }
+
+    public function testSearchCombinesTextAndStructureBeforeTheLimit(): void
+    {
+        $suffix = bin2hex(random_bytes(6));
+        $smiles = 'O' . str_repeat('C', 30);
+        // the same fingerprint for both compounds and the query, found in no other compound
+        $fingerprinter = new class implements FingerprinterInterface {
+            public array $fp;
+
+            public function __construct()
+            {
+                $this->fp = array_map(static fn(): int => random_int(1, 0x7FFFFFFF), array_fill(0, 32, 0));
+            }
+
+            public function calculate(string $fmt, string $data): array
+            {
+                return array('data' => $this->fp);
+            }
+        };
+        // every structure matches the pattern
+        $matcher = new class implements SmartsMatcherInterface {
+            public function matches(string $smarts, array $smiles, bool $exact = false): array
+            {
+                return array_keys($smiles);
+            }
+        };
+        $Compounds = new Compounds($this->httpGetter, new Users(1, 1), $fingerprinter, false, smartsMatcher: $matcher);
+        $first = $Compounds->create(name: 'Combined search first ' . $suffix, smiles: $smiles);
+        $second = $Compounds->create(name: 'Combined search second ' . $suffix, smiles: $smiles);
+        $search = fn(array $params): array => array_column($Compounds->readAll($Compounds->getQueryParams(new InputBag($params))), 'id');
+
+        $this->assertEqualsCanonicalizing(array($first, $second), $search(array('search_fp_smi' => $smiles, 'q' => $suffix)));
+        // the text applies before the limit: the other compound matching the structure does not take the only place
+        foreach (array(array('search_fp_smi' => $smiles), array('search_smarts' => '[OX2]C')) as $structure) {
+            $this->assertEquals(array($first), $search($structure + array('q' => 'Combined search first ' . $suffix, 'limit' => 1)));
+            $this->assertEquals(array($second), $search($structure + array('q' => 'Combined search second ' . $suffix, 'limit' => 1)));
+        }
+    }
+
+    public function testFingerprintSearchIsOrderedBySimilarity(): void
+    {
+        $suffix = bin2hex(random_bytes(6));
+        // bit 30 is free in the query, the larger compound has it set in every word
+        $query = array_map(static fn(): int => random_int(1, 0x3FFFFFFF), array_fill(0, 32, 0));
+        $largerFp = array_map(static fn(int $word): int => $word | 0x40000000, $query);
+        $fingerprinter = new class implements FingerprinterInterface {
+            public array $next = array();
+
+            public function calculate(string $fmt, string $data): array
+            {
+                return array('data' => $this->next);
+            }
+        };
+        $Compounds = new Compounds($this->httpGetter, new Users(1, 1), $fingerprinter, false);
+        // the same structure is created first: the id alone would list it last
+        $fingerprinter->next = $query;
+        $same = $Compounds->create(name: 'Similarity same ' . $suffix, smiles: 'CCO');
+        $fingerprinter->next = $largerFp;
+        $larger = $Compounds->create(name: 'Similarity larger ' . $suffix, smiles: 'CCCO');
+
+        $fingerprinter->next = $query;
+        $results = $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_fp_smi' => 'CCO', 'q' => $suffix))));
+        $this->assertSame(array($same, $larger), array_column($results, 'id'));
+        $this->assertEqualsWithDelta(1.0, (float) $results[0]['similarity_score'], 0.0001);
+        $this->assertLessThan(1.0, (float) $results[1]['similarity_score']);
+        // another order can still be asked
+        $byId = $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_fp_smi' => 'CCO', 'q' => $suffix, 'order' => 'id', 'sort' => 'desc'))));
+        $this->assertSame(array($larger, $same), array_column($byId, 'id'));
+    }
+
+    public function testOwnerListsCompoundsOfAnotherTeam(): void
+    {
+        // visible to the team only, and its owner is now in another team
+        $id = $this->Compounds->create(name: 'Owned in another team', canreadBase: BasePermissions::Team);
+        $req = Db::getConnection()->prepare('UPDATE compounds SET team = 2 WHERE id = :id');
+        $req->bindValue(':id', $id, PDO::PARAM_INT);
+        $req->execute();
+        // it can be opened, see Permissions::getCan(), so it is listed too
+        $this->Compounds->setId($id);
+        $this->assertSame($id, $this->Compounds->readOne()['id']);
+        $this->assertContains($id, array_column($this->Compounds->readAll($this->Compounds->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
+        // and not by the other members of its old team
+        $other = $this->getUserInTeam(1);
+        $this->assertNotSame(1, $other->userid);
+        $Other = new Compounds($this->httpGetter, $other, new NullFingerprinter(), false);
+        $this->assertNotContains($id, array_column($Other->readAll($Other->getQueryParams(new InputBag(array('limit' => 9999)))), 'id'));
     }
 
     public function testGetApiPath(): void
@@ -210,5 +472,40 @@ class CompoundsTest extends \PHPUnit\Framework\TestCase
         $req = new Request($queryParams);
         $q = $Compounds->getQueryParams($req->query);
         $this->assertIsArray($Compounds->readAll($q));
+    }
+
+    public function testSearchSmarts(): void
+    {
+        $smiles = 'N' . str_repeat('C', 40) . bin2hex(random_bytes(2));
+        $compoundId = $this->Compounds->create(name: 'smarts search', smiles: $smiles);
+        // only the structure of this compound matches, whatever the pattern
+        $matcher = new class ($smiles) implements SmartsMatcherInterface {
+            public string $pattern = '';
+
+            public function __construct(private string $match) {}
+
+            public function matches(string $smarts, array $smiles, bool $exact = false): array
+            {
+                $this->pattern = $smarts;
+                return array_keys(array_filter($smiles, fn(string $structure): bool => $structure === $this->match));
+            }
+        };
+        $Compounds = new Compounds($this->httpGetter, new Users(1, 1), new NullFingerprinter(), false, smartsMatcher: $matcher);
+        $results = $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_smarts' => ' [NX3]C '))));
+        $this->assertSame('[NX3]C', $matcher->pattern);
+        $this->assertEquals(array($compoundId), array_column($results, 'id'));
+
+        $this->expectException(ImproperActionException::class);
+        $Compounds->readAll($Compounds->getQueryParams(new InputBag(array('search_smarts' => str_repeat('C', 2049)))));
+    }
+
+    private function assertForbidden(callable $action): void
+    {
+        try {
+            $action();
+            $this->fail('Allowed a forbidden action');
+        } catch (ForbiddenException) {
+            $this->addToAssertionCount(1);
+        }
     }
 }

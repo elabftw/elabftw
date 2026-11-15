@@ -11,13 +11,16 @@ declare(strict_types=1);
 
 namespace Elabftw\Import;
 
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Tools;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\ExtraFieldReference;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\Storage;
 use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Factories\CompoundsFactory;
+use Elabftw\Make\MakeEln;
 use Elabftw\Models\Experiments;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
@@ -25,6 +28,7 @@ use Elabftw\Params\EntityParams;
 use Elabftw\Storage\Cache\ElabCache;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -801,6 +805,85 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    // other software can link several nodes in `about`: the first one resolving to a named node is the category
+    public function testImportMultipleAbout(): void
+    {
+        $title = 'Dataset with several about references';
+        $crate = array(
+            '@context' => 'https://w3id.org/ro/crate/1.2/context',
+            '@graph' => array(
+                array(
+                    '@id' => 'ro-crate-metadata.json',
+                    '@type' => 'CreativeWork',
+                    'about' => array('@id' => './'),
+                    'conformsTo' => array('@id' => 'https://w3id.org/ro/crate/1.2'),
+                ),
+                array(
+                    '@id' => './',
+                    '@type' => 'Dataset',
+                    'name' => 'Export from another tool',
+                    'hasPart' => array(array('@id' => './record/')),
+                ),
+                array(
+                    '@id' => './record/',
+                    '@type' => 'Dataset',
+                    'name' => $title,
+                    'about' => array(
+                        array('@id' => '#not-in-graph'),
+                        array('@id' => '#collection-a'),
+                        array('@id' => '#collection-b'),
+                    ),
+                ),
+                array(
+                    '@id' => '#collection-a',
+                    '@type' => 'Thing',
+                    'name' => 'Imported collection A',
+                ),
+                array(
+                    '@id' => '#collection-b',
+                    '@type' => 'Thing',
+                    'name' => 'Imported collection B',
+                    'color' => '29aeb9',
+                ),
+            ),
+        );
+
+        $archivePath = tempnam(sys_get_temp_dir(), 'elabftw-multiple-about-eln-');
+        $this->assertIsString($archivePath);
+        $archive = new ZipArchive();
+        $this->assertTrue($archive->open($archivePath, ZipArchive::OVERWRITE));
+        $json = json_encode($crate, JSON_THROW_ON_ERROR);
+        $this->assertTrue($archive->addFromString('multiple-about/ro-crate-metadata.json', $json));
+        $this->assertTrue($archive->close());
+
+        $uploadedFile = new UploadedFile(
+            $archivePath,
+            'multiple-about.eln',
+            null,
+            UPLOAD_ERR_OK,
+            true,
+        );
+
+        try {
+            $Import = new Eln(
+                new Users(1, 1),
+                new Users(1, 1),
+                $uploadedFile,
+                $this->fs,
+                $this->logger,
+                CompoundsFactory::getCompounds(new Users(1, 1)),
+                EntityType::Experiments,
+            );
+            $Import->import();
+            $this->assertSame(1, $Import->getInserted());
+
+            $Experiment = $this->getExperimentFromTitle($title);
+            $this->assertSame('Imported collection A', $Experiment->entityData['category_title']);
+        } finally {
+            unlink($archivePath);
+        }
+    }
+
     // test import keeps the state for archived/locked/deleted entries
     public function testImportRestoresLifecycle(): void
     {
@@ -860,6 +943,40 @@ class ElnTest extends \PHPUnit\Framework\TestCase
         );
         $Import->import();
         $this->assertEquals(1, $Import->getInserted());
+    }
+
+    public function testCompoundGhsRoundTrip(): void
+    {
+        // what MakeEln writes for a compound
+        $properties = new ReflectionMethod(MakeEln::class, 'ghsToPropertyValues')->invoke(
+            new ReflectionClass(MakeEln::class)->newInstanceWithoutConstructor(),
+            array(
+                'ghs_signal_word' => 'Danger',
+                'ghs_statements' => array(
+                    array('id' => 1, 'code' => 'H225', 'kind' => 'H', 'statement' => 'Highly flammable liquid and vapour.', 'is_deprecated' => 0),
+                    array('id' => 2, 'code' => 'EUH066', 'kind' => 'EUH', 'statement' => 'Repeated exposure may cause skin dryness or cracking.', 'is_deprecated' => 0),
+                    array('id' => 3, 'code' => 'P301+P316', 'kind' => 'P', 'statement' => 'IF SWALLOWED: Get emergency medical help immediately.', 'is_deprecated' => 0),
+                ),
+            ),
+        );
+        $this->assertSame(Compound::ELN_GHS_SIGNAL_WORD, $properties[0]['propertyID']);
+        $this->assertSame(Compound::ELN_GHS_HAZARD_STATEMENT, $properties[2]['propertyID']);
+        $this->assertSame(Compound::ELN_GHS_PRECAUTIONARY_STATEMENT, $properties[3]['propertyID']);
+        // other software can add properties of its own
+        $properties[] = array('@type' => 'PropertyValue', 'propertyID' => 'Boiling point', 'value' => 'H300');
+        $properties[] = 'not a property';
+
+        $compound = new ReflectionMethod(Eln::class, 'compoundFromJsonLd')->invoke(
+            $this->getElnForReflection(EntityType::Experiments),
+            array('@id' => '#compound-1', '@type' => 'MolecularEntity', 'name' => 'Ethanol', 'additionalProperty' => $properties),
+        );
+        $this->assertSame(GhsSignalWord::Danger, $compound->ghsSignalWord);
+        $this->assertSame(array('H225', 'EUH066', 'P301+P316'), $compound->ghsStatements);
+        // nothing to export without GHS data
+        $this->assertSame(array(), new ReflectionMethod(MakeEln::class, 'ghsToPropertyValues')->invoke(
+            new ReflectionClass(MakeEln::class)->newInstanceWithoutConstructor(),
+            array('ghs_signal_word' => null),
+        ));
     }
 
     private function getExperimentFromTitle(string $title): Experiments

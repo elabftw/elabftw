@@ -80,3 +80,19 @@
 .navbar-toggler i {
   color: var(--chrome-fg);
 }
+
+/* shown on top of every page while a Sysadmin/Admin is impersonating a user */
+.impersonation-banner {
+  background-color: var(--darkred);
+  color: var(--white);
+  gap: 10px;
+  padding: 6px 5%;
+
+  form {
+    margin: 0;
+  }
+
+  > span i {
+    color: var(--white);
+  }
+}

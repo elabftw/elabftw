@@ -38,6 +38,7 @@ use function array_values;
 use function basename;
 use function json_decode;
 use function sprintf;
+use function str_replace;
 
 class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
 {
@@ -429,6 +430,49 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 
+    public function testGetGhsStatements(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $Controller = new Apiv2Controller($user, Request::create('/api/v2/ghs_statements', 'GET'));
+        $res = $Controller->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $res->getStatusCode());
+        $this->assertContains('H300', array_column(json_decode((string) $res->getContent(), true), 'code'));
+    }
+
+    public function testCompoundGhsStatements(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $send = function (string $uri, string $method, ?string $content = null) use ($user): Response {
+            $Controller = new Apiv2Controller($user, Request::create($uri, $method, server: array('CONTENT_TYPE' => 'application/json'), content: $content));
+            $Controller->canWrite = true;
+            return $Controller->getResponse();
+        };
+        $res = $send('/api/v2/compounds', 'POST', '{"name": "Controller GHS compound"}');
+        $this->assertSame(Response::HTTP_CREATED, $res->getStatusCode());
+        $uri = sprintf('/api/v2/compounds/%d/ghs_statements', (int) basename((string) $res->headers->get('Location')));
+
+        $res = $send($uri, 'POST', '{"code": "H225"}');
+        $this->assertSame(Response::HTTP_CREATED, $res->getStatusCode());
+        $statementId = (int) basename((string) $res->headers->get('Location'));
+
+        $res = $send($uri, 'GET');
+        $this->assertSame(Response::HTTP_OK, $res->getStatusCode());
+        $this->assertSame(array('H225'), array_column(json_decode((string) $res->getContent(), true), 'code'));
+
+        $res = $send(sprintf('%s/%d', $uri, $statementId), 'GET');
+        $this->assertSame('H225', json_decode((string) $res->getContent(), true)['code']);
+
+        $res = $send(sprintf('%s/%d', $uri, $statementId), 'DELETE');
+        $this->assertSame(Response::HTTP_NO_CONTENT, $res->getStatusCode());
+
+        $res = $send($uri, 'POST', '{"code": "H999"}');
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+
+        // compounds have no other submodel
+        $res = $send(str_replace('ghs_statements', 'tags', $uri), 'GET');
+        $this->assertSame(Response::HTTP_BAD_REQUEST, $res->getStatusCode());
+    }
+
     public function testGetExports(): void
     {
         $user = $this->getRandomUserInTeam(1);
@@ -486,6 +530,25 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         self::assertContains($eventA, $ids);
         self::assertNotContains($eventB, $ids);
         self::assertSame(array($ItemA->id), array_values(array_unique(array_map('intval', array_column($events, 'item')))));
+    }
+
+    public function testNestedEventsCanBeFilteredByOwner(): void
+    {
+        $Item = $this->getFreshBookableItem(1);
+        $start = new DateTimeImmutable('+5 hour')->format('c');
+        $end = new DateTimeImmutable('+6 hour')->format('c');
+        $eventId = new Scheduler($Item)->postAction(Action::Create, array('start' => $start, 'end' => $end, 'title' => 'nested owner filter'));
+        $uri = sprintf('/%s%d/events', $Item->getApiPath(), $Item->id);
+
+        // filtering on the owner keeps the event
+        $Controller = new Apiv2Controller($Item->Users, Request::create($uri, 'GET', array('eventOwner' => $Item->Users->userid)));
+        $ids = array_map('intval', array_column(json_decode((string) $Controller->getResponse()->getContent(), true), 'id'));
+        self::assertContains($eventId, $ids);
+
+        // filtering on another user excludes it
+        $Controller = new Apiv2Controller($Item->Users, Request::create($uri, 'GET', array('eventOwner' => $Item->Users->userid + 1)));
+        $ids = array_map('intval', array_column(json_decode((string) $Controller->getResponse()->getContent(), true), 'id'));
+        self::assertNotContains($eventId, $ids);
     }
 
     private function getUserAs(Users $requester, int $userid): array

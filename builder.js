@@ -12,11 +12,15 @@
  * doing autocompletion.
  */
 const path = require('path');
+const { createRequire } = require('node:module');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MinimizerPlugin = require('minimizer-webpack-plugin');
 const webpack = require('webpack');
 const sveltePreprocess = require('svelte-preprocess');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+// Resolve through the package that declares Indigo, including with Yarn Plug'n'Play.
+const ketcherRequire = createRequire(require.resolve('ketcher-standalone'));
+const indigoRoot = path.dirname(ketcherRequire.resolve('indigo-ketcher'));
 const mathjaxNewcmRoot = path.resolve(
   path.dirname(
     require.resolve('@mathjax/mathjax-newcm-font/js/svg.js'),
@@ -132,10 +136,7 @@ module.exports = (env, argv) => {
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: path.resolve(
-              __dirname,
-              '/var/cache/elabftw/yarn/unplugged/indigo-ketcher-npm-*/node_modules/indigo-ketcher/**/*.wasm',
-            ),
+            from: path.join(indigoRoot, '**/*.wasm'),
             to: '[name][ext]',
             noErrorOnMissing: false,
           },
@@ -152,9 +153,15 @@ module.exports = (env, argv) => {
       conditionNames: ['svelte', 'browser', '...'],
       mainFields: ['svelte', 'browser', 'module', 'main'],
       fallback: {
+        assert: require.resolve('assert/'),
         // required by react 18
         process: require.resolve('process/browser'),
         util: require.resolve('util/'),
+      },
+      alias: {
+        // Yarn peer contexts must share one React DOM renderer, including /client.
+        'react-dom': path.dirname(require.resolve('react-dom/package.json')),
+        'paper$': 'paper/dist/paper-core.js',
       },
     },
     module: {

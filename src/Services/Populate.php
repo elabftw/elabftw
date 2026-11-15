@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Elabftw\Services;
 
 use DateTimeImmutable;
+use Elabftw\Elabftw\Compound;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Elabftw\LocalPassword;
@@ -22,6 +23,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\FileFromString;
+use Elabftw\Enums\GhsSignalWord;
 use Elabftw\Enums\PasswordComplexity;
 use Elabftw\Enums\Usergroup;
 use Elabftw\Enums\UsersColumn;
@@ -436,6 +438,8 @@ final class Populate
                 molecularWeight: (float) $compound['molecular_weight'],
                 pubchemCid: (int) $compound['pubchem_cid'],
                 smiles: $compound['smiles'],
+                ghsSignalWord: GhsSignalWord::tryFrom($compound['ghs_signal_word'] ?? ''),
+                ghsStatements: Compound::extractGhsCodes($compound['ghs_statements'] ?? ''),
             );
             $this->output->writeln(sprintf('├ + compound: %s (ID: %d)', $compound['name'], $id));
         }

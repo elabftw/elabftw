@@ -12,6 +12,7 @@ import { Action, Model } from './interfaces';
 import $ from 'jquery';
 import { notify } from './notify';
 import { core } from './core';
+import { clearLocalStorage } from './localStorage';
 import './users-table';
 
 document.getElementById('container')?.addEventListener('click', async (event) => {
@@ -150,6 +151,32 @@ document.getElementById('container')?.addEventListener('click', async (event) =>
       $('#editUserModal').modal('toggle');
       clearForm(form);
     });
+
+  // IMPERSONATE USER
+  } else if (el.matches('[data-action="impersonate-user"]')) {
+    if (!userid || !confirm(el.dataset.confirm)) {
+      return;
+    }
+    // a regular form POST so the server can change the session and redirect us
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = '/app/controllers/ImpersonationController.php';
+    form.hidden = true;
+    const fields = {
+      csrf: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+      action: 'start',
+      userid: userid,
+    };
+    Object.entries(fields).forEach(([name, value]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = name;
+      input.value = value;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    clearLocalStorage();
+    form.submit();
 
   // DESTROY USER
   } else if (el.matches('[data-action="destroy-user"]')) {

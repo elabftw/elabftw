@@ -33,6 +33,7 @@ use Override;
 use PDO;
 use Throwable;
 
+use function array_column;
 use function array_key_exists;
 use function intval;
 use function json_encode;
@@ -87,11 +88,10 @@ abstract class AbstractContainersLinks extends AbstractLinks
         $this->Db->execute($req);
 
         $results = $req->fetchAll();
-        // Note: currently it's easier to loop on the storage and do a readOne() rather than include the full_path here
-        $StorageUnits = new StorageUnits($this->Entity->Users, false);
+        // all the paths in one query instead of a readOne() per container
+        $fullPaths = new StorageUnits($this->Entity->Users, false)->readFullPaths(array_column($results, 'storage_id'));
         foreach ($results as &$result) {
-            $StorageUnits->setId($result['storage_id']);
-            $result['full_path'] = $StorageUnits->readOne()['full_path'];
+            $result['full_path'] = $fullPaths[$result['storage_id']] ?? '';
         }
         return $results;
     }

@@ -14,6 +14,7 @@ namespace Elabftw\Controllers;
 
 use Elabftw\Elabftw\App;
 use Elabftw\Models\Items;
+use Elabftw\Models\ItemsStatus;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\ProcurementRequests;
 use Override;
@@ -31,7 +32,7 @@ final class DatabaseController extends AbstractEntityController
         parent::__construct($app, $entity);
 
         $this->categoryArr = $app->itemsCategoryArr;
-        $this->statusArr = $this->itemsStatusArr;
+        $this->statusArr = $this->readAllStatus(new ItemsStatus($app->Teams));
     }
 
     #[Override]

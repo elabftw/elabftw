@@ -9,6 +9,7 @@
   import { onMount, tick } from 'svelte';
   import type { Writable } from 'svelte/store';
   import { ApiC } from '../api';
+  import { REACTION_SEARCH_PARAMS } from '../interfaces';
   import i18next from '../i18n';
   import { State, type StateValue } from '../state.auto';
   import { relativeMoment } from "../misc";
@@ -131,8 +132,21 @@
     currentSort: string;
     currentRelated: number | null;
     currentRelatedOrigin: string;
+    currentReactionParams: Record<string, string>;
     currentCompound: number | null;
   };
+
+  // reaction search filters, see initReactionSearch() in show.ts
+  function getCurrentReactionParams(): Record<string, string> {
+    const params: Record<string, string> = {};
+    for (const param of REACTION_SEARCH_PARAMS) {
+      const value = getCurrentUrlParam(param);
+      if (value.length > 0) {
+        params[param] = value;
+      }
+    }
+    return params;
+  }
 
   let fullnames = $state<Record<number, string>>({});
   const loadingFullnames = new Set<number>();
@@ -296,6 +310,7 @@
       currentSort: getCurrentUrlParamOrFallback('sort', sort),
       currentRelated: getCurrentUrlNumberParam('related'),
       currentRelatedOrigin: getCurrentUrlParam('related_origin'),
+      currentReactionParams: getCurrentReactionParams(),
       currentCompound: getCurrentUrlNumberParam('compound'),
     };
   }
@@ -319,6 +334,7 @@
       context.currentSort,
       context.currentRelated,
       context.currentRelatedOrigin,
+      context.currentReactionParams,
       context.currentCompound,
       currentReloadVersion,
     ]);
@@ -401,6 +417,7 @@
       currentSort,
       currentRelated,
       currentRelatedOrigin,
+      currentReactionParams,
       currentCompound,
     } = context;
     const seq = ++requestSeq;
@@ -468,6 +485,7 @@
         params['related_origin'] = currentRelatedOrigin;
       }
 
+      Object.assign(params, currentReactionParams);
       if (currentCompound !== null) {
         params['compound'] = currentCompound;
       }
@@ -495,6 +513,7 @@
       }
 
       hasMore = nextEntities.length === currentLimit;
+      window.dispatchEvent(new CustomEvent('entity-list-loaded'));
     } catch (err) {
       if (seq !== requestSeq) {
         return;
@@ -505,6 +524,8 @@
 
       if (apiError.status === 400) {
         error = '';
+        // a form that sent the request can still explain what is wrong, see initReactionSearch() in show.ts
+        window.dispatchEvent(new CustomEvent<string>('entity-list-rejected', { detail: apiError.message }));
         return;
       }
 

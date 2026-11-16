@@ -47,7 +47,8 @@ final class DatabaseController extends AbstractEntityController
     #[Override]
     protected function getEntityProcurementRequestsArr(): array
     {
-        if (!$this->Entity instanceof Items) {
+        // procurement requests are internal team data, never show them to anonymous visitors
+        if (!$this->Entity instanceof Items || $this->App->isAnonymous()) {
             return array();
         }
         return new ProcurementRequests($this->App->Teams)->readActiveForEntity($this->Entity->id ?? 0);

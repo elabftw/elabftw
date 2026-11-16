@@ -12,11 +12,14 @@ declare(strict_types=1);
 
 namespace Elabftw\Make;
 
+use Elabftw\Enums\State;
 use Elabftw\Enums\Storage;
 use Elabftw\Interfaces\ZipMakerInterface;
 use ZipStream\ZipStream;
 use Override;
 
+use function array_filter;
+use function array_values;
 use function hash;
 use function in_array;
 use function sprintf;
@@ -64,6 +67,11 @@ abstract class AbstractMakeZip extends AbstractMake implements ZipMakerInterface
      */
     protected function addAttachedFiles($filesArr): array
     {
+        // the blob of a deleted upload is still in storage: never put it in an archive
+        $filesArr = array_values(array_filter(
+            $filesArr,
+            fn(array $file): bool => (int) ($file['state'] ?? State::Normal->value) !== State::Deleted->value,
+        ));
         $realNamesSoFar = array();
         $i = 0;
         foreach ($filesArr as &$file) {

@@ -25,6 +25,8 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Response;
 
+use function array_column;
+use function array_map;
 use function count;
 use function dirname;
 use function ob_start;
@@ -150,6 +152,27 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         // The download controller closes one output buffer.
         ob_start();
         $this->assertSame(Response::HTTP_NOT_FOUND, $this->Entity->Uploads->readBinary()->getStatusCode());
+    }
+
+    public function testReadOneNeverListsDeletedUploads(): void
+    {
+        $keptId = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('kept.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $deletedId = $this->Entity->Uploads->create(new CreateUploadFromLocalFile('deleted.zip', dirname(__DIR__, 2) . '/_data/importable.zip'));
+        $this->Entity->Uploads->setId($deletedId);
+        $this->Entity->Uploads->destroy();
+        // the exports build their file list from readOne(), which reads the state from the request
+        foreach (array('3', '1,2,3') as $state) {
+            $_GET['state'] = $state;
+            try {
+                $ids = array_map('intval', array_column($this->Entity->readOne()['uploads'], 'id'));
+            } finally {
+                unset($_GET['state']);
+            }
+            $this->assertNotContains($deletedId, $ids);
+            if ($state === '1,2,3') {
+                $this->assertContains($keptId, $ids);
+            }
+        }
     }
 
     public function testPatch(): void

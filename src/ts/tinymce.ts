@@ -275,7 +275,6 @@ export function getTinymceBaseConfig(page: string): object {
         callback(res);
       });
     },
-    contextmenu: false,
     paste_data_images: Boolean(page === 'edit'),
     // use the preprocessing function on paste event to fix the bgcolor attribute from libreoffice into proper background-color style
     paste_preprocess: function(plugin, args) {

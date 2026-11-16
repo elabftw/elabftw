@@ -72,16 +72,16 @@ try {
 
     switch ($OrderingParams->table) {
         case Orderable::ExperimentsCategories:
-            $Entity = new ExperimentsCategories(new Teams($App->Users));
+            $Entity = new ExperimentsCategories(new Teams($App->Users, $App->Users->team));
             break;
         case Orderable::ResourcesCategories:
-            $Entity = new ResourcesCategories(new Teams($App->Users));
+            $Entity = new ResourcesCategories(new Teams($App->Users, $App->Users->team));
             break;
         case Orderable::ExperimentsStatus:
-            $Entity = new ExperimentsStatus(new Teams($App->Users));
+            $Entity = new ExperimentsStatus(new Teams($App->Users, $App->Users->team));
             break;
         case Orderable::ItemsStatus:
-            $Entity = new ItemsStatus(new Teams($App->Users));
+            $Entity = new ItemsStatus(new Teams($App->Users, $App->Users->team));
             break;
         case Orderable::ExperimentsSteps:
             $entityId = Guard::getNonZeroPositiveIntValueOfRequiredParam(

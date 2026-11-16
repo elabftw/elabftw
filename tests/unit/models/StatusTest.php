@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Models\Users\Users;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Traits\TestsUtilsTrait;
 
 use function mb_substr;
@@ -87,5 +89,55 @@ class StatusTest extends \PHPUnit\Framework\TestCase
         $otherStatus = new ExperimentsStatus(new Teams($this->getRandomUserInTeam(2), 2), $id);
         $this->expectException(ResourceNotFoundException::class);
         $otherStatus->patch(Action::Update, array('title' => 'Coucou'));
+    }
+
+    public function testUpdateOrdering(): void
+    {
+        $first = $this->Status->postAction(Action::Create, array('name' => 'first'));
+        $second = $this->Status->postAction(Action::Create, array('name' => 'second'));
+        $this->Status->updateOrdering(new OrderingParams(array(
+            'table' => 'experiments_status',
+            'ordering' => array('status_' . $second, 'status_' . $first),
+        )));
+        $this->assertSame(0, $this->getOrdering($second));
+        $this->assertSame(1, $this->getOrdering($first));
+    }
+
+    public function testCannotReorderStatusFromAnotherTeam(): void
+    {
+        $first = $this->Status->postAction(Action::Create, array('name' => 'first'));
+        $second = $this->Status->postAction(Action::Create, array('name' => 'second'));
+        $this->Status->updateOrdering(new OrderingParams(array(
+            'table' => 'experiments_status',
+            'ordering' => array('status_' . $first, 'status_' . $second),
+        )));
+        $attacker = $this->getRandomUserInTeam(2);
+        $attackerStatus = new ExperimentsStatus(new Teams($attacker, 2));
+        try {
+            $attackerStatus->updateOrdering(new OrderingParams(array(
+                'table' => 'experiments_status',
+                'ordering' => array('status_' . $second, 'status_' . $first),
+            )));
+            $this->fail('A user from another team reordered statuses.');
+        } catch (ForbiddenException) {
+            $this->assertSame(0, $this->getOrdering($first));
+            $this->assertSame(1, $this->getOrdering($second));
+        }
+    }
+
+    public function testCannotReorderWithoutTeam(): void
+    {
+        $id = $this->Status->postAction(Action::Create, array('name' => 'noteam'));
+        $Status = new ExperimentsStatus(new Teams(new Users(1, 1)));
+        $this->expectException(ForbiddenException::class);
+        $Status->updateOrdering(new OrderingParams(array(
+            'table' => 'experiments_status',
+            'ordering' => array('status_' . $id),
+        )));
+    }
+
+    private function getOrdering(int $id): int
+    {
+        return (int) new ExperimentsStatus(new Teams(new Users(1, 1), 1), $id)->readOne()['ordering'];
     }
 }

@@ -13,10 +13,13 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use DateTimeImmutable;
+use Elabftw\Enums\AccessType;
 use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\BinaryValue;
 use Elabftw\Enums\BodyContentType;
 use Elabftw\Enums\EntityType;
+use Elabftw\Exceptions\ForbiddenException;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Services\Filter;
 use Elabftw\Traits\InsertTagsTrait;
 use Elabftw\Traits\SortableTrait;
@@ -102,5 +105,35 @@ final class Templates extends AbstractTemplateEntity
     protected function getCreatePermissionKey(): string
     {
         return 'users_canwrite_experiments_templates';
+    }
+
+    /**
+     * Reordering templates requires write access to every one of them
+     */
+    #[Override]
+    protected function canReorderOrExplode(OrderingParams $params): void
+    {
+        foreach ($params->ordering as $id) {
+            $Template = new self($this->Users, $id);
+            $Template->canOrExplode(AccessType::Write);
+        }
+    }
+
+    #[Override]
+    protected function getOrderingTable(): string
+    {
+        return 'experiments_templates';
+    }
+
+    #[Override]
+    protected function getOrderingOwnerColumn(): string
+    {
+        return 'team';
+    }
+
+    #[Override]
+    protected function getOrderingOwnerId(): int
+    {
+        return $this->Users->team ?? throw new ForbiddenException();
     }
 }

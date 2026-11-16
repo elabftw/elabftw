@@ -16,6 +16,7 @@ use Elabftw\Enums\Action;
 use Elabftw\Interfaces\ContentParamsInterface;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Params\ContentParams;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Traits\SetIdTrait;
 use Elabftw\Traits\SortableTrait;
 use Override;
@@ -111,6 +112,33 @@ final class Todolist extends AbstractRest
         $req->bindParam(':userid', $this->userid, PDO::PARAM_INT);
 
         return $this->Db->execute($req);
+    }
+
+    /**
+     * Users can only reorder their own todolist, which is enforced by the userid scope
+     */
+    #[Override]
+    protected function canReorderOrExplode(OrderingParams $params): void
+    {
+        // nothing to check here: rows are scoped to the userid
+    }
+
+    #[Override]
+    protected function getOrderingTable(): string
+    {
+        return 'todolist';
+    }
+
+    #[Override]
+    protected function getOrderingOwnerColumn(): string
+    {
+        return 'userid';
+    }
+
+    #[Override]
+    protected function getOrderingOwnerId(): int
+    {
+        return $this->userid;
     }
 
     private function update(ContentParamsInterface $params): bool

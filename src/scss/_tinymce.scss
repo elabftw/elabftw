@@ -9,6 +9,21 @@ figure {
   text-align: center;
 }
 
+/* Allow figure alignment in view mode, see #7797 */
+figure.image.align-left {
+  float: left;
+}
+
+figure.image.align-right {
+  float: right;
+}
+
+figure.image.align-center {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .tox-tinymce--toolbar-sticky-on .tox-editor-header {
   top: calc(var(--navbar-height) + var(--toolbar-height)) !important;
   transition: top 0.2s ease;

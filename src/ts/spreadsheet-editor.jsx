@@ -179,17 +179,82 @@ const isWorkbook = (value) => Array.isArray(value)
   && value.length > 0
   && value.every(worksheet => typeof worksheet?.name === 'string' && Array.isArray(worksheet.data));
 
+const cloneJsonValue = (value) => {
+  if (value === undefined) return undefined;
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return undefined;
+  }
+};
+
+// jspreadsheet keeps formatting, merges and dimension config outside the data grid:
+// pick the option keys that describe the worksheet state so they can be saved with it
+const pickWorksheetState = (options) => {
+  if (!options || typeof options !== 'object') return undefined;
+  const state = {};
+  for (const key of ['comments', 'classes', 'meta', 'nestedHeaders', 'footers', 'freezeColumns']) {
+    const value = cloneJsonValue(options[key]);
+    if (value !== undefined) state[key] = value;
+  }
+  if (options.style && typeof options.style === 'object') {
+    // every rendered cell gets an entry with just the default alignment: keep only real styles
+    const defaultAlign = `text-align: ${options.defaultColAlign || 'center'};`;
+    const style = {};
+    for (const [cell, css] of Object.entries(options.style)) {
+      if (typeof css === 'string' && css !== defaultAlign) style[cell] = css;
+    }
+    if (Object.keys(style).length) state.style = style;
+  }
+  if (options.mergeCells && typeof options.mergeCells === 'object') {
+    const mergeCells = {};
+    for (const [cell, range] of Object.entries(options.mergeCells)) {
+      if (Array.isArray(range) && Number.isFinite(range[0]) && Number.isFinite(range[1])) {
+        mergeCells[cell] = [range[0], range[1]];
+      }
+    }
+    if (Object.keys(mergeCells).length) state.mergeCells = mergeCells;
+  }
+  if (Array.isArray(options.columns)) {
+    const columns = options.columns.map(col => (
+      col && typeof col === 'object' && typeof col.width === 'number' ? { width: col.width } : {}
+    ));
+    if (columns.some(col => col.width)) state.columns = columns;
+  }
+  if (Array.isArray(options.rows)) {
+    const rows = options.rows.map(row => (
+      row && typeof row === 'object' && typeof row.height === 'number' ? { height: row.height } : {}
+    ));
+    if (rows.some(row => row.height)) state.rows = rows;
+  }
+  return Object.keys(state).length ? state : undefined;
+};
+
 function SpreadsheetInner({ workbook, workbookReaderRef, buildToolbar, onSpreadsheetChange }) {
   const spreadsheetRef = useRef(null);
   useEffect(() => {
     workbookReaderRef.current = () => {
       const worksheets = spreadsheetRef.current;
-      return Array.isArray(worksheets) && worksheets.length > 0
-        ? worksheets.map((worksheet, index) => ({
+      if (!Array.isArray(worksheets) || worksheets.length === 0) return workbook;
+      return worksheets.map((worksheet, index) => {
+        // displayed values let the saved file cache formula results
+        let values;
+        try {
+          values = worksheet.getData?.(false, true) ?? workbook[index]?.values;
+        } catch {
+          values = workbook[index]?.values;
+        }
+        // ragged rows can yield undefined cells that would fail workbook validation
+        const data = (worksheet.getData?.() ?? workbook[index]?.data ?? [[]]).map(
+          row => (Array.isArray(row) ? row.map(cell => cell ?? '') : row),
+        );
+        return {
           name: worksheet.options?.worksheetName || workbook[index]?.name || `Sheet${index + 1}`,
-          data: worksheet.getData?.() ?? workbook[index]?.data ?? [[]],
-        }))
-        : workbook;
+          data,
+          values,
+          state: pickWorksheetState(worksheet.options),
+        };
+      });
     };
     return () => {
       workbookReaderRef.current = null;
@@ -207,6 +272,7 @@ function SpreadsheetInner({ workbook, workbookReaderRef, buildToolbar, onSpreads
       {workbook.map((worksheet, index) => (
         <Worksheet
           key={index}
+          {...(worksheet.state ?? {})}
           worksheetName={worksheet.name}
           data={worksheet.data}
           minDimensions={[

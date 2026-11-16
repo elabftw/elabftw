@@ -18,6 +18,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
 use PDO;
 
+use function hash_equals;
 use function is_int;
 
 /**
@@ -52,6 +53,25 @@ final class AccessKeyHelper
         $req->bindParam(':id', $this->id, PDO::PARAM_INT);
         $this->Db->execute($req);
         return $this->getAccessKey();
+    }
+
+    public function isValidFor(string $ak): bool
+    {
+        $entityAk = $this->getAccessKey();
+        return $entityAk !== null && hash_equals($entityAk, $ak);
+    }
+
+    /**
+     * Replace an existing access key with a new one, so a key harvested while the entry was readable stops working
+     * once access to the entry is reduced. Nothing happens if anonymous access is not enabled.
+     */
+    public function rotateAccessKey(): void
+    {
+        $sql = 'UPDATE ' . $this->entityType->value . ' SET access_key = :access_key WHERE id = :id AND access_key IS NOT NULL';
+        $req = $this->Db->prepare($sql);
+        $req->bindValue(':access_key', Tools::getUuidv4());
+        $req->bindParam(':id', $this->id, PDO::PARAM_INT);
+        $this->Db->execute($req);
     }
 
     private function getAccessKey(): ?string

@@ -714,6 +714,16 @@ export function loadPermissionsModal(
   });
 }
 
+// changing who can access an entry gives it a new access key: show the new anonymous access link
+async function refreshAnonymousAccessLink(modal: HTMLElement, response: Response): Promise<void> {
+  const input = modal.querySelector<HTMLInputElement>('#anonymousAccessUrlInput');
+  if (!input) return;
+  const json = await response.json().catch(() => null);
+  if (typeof json?.sharelink === 'string') {
+    input.value = json.sharelink;
+  }
+}
+
 // entity and user defaults are saved right away, for the selected entries we only remember what changed: see apply-permissions-selected
 export function savePermissionsChange(section: HTMLElement, change: PermissionsChange): void {
   const modal = section.closest<HTMLElement>('[data-permissions-endpoint]');
@@ -729,7 +739,8 @@ export function savePermissionsChange(section: HTMLElement, change: PermissionsC
     // a failed save reloaded the modal: what this section showed is gone, and so is its change
     if (!section.isConnected) return;
     try {
-      await ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
+      const response = await ApiC.patch(modal.dataset.permissionsEndpoint, permissionsSectionParams(section, [change]));
+      await refreshAnonymousAccessLink(modal, response);
     } catch {
       // the api already reported the error: show the permissions as they are saved, not as they were edited
       const reload = permissionsReloaders.get(modal) ?? (() => reloadElements([modal.querySelector('.modal-body').id]));

@@ -9,6 +9,25 @@ figure {
   text-align: center;
 }
 
+/* keep in sync with tinymce_content.min.css so the alignment classes set by
+ * the editor's align buttons also apply in view mode */
+.align-left {
+  float: left;
+}
+
+.align-right {
+  float: right;
+}
+
+/* the more specific figure.image.align-center selector is needed to override
+ * the display property from .image */
+.align-center,
+figure.image.align-center {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .tox-tinymce--toolbar-sticky-on .tox-editor-header {
   top: calc(var(--navbar-height) + var(--toolbar-height)) !important;
   transition: top 0.2s ease;

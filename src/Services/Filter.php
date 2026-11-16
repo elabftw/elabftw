@@ -235,7 +235,7 @@ final class Filter
         // create base config for html5
         $config = HTMLPurifier_HTML5Config::createDefault();
         // allow only certain elements
-        $config->set('HTML.Allowed', 'div[class|style],br,p[class|style],sub,img[src|class|style|width|height],sup,strong,b,em,u,a[href|target],s,span[style],ul[style],li[style],ol[style],dl,dt,dd,blockquote,h1[class|style],h2[class|style],h3[class|style],h4[class|style],h5[class|style],h6[class|style],hr,table[style|data-table-sort|border],tr[style],td[style|colspan|rowspan],th[style|colspan|rowspan],code,source[src|type],video[src|controls|style|width|height],audio[src|controls],pre[class],details[class|open],summary,caption,figure,figcaption');
+        $config->set('HTML.Allowed', 'div[class|style],br,p[class|style],sub,img[src|class|style|width|height],sup,strong,b,em,u,a[href|target],s,span[style],ul[style],li[style],ol[style],dl,dt,dd,blockquote,h1[class|style],h2[class|style],h3[class|style],h4[class|style],h5[class|style],h6[class|style],hr,table[style|data-table-sort|border],tr[style],td[style|colspan|rowspan],th[style|colspan|rowspan],code,source[src|type],video[src|controls|style|width|height],audio[src|controls],pre[class],details[class|open],summary,caption,figure[class|style],figcaption[style]');
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
         $config->set('HTML.TargetBlank', true);
         // configure the cache for htmlpurifier
@@ -272,6 +272,11 @@ final class Filter
             'language-yaml',
             'mce-accordion',
             'page-break',
+            // used by tinymce to style captioned images and their alignment (see #7797)
+            'image',
+            'align-left',
+            'align-center',
+            'align-right',
         ));
         // note: hyphens and word-break are not supported
         $config->set('CSS.AllowedProperties', array(
@@ -280,6 +285,7 @@ final class Filter
             'border-color',
             'color',
             'display', // see #3368
+            'float',
             'font-family',
             'font-size', // see #5873
             'font-style',
@@ -288,8 +294,11 @@ final class Filter
             'height',
             'line-height',
             'list-style-type',
+            'margin',
+            'margin-bottom',
             'margin-left',
             'margin-right',
+            'margin-top',
             'min-width',
             'text-align',
             'text-decoration',

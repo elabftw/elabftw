@@ -179,6 +179,54 @@ class FilterTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($input, Filter::body($input));
     }
 
+    public function testBodyPreservesFigureAlignClasses(): void
+    {
+        // the align toolbar buttons in TinyMCE add an align-* class to figure.image
+        $this->assertSame(
+            '<figure class="image align-left"><img src="img.png" alt="img.png"><figcaption>a caption</figcaption></figure>',
+            Filter::body('<figure class="image align-left"><img src="img.png" /><figcaption>a caption</figcaption></figure>'),
+        );
+        $this->assertSame(
+            '<figure class="image align-right"><img src="img.png" alt="img.png"><figcaption>a caption</figcaption></figure>',
+            Filter::body('<figure class="image align-right"><img src="img.png" /><figcaption>a caption</figcaption></figure>'),
+        );
+        $this->assertSame(
+            '<figure class="image align-center"><img src="img.png" alt="img.png"><figcaption>a caption</figcaption></figure>',
+            Filter::body('<figure class="image align-center"><img src="img.png" /><figcaption>a caption</figcaption></figure>'),
+        );
+    }
+
+    public function testBodyPreservesImageAlignStyles(): void
+    {
+        // the align toolbar buttons in TinyMCE set float or margins on img
+        $this->assertSame(
+            '<img src="img.png" style="float:left;" alt="img.png">',
+            Filter::body('<img src="img.png" style="float: left" />'),
+        );
+        $this->assertSame(
+            '<img src="img.png" style="float:right;" alt="img.png">',
+            Filter::body('<img src="img.png" style="float: right" />'),
+        );
+        $this->assertSame(
+            '<img src="img.png" style="display:block;margin-left:auto;margin-right:auto;" alt="img.png">',
+            Filter::body('<img src="img.png" style="display: block; margin-left: auto; margin-right: auto" />'),
+        );
+        // the "Image Left"/"Image Right" styles formats also set a margin
+        $this->assertSame(
+            '<img src="img.png" style="float:left;margin:0 10px 0 10px;" alt="img.png">',
+            Filter::body('<img src="img.png" style="float: left; margin: 0 10px 0 10px" />'),
+        );
+    }
+
+    public function testBodyPreservesFigureTextAlignStyle(): void
+    {
+        // a figure that is not figure.image gets text-align instead of an align-* class
+        $this->assertSame(
+            '<figure style="text-align:left;"><img src="img.png" alt="img.png"><figcaption>a caption</figcaption></figure>',
+            Filter::body('<figure style="text-align: left;"><img src="img.png" /><figcaption>a caption</figcaption></figure>'),
+        );
+    }
+
     public function testToFsTitleSanitizesCategory(): void
     {
         $Entity = $this->getFreshExperiment();

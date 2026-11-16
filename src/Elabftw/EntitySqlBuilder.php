@@ -213,6 +213,17 @@ final class EntitySqlBuilder implements SqlBuilderInterface
             $this->getCanSql($can),
             $this->entity->alwaysShowOwned ? 'OR entity.userid = :userid' : '',
         );
+        // deleted entries are only listed to those who can restore them: owner or users with write access
+        // keep in sync with AbstractEntity::canOrExplode()
+        if ($can === AccessType::Read->value) {
+            $sql .= $this->entity->Users instanceof AnonymousUser
+                ? sprintf(' AND entity.state != %d', State::Deleted->value)
+                : sprintf(
+                    ' AND (entity.state != %d OR entity.userid = :userid OR %s)',
+                    State::Deleted->value,
+                    $this->getCanSql(AccessType::Write->value),
+                );
+        }
 
         return $sql;
     }

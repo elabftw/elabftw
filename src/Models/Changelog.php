@@ -15,6 +15,7 @@ namespace Elabftw\Models;
 use Elabftw\Elabftw\Db;
 use Elabftw\Elabftw\Env;
 use Elabftw\Interfaces\ContentParamsInterface;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Services\WebhookEmitter;
 use PDO;
 
@@ -69,6 +70,11 @@ final class Changelog
 
     public function readAll(): array
     {
+        // like the body revisions, the history is not for anonymous users: it keeps values
+        // (e.g. metadata snapshots) from before the entry was made public, or since changed
+        if ($this->entity->Users instanceof AnonymousUser) {
+            return array();
+        }
         $sql = "SELECT ch.created_at, ch.target, ch.content, CONCAT(users.firstname, ' ', users.lastname) AS fullname, ch.users_id AS userid
             FROM " . $this->entity->entityType->value . '_changelog AS ch LEFT JOIN users ON (users.userid = ch.users_id)
             WHERE entity_id = :entity_id ORDER BY created_at DESC';

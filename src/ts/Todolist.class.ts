@@ -57,7 +57,7 @@ export default class Todolist extends SidePanel {
           const div = document.createElement('div');
           const input = document.createElement('input');
           input.type = 'checkbox';
-          input.classList.add('stepbox', 'mr-2');
+          input.classList.add('todo-stepbox', 'mr-2');
           input.id = `todo_step_${stepId}`;
           input.dataset.id = String(entity.id);
           input.dataset.type = type;

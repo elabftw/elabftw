@@ -29,37 +29,15 @@ import { entity } from './getEntity';
 import { on } from './handlers';
 import { createGroupedSortables } from './grouped-sortables';
 
-// FINISH: outside if stepsDiv because can be from Todolist panel
-$(document).on('click', 'input[type=checkbox].stepbox', function(e) {
-  // ask for confirmation before un-finishing a step
-  // this check happens after the browser changed the state, so it is inverted
-  // what we are really checking here is if it was checked before the user clicks on it
-  if (!$(this).is(':checked') && !confirm(i18next.t('step-unfinish-warning'))) {
-    // re-check the box on cancel
-    $(this).prop('checked', true);
-    return;
-  }
-
-  // on the todolist we don't want to grab the type from the page
-  // because it's only steps from experiments
-  // so if the element has a data-type, take that instead
-  // clone to avoid mutating shared state
-  const newentity = { ...entity };
-  if (e.currentTarget.dataset.type) {
-    newentity.type = e.currentTarget.dataset.type;
-    newentity.id = e.currentTarget.dataset.id;
-  }
-  const stepId = e.currentTarget.dataset.stepid;
-  const StepNew = new Step(newentity);
-  StepNew.finish(stepId).then(() => {
-    reloadElements(['stepsDiv']).then(() => {
-      // keep to do list in sync
-      $('#todo_step_' + stepId).prop('checked', $('.stepbox[data-stepid="' + stepId + '"]').prop('checked'));
-    });
-  });
-});
-
 const StepC = new Step(entity);
+
+// FINISH: steps in the Todolist panel are handled in todolist.ts
+document.addEventListener('change', (event: Event) => {
+  const input = event.target;
+  if (input instanceof HTMLInputElement && input.matches('#stepsDiv input[type=checkbox].stepbox')) {
+    StepC.finishFromCheckbox(input);
+  }
+});
 
 // deadlines are stored without timezone and compared against the server clock to trigger notifications
 // so they must be stored in the server timezone, while users see and type them in their own timezone

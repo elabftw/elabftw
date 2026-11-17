@@ -6,7 +6,8 @@
  * @package elabftw
  */
 import Todolistc from './Todolist.class';
-import { Model } from './interfaces';
+import { EntityType, Model } from './interfaces';
+import Step from './Step.class';
 
 let unfinishedStepsScope = 'user';
 // unfinished steps scopeSwitch i.e. user (0) or team (1)
@@ -34,5 +35,14 @@ scopeSwitch = document.getElementById(TodolistC.model + 'StepsShowTeam') as HTML
 scopeSwitch.addEventListener('change', () => {
   if (!document.getElementById(TodolistC.panelId).hasAttribute('hidden')){
     TodolistC.toggleUnfinishedStepsScope();
+  }
+});
+
+// FINISH a step from the Todolist panel
+// this lives here and not in steps-links.ts because that file is only loaded on pages with a stepsDiv (not on the dashboard)
+document.getElementById(TodolistC.panelId)?.addEventListener('change', (event: Event) => {
+  const input = event.target;
+  if (input instanceof HTMLInputElement && input.classList.contains('todo-stepbox')) {
+    (new Step({ type: input.dataset.type as EntityType, id: parseInt(input.dataset.id, 10) })).finishFromCheckbox(input);
   }
 });

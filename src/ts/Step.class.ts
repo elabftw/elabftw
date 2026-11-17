@@ -9,6 +9,8 @@ import { Model, Target, Action } from './interfaces';
 import type { Entity } from './interfaces';
 import { ApiC } from './api';
 import { getEditor } from './Editor.class';
+import i18next from './i18n';
+import { reloadElements } from './misc';
 
 export default class Step {
   entity: Entity;
@@ -39,6 +41,30 @@ export default class Step {
 
   finish(id: number): Promise<Response> {
     return this.genericPatch(id, Action.Finish);
+  }
+
+  // toggle the finished state of a step from its checkbox, which can be in the steps of the page or in the Todolist panel
+  // the browser has already changed the checkbox state when this is called
+  finishFromCheckbox(input: HTMLInputElement): Promise<void> {
+    // an unchecked box means the step was finished before: ask for confirmation
+    if (!input.checked && !confirm(i18next.t('step-unfinish-warning'))) {
+      input.checked = true;
+      return Promise.resolve();
+    }
+    const stepId = parseInt(input.dataset.stepid, 10);
+    return this.finish(stepId).then(() => {
+      // keep the Todolist panel and the steps of the page in sync
+      const todoBox = document.getElementById(`todo_step_${stepId}`);
+      if (todoBox instanceof HTMLInputElement) {
+        todoBox.checked = input.checked;
+      }
+      if (document.querySelector(`#stepsDiv .stepbox[data-stepid="${stepId}"]`)) {
+        return reloadElements(['stepsDiv']);
+      }
+    }).catch(() => {
+      // revert the visual state if the request failed
+      input.checked = !input.checked;
+    });
   }
 
   notif(id: number): Promise<Response> {

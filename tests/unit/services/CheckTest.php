@@ -19,6 +19,7 @@ use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\Users\Users;
 use Elabftw\Models\Config;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CheckTest extends \PHPUnit\Framework\TestCase
 {
@@ -52,6 +53,38 @@ class CheckTest extends \PHPUnit\Framework\TestCase
         $this->expectException(ImproperActionException::class);
         $this->expectExceptionMessage('The color attribute is invalid.');
         Check::color('pwet');
+    }
+
+    public function testBookingHours(): void
+    {
+        $this->assertNull(Check::bookingHours(''));
+        // duplicate days are removed and days are sorted
+        $this->assertSame(
+            '{"days":[1,5],"start":"08:00","end":"18:00"}',
+            Check::bookingHours('{"days": [5, 1, 1], "start": "08:00", "end": "18:00"}'),
+        );
+    }
+
+    #[DataProvider('invalidBookingHours')]
+    public function testInvalidBookingHours(string $bookingHours): void
+    {
+        $this->expectException(ImproperActionException::class);
+        Check::bookingHours($bookingHours);
+    }
+
+    public static function invalidBookingHours(): array
+    {
+        return array(
+            'not json' => array('pwet'),
+            'not an object' => array('"08:00"'),
+            'missing end' => array('{"days": [1], "start": "08:00"}'),
+            'no day' => array('{"days": [], "start": "08:00", "end": "18:00"}'),
+            'day 8' => array('{"days": [8], "start": "08:00", "end": "18:00"}'),
+            'day as string' => array('{"days": ["1"], "start": "08:00", "end": "18:00"}'),
+            'time with trailing newline' => array('{"days": [1], "start": "08:00\n", "end": "18:00"}'),
+            'hour out of range' => array('{"days": [1], "start": "08:00", "end": "24:00"}'),
+            'start equals end' => array('{"days": [1], "start": "08:00", "end": "08:00"}'),
+        );
     }
 
     public function testVisibility(): void

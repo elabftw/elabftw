@@ -818,6 +818,21 @@ function syncBookingApproversState(): void {
   }
 }
 
+// Returns null to keep the stored value, and an empty string to remove the restriction
+function getBookingHours(): string | null {
+  const restrict = getInput('restrictBookingHoursSwitch');
+  // like collectForm(), skip disabled inputs: the switch is disabled while the resource is not bookable
+  if (restrict.disabled) return null;
+  if (!restrict.checked) return '';
+  const days = Array.from(
+    document.querySelectorAll<HTMLInputElement>('#bookingHoursDiv input[data-weekday]:checked'),
+    input => Number(input.dataset.weekday),
+  );
+  const start = getInput('bookingHoursStart').value;
+  const end = getInput('bookingHoursEnd').value;
+  return JSON.stringify({ days, start, end });
+}
+
 $(document).on('shown.bs.modal', '#bookingParamsModal', syncBookingApproversState);
 $(document).on('change', '#requiresApprovalSwitch, #isBookableSwitch', syncBookingApproversState);
 
@@ -839,6 +854,10 @@ on('save-booking-settings', async (_, e:Event): Promise<void | Response> => {
   const params = collectForm(form);
   if (requiredInput) {
     Object.assign(params, { requires_booking_approval: requiredInput.checked ? 1 : 0, approvers });
+  }
+  const bookingHours = getBookingHours();
+  if (bookingHours !== null) {
+    Object.assign(params, { booking_hours: bookingHours });
   }
   await ApiC.patch(`items/${form.dataset.itemId}`, params);
   reloadElements(['topToolbar', 'permissionsDiv']);

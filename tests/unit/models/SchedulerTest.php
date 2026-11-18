@@ -26,6 +26,7 @@ use Elabftw\Models\Users\Users;
 use Elabftw\Params\EntityParams;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\HttpFoundation\InputBag;
 
 use function array_column;
@@ -43,6 +44,8 @@ use function usort;
 class SchedulerTest extends \PHPUnit\Framework\TestCase
 {
     use TestsUtilsTrait;
+
+    private const string WEEKDAYS_8_TO_18 = '{"days": [1, 2, 3, 4, 5], "start": "08:00", "end": "18:00"}';
 
     private Scheduler $Scheduler;
 
@@ -1022,6 +1025,59 @@ class SchedulerTest extends \PHPUnit\Framework\TestCase
         $end = new DateTime('+3 days +2 hours')->format('c');
         $this->expectException(ImproperActionException::class);
         $this->getFreshSchedulerWithEvent($Items, $start, $end);
+    }
+
+    public function testBookingHoursAcceptSlotInsideWindow(): void
+    {
+        $Items = $this->getFreshBookableItem(2, array('booking_hours' => self::WEEKDAYS_8_TO_18));
+        // ending exactly at closing time is allowed
+        $this->getFreshSchedulerWithEvent($Items, $this->nextMondayAt('08:00'), $this->nextMondayAt('18:00'));
+        $this->assertCount(1, $this->getSortedEvents($Items));
+    }
+
+    #[DataProvider('outOfBookingHoursSlots')]
+    public function testBookingHoursRejectSlotOutsideWindow(string $start, string $end): void
+    {
+        $Items = $this->getFreshBookableItem(2, array('booking_hours' => self::WEEKDAYS_8_TO_18));
+        $this->expectOutsideBookingHours();
+        $this->getFreshSchedulerWithEvent($Items, $this->nextMondayAt($start), $this->nextMondayAt($end));
+    }
+
+    public static function outOfBookingHoursSlots(): array
+    {
+        return array(
+            'starts before opening' => array('07:30', '09:00'),
+            'ends after closing' => array('17:00', '18:30'),
+            'on a saturday' => array('saturday 10:00', 'saturday 11:00'),
+        );
+    }
+
+    public function testBookingHoursRejectMovingEventOutsideWindow(): void
+    {
+        $Items = $this->getFreshBookableItem(2, array('booking_hours' => self::WEEKDAYS_8_TO_18));
+        $Scheduler = $this->getFreshSchedulerWithEvent($Items, $this->nextMondayAt('10:00'), $this->nextMondayAt('11:00'));
+        $this->expectOutsideBookingHours();
+        $Scheduler->patch(Action::Update, array('target' => 'datetime', 'start' => $this->nextMondayAt('17:00'), 'end' => $this->nextMondayAt('19:00')));
+    }
+
+    public function testBookingHoursRejectChangingToRestrictedResource(): void
+    {
+        $RestrictedItems = $this->getFreshBookableItem(2, array('booking_hours' => self::WEEKDAYS_8_TO_18));
+        $Scheduler = $this->getFreshSchedulerWithEvent(null, $this->nextMondayAt('saturday 10:00'), $this->nextMondayAt('saturday 11:00'));
+        $this->expectOutsideBookingHours();
+        $Scheduler->patch(Action::Update, array('target' => 'item', 'id' => $RestrictedItems->id));
+    }
+
+    // a fixed weekday
+    private function nextMondayAt(string $modifier): string
+    {
+        return new DateTimeImmutable('next monday')->modify($modifier)->format('c');
+    }
+
+    private function expectOutsideBookingHours(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->expectExceptionMessage('Booking is limited to Mon, Tue, Wed, Thu, Fri, from 08:00 to 18:00.');
     }
 
     // a completed booking from a regular user, outside of the creation grace period

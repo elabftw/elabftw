@@ -108,6 +108,15 @@ When approval is required:
 
 Team admins do not get the right to approve bookings unless they are selected as approvers. Disabling approval later does not change requests that are still pending.
 
+### Restricting booking days and hours
+
+In the `Modify booking parameters` modal, you can enable `Restrict booking days and hours`, select the days, and set a start and an end time. A booking is then only accepted if it:
+
+- is on one of the selected days
+- starts and ends on the same day, between the start and the end time (it may end exactly at the end time)
+
+A recurring booking is only saved if all its occurrences fit. The restriction applies to everyone, including team admins. Existing bookings are kept, but any change to them is checked against the new restriction.
+
 ## Making a Resource procurable
 
 Resources are not procurable by default. To enable procurement for a resource, you must configure its procurement parameters.

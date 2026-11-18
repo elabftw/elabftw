@@ -21,7 +21,9 @@ use Elabftw\Models\Config;
 use Elabftw\Models\Users\Users;
 use JsonException;
 
+use function array_all;
 use function array_is_list;
+use function array_unique;
 use function filter_var;
 use function intval;
 use function mb_strlen;
@@ -34,8 +36,11 @@ use function _;
 use function implode;
 use function is_array;
 use function is_int;
+use function is_string;
 use function json_decode;
+use function json_encode;
 use function preg_match;
+use function sort;
 use function str_starts_with;
 use function strtolower;
 
@@ -52,6 +57,9 @@ final class Check
 
     /** how deep goes the canread/canwrite json */
     private const PERMISSIONS_JSON_MAX_DEPTH = 3;
+
+    /** depth of the booking hours json: object > days list > day numbers */
+    private const BOOKING_HOURS_JSON_MAX_DEPTH = 3;
 
     /**
      * Check the number of character of a password
@@ -167,6 +175,47 @@ final class Check
             }
         }
         return $visibility;
+    }
+
+    /**
+     * Days (1 is Monday, 7 is Sunday) and hours during which a resource can be booked, e.g.
+     * {"days": [1, 2, 3, 4, 5], "start": "08:00", "end": "18:00"}
+     * Saved as one value so the start time can be checked against the end time
+     */
+    public static function bookingHours(string $bookingHours): ?string
+    {
+        if ($bookingHours === '') {
+            return null;
+        }
+        try {
+            $decoded = json_decode($bookingHours, true, self::BOOKING_HOURS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            throw new ImproperActionException('The booking hours parameter could not be decoded as JSON.');
+        }
+
+        $days = $decoded['days'] ?? null;
+        $isDay = static fn(mixed $day): bool => is_int($day) && $day >= 1 && $day <= 7;
+        if (!is_array($days) || !array_all($days, $isDay)) {
+            throw new ImproperActionException('Booking days must be integers from 1 (Monday) to 7 (Sunday).');
+        }
+        if ($days === array()) {
+            throw new ImproperActionException(_('Select at least one day on which the resource can be booked.'));
+        }
+
+        $start = $decoded['start'] ?? null;
+        $end = $decoded['end'] ?? null;
+        $isTime = static fn(mixed $time): bool => is_string($time) && preg_match('/^([01]\d|2[0-3]):[0-5]\d\z/', $time) === 1;
+        if (!$isTime($start) || !$isTime($end)) {
+            throw new ImproperActionException(_('Enter a valid start and end time (HH:MM).'));
+        }
+        // zero-padded HH:MM strings compare like the times they represent
+        if ($start >= $end) {
+            throw new ImproperActionException(_('The start time must be before the end time.'));
+        }
+
+        $days = array_unique($days);
+        sort($days);
+        return json_encode(array('days' => $days, 'start' => $start, 'end' => $end), JSON_THROW_ON_ERROR);
     }
 
     public static function accessKey(string $ak): string

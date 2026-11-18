@@ -35,6 +35,7 @@ final class EntityParams extends ContentParams implements ContentParamsInterface
             'canread_base', 'canwrite_base', 'canbook_base', 'canread_target_base', 'canwrite_target_base', 'canbook_target_base' => $this->getCanBase(),
             'color' => Check::color($this->asString()),
             'book_max_minutes', 'book_max_slots', 'book_cancel_minutes', 'booking_window_days', 'proc_pack_qty', 'rating', 'userid', 'team' => $this->asInt(),
+            'booking_hours' => Check::bookingHours($this->asString()),
             'content_type' => $this->getEnum(BodyContentType::class, $this->asInt())->value,
             'state' => $this->getState(),
             'custom_id', 'status', 'category', 'storage', 'qty_stored' => $this->getPositiveIntOrNull(),

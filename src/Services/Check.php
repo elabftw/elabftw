@@ -188,12 +188,12 @@ final class Check
             return null;
         }
         try {
-            $decoded = json_decode($bookingHours, true, self::BOOKING_HOURS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($bookingHours, false, self::BOOKING_HOURS_JSON_MAX_DEPTH, JSON_THROW_ON_ERROR);
         } catch (JsonException) {
             throw new ImproperActionException('The booking hours parameter could not be decoded as JSON.');
         }
 
-        $days = $decoded['days'] ?? null;
+        $days = $decoded->days ?? null;
         $isDay = static fn(mixed $day): bool => is_int($day) && $day >= 1 && $day <= 7;
         if (!is_array($days) || !array_all($days, $isDay)) {
             throw new ImproperActionException('Booking days must be integers from 1 (Monday) to 7 (Sunday).');
@@ -202,8 +202,8 @@ final class Check
             throw new ImproperActionException(_('Select at least one day on which the resource can be booked.'));
         }
 
-        $start = $decoded['start'] ?? null;
-        $end = $decoded['end'] ?? null;
+        $start = $decoded->start ?? null;
+        $end = $decoded->end ?? null;
         $isTime = static fn(mixed $time): bool => is_string($time) && preg_match('/^([01]\d|2[0-3]):[0-5]\d\z/', $time) === 1;
         if (!$isTime($start) || !$isTime($end)) {
             throw new ImproperActionException(_('Enter a valid start and end time (HH:MM).'));

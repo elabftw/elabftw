@@ -115,7 +115,7 @@ In the `Modify booking parameters` modal, you can enable `Restrict booking days 
 - is on one of the selected days
 - starts and ends on the same day, between the start and the end time (it may end exactly at the end time)
 
-A recurring booking is only saved if all its occurrences fit. The restriction applies to everyone, including team admins. Existing bookings are kept, but any change to them is checked against the new restriction.
+A recurring booking is only saved if all its occurrences fit. The restriction applies to everyone, including team admins. Existing bookings are not changed.
 
 ## Making a Resource procurable
 

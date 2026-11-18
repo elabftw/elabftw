@@ -81,6 +81,7 @@ class CheckTest extends \PHPUnit\Framework\TestCase
             'no day' => array('{"days": [], "start": "08:00", "end": "18:00"}'),
             'day 8' => array('{"days": [8], "start": "08:00", "end": "18:00"}'),
             'day as string' => array('{"days": ["1"], "start": "08:00", "end": "18:00"}'),
+            'days as object' => array('{"days": {"0": 1}, "start": "08:00", "end": "18:00"}'),
             'time with trailing newline' => array('{"days": [1], "start": "08:00\n", "end": "18:00"}'),
             'hour out of range' => array('{"days": [1], "start": "08:00", "end": "24:00"}'),
             'start equals end' => array('{"days": [1], "start": "08:00", "end": "08:00"}'),

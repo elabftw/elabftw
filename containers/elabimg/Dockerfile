@@ -36,10 +36,10 @@ RUN case "$TARGETPLATFORM" in \
 # https://hub.docker.com/layers/library/alpine/3.24.3/images/sha256-6708ca119efec5c3fdcad5dc95d8a28a529aad8debc95872b7e12b3941882f55
 FROM alpine@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a AS nginx-builder
 
-ENV NGINX_VERSION=1.30.6
+ENV NGINX_VERSION=1.30.7
 # The build verifies the release signature, then this pinned checksum: update it together with NGINX_VERSION.
-# 1.30.6 is signed by Sergey Kandaurov: D6786CE303D9A9022998DC6CC8464D549AF75C0A
-ARG NGINX_SHA256=3cf46f5ed7504d460125866b7bea99fb357f31d887e2e63b35503310e9b8b6c8
+# 1.30.7 is signed by Sergey Kandaurov: D6786CE303D9A9022998DC6CC8464D549AF75C0A
+ARG NGINX_SHA256=2565b5c837050e958f70fb0f73c48e2bca4542ad349fd356f46fb0c72610bc6e
 # pin nginx modules versions
 # see https://github.com/google/ngx_brotli/issues/120 for the lack of tags
 ENV NGX_BROTLI_COMMIT=53e0fb55f250f48fe80c0ddbf6c0f7103cdbaae1

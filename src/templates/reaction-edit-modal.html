@@ -3,7 +3,7 @@
     <form id='reactionForm' class='modal-content' data-endpoint='{{ Entity.entityType.value }}/{{ Entity.id }}/reactions'
       data-confirm-delete='{{ 'Delete this reaction? Its history will be retained.'|trans }}'
       data-confirm-replace='{{ 'Replace the saved drawing with the current editor contents? Quantities are retained for matching structures. Changed or removed structures lose their previous quantities.'|trans }}'
-      data-confirm-load='{{ 'Replace the current drawing with this reaction?'|trans }}'
+      data-confirm-load='{{ 'Replace the current drawing?'|trans }}'
       data-confirm-discard='{{ 'Discard unsaved reaction changes?'|trans }}'
       data-mismatch='{{ 'This compound has a different structure. Choose a matching compound or update the drawing first.'|trans }}'>
       <div class='modal-header'>
@@ -40,7 +40,7 @@
         <p class='small text-muted'>{{ 'Planned and actual quantities are independent. Solution calculations use stock molarity; neat materials use molar mass, purity and density. Unknown values are left blank.'|trans }}</p>
         <div class='table-responsive'>
           <table class='table table-sm'>
-            <thead><tr><th scope='col'>{{ 'Component and properties'|trans }}</th><th scope='col'>{{ 'Role'|trans }}</th><th scope='col'>{{ 'Planned quantity'|trans }}</th><th scope='col'>{{ 'Actual quantity'|trans }}</th><th scope='col'>{{ 'Calculated'|trans }}</th><th scope='col'>{{ 'Remove'|trans }}</th></tr></thead>
+            <thead><tr><th scope='col'>{{ 'Component'|trans }}</th><th scope='col'>{{ 'Role'|trans }}</th><th scope='col'>{{ 'Planned'|trans }}</th><th scope='col'>{{ 'Actual'|trans }}</th><th scope='col'>{{ 'Calculated'|trans }}</th><th scope='col'>{{ 'Remove'|trans }}</th></tr></thead>
             <tbody id='reactionComponents'></tbody>
           </table>
         </div>
@@ -49,7 +49,7 @@
       </div>
       <div class='modal-footer'>
         <button type='button' class='btn btn-secondary' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
-        <button type='submit' class='btn btn-primary' data-cy='reaction-save'>{{ 'Save reaction'|trans }}</button>
+        <button type='submit' class='btn btn-primary' data-cy='reaction-save'>{{ 'Save'|trans }}</button>
       </div>
     </form>
   </div>
@@ -57,11 +57,11 @@
 <template id='reactionComponentTemplate'>
   <tr>
     <td>
-      <input class='form-control form-control-sm' data-field='name' aria-label='{{ 'Component name'|trans }}' maxlength='1024'>
+      <input class='form-control form-control-sm' data-field='name' aria-label='{{ 'Name'|trans }}' maxlength='1024'>
       <small data-formula></small>
       <details class='mt-1'>
         <summary>{{ 'Properties and links'|trans }}</summary>
-        {% for property in [['molecular_weight', 'Molar mass (g/mol)'|trans, '0', '999999999'], ['purity_percent', 'Purity (%)'|trans, '0', '100'], ['density_g_ml', 'Density (g/mL)'|trans, '0', '999999999999'], ['concentration_mol_l', 'Stock molarity (mol/L)'|trans, '0', '999999999999'], ['coefficient', 'Stoichiometric coefficient'|trans, '0.000001', '999999']] %}
+        {% for property in [['molecular_weight', 'Molar mass'|trans ~ ' (g/mol)', '0', '999999999'], ['purity_percent', 'Purity (%)'|trans, '0', '100'], ['density_g_ml', 'Density (g/mL)'|trans, '0', '999999999999'], ['concentration_mol_l', 'Stock molarity (mol/L)'|trans, '0', '999999999999'], ['coefficient', 'Stoichiometric coefficient'|trans, '0.000001', '999999']] %}
           <label class='d-block small mb-1'>{{ property[1] }}<input class='form-control form-control-sm' type='number' min='{{ property[2] }}' max='{{ property[3] }}' step='any' data-field='{{ property[0] }}' {{ property[0] in ['purity_percent', 'coefficient'] ? 'required' }}></label>
         {% endfor %}
         <label class='d-block small'>{{ 'Material form'|trans }}<select class='form-control form-control-sm' data-field='material_form'><option value='neat'>{{ 'Neat material'|trans }}</option><option value='solution'>{{ 'Solution'|trans }}</option></select></label>

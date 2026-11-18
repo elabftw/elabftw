@@ -391,7 +391,7 @@ final class Uploads extends AbstractRest
         if ($action === Action::Update && $this->id === null && array_key_exists('grouped_ordering', $params)) {
             $this->Entity->canOrExplode(AccessType::Write);
             if (!is_array($params['grouped_ordering'])) {
-                throw new ImproperActionException(_('Invalid grouped uploads ordering.'));
+                throw new ImproperActionException(_('Invalid grouped ordering.'));
             }
             $this->updateGroupedOrdering($params['grouped_ordering']);
             $this->Entity->touch();
@@ -399,7 +399,7 @@ final class Uploads extends AbstractRest
             return $this->readAll();
         }
         if ($this->id === null) {
-            throw new ImproperActionException(_('An upload id is required for this update.'));
+            throw new ImproperActionException(_('An id is required for this update.'));
         }
         $this->canWriteOrExplode();
         $this->Entity->touch();
@@ -648,7 +648,7 @@ final class Uploads extends AbstractRest
         $req = $this->Db->prepare($sql);
         foreach ($groups as $group) {
             if (!is_array($group) || !array_key_exists('upload_ids', $group) || !is_array($group['upload_ids'])) {
-                throw new ImproperActionException(_('Invalid grouped uploads ordering.'));
+                throw new ImproperActionException(_('Invalid grouped ordering.'));
             }
             $rawGroupId = $group['group_id'] ?? null;
             $groupId = $rawGroupId === null || $rawGroupId === '' ? null : (int) $rawGroupId;
@@ -657,7 +657,7 @@ final class Uploads extends AbstractRest
             foreach ($group['upload_ids'] as $ordering => $rawUploadId) {
                 $uploadId = (int) $rawUploadId;
                 if (!array_key_exists($uploadId, $uploads) || isset($seen[$uploadId])) {
-                    throw new ImproperActionException(_('Cannot reorder an upload that does not belong to this entity.'));
+                    throw new ImproperActionException(_('Cannot reorder an element that does not belong to this entry.'));
                 }
                 $seen[$uploadId] = true;
                 $req->bindValue(':group_id', $groupId, $groupId === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
@@ -676,7 +676,7 @@ final class Uploads extends AbstractRest
             return;
         }
         if ($groupId < 1) {
-            throw new ImproperActionException(_('Invalid upload group.'));
+            throw new ImproperActionException(_('Invalid group.'));
         }
         new UploadGroups($this->Entity, $groupId)->readOne();
     }

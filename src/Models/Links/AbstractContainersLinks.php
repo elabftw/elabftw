@@ -466,7 +466,7 @@ abstract class AbstractContainersLinks extends AbstractLinks
         // reject rather than truncate: a silently shortened audit record is worse than a refused deletion
         if (mb_strlen($comment) > self::MAX_DELETION_COMMENT_LENGTH) {
             throw new ImproperActionException(sprintf(
-                _('The comment is too long: %d characters maximum.'),
+                _('Input is too long. Maximum length is %d characters.'),
                 self::MAX_DELETION_COMMENT_LENGTH,
             ));
         }

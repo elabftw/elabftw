@@ -59,7 +59,7 @@
         {% set termB = sp|format('termB') %}
         {% set termC = sp|format('termC') %}
         {% set dateFormatsLink = "<a href='#dateFormats'>" ~ 'See accepted date formats below'|trans ~ '</a>' %}
-        {% set termOrQuoted = 'Term or Quoted term'|trans %}
+        {% set termOrQuoted = 'simple or quoted term'|trans %}
         {% set booleanValues = [
           '%s or %s'|trans|format(spb|format('yes'), spb|format('no')),
           '%s or %s'|trans|format(spb|format('true'), spb|format('false')),
@@ -153,7 +153,7 @@
               {{ '%s or %s'|trans|format([sp|format('public'), sp|format('organization'), sp|format('myteam'), sp|format('user')]|join(', '), sp|format('useronly'))|raw }}.
           </dd>
         </dl>
-        {% set dateWord = 'date'|trans %}
+        {% set dateWord = 'Date'|trans|lower %}
         <h3 id='dateFormats'>{{ 'Date formats'|trans }}</h3>
         <p>{{ "A date has to be provided in the following format: %s, i.e., four digit year, two digit month, and two digit day. Year, month and day can—but don't have to—be separated by hyphen (%s), slash (%s), period (%s), or comma (%s)."|trans|format("<code><span class='token number'>YYYYMMDD</span></code>", op|format('-'), op|format('/'), op|format('.'), op|format(','))|raw }}<br>
           {{ 'Either a %ssingle date%s or a %sdate range%s can be used.'|trans|format('<strong>', '</strong>', '<strong>', '</strong>')|raw }}</p>

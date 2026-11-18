@@ -17,3 +17,10 @@ jobs:
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v2
         with:
           files: apidoc/v2/openapi.yaml
+
+      - name: Trigger elabapi-go release
+        env:
+          GH_TOKEN: ${{ secrets.ELABAPI_GO_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh workflow run release.yml -R elabftw/elabapi-go -f version="$TAG"
+

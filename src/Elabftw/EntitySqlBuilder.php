@@ -222,10 +222,17 @@ final class EntitySqlBuilder implements SqlBuilderInterface
         if ($fullSelect) {
             // get all the columns of entity table
             $this->selectSql[] = 'entity.*';
-            // the access key gives anonymous read access to the entry: an impersonator could keep it and read the entry
-            // once the impersonation is over. Same column name after entity.* so it replaces it in the fetched row.
-            if ($this->entity->Users->impersonatorId !== null) {
+            // the access key gives anonymous read access to the entry: whoever sees it can keep reading the entry after losing access
+            // (permissions tightened, removed from the team, entry moved to another team). So only show it to those who can toggle it:
+            // the users with write access. An impersonator could keep it and read the entry once the impersonation is over.
+            // Same column name after entity.* so it replaces it in the fetched row.
+            if ($this->entity->Users->impersonatorId !== null || $this->entity->Users instanceof AnonymousUser) {
                 $this->selectSql[] = 'NULL AS access_key';
+            } else {
+                $this->selectSql[] = sprintf(
+                    'CASE WHEN (%s OR entity.userid = :userid) THEN entity.access_key ELSE NULL END AS access_key',
+                    $this->getCanSql(AccessType::Write->value),
+                );
             }
             // add a literal string for the page that can be used by the mention tinymce plugin code
             $this->selectSql[] = sprintf(

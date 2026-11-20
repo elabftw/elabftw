@@ -174,7 +174,7 @@
 
     <div id='imagePane' class='mt-2 entity-body-pane-inactive' role='tabpanel' aria-labelledby='imageTab'>
       {% set doodleExtensions = constant('Elabftw\\Elabftw\\Extensions::DOODLE') %}
-      <div id='doodleDiv' data-confirm-replace='{{ 'Replace the current drawing with this image?'|trans }}' data-error='{{ 'Could not load this image.'|trans }}' data-extensions='{{ doodleExtensions|json_encode|e('html_attr') }}'>
+      <div id='doodleDiv' data-confirm-replace='{{ 'Replace the current drawing?'|trans }}' data-error='{{ 'Could not load this image.'|trans }}' data-extensions='{{ doodleExtensions|json_encode|e('html_attr') }}'>
         {# TOOLBAR: the tools one after the other above the canvas, wrapping on narrow screens #}
         <div class='d-flex flex-wrap align-items-center mb-2 doodle-toolbar' role='toolbar' aria-label='{{ 'Image editor'|trans }}'>
           <button type='button' class='btn btn-secondary mr-2' data-action='doodle-load-attachment' data-cy='doodle-load-attachment'><i class='fas fa-folder-open fa-fw mr-1'></i>{{ 'Load attachment'|trans }}</button>

@@ -824,7 +824,7 @@ final class Compounds extends AbstractRest
     private function getSmartsSql(string $pattern, string $where, string $text): string
     {
         if (strlen($pattern) > self::MAX_SMARTS_LENGTH) {
-            throw new ImproperActionException(sprintf(_('The SMARTS pattern is limited to %d characters.'), self::MAX_SMARTS_LENGTH));
+            throw new ImproperActionException(sprintf(_('Input is too long. Maximum length is %d characters.'), self::MAX_SMARTS_LENGTH));
         }
         $sql = sprintf(
             "SELECT entity.id, entity.smiles FROM compounds AS entity

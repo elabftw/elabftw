@@ -5,10 +5,12 @@
  * @license AGPL-3.0
  * @package elabftw
  */
+import { DateTime } from 'luxon';
 import {
   collectForm,
   reloadElements,
   saveStringAsFile,
+  serverTimezone,
 } from './misc';
 import i18next from './i18n';
 import { Action, Model } from './interfaces';
@@ -62,6 +64,57 @@ on('regenerate-sigkeys', (_, event: Event) => {
     });
 });
 
+const apikeyExpirationSelect = document.getElementById('apikeyExpiration') as HTMLSelectElement | null;
+const apikeyValidUntilInput = document.getElementById('apikeyValidUntil') as HTMLInputElement | null;
+
+function getFutureDateString(days: number): string {
+  return DateTime.now().setZone(serverTimezone()).plus({ days }).toFormat('yyyy-MM-dd');
+}
+
+apikeyExpirationSelect?.addEventListener('change', () => {
+  if (!apikeyValidUntilInput) {
+    return;
+  }
+  const isCustom = apikeyExpirationSelect.value === 'custom';
+  apikeyValidUntilInput.hidden = !isCustom;
+  if (isCustom) {
+    apikeyValidUntilInput.min = getFutureDateString(1);
+  } else {
+    apikeyValidUntilInput.value = '';
+    apikeyValidUntilInput.style.borderColor = '';
+  }
+});
+
+function resolveApikeyValidUntil(): string | null | false {
+  const mode = apikeyExpirationSelect?.value ?? 'never';
+  if (mode === 'never') {
+    return null;
+  }
+  if (mode === 'custom') {
+    const minDate = getFutureDateString(1);
+    if (apikeyValidUntilInput) {
+      apikeyValidUntilInput.min = minDate;
+    }
+    const customDate = apikeyValidUntilInput?.value;
+    if (!customDate || customDate < minDate || !apikeyValidUntilInput?.checkValidity()) {
+      notify.error('check-required');
+      if (apikeyValidUntilInput) {
+        apikeyValidUntilInput.style.borderColor = 'red';
+      }
+      return false;
+    }
+    if (apikeyValidUntilInput) {
+      apikeyValidUntilInput.style.borderColor = '';
+    }
+    return customDate;
+  }
+  const days = parseInt(mode, 10);
+  if (Number.isNaN(days) || days <= 0) {
+    return null;
+  }
+  return getFutureDateString(days);
+}
+
 on('create-apikey', () => {
   // clear any previous new key message
   const nameInput = (document.getElementById('apikeyName') as HTMLInputElement);
@@ -72,8 +125,13 @@ on('create-apikey', () => {
     nameInput.style.borderColor = 'red';
     return;
   }
+  nameInput.style.borderColor = '';
+  const validUntil = resolveApikeyValidUntil();
+  if (validUntil === false) {
+    return;
+  }
   const canwrite = parseInt((document.getElementById('apikeyCanwrite') as HTMLInputElement).value, 10);
-  ApiC.post(`${Model.Apikey}`, {name: content, canwrite: canwrite}).then(resp => {
+  ApiC.post(`${Model.Apikey}`, {name: content, canwrite: canwrite, valid_until: validUntil}).then(resp => {
     const location = resp.headers.get('location').split('/');
     reloadElements(['apiTable']);
     const newkeyInputGroup = document.getElementById('newApiKeyInputGroup');

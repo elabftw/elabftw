@@ -738,6 +738,12 @@ abstract class AbstractEntity extends AbstractRest
         $this->entityData['related_experiments_links'] = $this->ExperimentsLinks->readRelated();
         $this->entityData['related_items_links'] = $this->ItemsLinks->readRelated();
         $this->entityData['upload_groups'] = new UploadGroups($this)->readAll();
+        // the state from the request only toggles archived uploads: deleted ones must never be listed here,
+        // or the zip and pdf exports built from entityData would serve their content
+        $queryParams->states = array_values(array_filter(
+            $queryParams->getStates(),
+            fn(State $state): bool => $state !== State::Deleted,
+        )) ?: array(State::Normal);
         $this->entityData['uploads'] = $this->Uploads->readAll($queryParams);
         $this->entityData['changelog'] = $this->withChangelog ? new Changelog($this)->readAll() : array();
         $this->entityData['comments'] = new Comments($this)->readAll();

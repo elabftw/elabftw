@@ -911,6 +911,11 @@ abstract class AbstractEntity extends AbstractRest
         if (!$permissions->fromCan($rw)) {
             throw new ForbiddenException();
         }
+        // the trash is only visible to those who can restore from it: an entry that was public when deleted must not stay readable
+        // keep in sync with EntitySqlBuilder::getCanFilter()
+        if ($this->entityData['state'] === State::Deleted->value && !$this->canSeeDeleted($permissions)) {
+            throw new ForbiddenException();
+        }
     }
 
     // generate a title useful for zip folder name for instance: shortened, with category and short elabid
@@ -1574,6 +1579,14 @@ abstract class AbstractEntity extends AbstractRest
     }
 
     protected function enforceTemplate(array $teamConfigArr): void {}
+
+    private function canSeeDeleted(AccessPermissions $permissions): bool
+    {
+        if ($this->Users instanceof AnonymousUser) {
+            return false;
+        }
+        return $permissions->write || (int) $this->entityData['userid'] === $this->Users->userid;
+    }
 
     private function canUseDefaultReadFastPath(
         QueryParamsInterface $displayParams,

@@ -85,6 +85,7 @@ final class ProcurementRequests extends AbstractRest
 
     public function readActiveForEntity(int $entityId): array
     {
+        $this->isAuthOrExplode();
         $sql = "SELECT CONCAT(users.firstname, ' ', users.lastname) AS requester_fullname, pr.id, pr.created_at, pr.team, pr.requester_userid, pr.entity_id, pr.qty_ordered, pr.body, pr.quote, pr.email_sent, pr.state
             FROM procurement_requests AS pr LEFT JOIN users ON (requester_userid = users.userid) WHERE pr.entity_id = :entity_id AND pr.team = :team AND pr.state NOT IN (:state_received, :state_archived)";
         $req = $this->Db->prepare($sql);

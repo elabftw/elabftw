@@ -70,6 +70,14 @@ class ProcurementRequestsTest extends \PHPUnit\Framework\TestCase
         $ProcurementRequests->readAll();
     }
 
+    public function testAnonymousUserCannotReadActiveForEntity(): void
+    {
+        $ProcurementRequests = new ProcurementRequests(new Teams(new AnonymousUser(1), 1));
+
+        $this->expectException(ForbiddenException::class);
+        $ProcurementRequests->readActiveForEntity(1);
+    }
+
     public function testReadRecordNotFound(): void
     {
         $this->pr->setId(2);

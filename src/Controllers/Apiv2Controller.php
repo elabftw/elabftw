@@ -127,6 +127,8 @@ final class Apiv2Controller extends AbstractApiController
 
     private bool $hasSubmodel = false;
 
+    private ?ApiSubModels $submodel = null;
+
     private array $reqBody = array();
 
     private ExportFormat $format = ExportFormat::None;
@@ -193,7 +195,8 @@ final class Apiv2Controller extends AbstractApiController
             $subId = (int) $subIdString;
             $this->subIdString = !empty($subIdString) ? $subIdString : null;
             $this->subId = $subId > 0 ? $subId : null;
-            $this->Model = $this->getSubModel(ApiSubModels::tryFrom($submodel));
+            $this->submodel = ApiSubModels::tryFrom($submodel);
+            $this->Model = $this->getSubModel($this->submodel);
             $this->hasSubmodel = true;
         }
 
@@ -589,6 +592,23 @@ final class Apiv2Controller extends AbstractApiController
         if (!in_array($this->endpoint, $allowedEndpoints, true)) {
             throw new ForbiddenException();
         };
+        // submodels are dispatched under an allowed endpoint, so they need their own allowlist:
+        // only the ones whose content is already rendered on the entity view page for anonymous visitors.
+        // Everything else (comments, containers, request actions, revisions, events, user submodels...) is denied.
+        $allowedSubModels = array(
+            ApiSubModels::CompoundsLinks,
+            ApiSubModels::ExperimentsLinks,
+            ApiSubModels::ItemsLinks,
+            ApiSubModels::Reactions,
+            ApiSubModels::StepGroups,
+            ApiSubModels::Steps,
+            ApiSubModels::Tags,
+            ApiSubModels::UploadGroups,
+            ApiSubModels::Uploads,
+        );
+        if ($this->hasSubmodel && !in_array($this->submodel, $allowedSubModels, true)) {
+            throw new ForbiddenException();
+        }
         // bookings are internal team data: the scheduler is not available to anonymous visitors
         if ($this->Model instanceof Scheduler) {
             throw new ForbiddenException();

@@ -523,6 +523,7 @@ final class Scheduler extends AbstractRest
         $this->checkSlotTime($start, $end);
         $this->checkEndAfterStart($start, $end);
         $this->checkBookingWindow($start);
+        $this->checkBookingHours($start, $end);
     }
 
     public function formatDate(string $input): DateTimeImmutable
@@ -939,6 +940,34 @@ final class Scheduler extends AbstractRest
         $maxAllowed = $now->modify(sprintf('+%d days', $maxDays))->setTime(23, 59, 59);
         if ($startDate > $maxAllowed) {
             throw new ImproperActionException(sprintf(_('Booking is limited to %d day(s) in advance.'), $maxDays));
+        }
+    }
+
+    // A resource can be restricted to some days and hours, see Check::bookingHours() for the format
+    private function checkBookingHours(string $start, string $end): void
+    {
+        $bookingHours = $this->Items->entityData['booking_hours'] ?? null;
+        if ($bookingHours === null) {
+            return;
+        }
+        /** @var array{days: list<int>, start: string, end: string} $hours */
+        $hours = json_decode($bookingHours, true, flags: JSON_THROW_ON_ERROR);
+        $startDate = $this->formatDate($start);
+        $endDate = $this->formatDate($end);
+        // opening and closing times are taken on the start day
+        $opensAt = $startDate->modify($hours['start']);
+        $closesAt = $startDate->modify($hours['end']);
+        $isAllowed = in_array((int) $startDate->format('N'), $hours['days'], true)
+            && $startDate >= $opensAt && $endDate <= $closesAt;
+        if (!$isAllowed) {
+            $dayNames = array(1 => _('Mon'), 2 => _('Tue'), 3 => _('Wed'), 4 => _('Thu'), 5 => _('Fri'), 6 => _('Sat'), 7 => _('Sun'));
+            $allowedDays = array_map(static fn(int $day): string => $dayNames[$day], $hours['days']);
+            throw new ImproperActionException(sprintf(
+                _('Booking is limited to %s, from %s to %s.'),
+                implode(', ', $allowedDays),
+                $hours['start'],
+                $hours['end'],
+            ));
         }
     }
 

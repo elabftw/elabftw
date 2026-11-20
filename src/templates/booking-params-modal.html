@@ -94,6 +94,35 @@
               <label for='booking_window_days' class='col-form-label'>{{ 'Allow bookings up to (days) in advance'|trans }}</label>
               <input class='form-control col-md-4' name='booking_window_days' type='number' value='{{ Entity.entityData.booking_window_days }}' {{ Entity.entityData.is_bookable == 0 ? 'disabled' }} id='booking_window_days' />
             </div>
+            {# no name attributes: getBookingHours() in common.ts saves these inputs as one value #}
+            {% set restrictHours = Entity.entityData.booking_hours is not empty %}
+            {% set hours = restrictHours ? Entity.entityData.booking_hours|jsonDecode : {days: [1, 2, 3, 4, 5], start: '08:00', end: '18:00'} %}
+            {% set hoursDisabled = Entity.entityData.is_bookable == 0 or not restrictHours %}
+            <div class='d-flex justify-content-between mb-2'>
+              <label class='d-inline mr-1' for='restrictBookingHoursSwitch'>{{ 'Restrict booking days and hours'|trans }}</label>
+              <label class='switch' title='{{ 'Restrict booking days and hours'|trans }}'><span class='sr-only'>{{ 'Restrict booking days and hours'|trans }}</span>
+                <input data-action='toggle-dependent' data-target-toggle='bookingHoursDiv' type='checkbox' autocomplete='off' id='restrictBookingHoursSwitch' {{ restrictHours ? 'checked="checked"' }} {{ Entity.entityData.is_bookable == 0 ? 'disabled' }}>
+                <span class='slider'></span>
+              </label>
+            </div>
+            <div class='mb-2 ml-2' id='bookingHoursDiv' style='{{ restrictHours ? "" : "opacity:0.5;" }}'>
+              <div class='d-flex justify-content-between mb-2'>
+                {% for label in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                  <label class='text-center mb-0'>
+                    <input class='d-block mx-auto mb-1' type='checkbox' autocomplete='off' data-weekday='{{ loop.index }}' {{ loop.index in hours.days ? 'checked="checked"' }} {{ hoursDisabled ? 'disabled' }}>
+                    {{ label|trans }}
+                  </label>
+                {% endfor %}
+              </div>
+              <div class='d-flex justify-content-between mb-2'>
+                <label for='bookingHoursStart' class='col-form-label'>{{ 'Start time'|trans }}</label>
+                <input class='form-control col-md-4' type='time' id='bookingHoursStart' value='{{ hours.start }}' {{ hoursDisabled ? 'disabled' }} />
+              </div>
+              <div class='d-flex justify-content-between mb-2'>
+                <label for='bookingHoursEnd' class='col-form-label'>{{ 'End time'|trans }}</label>
+                <input class='form-control col-md-4' type='time' id='bookingHoursEnd' value='{{ hours.end }}' {{ hoursDisabled ? 'disabled' }} />
+              </div>
+            </div>
             <hr>
             <h4>{{ 'Booking costs'|trans }}</h4>
             <div class='smallgray mb-4'>{{ 'Calculate the %shourly%s cost of booked resources based on scheduling data, and export the results as a CSV file from the Scheduler page.'|trans|format('<strong>', '</strong>')|raw }}</div>

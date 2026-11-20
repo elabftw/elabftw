@@ -491,7 +491,13 @@
     <input class='form-control col-md-12' name='subject' type='text' required id='massSubject' size='45' />
 
     <label for='massBody' class='col-form-label mt-2'>{{ 'Email Body'|trans }}</label>
-    <textarea class='form-control col-md-12' name='body' id='massBody'></textarea>
+    <div>
+      {% if App.devMode -%}
+      {# set no-unused-disable and text-content because removing or leaving text-content brings up error #}
+      <!-- [html-validate-disable-block unique-landmark, element-permitted-content, no-deprecated-attr, prefer-native-element, no-unused-disable, element-permitted-content: suppress errors from tinymce] -->
+      {%- endif %}
+      <textarea style='height:300px' class='mceditable' name='body' id='massBody'></textarea>
+    </div>
     <div class='mt-4 text-center'>
       <button type='submit' data-action='send-mass-email' class='btn btn-primary'>{{ 'Send'|trans }}</button>
     </div>

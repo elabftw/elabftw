@@ -25,6 +25,8 @@ use Symfony\Component\Mime\Address;
 use function explode;
 use function in_array;
 use function str_starts_with;
+use function htmlspecialchars;
+use function nl2br;
 
 /**
  * Instance level actions
@@ -57,7 +59,7 @@ final class Instance extends AbstractRest
                 EmailTarget::from((string) $reqBody['target']),
                 null,
                 Filter::toPureString($reqBody['subject']),
-                Filter::toPureString($reqBody['body']),
+                Filter::body($reqBody['body']),
                 new Address($this->requester->userData['email'], $this->requester->userData['fullname']),
                 $this->emailSendGrouped,
             ),
@@ -87,7 +89,7 @@ final class Instance extends AbstractRest
             $targetType,
             $targetId,
             $reqBody['subject'],
-            $reqBody['body'],
+            nl2br(htmlspecialchars($reqBody['body'])),
             $replyTo,
             $this->emailSendGrouped,
         );

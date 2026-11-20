@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Elabftw\Models;
 
 use Elabftw\Enums\Action;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Params\OrderingParams;
 
 class TodolistTest extends \PHPUnit\Framework\TestCase
@@ -49,6 +50,17 @@ class TodolistTest extends \PHPUnit\Framework\TestCase
         $this->Todolist->updateOrdering($OrderingParams);
         $all = $this->Todolist->readAll();
         $this->assertEquals('item 4', $all[0]['body']);
+    }
+
+    public function testCannotReorderTodoOfAnotherUser(): void
+    {
+        $victimItem = $this->Todolist->postAction(Action::Create, array('content' => 'victim item'));
+        $attacker = new Todolist(2);
+        $this->expectException(ForbiddenException::class);
+        $attacker->updateOrdering(new OrderingParams(array(
+            'ordering' => array('todoItem_' . $victimItem),
+            'table' => 'todolist',
+        )));
     }
 
     public function testDestroy(): void

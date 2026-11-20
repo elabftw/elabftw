@@ -19,6 +19,7 @@ use Elabftw\Enums\Metadata as MetadataEnum;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
 use Elabftw\Enums\Units;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Models\Changelog;
@@ -28,6 +29,7 @@ use Elabftw\Models\Items;
 use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\StorageUnits;
 use Elabftw\Models\Teams;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Params\ContentParams;
 use Override;
 use PDO;
@@ -63,6 +65,10 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
+        // the storage locations are not shown to anonymous users, even on a public entry: same as the page and the storage endpoints
+        if ($this->Entity->Users instanceof AnonymousUser) {
+            return array();
+        }
         // do not ORDER BY entity.date as items_types don't have date column
         $sql = 'SELECT
             main.id,
@@ -218,6 +224,9 @@ abstract class AbstractContainersLinks extends AbstractLinks
     #[Override]
     public function readOne(): array
     {
+        if ($this->Entity->Users instanceof AnonymousUser) {
+            throw new ForbiddenException();
+        }
         $sql = 'SELECT
             main.id,
             main.qty_stored,

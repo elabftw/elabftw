@@ -202,6 +202,30 @@ class UploadsTest extends \PHPUnit\Framework\TestCase
         $this->assertIsInt($Uploads->postAction(Action::Replace, array('real_name' => 'yep', 'filePath' => Tmp::getFolder() . '/a.file')));
     }
 
+    public function testReplaceReferencedInBody(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $this->Entity->patch(Action::Update, array('body' => '<img src="app/download.php?f=' . $Uploads->uploadData['long_name'] . '" />'));
+        $fs = new Tmp()->getFs();
+        $fs->write('replace-referenced.txt', 'replacement');
+
+        $this->assertIsInt($Uploads->postAction(Action::Replace, array('real_name' => 'replacement.txt', 'filePath' => Tmp::getFolder() . '/replace-referenced.txt')));
+        $this->assertEquals(State::Archived->value, $Uploads->readOne()['state']);
+    }
+
+    public function testArchiveReferencedInBodyIsRejected(): void
+    {
+        $Uploads = new Uploads($this->Entity);
+        $id = $Uploads->create(new CreateUploadFromLocalFile('example.png', dirname(__DIR__, 2) . '/_data/example.png'));
+        $Uploads->setId($id);
+        $this->Entity->patch(Action::Update, array('body' => '<img src="app/download.php?f=' . $Uploads->uploadData['long_name'] . '" />'));
+
+        $this->expectException(ImproperActionException::class);
+        $Uploads->patch(Action::Archive, array());
+    }
+
     public function testReplace(): void
     {
         $comment = 'some super duper comment';

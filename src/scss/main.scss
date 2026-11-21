@@ -1218,6 +1218,26 @@ tr.upload-group-drop-target td {
   }
 }
 
+.entity-type-label {
+  color: $white;
+
+  &[data-entity-type='experiments'] {
+    background-color: #24579a;
+  }
+
+  &[data-entity-type='experiments_templates'] {
+    background-color: #694393;
+  }
+
+  &[data-entity-type='items'] {
+    background-color: #23674e;
+  }
+
+  &[data-entity-type='items_types'] {
+    background-color: #884717;
+  }
+}
+
 .catstat-privacy {
   .private-icon {
     display: none;

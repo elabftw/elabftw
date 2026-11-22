@@ -38,6 +38,7 @@ jobs:
             check.trivy.dev
             dl-cdn.alpinelinux.org
             docker.io
+            get.trivy.dev
             ghcr.io
             index.docker.io
             mirror.gcr.io

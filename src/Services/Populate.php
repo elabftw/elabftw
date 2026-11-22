@@ -51,6 +51,7 @@ use Elabftw\Models\ItemsTypes;
 use Elabftw\Models\Links\Containers2ItemsLinks;
 use Elabftw\Models\ResourcesCategories;
 use Elabftw\Models\Scheduler;
+use Elabftw\Models\SigKeys;
 use Elabftw\Models\StepGroups;
 use Elabftw\Models\Steps;
 use Elabftw\Models\StorageUnits;
@@ -675,6 +676,10 @@ final class Populate
         if (array_key_exists('api_key', $user)) {
             $ApiKeys = new ApiKeys($Users);
             $ApiKeys->createKnown($user['api_key'] ?? 'yep');
+        }
+        // with a known passphrase, the user can sign entities without generating a key first
+        if (array_key_exists('sig_key_passphrase', $user)) {
+            new SigKeys($Users)->postAction(Action::Create, array('passphrase' => (string) $user['sig_key_passphrase']));
         }
         if (isset($user['user_preferences'])) {
             $Users->patch(Action::Update, $user['user_preferences']);

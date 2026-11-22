@@ -1751,102 +1751,94 @@ teams:
 
     user_groups:
       - name: Recherche & Développement
-        users: [43, 44, 45, 48, 49]
+        users: [margaux@lafabriqueducanele.com, bastien@lafabriqueducanele.com, chloe@lafabriqueducanele.com, julia@lafabriqueducanele.com, elise@lafabriqueducanele.com]
       - name: Qualité
-        users: [42]
+        users: [jules@lafabriqueducanele.com]
       - name: Doctorant
-        users: [46, 47]
+        users: [hugo@lafabriqueducanele.com, ines@lafabriqueducanele.com]
 
-    # Category colors are set explicitly to reach WCAG AAA (contrast >= 7:1 with color_fg)
+    # Categories are shown as a badge: soft pastel background with black text (color_fg)
+    # contrast ratios are given against black, WCAG AAA needs at least 7:1
     # if color is omitted, a random dark color is used as fallback (RandomColorTrait)
     experiments_categories:
       - name: Recette R&D
-        color: '#8E2A1F' # 8.40:1
-        color_fg: '#FFFFFF'
+        color: '#D9D1FF' # 14.5:1
+        color_fg: '#000000'
       - name: Développement client
-        color: '#1F4E8C' # 8.3:1
-        color_fg: '#FFFFFF'
+        color: '#D4D4D4' # 14.2:1
+        color_fg: '#000000'
       - name: Contrôle qualité
-        color: '#17592E' # 8.4:1
-        color_fg: '#FFFFFF'
+        color: '#BBFFB3' # 18.1:1
+        color_fg: '#000000'
       - name: Recherche
-        color: '#5B2A86' # 9.9:1
-        color_fg: '#FFFFFF'
+        color: '#CCF2FF' # 17.7:1
+        color_fg: '#000000'
       - name: Divers Noël
-        color: '#A01818' # 8.0:1
-        color_fg: '#FFFFFF'
+        color: '#FFA3A3' # 11.0:1
+        color_fg: '#000000'
       - name: Tests Paul
-        color: '#7F3F00' # 8.0:1
-        color_fg: '#FFFFFF'
+        color: '#FFBDDD' # 13.6:1
+        color_fg: '#000000'
       - name: Analyses bactériologiques Emma
-        color: '#005A66' # 7.9:1
-        color_fg: '#FFFFFF'
+        color: '#FDFFA3' # 20.0:1
+        color_fg: '#000000'
 
+    # Statuses have no color_fg: the admin page previews them with white text on their color,
+    # so they are deep tones; contrast ratios are given against white, WCAG AAA needs at least 7:1
     experiments_status:
       - name: En cours
-        color: '#EAF825' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#1E40AF' # 8.7:1
       - name: Réussi
-        color: '#3DB724' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#166534' # 7.1:1
       - name: À refaire
-        color: '#E68D28' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#92400E' # 7.1:1
       - name: Échec
-        color: '#E44821' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#991B1B' # 8.3:1
 
-    # Contrast ratio with white text in comments
     resources_categories:
       - name: Matière première
-        color: '#003C85' # 10.6:1
-        color_fg: '#FFFFFF'
+        color: '#FFE2B8' # 16.8:1
+        color_fg: '#000000'
       - name: Moule
-        color: '#303030' # 13.2:1
-        color_fg: '#FFFFFF'
+        color: '#E2E8F0' # 17.0:1
+        color_fg: '#000000'
       - name: Four
-        color: '#AA0808' # 7.6:1
-        color_fg: '#FFFFFF'
+        color: '#FFCFC2' # 15.0:1
+        color_fg: '#000000'
       - name: Appareil de mesure
-        color: '#286318' # 7.3:1
-        color_fg: '#FFFFFF'
+        color: '#C6F0DC' # 16.9:1
+        color_fg: '#000000'
       - name: Chambre froide
-        color: '#810891' # 8.8.1
-       # color: '#0B4F7A' # 8.7:1
-        color_fg: '#FFFFFF'
+        color: '#D3E3FF' # 16.2:1
+        color_fg: '#000000'
       - name: Clients
-        color: '#6B4A00' # 14.0:1
-        color_fg: '#FFFFFF'
+        color: '#F1D7FA' # 15.8:1
+        color_fg: '#000000'
 
     items_status:
       - name: En stock
-        color: '#3DB724' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#166534' # 7.1:1
       - name: À recommander
-        color: '#E44821' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#991B1B' # 8.3:1
       - name: En service
-        color: '#EAF825' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#1E40AF' # 8.7:1
       - name: À compléter
-        color: '#1A2bA8' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#92400E' # 7.1:1
       - name: Complet
-        color: '#11100E' # 9.0:1
-        color_fg: '#FFFFFF'
+        color: '#475569' # 7.6:1
 
     templates:
       - title: Contrôle qualité
         owner: jules@lafabriqueducanele.com
-        category: 28
-        status: 21
+        category: 'Contrôle qualité'
+        status: 'En cours'
         tags:
           - Contrôle
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name":"Paramètres du lot"}, {"id": 2, "name":"Mesures"}, {"id": 3, "name":"Décision"}]}, "extra_fields": {"Numéro de lot": {"type": "experiments", "value": "", "group_id": 1, "required": true, "description":"L''expérience contrôlée"}, "Client": {"type": "items", "value": "", "group_id": 1, "required": true}, "Arômes": {"type": "select", "value": "", "options": ["", "Chocolat", "Café", "Citron", "Fleur d''oranger", "Amande", "Crème de marron", "Anis", "Caramel", "Miel", "Pistache", "Figues", "Chorizo", "Piment d''Espelette", "Parmesan", "Emmental", "Foie gras", "Fines herbes", "Saumon", "Curry", "Tomates", "Basilic"], "allow_multi_values": true, "group_id": 2}, "Moule utilisé": {"type": "items", "value": "", "group_id": 1}, "Poids": {"type": "number", "value_labels": ["échantillon 1", "échantillon 2", "échantillon 3"], "value": ["", "", ""], "unit":"g", "units":["g"], "group_id": 2, "description": "Moyenne sur 3 échantillons minimum", "required": true, "allow_multi_values": true}, "Couleur": {"type": "select", "value": "", "options": ["", "Blond", "Doré", "Acajou", "Brun foncé"], "group_id": 2}, "Alvéolage": {"type": "select", "value": "", "options": ["", "Régulier", "Irrégulier"], "group_id": 2}, "Résultat du contrôle": {"type": "select", "value": "", "options": ["", "Conforme", "Non conforme"], "required": true, "group_id": 3}}}'
       - title: Recette R&D
         owner: chloe@lafabriqueducanele.com
         category: 'Recette R&D'
-        status: 21
+        status: 'En cours'
         tags:
           - 'Recette'
         body: '<h1>Recette</h1><p>&nbsp;</p><h1>Cuisson</h1><p>&nbsp;</p><h1>Dégustation</h1><p>&nbsp;</p>'
@@ -1854,7 +1846,7 @@ teams:
       - title: 'Développement client'
         owner: margaux@lafabriqueducanele.com
         category: 'Développement client'
-        status: 21
+        status: 'En cours'
         tags:
           - 'Client'
         body: '<h1>Contexte</h1><p>&nbsp;</p><h1>Cuisson</h1><p>&nbsp;</p><h1>Livraison</h1><p>&nbsp;</p>'
@@ -1863,22 +1855,22 @@ teams:
     items_types:
       - name: 'Client'
         category: 'Clients'
-        status: 40
+        status: 'À compléter'
         owner: jules@lafabriqueducanele.com
         template: '<h1>Exigences particulières</h1><p>&nbsp;</p><h1>Historique des commandes</h1><p>&nbsp;</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"", "required": true, "group_id":1},"Email":{"type":"email","value":"","group_id":1},"Téléphone":{"type":"text","value":"","group_id":1},"Adresse de livraison":{"type":"text","value":"","group_id":1},"Préfixe des lots":{"type":"select","value":"","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":"","options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
       - name: 'Matière première'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]},"extra_fields": {"Marque": {"type": "text", "value": "", "group_id": 1}, "Allergènes": {"type": "text", "value": "", "group_id": 1}, "Fournisseur": {"type": "text", "value": "", "group_id": 1}, "Matière grasse": {"type": "number", "value": "", "unit": "%", "units": ["%"], "group_id": 1 }, "N° de lot": {"type": "text", "value": "", "group_id": 2}, "Date de réception" : {"type": "date", "value": "", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "", "group_id": 2,"description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type":"number", "value":"", "unit":"kg", "units":["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "", "options": ["Ambiante, au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Référence fournisseur": {"type": "text", "value": "", "group_id" : 1}, "Conditionnement": {"type": "text", "value": "", "group_id": 1}, "Certificat d''analyse": {"type": "checkbox", "value": "", "group_id": 1}}}'
       - name: 'Équipement'
-        status: 39
+        status: 'En service'
         owner: jules@lafabriqueducanele.com
         template: '<h1>Mise en route</h1><p>&nbsp;</p><h1>Nettoyage</h1><p>&nbsp;</p><h1>Maintenance</h1><p>&nbsp;</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Identification"},{"id":2,"name":"Maintenance"}]},"extra_fields":{"Type d''équipement":{"type":"select","value":"","options":["","Four","Appareil de mesure","Chambre froide","Pétrin","Autre"],"group_id":1,"required":true},"Marque":{"type":"text","value":"","group_id":1},"Modèle":{"type":"text","value":"","group_id":1},"N° de série":{"type":"text","value":"","group_id":1,"blank_value_on_duplicate":true},"Date de mise en service":{"type":"date","value":"","group_id":1},"Responsable":{"type":"users","value":"","group_id":2},"Dernière maintenance":{"type":"date","value":"","group_id":2},"Prochaine maintenance":{"type":"date","value":"","group_id":2},"Étalonnage requis":{"type":"checkbox","value":"","group_id":2,"description":"Pour les appareils de mesure"}}}'
       - name: 'Ressource'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         template: '<h1>Description</h1><p>&nbsp;</p><h1>Consignes d''utilisation</h1><p>&nbsp;</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Informations"}]},"extra_fields":{"Responsable":{"type":"users","value":"","group_id":1},"Localisation":{"type":"text","value":"","group_id":1},"Quantité disponible":{"type":"number","value":"","unit":"pièces","units":["pièces","kg","L"],"group_id":1},"Remarques":{"type":"text","value":"","group_id":1}}}'
@@ -1886,25 +1878,50 @@ teams:
     items:
       - title: 'Four à sole n°1'
         category: 'Four'
-        status: 39
+        status: 'En service'
         owner: bastien@lafabriqueducanele.com
         is_bookable: 1
         body: '<p>Four à sole 4 étages. Sondes four et à cœur enregistrées à chaque cuisson.</p>'
       - title: 'Four à sole n°2'
         category: 'Four'
-        status: 39
+        status: 'En service'
         owner: bastien@lafabriqueducanele.com
         is_bookable: 1
         body: '<p>Four à sole 4 étages.</p>'
       - title: 'Dessiccateur'
         category: 'Appareil de mesure'
-        status: 39
+        status: 'En service'
         owner: jules@lafabriqueducanele.com
         is_bookable: 1
         body: '<p>Thermobalance : mesure de la teneur en eau à 105 °C, environ 10 minutes par échantillon.</p>'
+      - title: 'Balance de précision'
+        category: 'Appareil de mesure'
+        status: 'En service'
+        owner: jules@lafabriqueducanele.com
+        is_bookable: 1
+        body: '<h1>Mise en route</h1><p>Allumer 30 minutes avant la première pesée. Vérifier le niveau à bulle et faire le zéro.</p><h1>Nettoyage</h1><p>Pinceau sec sur le plateau, chiffon humide sur le capot. Jamais de jet d''eau.</p><h1>Maintenance</h1><p>Contrôle chaque lundi avec la masse étalon de 200 g (tolérance ± 0,02 g). Étalonnage annuel par un organisme accrédité.</p>'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Identification"},{"id":2,"name":"Maintenance"}]},"extra_fields":{"Type d''équipement":{"type":"select","value":"Appareil de mesure","options":["","Four","Appareil de mesure","Chambre froide","Pétrin","Autre"],"group_id":1,"required":true},"Marque":{"type":"text","value":"Equilibra","group_id":1},"Modèle":{"type":"text","value":"EQ-3200","group_id":1},"N° de série":{"type":"text","value":"EQ32-04417","group_id":1,"blank_value_on_duplicate":true},"Date de mise en service":{"type":"date","value":"2023-02-14","group_id":1},"Responsable":{"type":"users","value":"","group_id":2},"Dernière maintenance":{"type":"date","value":"2026-01-12","group_id":2},"Prochaine maintenance":{"type":"date","value":"2027-01-12","group_id":2},"Étalonnage requis":{"type":"checkbox","value":"on","group_id":2,"description":"Pour les appareils de mesure"}}}'
+      - title: 'Moules cuivre 10 g'
+        category: 'Moule'
+        status: 'En service'
+        owner: bastien@lafabriqueducanele.com
+        body: '<h1>Description</h1><p>Moules à canelé en cuivre étamé, 10 g, pour les mignardises.</p><h1>Consignes d''utilisation</h1><p>Cirer au mélange beurre et cire d''abeille avant chaque fournée. Ne jamais laver à l''eau savonneuse : essuyer à chaud.</p>'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Informations"}]},"extra_fields":{"Responsable":{"type":"users","value":"","group_id":1},"Localisation":{"type":"text","value":"Usine | Atelier cuisson | Rayonnage moules","group_id":1},"Quantité disponible":{"type":"number","value":"240","unit":"pièces","units":["pièces","kg","L"],"group_id":1},"Remarques":{"type":"text","value":"12 moules à rétamer","group_id":1}}}'
+        storage:
+          - location: 'Usine | Atelier cuisson | Rayonnage moules | Étagère 1'
+            quantity: 240
+      - title: 'Moules cuivre 45 g'
+        category: 'Moule'
+        status: 'En service'
+        owner: bastien@lafabriqueducanele.com
+        body: '<h1>Description</h1><p>Moules à canelé en cuivre étamé, 45 g, format classique.</p><h1>Consignes d''utilisation</h1><p>Cirer au mélange beurre et cire d''abeille avant chaque fournée. Ne jamais laver à l''eau savonneuse : essuyer à chaud.</p>'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Informations"}]},"extra_fields":{"Responsable":{"type":"users","value":"","group_id":1},"Localisation":{"type":"text","value":"Usine | Atelier cuisson | Rayonnage moules","group_id":1},"Quantité disponible":{"type":"number","value":"180","unit":"pièces","units":["pièces","kg","L"],"group_id":1},"Remarques":{"type":"text","value":"","group_id":1}}}'
+        storage:
+          - location: 'Usine | Atelier cuisson | Rayonnage moules | Étagère 2'
+            quantity: 180
       - title: 'Chambre froide R&D'
         category: 'Chambre froide'
-        status: 39
+        status: 'En service'
         owner: margaux@lafabriqueducanele.com
         is_bookable: 1
         body: '<p>Chambre froide positive à +4 °C réservée aux essais R&amp;D. 4 étagères.</p>'
@@ -1913,7 +1930,7 @@ teams:
       # phone numbers use the 05 36 49 range reserved by ARCEP for fiction
       - title: 'Maison Opale'
         category: 'Clients'
-        status: 41
+        status: 'Complet'
         owner: margaux@lafabriqueducanele.com
         rating: 5
         body: |
@@ -1971,10 +1988,9 @@ teams:
         experiments_links:
           - 'Canelé classique vanille-rhum - Maison Opale - réception de printemps - Lot HP-2026-25'
           - 'Contrôle qualité - Maison Opale - Lot HP-2026-25'
-          - 'Mignardise fleur d''oranger - Maison Opale Saint-Émilion - Lot HP-2026-16'
       - title: 'Domaine des Trois Hérons'
         category: 'Clients'
-        status: 41
+        status: 'Complet'
         owner: margaux@lafabriqueducanele.com
         body: '<h1>Exigences particulières</h1><p>Hôtel-restaurant. Mignardises servies au café, présentation soignée.</p><h1>Historique des commandes</h1><p>HP-2025-18, HP-2026-21, HP-2026-24.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Hôtellerie-restauration","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Bertrand Lévêque","required":true,"group_id":1},"Email":{"type":"email","value":"b.leveque@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 20 11","group_id":1},"Adresse de livraison":{"type":"text","value":"2 route des Hérons Gris, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"HP","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["10 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
@@ -1982,7 +1998,7 @@ teams:
           - 'Mignardise chocolat - Domaine des Trois Hérons - Lot HP-2025-18'
       - title: 'Hôtel des Mouettes Rieuses'
         category: 'Clients'
-        status: 40
+        status: 'À compléter'
         owner: margaux@lafabriqueducanele.com
         body: '<h1>Exigences particulières</h1><p>Hôtel en bord de lac, commandes surtout en saison estivale.</p><h1>Historique des commandes</h1><p>HP-2026-06, HP-2026-35.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Hôtellerie-restauration","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Nadia Corbières","required":true,"group_id":1},"Email":{"type":"email","value":"","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 20 22","group_id":1},"Adresse de livraison":{"type":"text","value":"","group_id":1},"Préfixe des lots":{"type":"select","value":"HP","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["10 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
@@ -1990,7 +2006,7 @@ teams:
           - 'Mignardise vanille - Hôtel des Mouettes Rieuses - Lot HP-2026-06'
       - title: 'Boulangerie Fournil des Brumes'
         category: 'Clients'
-        status: 41
+        status: 'Complet'
         owner: jules@lafabriqueducanele.com
         body: '<h1>Exigences particulières</h1><p>Revend les canelés en vitrine, format boulangerie 25 g.</p><h1>Historique des commandes</h1><p>BO-2026-03, BO-2026-28, BO-2026-39.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Boulangerie","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Gaëtan Brumaire","required":true,"group_id":1},"Email":{"type":"email","value":"fournil.brumes@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 30 33","group_id":1},"Adresse de livraison":{"type":"text","value":"18 rue du Four Imaginaire, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"BO","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["25 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
@@ -1998,7 +2014,7 @@ teams:
           - 'Canelé caramel beurre salé - Boulangerie Fournil des Brumes - Lot BO-2026-03'
       - title: 'Maison Brioche Céleste'
         category: 'Clients'
-        status: 41
+        status: 'Complet'
         owner: jules@lafabriqueducanele.com
         body: '<h1>Exigences particulières</h1><p>Client boulangerie le plus régulier : une commande toutes les deux à trois semaines.</p><h1>Historique des commandes</h1><p>BO-2026-09, BO-2026-20, BO-2026-23, BO-2026-27, BO-2026-29, BO-2026-30, BO-2026-32, BO-2026-41.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Boulangerie","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Solène Ravenel","required":true,"group_id":1},"Email":{"type":"email","value":"brioche.celeste@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 30 44","group_id":1},"Adresse de livraison":{"type":"text","value":"5 place des Levains, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"BO","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["25 g","45 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
@@ -2006,7 +2022,7 @@ teams:
           - 'Canelé café - Maison Brioche Céleste - Lot BO-2026-09'
       - title: 'Halles du Port-Lune'
         category: 'Clients'
-        status: 40
+        status: 'À compléter'
         owner: jules@lafabriqueducanele.com
         body: '<h1>Exigences particulières</h1><p>Stand de produits régionaux dans une halle couverte.</p><h1>Historique des commandes</h1><p>GD-2026-22, GD-2026-26, GD-2026-37.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Grande distribution","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Rémi Talabot","required":true,"group_id":1},"Email":{"type":"email","value":"","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 40 55","group_id":1},"Adresse de livraison":{"type":"text","value":"","group_id":1},"Préfixe des lots":{"type":"select","value":"GD","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["45 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
@@ -2014,7 +2030,7 @@ teams:
           - 'Contrôle qualité - Halles du Port-Lune - Lot GD-2026-22'
       - title: 'Hypermarché Cap Zéphyr'
         category: 'Clients'
-        status: 41
+        status: 'Complet'
         owner: jules@lafabriqueducanele.com
         body: '<h1>Exigences particulières</h1><p>Gros volumes, étiquetage avec code-barres fourni par le client.</p><h1>Historique des commandes</h1><p>GD-2026-31, GD-2026-33, GD-2026-34, GD-2026-36, GD-2026-38, GD-2026-40, GD-2026-42.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Grande distribution","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Service achats frais","required":true,"group_id":1},"Email":{"type":"email","value":"achats.capzephyr@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 40 66","group_id":1},"Adresse de livraison":{"type":"text","value":"Plateforme logistique, zone des Alizés, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"GD","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["35 g","45 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
@@ -2022,7 +2038,7 @@ teams:
           - 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-31'
       - title: 'Beurre doux AOP - lot B1185'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         body: '<p>Beurre doux AOP en plaques, utilisé pour l''appareil et le cirage des moules.</p><p>Certificat d''analyse reçu et conforme.</p>'
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]},"extra_fields": {"Marque": {"type": "text", "value": "Beurre des Charentes AOP", "group_id": 1}, "Allergènes": {"type": "text", "value": "Lait", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Laiterie du Médoc", "group_id": 1}, "Matière grasse": {"type": "number", "value": "82", "unit": "%", "units": ["%"], "group_id": 1 }, "N° de lot": {"type": "text", "value": "B1185", "group_id": 2}, "Date de réception" : {"type": "date", "value": "2026-11-09", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-01-15", "group_id": 2,"description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type":"number", "value":"25", "unit":"kg", "units":["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante, au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Référence fournisseur": {"type": "text", "value": "BD-AOP-82-2.5", "group_id" : 1}, "Conditionnement": {"type": "text", "value": "Plaques de 2,5 kg, carton de 10", "group_id": 1}, "Certificat d''analyse": {"type": "checkbox", "value": "on", "group_id": 1}}}'
@@ -2032,7 +2048,7 @@ teams:
             unit: 'kg'
       - title: 'Farine T45 - lot M2231'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Moulin des Landes", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Minoterie des Landes", "group_id": 1}, "N° de lot": {"type": "text", "value": "M2231", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-10-21", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-03-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "500", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Gluten", "group_id": 1}}}'
         storage:
@@ -2041,7 +2057,7 @@ teams:
             unit: 'kg'
       - title: 'Lait entier - lot L0907'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Lait des prés du Médoc", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Laiterie du Médoc", "group_id": 1}, "N° de lot": {"type": "text", "value": "L0907", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-11-16", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2026-11-28", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "200", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Lait", "group_id": 1}}}'
         storage:
@@ -2050,7 +2066,7 @@ teams:
             unit: 'L'
       - title: 'Fleur d''oranger - lot F118'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Eau de fleur d''oranger alimentaire", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Distillerie Méditerranée", "group_id": 1}, "N° de lot": {"type": "text", "value": "F118", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-10-05", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-06-30", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "10", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
@@ -2061,7 +2077,7 @@ teams:
           - 6
       - title: 'Fleur d''oranger - lot F097'
         category: 'Matière première'
-        status: 38
+        status: 'À recommander'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Eau de fleur d''oranger alimentaire", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Distillerie Méditerranée", "group_id": 1}, "N° de lot": {"type": "text", "value": "F097", "group_id": 2}, "Date de réception": {"type": "date", "value": "2025-03-18", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-01-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "10", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
@@ -2072,7 +2088,7 @@ teams:
           - 6
       - title: 'Rhum ambré - lot R551'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Rhum ambré 54 % vol.", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Rhumerie des Antilles", "group_id": 1}, "N° de lot": {"type": "text", "value": "R551", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-06-02", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2030-12-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "30", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
@@ -2081,7 +2097,7 @@ teams:
             unit: 'L'
       - title: 'Sucre semoule - lot S2210'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Sucre semoule extra-fin", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Sucrerie de l''Ouest", "group_id": 1}, "N° de lot": {"type": "text", "value": "S2210", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-09-14", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-12-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "1000", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
@@ -2090,7 +2106,7 @@ teams:
             unit: 'kg'
       - title: 'Œufs entiers - lot O4471'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Œufs plein air calibre M", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Ferme de Saucats", "group_id": 1}, "N° de lot": {"type": "text", "value": "O4471", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-11-13", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2026-12-02", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "1800", "unit": "œufs", "units": ["œufs"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Œuf", "group_id": 1}}}'
         storage:
@@ -2099,7 +2115,7 @@ teams:
             unit: 'œufs'
       - title: 'Gousses de vanille - lot V310'
         category: 'Matière première'
-        status: 37
+        status: 'En stock'
         owner: jules@lafabriqueducanele.com
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Vanille Bourbon de Madagascar", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Comptoir de Madagascar", "group_id": 1}, "N° de lot": {"type": "text", "value": "V310", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-04-22", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-02-28", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "2", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
@@ -2110,7 +2126,7 @@ teams:
     experiments:
       - title: 'Mignardise vanille-rhum 10 g - Lot RD-2026-13'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2026-09-21'
         rating: 3
@@ -2123,7 +2139,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille-rhum, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>19 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise chocolat 10 g - Lot RD-2026-11'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-09-14'
         rating: 5
@@ -2135,7 +2151,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme chocolat, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>19 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise café 10 g - Lot RD-2024-01'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2024-01-20'
         rating: 3
@@ -2147,7 +2163,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme café, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>20 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise pistache 10 g - Lot RD-2024-05'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2024-08-01'
         rating: 5
@@ -2159,7 +2175,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme pistache, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>19 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise framboise 10 g - Lot RD-2025-10'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2025-05-12'
         rating: 4
@@ -2171,7 +2187,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme framboise, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>19 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise citron 10 g - Lot RD-2026-05'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-02-24'
         rating: 4
@@ -2183,7 +2199,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme citron, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>18 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise miel 10 g - Lot RD-2026-07'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-05-10'
         rating: 5
@@ -2195,7 +2211,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme miel, moules cuivre de 10 g.</p><h1>Cuisson</h1><p>19 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise vanille-rhum 15 g - Lot RD-2026-14'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-10-10'
         rating: 3
@@ -2208,7 +2224,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille-rhum, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>24 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise caramel beurre salé 15 g - Lot RD-2025-11'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2025-07-03'
         rating: 5
@@ -2220,7 +2236,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme caramel beurre salé, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>24 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise noisette 15 g - Lot RD-2025-03'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2025-02-14'
         rating: 5
@@ -2232,7 +2248,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme noisette, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>25 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise thé matcha 15 g - Lot RD-2025-13'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2025-07-19'
         rating: 5
@@ -2244,7 +2260,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme thé matcha, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>23 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise vanille 15 g - Lot RD-2024-07'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2024-10-08'
         rating: 4
@@ -2256,7 +2272,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>25 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise chocolat 15 g - Lot RD-2026-04'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-02-23'
         rating: 5
@@ -2268,7 +2284,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme chocolat, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>24 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise café 15 g - Lot RD-2025-09'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2025-04-28'
         rating: 3
@@ -2280,7 +2296,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme café, moules cuivre de 15 g.</p><h1>Cuisson</h1><p>23 min à 220 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé boulangerie vanille-rhum 25 g - Lot RD-2025-21'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2025-12-18'
         rating: 4
@@ -2293,7 +2309,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille-rhum, moules cuivre de 25 g.</p><h1>Cuisson</h1><p>36 min à 210 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé boulangerie vanille 25 g - Lot RD-2025-15'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2025-09-26'
         rating: 5
@@ -2305,7 +2321,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille, moules cuivre de 25 g.</p><h1>Cuisson</h1><p>36 min à 210 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé boulangerie café 25 g - Lot RD-2024-04'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2024-05-27'
         rating: 4
@@ -2317,7 +2333,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme café, moules cuivre de 25 g.</p><h1>Cuisson</h1><p>36 min à 210 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé boulangerie caramel beurre salé 25 g - Lot RD-2024-08'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2024-11-20'
         rating: 5
@@ -2329,7 +2345,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme caramel beurre salé, moules cuivre de 25 g.</p><h1>Cuisson</h1><p>34 min à 210 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé moyen vanille-rhum 35 g - Lot RD-2025-06'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2025-04-09'
         rating: 5
@@ -2342,7 +2358,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille-rhum, moules cuivre de 35 g.</p><h1>Cuisson</h1><p>44 min à 205 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé moyen nature 35 g - Lot RD-2025-12'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2025-07-18'
         rating: 3
@@ -2354,7 +2370,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme nature, moules cuivre de 35 g.</p><h1>Cuisson</h1><p>43 min à 205 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé classique vanille-rhum 45 g - Lot RD-2025-04'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2025-02-15'
         rating: 4
@@ -2367,7 +2383,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille-rhum, moules cuivre de 45 g.</p><h1>Cuisson</h1><p>52 min à 200 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé classique vanille 45 g - Lot RD-2025-20'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2025-12-16'
         rating: 3
@@ -2379,7 +2395,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille, moules cuivre de 45 g.</p><h1>Cuisson</h1><p>48 min à 200 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé classique chocolat 45 g - Lot RD-2025-02'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2025-02-07'
         rating: 5
@@ -2391,7 +2407,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme chocolat, moules cuivre de 45 g.</p><h1>Cuisson</h1><p>52 min à 200 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé classique noisette 45 g - Lot RD-2024-02'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2024-02-01'
         rating: 5
@@ -2403,7 +2419,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme noisette, moules cuivre de 45 g.</p><h1>Cuisson</h1><p>50 min à 200 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé classique pistache 45 g - Lot RD-2024-03'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2024-04-04'
         rating: 3
@@ -2415,7 +2431,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme pistache, moules cuivre de 45 g.</p><h1>Cuisson</h1><p>50 min à 200 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Canelé classique miel 45 g - Lot RD-2026-08'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-06-05'
         rating: 3
@@ -2427,7 +2443,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme miel, moules cuivre de 45 g.</p><h1>Cuisson</h1><p>52 min à 200 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Grand canelé vanille-rhum 55 g - Lot RD-2026-15'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-10-25'
         rating: 5
@@ -2440,7 +2456,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille-rhum, moules cuivre de 55 g.</p><h1>Cuisson</h1><p>58 min à 195 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Grand canelé vanille 55 g - Lot RD-2024-06'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2024-09-08'
         rating: 5
@@ -2452,7 +2468,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille, moules cuivre de 55 g.</p><h1>Cuisson</h1><p>62 min à 195 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Grand canelé caramel beurre salé 55 g - Lot RD-2026-10'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2026-09-10'
         rating: 3
@@ -2464,7 +2480,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme caramel beurre salé, moules cuivre de 55 g.</p><h1>Cuisson</h1><p>62 min à 195 °C, four à sole.</p><h1>Dégustation</h1><p>Croûte acajou, cœur moelleux. Recette retenue.</p>
       - title: 'Mignardise café 10 g - sans sucre - Lot RD-2025-05'
         category: 'Recette R&D'
-        status: 24
+        status: 'Échec'
         owner: chloe@lafabriqueducanele.com
         date: '2025-03-26'
         tags:
@@ -2475,7 +2491,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme café, moules de 10 g.</p><h1>Résultat</h1><p>Croûte trop pâle, ne caramélise pas sans sucre.</p>
       - title: 'Canelé classique vanille 45 g - four ventilé - Lot RD-2026-12'
         category: 'Recette R&D'
-        status: 23
+        status: 'À refaire'
         owner: bastien@lafabriqueducanele.com
         date: '2026-09-14'
         tags:
@@ -2486,7 +2502,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme vanille, moules de 45 g.</p><h1>Résultat</h1><p>Cuisson irrégulière en four ventilé, à refaire en four à sole.</p>
       - title: 'Grand canelé chocolat 55 g - Lot RD-2025-16'
         category: 'Recette R&D'
-        status: 24
+        status: 'Échec'
         owner: chloe@lafabriqueducanele.com
         date: '2025-09-26'
         tags:
@@ -2497,7 +2513,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme chocolat, moules de 55 g.</p><h1>Résultat</h1><p>Le cacao assèche le cœur.</p>
       - title: 'Mignardise citron 15 g - zestes confits - Lot RD-2026-02'
         category: 'Recette R&D'
-        status: 23
+        status: 'À refaire'
         owner: margaux@lafabriqueducanele.com
         date: '2026-01-04'
         tags:
@@ -2508,7 +2524,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme citron, moules de 15 g.</p><h1>Résultat</h1><p>Zestes qui brûlent en surface.</p>
       - title: 'Mignardise framboise 10 g - purée de fruit - Lot RD-2025-01'
         category: 'Recette R&D'
-        status: 24
+        status: 'Échec'
         owner: chloe@lafabriqueducanele.com
         date: '2025-01-27'
         tags:
@@ -2519,7 +2535,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme framboise, moules de 10 g.</p><h1>Résultat</h1><p>La purée fait retomber la pâte.</p>
       - title: 'Canelé boulangerie miel 25 g - Lot RD-2026-01'
         category: 'Recette R&D'
-        status: 21
+        status: 'En cours'
         owner: chloe@lafabriqueducanele.com
         date: '2026-01-01'
         tags:
@@ -2530,7 +2546,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, arôme miel, moules de 25 g.</p><h1>Résultat</h1><p>Essai en cours, dégustation prévue la semaine prochaine.</p>
       - title: 'Fleur d''oranger - v1 - Lot RD-2025-07'
         category: 'Recette R&D'
-        status: 23
+        status: 'À refaire'
         owner: margaux@lafabriqueducanele.com
         date: '2025-04-10'
         rating: 2
@@ -2542,7 +2558,7 @@ teams:
           <h1>Recette</h1><p>Base canelé maison, 12 mL d'eau de fleur d'oranger par litre de lait, moules de 15 g.</p><h1>Cuisson</h1><p>24 min à 220 °C.</p>
       - title: 'Fleur d''oranger - v2 - Lot RD-2025-08'
         category: 'Recette R&D'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2025-04-24'
         rating: 4
@@ -2556,7 +2572,7 @@ teams:
           - 152
       - title: 'Canelé classique vanille-rhum - Maison Opale - réception de printemps - Lot HP-2026-25'
         category: 'Développement client'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2026-03-09'
         rating: 5
@@ -2570,7 +2586,7 @@ teams:
           <h1>Contexte</h1><p>Commande de Maison Opale.</p><h1>Cuisson</h1><p>50 min à 200 °C.</p><h1>Livraison</h1><p>Lot livré, client satisfait.</p>
       - title: 'Mignardise chocolat - Domaine des Trois Hérons - Lot HP-2025-18'
         category: 'Développement client'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2025-11-20'
         rating: 5
@@ -2583,7 +2599,7 @@ teams:
           <h1>Contexte</h1><p>Commande de Domaine des Trois Hérons.</p><h1>Cuisson</h1><p>19 min à 220 °C.</p><h1>Livraison</h1><p>Lot livré, client satisfait.</p>
       - title: 'Mignardise vanille - Hôtel des Mouettes Rieuses - Lot HP-2026-06'
         category: 'Développement client'
-        status: 22
+        status: 'Réussi'
         owner: margaux@lafabriqueducanele.com
         date: '2026-05-06'
         rating: 5
@@ -2596,7 +2612,7 @@ teams:
           <h1>Contexte</h1><p>Commande de Hôtel des Mouettes Rieuses.</p><h1>Cuisson</h1><p>24 min à 220 °C.</p><h1>Livraison</h1><p>Lot livré, client satisfait.</p>
       - title: 'Canelé caramel beurre salé - Boulangerie Fournil des Brumes - Lot BO-2026-03'
         category: 'Développement client'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-02-02'
         rating: 4
@@ -2608,7 +2624,7 @@ teams:
           <h1>Contexte</h1><p>Commande de Boulangerie Fournil des Brumes.</p><h1>Cuisson</h1><p>34 min à 210 °C.</p><h1>Livraison</h1><p>Lot livré, client satisfait.</p>
       - title: 'Canelé café - Maison Brioche Céleste - Lot BO-2026-09'
         category: 'Développement client'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2026-06-15'
         rating: 4
@@ -2620,14 +2636,14 @@ teams:
           <h1>Contexte</h1><p>Commande de Maison Brioche Céleste.</p><h1>Cuisson</h1><p>34 min à 210 °C.</p><h1>Livraison</h1><p>Lot livré, client satisfait.</p>
       - title: 'test'
         category: 'Divers Noël'
-        status: 21
+        status: 'En cours'
         owner: chloe@lafabriqueducanele.com
         date: '2025-12-12'
         body: |
           <p>test</p>
       - title: 'Essai canelés Noël - Lot RD-2025-22'
         category: 'Divers Noël'
-        status: 22
+        status: 'Réussi'
         owner: bastien@lafabriqueducanele.com
         date: '2025-12-18'
         tags:
@@ -2636,35 +2652,35 @@ teams:
           <p>Fournée du 18 décembre, ok.</p>
       - title: 'test four 2 - Lot RD-2025-17'
         category: 'Tests Paul'
-        status: 21
+        status: 'En cours'
         owner: bastien@lafabriqueducanele.com
         date: '2025-10-03'
         body: |
           <p>À voir</p>
       - title: 'Essai sans gluten - Lot RD-2025-14'
         category: 'Tests Paul'
-        status: 24
+        status: 'Échec'
         owner: chloe@lafabriqueducanele.com
         date: '2025-09-22'
         body: |
           <p>Pâte trop liquide.</p>
       - title: 'Analyse flore totale - lot BO-2025-28'
         category: 'Analyses bactériologiques Emma'
-        status: 22
+        status: 'Réussi'
         owner: chloe@lafabriqueducanele.com
         date: '2025-11-04'
         body: |
           <p>Résultat envoyé par le labo externe : conforme.</p>
       - title: 'Listeria surfaces chambre froide'
         category: 'Analyses bactériologiques Emma'
-        status: 21
+        status: 'En cours'
         owner: chloe@lafabriqueducanele.com
         date: '2025-12-02'
         body: |
           <p>En attente des résultats.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-20'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-01-12'
         tags:
@@ -2675,7 +2691,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Domaine des Trois Hérons - Lot HP-2026-21'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-01-26'
         tags:
@@ -2686,7 +2702,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Halles du Port-Lune - Lot GD-2026-22'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-02-09'
         tags:
@@ -2697,7 +2713,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-23'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-02-23'
         tags:
@@ -2708,7 +2724,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Domaine des Trois Hérons - Lot HP-2026-24'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-03-09'
         tags:
@@ -2719,7 +2735,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Maison Opale - Lot HP-2026-25'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-03-23'
         tags:
@@ -2732,7 +2748,7 @@ teams:
           - 'Canelé classique vanille-rhum - Maison Opale - réception de printemps - Lot HP-2026-25'
       - title: 'Contrôle qualité - Halles du Port-Lune - Lot GD-2026-26'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-04-06'
         tags:
@@ -2743,7 +2759,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-27'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-04-20'
         tags:
@@ -2754,7 +2770,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Boulangerie Fournil des Brumes - Lot BO-2026-28'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-05-04'
         tags:
@@ -2765,7 +2781,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-29'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-05-18'
         tags:
@@ -2776,7 +2792,7 @@ teams:
           <h1>Observations</h1><p>Humidité hors plage, lot bloqué.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-30'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-06-01'
         tags:
@@ -2787,7 +2803,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-31'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-06-15'
         tags:
@@ -2798,7 +2814,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-32'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-06-29'
         tags:
@@ -2809,7 +2825,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-33'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-07-13'
         tags:
@@ -2820,7 +2836,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-34'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-07-27'
         tags:
@@ -2831,7 +2847,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hôtel des Mouettes Rieuses - Lot HP-2026-35'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-08-10'
         tags:
@@ -2842,7 +2858,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-36'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-08-24'
         tags:
@@ -2853,7 +2869,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Halles du Port-Lune - Lot GD-2026-37'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-09-07'
         tags:
@@ -2864,7 +2880,7 @@ teams:
           <h1>Observations</h1><p>Humidité hors plage, lot bloqué.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-38'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-09-21'
         tags:
@@ -2875,7 +2891,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Boulangerie Fournil des Brumes - Lot BO-2026-39'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-10-05'
         tags:
@@ -2886,7 +2902,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-40'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-10-19'
         tags:
@@ -2897,7 +2913,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Maison Brioche Céleste - Lot BO-2026-41'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-11-02'
         tags:
@@ -2908,7 +2924,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-42'
         category: 'Contrôle qualité'
-        status: 22
+        status: 'Réussi'
         owner: jules@lafabriqueducanele.com
         date: '2026-11-16'
         tags:
@@ -2919,7 +2935,7 @@ teams:
           <h1>Observations</h1><p>RAS.</p>
       - title: 'Thèse - cinétique de caramélisation de la croûte'
         category: 'Recherche'
-        status: 21
+        status: 'En cours'
         owner: hugo@lafabriqueducanele.com
         date: '2026-10-06'
         tags:
@@ -2930,7 +2946,7 @@ teams:
           <h1>Objectif</h1><p>Suivre la coloration de la croûte au cours de la cuisson selon le taux de sucre de la pâte.</p><h1>Plan d'expérience</h1><p>3 taux de sucre, 4 temps de cuisson, mesure de couleur par colorimètre.</p>
       - title: 'Thèse - effet du temps de repos de la pâte sur l''alvéolage'
         category: 'Recherche'
-        status: 21
+        status: 'En cours'
         owner: hugo@lafabriqueducanele.com
         date: '2026-11-02'
         tags:
@@ -2941,7 +2957,7 @@ teams:
           <h1>Objectif</h1><p>Comparer l'alvéolage après 12 h, 24 h, 48 h et 72 h de repos en chambre froide.</p><h1>Premiers résultats</h1><p>Alvéolage plus régulier à partir de 24 h.</p>
       - title: 'Mignardise fleur d''oranger - Maison Opale Saint-Émilion - Lot HP-2026-16'
         category: 'Développement client'
-        status: 21
+        status: 'En cours'
         owner: margaux@lafabriqueducanele.com
         date: '-1 day'
         tags:
@@ -3014,8 +3030,6 @@ teams:
             steps:
               - 'Faire contrôler le lot par la Qualité'
               - 'Faire signer l''expérience'
-        uploads:
-          - src/tools/canneles/preparation-pate.jpg
         items_links:
           - 'Maison Opale'
           - 'Four à sole n°1'
@@ -3027,10 +3041,6 @@ teams:
           - 'Œufs entiers - lot O4471'
           - 'Beurre doux AOP - lot B1185'
           - 'Rhum ambré - lot R551'
-        storage:
-          - location: 'Usine | Laboratoire R&D | Chambre froide R&D | Étagère 2'
-            quantity: 2
-            unit: 'kg'
 
     events:
       - item: 'Dessiccateur'

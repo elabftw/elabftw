@@ -49,9 +49,18 @@ trait RandomColorTrait
      */
     protected function getRandomAaaColor(): string
     {
+        return self::toAaaColor($this->getRandomDarkColor());
+    }
+
+    /**
+     * Darken a color until it reaches WCAG AAA contrast (7:1) with white text, keeping its hue
+     * A color that is already dark enough is returned unchanged
+     */
+    protected static function toAaaColor(string $color): string
+    {
         $rgb = array_map(
             static fn(string $channel): int => (int) hexdec($channel),
-            str_split(ltrim($this->getRandomDarkColor(), '#'), 2),
+            str_split(ltrim($color, '#'), 2),
         );
         // terminates because black has a 21:1 contrast ratio with white
         while (self::getContrastRatioWithWhite($rgb) < self::AAA_CONTRAST_RATIO) {

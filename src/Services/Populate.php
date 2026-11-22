@@ -32,7 +32,6 @@ use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Factories\LinksFactory;
 use Elabftw\Hash\LocalPasswordHash;
-use Elabftw\Models\AbstractCategory;
 use Elabftw\Models\AbstractEntity;
 use Elabftw\Models\AbstractStatus;
 use Elabftw\Models\ApiKeys;
@@ -80,6 +79,7 @@ use function random_bytes;
 use function sprintf;
 use function explode;
 use function shuffle;
+use function strtoupper;
 use function array_filter;
 use function array_values;
 use function ctype_digit;
@@ -174,10 +174,11 @@ final class Populate
                 $Teamgroups = new TeamGroups($teamScopedAdmin);
                 $id = $Teamgroups->create($group['name']);
                 $Teamgroups->setId($id);
-                foreach ($group['users'] as $userid) {
+                foreach ($group['users'] as $user) {
                     $Teamgroups->updateMember(array(
                         'how' => Action::Add->value,
-                        'userid' => $userid,
+                        // an email keeps the membership stable: ids shift with --fast or random users
+                        'userid' => is_int($user) ? $user : ExistingUser::fromEmail($user)->userid,
                     ));
                 }
                 $this->output->writeln(sprintf('├ + teamgroup: %s (id: %d in team: %d)', $group['name'], $id, $teamid));
@@ -187,7 +188,7 @@ final class Populate
             // EXPERIMENTS CATEGORIES
             // a custom category set replaces the default one created along with the team
             if (!empty($team['experiments_categories'])) {
-                $this->destroyCategories(new ExperimentsCategories($TeamAsAdmin), 'experiments categories');
+                $this->destroyCatStat(new ExperimentsCategories($TeamAsAdmin), 'experiments categories', $teamid);
             }
             foreach ($team['experiments_categories'] ?? array() as $category) {
                 $id = new ExperimentsCategories($Teams)->postAction(Action::Create, array(
@@ -201,7 +202,7 @@ final class Populate
             // EXPERIMENTS STATUS
             // a custom status set replaces the default one created along with the team
             if (!empty($team['experiments_status'])) {
-                $this->destroyStatus(new ExperimentsStatus($TeamAsAdmin), 'experiments status');
+                $this->destroyCatStat(new ExperimentsStatus($TeamAsAdmin), 'experiments status', $teamid);
             }
             foreach ($team['experiments_status'] ?? array() as $status) {
                 $id = new ExperimentsStatus($Teams)->postAction(Action::Create, array(
@@ -211,15 +212,19 @@ final class Populate
                 ));
                 $this->output->writeln(sprintf('├ + exp status: %s (id: %d in team: %d)', $status['name'], $id, $teamid));
             }
+            // the default set (Running, Success...) uses light colors: darken them so white text stays readable
+            if (empty($team['experiments_status'])) {
+                $this->darkenToAaa(new ExperimentsStatus($TeamAsAdmin), $teamid);
+            }
 
             // ITEMS STATUS
             if (!empty($team['items_status'])) {
-                $this->destroyStatus(new ItemsStatus($TeamAsAdmin), 'resources status');
+                $this->destroyCatStat(new ItemsStatus($TeamAsAdmin), 'resources status', $teamid);
             }
             foreach ($team['items_status'] ?? array() as $status) {
                 $id = new ItemsStatus($Teams)->postAction(Action::Create, array(
                     'name' => $status['name'],
-                    'color' => $status['color'] ?? $this->getRandomDarkColor(),
+                    'color' => $status['color'] ?? $this->getRandomAaaColor(),
                 ));
                 $this->output->writeln(sprintf('├ + resources status: %s (id: %d in team: %d)', $status['name'], $id, $teamid));
             }
@@ -230,8 +235,8 @@ final class Populate
                 $id = $Templates->create(
                     title: $template['title'],
                     body: $template['body'] ?? '',
-                    category: new ExperimentsCategories($Teams)->getIdempotentIdFromTitle($template['title'] ?? 'Project Narwal'),
-                    status: $this->getStatus($template['status'] ?? 2),
+                    category: new ExperimentsCategories($Teams)->getIdempotentIdFromTitle($template['category'] ?? 'Project Narwal', $this->getRandomAaaColor()),
+                    status: $this->getStatus(new ExperimentsStatus($Teams), $template['status'] ?? 2),
                     metadata: $template['metadata'] ?? '{}',
                 );
                 $Templates->setId($id);
@@ -251,7 +256,7 @@ final class Populate
 
             // ADD RESOURCES CATEGORIES
             if (!empty($team['resources_categories'])) {
-                $this->destroyCategories($ResourcesCategories, 'resources categories');
+                $this->destroyCatStat($ResourcesCategories, 'resources categories', $teamid);
             }
             foreach ($team['resources_categories'] ?? array() as $entry) {
                 $id = $ResourcesCategories->create(
@@ -265,14 +270,14 @@ final class Populate
             // ITEMS TYPES
             foreach ($team['items_types'] ?? array() as $items_types) {
                 $ItemsTypes = new ItemsTypes($this->getOwnerInTeam($teamid, $items_types['owner'] ?? null));
-                $category = array_key_exists('category', $items_types) ? $ResourcesCategories->getIdempotentIdFromTitle($items_types['category']) : null;
+                $category = array_key_exists('category', $items_types) ? $ResourcesCategories->getIdempotentIdFromTitle($items_types['category'], $this->getRandomAaaColor()) : null;
                 $itemTypeId = $ItemsTypes->create(
                     title: $items_types['name'],
                     body: $items_types['template'] ?? '',
                     category: $category,
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     metadata: $items_types['metadata'] ?? '{}',
-                    status: $this->getStatus($items_types['status'] ?? 2),
+                    status: $this->getStatus(new ItemsStatus($Teams), $items_types['status'] ?? 2),
                 );
                 $ItemsTypes->setId($itemTypeId);
                 $this->queueLinks($ItemsTypes, $items_types);
@@ -298,9 +303,8 @@ final class Populate
                     title: $experiment['title'],
                     body: $experiment['body'] ?? '',
                     date: new DateTimeImmutable((string) ($experiment['date'] ?? $this->faker->dateTimeBetween('-5 years')->format('Ymd'))),
-                    category: $ExperimentsCategories->getIdempotentIdFromTitle($experiment['category'] ?? 'Demo'),
-                    // status: $this->getStatus($Teams, $experiment['status'] ?? 2),
-                    status: $this->getStatus($experiment['status'] ?? 2),
+                    category: $ExperimentsCategories->getIdempotentIdFromTitle($experiment['category'] ?? 'Demo', $this->getRandomAaaColor()),
+                    status: $this->getStatus(new ExperimentsStatus($Teams), $experiment['status'] ?? 2),
                     metadata: $experiment['metadata'] ?? '{}',
                     rating: $experiment['rating'] ?? 0,
                 );
@@ -350,8 +354,8 @@ final class Populate
                         title: $item['title'],
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
-                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default'),
-                        status: $item['status'] ?? null,
+                        category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default', $this->getRandomAaaColor()),
+                        status: isset($item['status']) ? $this->getStatus(new ItemsStatus($Teams), $item['status']) : null,
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
@@ -549,7 +553,6 @@ final class Populate
             'scientific literature',
         );
 
-        //$category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
         for ($i = 0; $i < $iterations; $i++) {
             $category = empty($categoryArr) ? null : $this->faker->randomElement($categoryArr)['id'];
             $id = $Entity->create(
@@ -599,23 +602,16 @@ final class Populate
     }
 
     /**
-    * Remove the status of a team, such as the default set (Running, Success...) created with it
-    */
-    private function destroyStatus(AbstractStatus $Status, string $label): void
+     * Remove all the categories or all the status of a team, such as the default status set (Running, Success...)
+     * categories and status share the same parent class (AbstractStatus), so one function covers both
+     * readAllIgnoreState() is used because readAll() also lists the non private rows of other teams
+     */
+    private function destroyCatStat(AbstractStatus $Status, string $label, int $teamid): void
     {
         foreach ($Status->readAllIgnoreState() as $status) {
             $Status->setId((int) $status['id']);
             $Status->destroy();
-            $this->output->writeln(sprintf('├ - default %s (id: %d in team: %d)', $label, $status['title'], $status['id']));
-        }
-    }
-
-    private function destroyCategories(AbstractCategory $Category, string $label): void
-    {
-        foreach ($Category->readAll() as $category) {
-            $Category->setId((int) $category['id']);
-            $Category->destroy();
-            $this->output->writeln(sprintf('├ - default %s (id: %s in team: %d)', $label, $category['title'], $category['id']));
+            $this->output->writeln(sprintf('├ - default %s: %s (id: %d in team: %d)', $label, $status['title'], $status['id'], $teamid));
         }
     }
 
@@ -702,13 +698,39 @@ final class Populate
         return new AuthenticatedUser(ExistingUser::fromEmail($email)->userid, $teamid);
     }
 
-    private function getStatus(int $status): int
+    private function darkenToAaa(AbstractStatus $Status, int $teamid): void
     {
-        if ($status) {
+        foreach ($Status->readAllIgnoreState() as $status) {
+            $color = self::toAaaColor($status['color']);
+            if ($color === '#' . strtoupper($status['color'])) {
+                continue;
+            }
+            $Status->setId((int) $status['id']);
+            $Status->patch(Action::Update, array('color' => $color));
+            $this->output->writeln(sprintf('├ ~ status color: %s #%s → %s (in team: %d)', $status['title'], $status['color'], $color, $teamid));
+        }
+    }
+
+    /**
+     * A status is given by its name (stable across runs) or by its id
+     * 0 picks a random status of the team, an unknown name gives no status
+     */
+    private function getStatus(AbstractStatus $Status, int|string $status): ?int
+    {
+        if (is_int($status) && $status > 0) {
             return $status;
         }
-
-        return $this->faker->randomElement($status)['id'];
+        // only the statuses of this team: readAll() also lists the non private ones of other teams
+        $teamStatus = $Status->readAllIgnoreState();
+        if ($status === 0) {
+            return (int) $this->faker->randomElement($teamStatus)['id'];
+        }
+        foreach ($teamStatus as $row) {
+            if ($row['title'] === $status) {
+                return (int) $row['id'];
+            }
+        }
+        return null;
     }
 
     private function storeItem(Items $Items, array $storage): void
@@ -717,14 +739,13 @@ final class Populate
         foreach ($storage as $entry) {
             $StorageUnitId = $StorageUnits->createImmutable(explode('|', $entry['location'] ?? ''));
             if ($StorageUnitId === 0) {
-                return;
+                $this->output->writeln(sprintf('├ ! storage: skipped entry without location for resource %d', $Items->id ?? 0));
+                continue;
             }
-            new Containers2ItemsLinks($Items, $StorageUnitId)->createWithQuantity(
-                (float) ($entry['quantity'] ?? 1),
-                $entry['unit'] ?? Units::Unit->value,
-                enforceCapacity: false,
-            );
-            $this->output->writeln(sprintf('├ + storage: %s (%s %s)', $entry['location'], $entry['quantity'] >> 1, $entry['unit'] ?? Units::Unit->value));
+            $quantity = (float) ($entry['quantity'] ?? 1);
+            $unit = $entry['unit'] ?? Units::Unit->value;
+            new Containers2ItemsLinks($Items, $StorageUnitId)->createWithQuantity($quantity, $unit, enforceCapacity: false);
+            $this->output->writeln(sprintf('├ + storage: %s (%s %s)', $entry['location'], $quantity, $unit));
         }
     }
 

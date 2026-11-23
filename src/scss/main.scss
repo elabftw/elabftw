@@ -1219,22 +1219,24 @@ tr.upload-group-drop-target td {
 }
 
 .entity-type-label {
-  color: $white;
-
   &[data-entity-type='experiments'] {
-    background-color: #24579a;
+    background-color: var(--lightblue);
+    color: var(--darkblue);
   }
 
   &[data-entity-type='experiments_templates'] {
-    background-color: #694393;
+    background-color: var(--primary);
+    color: var(--primary-fg);
   }
 
   &[data-entity-type='items'] {
-    background-color: #23674e;
+    background-color: var(--superlight);
+    color: var(--mediumstrong);
   }
 
   &[data-entity-type='items_types'] {
-    background-color: #884717;
+    background-color: var(--lightgold);
+    color: var(--darkgold);
   }
 }
 

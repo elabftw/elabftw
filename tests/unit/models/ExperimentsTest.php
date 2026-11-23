@@ -19,6 +19,7 @@ use Elabftw\Enums\FileFromString;
 use Elabftw\Enums\Meaning;
 use Elabftw\Enums\AccessType;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\UnprocessableContentException;
 use Elabftw\Models\Users\AnonymousUser;
@@ -39,6 +40,7 @@ use function rawurlencode;
 use function sprintf;
 use function str_replace;
 use function json_encode;
+use function array_column;
 use function array_filter;
 use function reset;
 
@@ -822,5 +824,39 @@ class ExperimentsTest extends \PHPUnit\Framework\TestCase
             sprintf('%s-%d', $titlePrefix, BasePermissions::Full->value),
             $results[0]['title'],
         );
+    }
+
+    // a public entry moved to the trash must only stay visible to those who can restore it
+    public function testDeletedPublicEntryIsHiddenFromReaders(): void
+    {
+        $this->Experiments->patch(Action::Update, array(
+            'canread_base' => BasePermissions::Full->value,
+            'canwrite_base' => BasePermissions::User->value,
+        ));
+        $id = $this->Experiments->id;
+        $this->assertIsInt($id);
+        $this->Experiments->destroy();
+        $trash = new InputBag(array('state' => (string) State::Deleted->value));
+
+        // the owner can still read it and list it, to restore it
+        $this->assertSame(State::Deleted->value, $this->Experiments->readOne()['state']);
+        $Owned = new Experiments($this->Users);
+        $this->assertContains($id, array_column($Owned->readAll($Owned->getQueryParams($trash)), 'id'));
+
+        $readers = array(
+            new AnonymousUser(1),
+            $this->getRegularUserInTeam(1, array($this->Users->userid)),
+        );
+        foreach ($readers as $reader) {
+            $Experiments = new Experiments($reader);
+            $this->assertNotContains($id, array_column($Experiments->readAll($Experiments->getQueryParams($trash)), 'id'));
+            try {
+                // setId() reads the entry
+                $Experiments->setId($id);
+                $this->fail('A deleted entry must not be readable without write access.');
+            } catch (ForbiddenException) {
+                $this->addToAssertionCount(1);
+            }
+        }
     }
 }

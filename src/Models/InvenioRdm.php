@@ -22,6 +22,7 @@ use Elabftw\Enums\EntityType;
 use Elabftw\Enums\InvenioRdmAction;
 use Elabftw\Enums\Storage;
 use Elabftw\Exceptions\ImproperActionException;
+use Elabftw\Factories\CompoundsFactory;
 use Elabftw\Interfaces\QueryParamsInterface;
 use Elabftw\Make\MakeEln;
 use Elabftw\Models\Users\Users;
@@ -34,10 +35,10 @@ use function date;
 use function fopen;
 use function implode;
 use function json_decode;
-use function json_encode;
 use function rtrim;
 use function sprintf;
 use function str_replace;
+use function _;
 
 /**
  * Connect with an InvenioRDM repository
@@ -67,7 +68,7 @@ final class InvenioRdm extends AbstractRest
     #[Override]
     public function readAll(?QueryParamsInterface $queryParams = null): array
     {
-        return match (InvenioRdmAction::tryFrom($queryParams?->getQuery()->getString('action'))) {
+        return match (InvenioRdmAction::tryFrom($queryParams?->getQuery()->getString('action') ?? '')) {
             InvenioRdmAction::GetCommunities  => $this->getCommunities(),
             InvenioRdmAction::GetResourceTypes => $this->getResourceTypes(),
             InvenioRdmAction::GetLicenses     => $this->getLicenses(),
@@ -165,7 +166,16 @@ final class InvenioRdm extends AbstractRest
         $tmpFileName = Tools::getUuidv4();
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($tmpFileName);
-        $maker = new MakeEln(App::getDefaultLogger(), new ZipStream(sendHttpHeaders: false), $this->requester, array($entity));
+        $maker = new MakeEln(
+            App::getDefaultLogger(),
+            new ZipStream(sendHttpHeaders: false),
+            $this->requester,
+            array($entity),
+            new Instance2Rors(),
+            new Teams2Rors($this->requester->getTeam(), false),
+            new Users2Rors($this->requester->getUserid(), false),
+            CompoundsFactory::getCompounds($this->requester),
+        );
         $maker->writeToFile($absolutePath);
 
         $headers = $this->getAuthHeaders();

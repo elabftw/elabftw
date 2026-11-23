@@ -10,13 +10,13 @@
  */
 import { ApiC } from './api';
 import i18next from './i18n';
-import { Action, Method, Model } from './interfaces';
+import { Action, Model } from './interfaces';
 import { rememberLastSelected, selectLastSelected } from './localStorage';
 import { notify } from './notify';
+import { hideModal, showModal } from './common';
 import { entity } from './getEntity';
 import { TomSelect, collectForm, mkSpin, mkSpinStop, reloadElements } from './misc';
 import { on } from './handlers';
-import $ from 'jquery';
 import JsonEditorHelper from './JsonEditorHelper.class';
 import { Metadata } from './Metadata.class';
 import { ExtraFieldInputType, ValidMetadata } from './metadataInterfaces';
@@ -40,33 +40,38 @@ async function saveDraftUrlAsExtraField(draftUrl: string): Promise<void> {
     : reloadElements(['extraFieldsSection']));
 }
 
+interface InvenioHit {
+  id: string;
+  title?: { en?: string };
+  props?: { subtype_name?: string; type_name?: string; spdx_id?: string };
+  metadata?: { title?: string };
+}
+
+interface InvenioHits {
+  hits?: { hits?: InvenioHit[] };
+}
+
 on('export-to-inveniordm', async (el, event: Event) => {
   const btn = el as HTMLButtonElement;
   event.preventDefault();
   const form = document.getElementById('inveniordmExportForm') as HTMLFormElement;
   const params = collectForm(form);
   const oldHTML = mkSpin(btn);
-  const prevNotifOnSaved = ApiC.notifOnSaved;
-  const prevNotifOnError = ApiC.notifOnError;
   try {
-    ApiC.notifOnSaved = false;
-    ApiC.notifOnError = false;
-    const res = await ApiC.send(Method.PATCH, 'inveniordm', { ...params, entity });
+    const res = await ApiC.patch('inveniordm', { notifOnSaved: 0, notifOnError: 0, ...params, entity });
     const data = await res.json();
     await saveDraftUrlAsExtraField(data.draftUrl);
     notify.success('export-success');
-    $('#inveniordmExportModal').modal('hide');
+    hideModal('#inveniordmExportModal');
   } catch (e) {
     notify.error(e);
   } finally {
-    ApiC.notifOnSaved = prevNotifOnSaved;
-    ApiC.notifOnError = prevNotifOnError;
     mkSpinStop(btn, oldHTML);
   }
 });
 
 on('open-inveniordm-modal', async () => {
-  $('#inveniordmExportModal').modal('toggle');
+  showModal('#inveniordmExportModal');
 
   const communitySelect = document.getElementById('inveniordmCommunity') as HTMLSelectElement & { tomselect?: TomSelect };
   const resourceTypeSelect = document.getElementById('inveniordmResourceType') as HTMLSelectElement & { tomselect?: TomSelect };
@@ -79,9 +84,9 @@ on('open-inveniordm-modal', async () => {
 
   try {
     const [communitiesJson, resourceTypesJson, licensesJson] = await Promise.all([
-      ApiC.getJson<Record<string, unknown>>('inveniordm', { action: Action.GetCommunities }),
-      ApiC.getJson<Record<string, unknown>>('inveniordm', { action: Action.GetResourceTypes }),
-      ApiC.getJson<Record<string, unknown>>('inveniordm', { action: Action.GetLicenses }),
+      ApiC.getJson<InvenioHits>('inveniordm', { action: Action.GetCommunities }),
+      ApiC.getJson<InvenioHits>('inveniordm', { action: Action.GetResourceTypes }),
+      ApiC.getJson<InvenioHits>('inveniordm', { action: Action.GetLicenses }),
     ]);
 
     if (communitySelect.tomselect) communitySelect.tomselect.destroy();
@@ -89,9 +94,9 @@ on('open-inveniordm-modal', async () => {
     if (licenseSelect.tomselect) licenseSelect.tomselect.destroy();
 
     // communities: hits.hits[]
-    const communities = (communitiesJson as any)?.hits?.hits ?? [];
+    const communities = communitiesJson?.hits?.hits ?? [];
     communitySelect.innerHTML = `<option value=''>${i18next.t('none')}</option>`;
-    communities.forEach((c: any) => {
+    communities.forEach((c: InvenioHit) => {
       const opt = document.createElement('option');
       opt.value = c.id;
       opt.textContent = c.metadata?.title ?? c.id;
@@ -99,9 +104,9 @@ on('open-inveniordm-modal', async () => {
     });
 
     // resource types: hits.hits[]
-    const resourceTypes = (resourceTypesJson as any)?.hits?.hits ?? [];
+    const resourceTypes = resourceTypesJson?.hits?.hits ?? [];
     resourceTypeSelect.innerHTML = '';
-    resourceTypes.forEach((rt: any) => {
+    resourceTypes.forEach((rt: InvenioHit) => {
       const opt = document.createElement('option');
       opt.value = rt.id;
       opt.textContent = rt.props?.subtype_name ?? rt.props?.type_name ?? rt.id;
@@ -109,9 +114,9 @@ on('open-inveniordm-modal', async () => {
     });
 
     // licenses: hits.hits[]
-    const licenses = (licensesJson as any)?.hits?.hits ?? [];
+    const licenses = licensesJson?.hits?.hits ?? [];
     licenseSelect.innerHTML = '';
-    licenses.forEach((lic: any) => {
+    licenses.forEach((lic: InvenioHit) => {
       const opt = document.createElement('option');
       opt.value = lic.id;
       opt.textContent = lic.props?.spdx_id ?? lic.title?.en ?? lic.id;

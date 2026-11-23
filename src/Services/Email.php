@@ -37,6 +37,8 @@ use function preg_replace;
 use function quoted_printable_encode;
 use function sprintf;
 use function html_entity_decode;
+use function htmlspecialchars;
+use function nl2br;
 
 /**
  * Email service
@@ -71,7 +73,9 @@ class Email
             return 0;
         }
         $replyTo = new Address($requester->userData['email'], $requester->userData['fullname']);
-        return $this->sendInLoop($addresses, $subject, $content, $replyTo);
+        // content is plain text: escape it and keep line breaks
+        $htmlContent = nl2br(htmlspecialchars($content));
+        return $this->sendInLoop($addresses, $subject, $htmlContent, $replyTo);
     }
 
     /**
@@ -145,7 +149,10 @@ class Email
         $addresses = self::getAllEmailAddresses($target, $targetId);
         $addressesCount = count($addresses);
 
-        $sender = sprintf("\n\nEmail sent by %s. You can reply directly to this email.\n", $replyTo->getName());
+        $sender = sprintf(
+            '<p>Email sent by %s. You can reply directly to this email.</p>',
+            htmlspecialchars($replyTo->getName()),
+        );
 
         $content = $body . $sender;
 
@@ -158,7 +165,8 @@ class Email
             // set recipients in BCC to hide email addresses
             ->bcc(...$addresses)
             ->replyTo($replyTo)
-            ->text(self::toPlainText($content . $this->footer['plain']));
+            ->text(self::htmlToText($content) . $this->footer['plain'])
+            ->html($content . $this->footer['html']);
 
             return $this->send($message) ? $addressesCount : 0;
         }
@@ -196,17 +204,7 @@ class Email
             $message->html($htmlBody . $this->footer['html']);
 
             if (empty($body)) {
-                $textWithLinks = (new Transformer())
-                    ->keepLinks()
-                    ->keepNewLines()
-                    // Transformer decodes quoted-printable input unconditionally, so encode
-                    // raw HTML first to preserve URL query values such as "=12".
-                    ->toText(quoted_printable_encode($htmlBody));
-                // convert links to plain text and keep the url
-                // <a href="url">link text</a> => link text (url)
-                $plainText = preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks);
-
-                $message->text($plainText . $this->footer['plain']);
+                $message->text(self::htmlToText($htmlBody) . $this->footer['plain']);
             }
         }
 
@@ -248,16 +246,30 @@ class Email
         return $emails;
     }
 
+    private static function htmlToText(string $html): string
+    {
+        $textWithLinks = (new Transformer())
+            ->keepLinks()
+            ->keepNewLines()
+            // Transformer decodes quoted-printable input unconditionally, so encode
+            // raw HTML first to preserve URL query values such as "=12".
+            // keep <br> line breaks; also eat a following newline (from nl2br) to avoid doubling it
+            ->toText(quoted_printable_encode(preg_replace('/<br\s*\/?>\R?/i', "\n", $html) ?? $html));
+        // <a href="url">link text</a> => link text (url)
+        return preg_replace('/<a href="([^"]*)">([^<]*)<\/a>/iu', '$2 ($1)', $textWithLinks) ?? '';
+    }
+
     private function sendInLoop(array $addresses, string $subject, string $content, Address $replyTo): int
     {
         // send emails one by one
         $sentCount = 0;
         $plainSubject = self::toPlainText($subject);
-        $plainContent = self::toPlainText($content);
+        // same content for every recipient: convert it once
+        $plainContent = self::htmlToText($content);
         foreach ($addresses as $address) {
             // use a try catch so we finish the loop even if errors are encountered
             try {
-                if ($this->sendEmail($address, $plainSubject, $plainContent, replyTo: $replyTo)) {
+                if ($this->sendEmail($address, $plainSubject, $plainContent, htmlBody: $content, replyTo: $replyTo)) {
                     $sentCount++;
                     continue;
                 }

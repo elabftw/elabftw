@@ -205,7 +205,7 @@ final class Steps extends AbstractRest
         $enforceImmutability = $this->enforcesImmutability();
         foreach ($params->ordering as $id) {
             if (!array_key_exists($id, $steps)) {
-                throw new ImproperActionException(_('Cannot reorder a step that does not belong to this entity.'));
+                throw new ImproperActionException(_('Cannot reorder an element that does not belong to this entry.'));
             }
             if ($enforceImmutability && (int) $steps[$id]['is_immutable'] === 1) {
                 throw new ImproperActionException(_('This step is immutable: it cannot be modified.'));
@@ -233,14 +233,14 @@ final class Steps extends AbstractRest
         // collection-level PATCH does not target one specific step id.
         if ($action === Action::Update && $this->id === null && array_key_exists('grouped_ordering', $params)) {
             if (!is_array($params['grouped_ordering'])) {
-                throw new ImproperActionException(_('Invalid grouped steps ordering.'));
+                throw new ImproperActionException(_('Invalid grouped ordering.'));
             }
             $this->updateGroupedOrdering($params['grouped_ordering']);
             $this->logChange('Reordered steps');
             return $this->readAll();
         }
         if ($action === Action::Update && $this->id === null) {
-            throw new ImproperActionException(_('A step id is required for this update.'));
+            throw new ImproperActionException(_('An id is required for this update.'));
         }
         match ($action) {
             Action::Finish => $this->toggleFinished(),
@@ -440,7 +440,7 @@ final class Steps extends AbstractRest
 
         foreach ($groups as $group) {
             if (!is_array($group) || !array_key_exists('step_ids', $group) || !is_array($group['step_ids'])) {
-                throw new ImproperActionException(_('Invalid grouped steps ordering.'));
+                throw new ImproperActionException(_('Invalid grouped ordering.'));
             }
             $groupId = $this->toGroupId($group['group_id'] ?? null);
             $this->assertGroupBelongsToEntity($groupId);
@@ -448,7 +448,7 @@ final class Steps extends AbstractRest
             foreach ($group['step_ids'] as $ordering => $rawStepId) {
                 $stepId = (int) $rawStepId;
                 if (!array_key_exists($stepId, $steps) || isset($seen[$stepId])) {
-                    throw new ImproperActionException(_('Cannot reorder a step that does not belong to this entity.'));
+                    throw new ImproperActionException(_('Cannot reorder an element that does not belong to this entry.'));
                 }
                 $seen[$stepId] = true;
                 $currentGroupId = $this->toGroupId($steps[$stepId]['group_id']);
@@ -471,7 +471,7 @@ final class Steps extends AbstractRest
             return;
         }
         if ($groupId < 1) {
-            throw new ImproperActionException(_('Invalid step group.'));
+            throw new ImproperActionException(_('Invalid group.'));
         }
         // The foreign key only proves that the group exists
         // readOne() also checks entity_id, preventing a step from using another entity's group

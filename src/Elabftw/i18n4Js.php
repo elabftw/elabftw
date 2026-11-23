@@ -78,7 +78,7 @@ final class i18n4Js
             'booking-rejection-reason' => _('Reason for rejection (optional)'),
             'requested-by' => _('Requested by'),
             'booking-recurring' => _('This is a recurring event'),
-            'booking-repeats-every' => _('Every {{interval}}'),
+            'booking-repeats-every' => _('Interval: {{interval}}'),
             'booking-on-weekdays' => _('On {{days}}'),
             'approved' => _('Approved'),
             'overdue' => _('Overdue'),

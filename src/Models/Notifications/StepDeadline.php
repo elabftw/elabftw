@@ -81,7 +81,7 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
     {
         $subject = _('A step deadline is approaching.');
         $url = sprintf(
-            _('%s/%s?mode=view&id=%d&highlightstep=%d#step_view_%d'),
+            '%s/%s?mode=view&id=%d&highlightstep=%d#step_view_%d',
             Env::asUrl('SITE_URL'),
             $this->entityPage,
             $this->entityId,
@@ -89,7 +89,7 @@ final class StepDeadline extends AbstractNotifications implements MailableInterf
             $this->stepId,
         );
         $body = sprintf(
-            _('%s %s'),
+            '%s %s',
             $subject,
             $url,
         );

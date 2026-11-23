@@ -99,7 +99,7 @@ final class EventsRecurrence extends AbstractRest
             $event = $this->Scheduler->readOne();
             $recurrenceId = $event['recurrence_id'];
             if ($recurrenceId === null) {
-                throw new ImproperActionException(_('This reservation no longer belongs to a recurrence.'));
+                throw new ImproperActionException(_('This reservation does not belong to a recurrence.'));
             }
             if ($changeDateTime && (int) $event['approval_status'] !== BookingApprovalStatus::NoApproval->value) {
                 throw new ImproperActionException('Approval-controlled reservations cannot change time.');
@@ -187,7 +187,7 @@ final class EventsRecurrence extends AbstractRest
             $this->Scheduler->lockItemForBooking();
             $event = $this->Scheduler->readOne();
             if ($event['recurrence_id'] === null) {
-                throw new ImproperActionException(_('This reservation no longer belongs to a recurrence.'));
+                throw new ImproperActionException(_('This reservation does not belong to a recurrence.'));
             }
             $allEvents = $this->readRecurrenceEvents($event['recurrence_id']);
             $this->assertRecurrenceOwnership($allEvents, $event);

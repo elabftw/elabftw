@@ -1794,7 +1794,7 @@ abstract class AbstractEntity extends AbstractRest
         $valueLabels = null;
         if (is_array($value) && array_key_exists('value_labels', $value)) {
             if (!array_key_exists('value', $value)) {
-                throw new ImproperActionException(sprintf(_('Invalid metadata value for field %s.'), $key));
+                throw new ImproperActionException(sprintf(_('Metadata field %s contains an invalid value.'), $key));
             }
             $valueLabels = $value['value_labels'];
             if ($valueLabels !== null && (!is_array($valueLabels) || !array_is_list($valueLabels))) {

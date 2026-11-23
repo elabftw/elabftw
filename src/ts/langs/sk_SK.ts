@@ -34,7 +34,7 @@ const t = {
     "booking-rejection-reason": "Reason for rejection (optional)",
     "requested-by": "Requested by",
     "booking-recurring": "This is a recurring event",
-    "booking-repeats-every": "Every {{interval}}",
+    "booking-repeats-every": "Interval: {{interval}}",
     "booking-on-weekdays": "On {{days}}",
     "approved": "Approved",
     "overdue": "Overdue",

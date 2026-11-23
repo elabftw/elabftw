@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elabftw\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-17 17:25+0100\n"
+"POT-Creation-Date: 2026-11-23 16:18+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Nicolas CARPi\n"
 "Language-Team: \n"
@@ -269,7 +269,7 @@ msgstr "Le champ de métadonnées %s présente une incompatibilité %s."
 msgid "Metadata field %s expects a single value."
 msgstr "Le champ de métadonnées %s attend une valeur unique."
 
-#: src/Elabftw/MetadataHelpers.php:376
+#: src/Elabftw/MetadataHelpers.php:376 src/Models/AbstractEntity.php:1797
 #, php-format
 msgid "Metadata field %s contains an invalid value."
 msgstr "Le champ de métadonnées %s contient une valeur non valide."
@@ -449,8 +449,8 @@ msgid "This is a recurring event"
 msgstr "Cet événement est récurrent"
 
 #: src/Elabftw/i18n4Js.php:81
-msgid "Every {{interval}}"
-msgstr "À intervalles de {{interval}}"
+msgid "Interval: {{interval}}"
+msgstr "Intervalle : {{interval}}"
 
 #: src/Elabftw/i18n4Js.php:82
 msgid "On {{days}}"
@@ -1815,6 +1815,14 @@ msgstr "Vous ne pouvez pas restaurer une révision d'un item verrouillé !"
 msgid "Cannot delete a linked compound."
 msgstr "Impossible de supprimer un composé lié."
 
+#: src/Models/Compounds.php:827
+#: src/Models/Links/AbstractContainersLinks.php:469
+#: src/Models/StorageUnits.php:801 src/Services/ReactionSearch.php:105
+#: src/Services/ReactionSearch.php:110
+#, php-format
+msgid "Input is too long. Maximum length is %d characters."
+msgstr "La saisie est trop longue. La longueur maximale est de %d caractères."
+
 #: src/Models/Compounds.php:842
 msgid ""
 "Too many compounds to search with a SMARTS pattern: add other criteria to "
@@ -1828,6 +1836,7 @@ msgid "DSpace login did not return an Authorization header."
 msgstr "La connexion à DSpace n'a pas renvoyé d'en-tête d'autorisation."
 
 #: src/Models/EventsRecurrence.php:61 src/Models/EventsRecurrence.php:79
+#: src/Models/EventsRecurrence.php:102 src/Models/EventsRecurrence.php:190
 msgid "This reservation does not belong to a recurrence."
 msgstr ""
 "Cette réservation ne fait pas partie d'une série de réservations récurrentes."
@@ -2187,9 +2196,23 @@ msgstr ""
 msgid "The steps table does not match the entity type."
 msgstr "La table « steps » ne correspond pas au type d'entité."
 
+#: src/Models/Steps.php:208 src/Models/Steps.php:451 src/Models/Uploads.php:660
+msgid "Cannot reorder an element that does not belong to this entry."
+msgstr ""
+"Impossible de réorganiser un élément qui n’appartient pas à cette entrée."
+
 #: src/Models/Steps.php:211 src/Models/Steps.php:343 src/Models/Steps.php:457
 msgid "This step is immutable: it cannot be modified."
 msgstr "Cette étape est immuable : elle ne peut pas être modifiée."
+
+#: src/Models/Steps.php:236 src/Models/Steps.php:443 src/Models/Uploads.php:394
+#: src/Models/Uploads.php:651
+msgid "Invalid grouped ordering."
+msgstr "Ordre des éléments groupés non valide."
+
+#: src/Models/Steps.php:243 src/Models/Uploads.php:402
+msgid "An id is required for this update."
+msgstr "Un identifiant est requis pour cette mise à jour."
 
 #: src/Models/Steps.php:339
 msgid ""
@@ -2197,6 +2220,10 @@ msgid ""
 msgstr ""
 "Le paramètre d'immuabilité ne peut pas être modifié à partir d'expériences "
 "ou de ressources."
+
+#: src/Models/Steps.php:474 src/Models/Uploads.php:679
+msgid "Invalid group."
+msgstr "Groupe non valide."
 
 #: src/Models/Steps.php:559
 msgid "A deadline is required to enable a notification for this step."
@@ -2232,11 +2259,6 @@ msgstr "Impossible de supprimer une unité de stockage avec des enfants !"
 #: src/Models/StorageUnits.php:575
 msgid "Cannot delete a storage unit with containers!"
 msgstr "Impossible de supprimer une unité de stockage avec des conteneurs !"
-
-#: src/Models/StorageUnits.php:801
-#, php-format
-msgid "Input is too long. Maximum length is %d characters."
-msgstr "La saisie est trop longue. La longueur maximale est de %d caractères."
 
 #: src/Models/Tags.php:157
 msgid "Users cannot create tags."
@@ -2638,7 +2660,7 @@ msgstr "Paramètres"
 #: src/templates/procurement-params-modal.html:47
 #: src/templates/reaction-edit-modal.html:11 src/templates/register.html:14
 #: src/templates/register.html:22 src/templates/scheduler-event-modal.html:10
-#: src/templates/scheduler-event-view-modal.html:136
+#: src/templates/scheduler-event-view-modal.html:124
 #: src/templates/scheduler-exports-modal.html:6
 #: src/templates/scheduler-exports-modal.html:25
 #: src/templates/scheduler-pick-items-modal.html:6
@@ -2926,8 +2948,10 @@ msgstr "Lien vers la documentation"
 msgid "Create user group"
 msgstr "Créer un groupe d'utilisateurs"
 
-#: src/templates/admin.html:189 src/templates/steps-edit.html:98
-#: src/templates/uploads.html:207 src/templates/uploads.html:209
+#: src/templates/admin.html:189 src/templates/field-builder-modal.html:35
+#: src/templates/steps-edit.html:98 src/templates/steps-edit.html:100
+#: src/templates/steps-edit.html:104 src/templates/uploads.html:207
+#: src/templates/uploads.html:209 src/templates/uploads.html:213
 msgid "Add a group"
 msgstr "Ajouter un groupe"
 
@@ -3436,7 +3460,7 @@ msgstr "Enregistrer le nouveau mot de passe"
 
 #: src/templates/changelog-table.html:4
 #: src/templates/field-builder-modal.html:59 src/templates/pdf.html:35
-#: src/templates/ucp.html:85
+#: src/templates/search-help-modal.html:156 src/templates/ucp.html:85
 msgid "Date"
 msgstr "Date"
 
@@ -3468,6 +3492,15 @@ msgstr "Éditeur CHEM"
 #: src/templates/chem-editor-edit.html:8
 msgid "Create reaction"
 msgstr "Créer une réaction"
+
+#: src/templates/chem-editor-edit.html:9 src/templates/json-editor.html:21
+msgid "Save as…"
+msgstr "Enregistrer sous..."
+
+#: src/templates/chem-editor-edit.html:10 src/templates/edit.html:177
+#: src/templates/reaction-edit-modal.html:6
+msgid "Replace the current drawing?"
+msgstr "Remplacer le dessin actuel ?"
 
 #: src/templates/chem-editor-edit.html:10
 msgid "Could not load this attachment as a chemical structure."
@@ -3671,13 +3704,13 @@ msgid ""
 "exact: then a SMILES for this exact structure, or smarts: then a SMARTS "
 "pattern, for instance smarts:[OX2H]c for a phenol."
 msgstr ""
-"Saisissez du texte pour filtrer les composés dans toutes les colonnes : nom,"
-" numéro CAS, formule, InChI, InChIKey (qui permet également de trouver les "
+"Saisissez du texte pour filtrer les composés dans toutes les colonnes : nom, "
+"numéro CAS, formule, InChI, InChIKey (qui permet également de trouver les "
 "stéréoisomères)… Pour une recherche par structure, saisissez smiles: suivi "
-"d’une chaîne SMILES pour trouver les composés contenant cette "
-"sous-structure, exact: suivi d’une chaîne SMILES pour trouver cette "
-"structure exacte, ou smarts: suivi d’un motif SMARTS, par exemple "
-"smarts:[OX2H]c pour un phénol."
+"d’une chaîne SMILES pour trouver les composés contenant cette sous-"
+"structure, exact: suivi d’une chaîne SMILES pour trouver cette structure "
+"exacte, ou smarts: suivi d’un motif SMARTS, par exemple smarts:[OX2H]c pour "
+"un phénol."
 
 #: src/templates/compounds.html:35
 msgid "Name, CAS number, InChIKey, smiles:CCO, smarts:[OX2H]c…"
@@ -3718,9 +3751,9 @@ msgstr "requis"
 #: src/templates/edit-compound-modal.html:156
 #: src/templates/import-pubchem-modal.html:57
 #: src/templates/import-pubchem-modal.html:58
-#: src/templates/permissions-modal.html:16 src/templates/ucp.html:482
-#: src/templates/ucp.html:502 src/templates/ucp.html:513
-#: src/templates/view-edit-toolbar.html:301
+#: src/templates/permissions-modal.html:16 src/templates/show.html:636
+#: src/templates/ucp.html:482 src/templates/ucp.html:502
+#: src/templates/ucp.html:513 src/templates/view-edit-toolbar.html:301
 msgid "Permissions"
 msgstr "Permissions"
 
@@ -4384,11 +4417,12 @@ msgstr "J'accepte la licence DSpace."
 msgid "Include changelog"
 msgstr "Inclure le journal des modifications"
 
-#: src/templates/export-menu-modal.html:17
+#: src/templates/export-menu-modal.html:17 src/templates/export-modal.html:52
 msgid "The files will contain the changelog."
 msgstr "Les fichiers contiendront l’historique des modifications."
 
 #: src/templates/export-menu-modal.html:30
+#: src/templates/export-menu-modal.html:33
 msgid "Include links"
 msgstr "Inclure les liens"
 
@@ -5094,8 +5128,8 @@ msgstr "Nom du composé"
 
 #: src/templates/interface-buttons.html:9
 #: src/templates/scheduler-event-view-modal.html:18
-#: src/templates/scheduler-event-view-modal.html:85
-#: src/templates/scheduler-event-view-modal.html:111
+#: src/templates/scheduler-event-view-modal.html:73
+#: src/templates/scheduler-event-view-modal.html:99
 msgid "View"
 msgstr "Voir"
 
@@ -5156,10 +5190,6 @@ msgstr "Éditeur JSON"
 #: src/templates/profile.html:182
 msgid "Import from file"
 msgstr "Importer depuis un fichier"
-
-#: src/templates/json-editor.html:21
-msgid "Save as…"
-msgstr "Enregistrer sous..."
 
 #: src/templates/json-editor.html:37 src/templates/spreadsheet-editor.html:5
 msgid "You have unsaved changes"
@@ -5931,10 +5961,10 @@ msgid ""
 "stock molarity; neat materials use molar mass, purity and density. Unknown "
 "values are left blank."
 msgstr ""
-"Les quantités prévues et réelles sont indépendantes. Pour les solutions, les"
-" calculs utilisent la molarité de la solution mère ; pour les produits non "
-"dilués, ils utilisent la masse molaire, la pureté et la masse volumique. Les"
-" valeurs inconnues sont laissées vides."
+"Les quantités prévues et réelles sont indépendantes. Pour les solutions, les "
+"calculs utilisent la molarité de la solution mère ; pour les produits non "
+"dilués, ils utilisent la masse molaire, la pureté et la masse volumique. Les "
+"valeurs inconnues sont laissées vides."
 
 #: src/templates/reaction-edit-modal.html:43
 msgid "Calculated"
@@ -5999,6 +6029,10 @@ msgstr "Rechercher des expériences comportant la même réaction"
 #: src/templates/reactions.html:11
 msgid "Find experiments using this compound"
 msgstr "Rechercher les expériences utilisant ce composé"
+
+#: src/templates/reactions.html:13 src/templates/upload-dropdown-menu.html:67
+msgid "Load in chemical editor"
+msgstr "Charger dans l’éditeur de structures chimiques"
 
 #: src/templates/reactions.html:19
 msgid ""
@@ -6128,18 +6162,23 @@ msgstr "Annuler le créneau de réservation"
 msgid "Add a custom message"
 msgstr "Ajouter un message personnalisé"
 
+#: src/templates/scheduler-event-delete-modal.html:8
+#: src/templates/scheduler-event-view-modal.html:48
+msgid "Apply to"
+msgstr "Appliquer à"
+
 #: src/templates/scheduler-event-delete-modal.html:11
-#: src/templates/scheduler-event-view-modal.html:63
+#: src/templates/scheduler-event-view-modal.html:51
 msgid "This reservation only"
 msgstr "Uniquement pour cette réservation"
 
 #: src/templates/scheduler-event-delete-modal.html:15
-#: src/templates/scheduler-event-view-modal.html:67
+#: src/templates/scheduler-event-view-modal.html:55
 msgid "This and all future reservations"
 msgstr "Cette réservation et toutes les réservations futures"
 
 #: src/templates/scheduler-event-delete-modal.html:19
-#: src/templates/scheduler-event-view-modal.html:71
+#: src/templates/scheduler-event-view-modal.html:59
 msgid "All reservations in this recurrence"
 msgstr "Toutes les réservations de cette récurrence"
 
@@ -6179,12 +6218,12 @@ msgid "Number of days"
 msgstr "Nombre de jours"
 
 #: src/templates/scheduler-event-delete-modal.html:43
-#: src/templates/scheduler-recurrence-fields.html:27
+#: src/templates/scheduler-recurrence-fields.html:24
 msgid "days"
 msgstr "jours"
 
 #: src/templates/scheduler-event-delete-modal.html:44
-#: src/templates/scheduler-recurrence-fields.html:29
+#: src/templates/scheduler-recurrence-fields.html:26
 msgid "month"
 msgstr "mois"
 
@@ -6252,43 +6291,39 @@ msgstr "Heure de début"
 msgid "End time"
 msgstr "Heure de fin"
 
-#: src/templates/scheduler-event-view-modal.html:60
-msgid "Apply to"
-msgstr "Appliquer à"
-
-#: src/templates/scheduler-event-view-modal.html:76
+#: src/templates/scheduler-event-view-modal.html:64
 msgid "Bindings"
 msgstr "Associations"
 
-#: src/templates/scheduler-event-view-modal.html:77
+#: src/templates/scheduler-event-view-modal.html:65
 msgid "Connect this event to experiments or resources."
 msgstr "Associez cet événement à des expériences ou à des ressources."
 
-#: src/templates/scheduler-event-view-modal.html:86
-#: src/templates/scheduler-event-view-modal.html:112
+#: src/templates/scheduler-event-view-modal.html:74
+#: src/templates/scheduler-event-view-modal.html:100
 msgid "Unbind"
 msgstr "Détacher"
 
-#: src/templates/scheduler-event-view-modal.html:92
+#: src/templates/scheduler-event-view-modal.html:80
 msgid "Bind an experiment"
 msgstr "Attacher une expérience"
 
-#: src/templates/scheduler-event-view-modal.html:97
-#: src/templates/scheduler-event-view-modal.html:123
-#: src/templates/scheduler-event-view-modal.html:124
+#: src/templates/scheduler-event-view-modal.html:85
+#: src/templates/scheduler-event-view-modal.html:111
+#: src/templates/scheduler-event-view-modal.html:112
 msgid "Search in resources"
 msgstr "Rechercher dans les ressources"
 
-#: src/templates/scheduler-event-view-modal.html:98
+#: src/templates/scheduler-event-view-modal.html:86
 msgid "Search in experiments"
 msgstr "Rechercher dans les expériences"
 
-#: src/templates/scheduler-event-view-modal.html:100
-#: src/templates/scheduler-event-view-modal.html:126
+#: src/templates/scheduler-event-view-modal.html:88
+#: src/templates/scheduler-event-view-modal.html:114
 msgid "Attach"
 msgstr "Attacher"
 
-#: src/templates/scheduler-event-view-modal.html:118
+#: src/templates/scheduler-event-view-modal.html:106
 msgid "Bind a resource"
 msgstr "Lier une ressource"
 
@@ -6322,81 +6357,81 @@ msgstr "Ajouter des détails (facultatif)…"
 msgid "Create event(s)"
 msgstr "Créer un (des) événement(s)"
 
-#: src/templates/scheduler-recurrence-fields.html:6
-#: src/templates/scheduler-recurrence-fields.html:8
+#: src/templates/scheduler-recurrence-fields.html:3
+#: src/templates/scheduler-recurrence-fields.html:5
 msgid "Repeat"
 msgstr "Répéter"
 
-#: src/templates/scheduler-recurrence-fields.html:16
-#: src/templates/scheduler-recurrence-fields.html:23
+#: src/templates/scheduler-recurrence-fields.html:13
+#: src/templates/scheduler-recurrence-fields.html:20
 msgid "Recurrence interval"
 msgstr "Intervalle de récurrence"
 
-#: src/templates/scheduler-recurrence-fields.html:17
+#: src/templates/scheduler-recurrence-fields.html:14
 msgid "every"
 msgstr "chaque"
 
-#: src/templates/scheduler-recurrence-fields.html:18
+#: src/templates/scheduler-recurrence-fields.html:15
 msgid "every other"
 msgstr "un sur deux"
 
-#: src/templates/scheduler-recurrence-fields.html:19
+#: src/templates/scheduler-recurrence-fields.html:16
 msgid "every (number)"
 msgstr "tous les (nombre)"
 
-#: src/templates/scheduler-recurrence-fields.html:26
+#: src/templates/scheduler-recurrence-fields.html:23
 msgid "Recurrence frequency"
 msgstr "Fréquence de récurrence"
 
-#: src/templates/scheduler-recurrence-fields.html:27
+#: src/templates/scheduler-recurrence-fields.html:24
 msgid "day"
 msgstr "jour"
 
-#: src/templates/scheduler-recurrence-fields.html:28
+#: src/templates/scheduler-recurrence-fields.html:25
 msgid "week"
 msgstr "semaine"
 
-#: src/templates/scheduler-recurrence-fields.html:28
+#: src/templates/scheduler-recurrence-fields.html:25
 msgid "weeks"
 msgstr "semaines"
 
-#: src/templates/scheduler-recurrence-fields.html:29
+#: src/templates/scheduler-recurrence-fields.html:26
 msgid "months"
 msgstr "mois"
 
-#: src/templates/scheduler-recurrence-fields.html:35
+#: src/templates/scheduler-recurrence-fields.html:32
 msgid "Days of the week"
 msgstr "Jours de la semaine"
 
-#: src/templates/scheduler-recurrence-fields.html:38
+#: src/templates/scheduler-recurrence-fields.html:35
 msgid "on weekdays"
 msgstr "en semaine"
 
-#: src/templates/scheduler-recurrence-fields.html:39
+#: src/templates/scheduler-recurrence-fields.html:36
 msgid "on (select days)"
 msgstr "les jours sélectionnés"
 
-#: src/templates/scheduler-recurrence-fields.html:55
+#: src/templates/scheduler-recurrence-fields.html:52
 msgid "Recurrence end"
 msgstr "Fin de la récurrence"
 
-#: src/templates/scheduler-recurrence-fields.html:56
+#: src/templates/scheduler-recurrence-fields.html:53
 msgid "Occurs (number) times"
 msgstr "Se produit (nombre) fois"
 
-#: src/templates/scheduler-recurrence-fields.html:57
+#: src/templates/scheduler-recurrence-fields.html:54
 msgid "Last occurs on (date)"
 msgstr "Dernière occurrence le (date)"
 
-#: src/templates/scheduler-recurrence-fields.html:61
+#: src/templates/scheduler-recurrence-fields.html:58
 msgid "Number of occurrences"
 msgstr "Nombre d’occurrences"
 
-#: src/templates/scheduler-recurrence-fields.html:64
+#: src/templates/scheduler-recurrence-fields.html:61
 msgid "Last occurrence date"
 msgstr "Date de la dernière occurrence"
 
-#: src/templates/scheduler-recurrence-fields.html:68
+#: src/templates/scheduler-recurrence-fields.html:65
 msgid "A recurring reservation is limited to 100 occurrences and 10 years."
 msgstr ""
 "Une réservation récurrente est limitée à 100 occurrences et à une durée de "
@@ -6557,6 +6592,7 @@ msgstr "Champs disponibles"
 #: src/templates/search-help-modal.html:38
 #: src/templates/search-help-modal.html:40
 #: src/templates/search-help-modal.html:41
+#: src/templates/search-help-modal.html:62
 msgid "simple or quoted term"
 msgstr "terme simple ou entre guillemets"
 
@@ -7503,6 +7539,8 @@ msgid "No containers stored"
 msgstr "Pas de conteneurs stockés"
 
 #: src/templates/sysconfig.html:10 src/templates/sysconfig.html:14
+#: src/templates/uploads.html:26 src/templates/uploads.html:27
+#: src/templates/uploads.html:29
 msgid "Upload new file"
 msgstr "Déposer un nouveau fichier"
 
@@ -9156,10 +9194,6 @@ msgstr "Charger dans l'éditeur JSON"
 msgid "Spreadsheet editor"
 msgstr "Éditeur de tableur"
 
-#: src/templates/upload-dropdown-menu.html:67
-msgid "Load in chemical editor"
-msgstr "Charger dans l’éditeur de structures chimiques"
-
 #: src/templates/upload-dropdown-menu.html:71
 msgid "Open in NMRium"
 msgstr "Ouvrir dans NMRium"
@@ -9875,26 +9909,3 @@ msgstr "Cette entrée a été supprimée."
 
 #~ msgid "Share"
 #~ msgstr "Partager"
-
-#: src/Models/Steps.php:243 src/Models/Uploads.php:402
-msgid "An id is required for this update."
-msgstr "Un identifiant est requis pour cette mise à jour."
-
-#: src/Models/Steps.php:208 src/Models/Steps.php:451
-#: src/Models/Uploads.php:660
-msgid "Cannot reorder an element that does not belong to this entry."
-msgstr "Impossible de réorganiser un élément qui n’appartient pas à cette entrée."
-
-#: src/Models/Steps.php:474 src/Models/Uploads.php:679
-msgid "Invalid group."
-msgstr "Groupe non valide."
-
-#: src/Models/Steps.php:236 src/Models/Steps.php:443
-#: src/Models/Uploads.php:394 src/Models/Uploads.php:651
-msgid "Invalid grouped ordering."
-msgstr "Ordre des éléments groupés non valide."
-
-#: src/templates/chem-editor-edit.html:10 src/templates/edit.html:177
-#: src/templates/reaction-edit-modal.html:6
-msgid "Replace the current drawing?"
-msgstr "Remplacer le dessin actuel ?"

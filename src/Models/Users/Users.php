@@ -870,6 +870,11 @@ class Users extends AbstractRest
             $EmailValidator->validate();
         }
 
+        // the InvenioRDM token is personal
+        if ($params->getTarget() === UsersColumn::InvenioRdmToken->value) {
+            $this->isSelfOrExplode();
+        }
+
         // columns that can only be modified by Sysadmin requester
         if (in_array($params->getTarget(), array('can_manage_compounds', 'can_manage_inventory_locations', 'can_manage_users2teams', 'is_sysadmin'), true)) {
             $this->requester->isSysadminOrExplode();

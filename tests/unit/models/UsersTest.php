@@ -203,6 +203,14 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $user->update(new UserParams('can_manage_users2teams', '1'));
     }
 
+    public function testUpdateInvenioRdmTokenOfAnotherUser(): void
+    {
+        $other = $this->getRandomUserInTeam(1);
+        $target = new Users($other->userData['userid'], 1, $this->Users);
+        $this->expectException(ForbiddenException::class);
+        $target->update(new UserParams('inveniordm_token', 'sometoken'));
+    }
+
     public function testReadAll(): void
     {
         // Sysadmins receive the extended response, including last login information.

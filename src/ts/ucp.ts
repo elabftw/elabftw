@@ -27,7 +27,7 @@ on('patch-account', () => {
   if (!params['inveniordm_token']) {
     delete params['inveniordm_token'];
   }
-  ApiC.patch(`${Model.User}/me`, params);
+  ApiC.patch(`${Model.User}/me`, params).then(() => reloadElements(['ucp-account-form']));
 });
 
 on('disable-mfa', () => {

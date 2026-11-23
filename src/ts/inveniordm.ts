@@ -78,7 +78,7 @@ on('open-inveniordm-modal', async () => {
   const licenseSelect = document.getElementById('inveniordmLicense') as HTMLSelectElement & { tomselect?: TomSelect };
 
   const loading = `<option disabled selected>${i18next.t('loading')}...</option>`;
-  communitySelect.innerHTML = `<option value=''>${i18next.t('none')}</option>`;
+  communitySelect.innerHTML = `<option value=''>${i18next.t('not-set')}</option>`;
   resourceTypeSelect.innerHTML = loading;
   licenseSelect.innerHTML = loading;
 
@@ -95,7 +95,7 @@ on('open-inveniordm-modal', async () => {
 
     // communities: hits.hits[]
     const communities = communitiesJson?.hits?.hits ?? [];
-    communitySelect.innerHTML = `<option value=''>${i18next.t('none')}</option>`;
+    communitySelect.innerHTML = `<option value=''>${i18next.t('not-set')}</option>`;
     communities.forEach((c: InvenioHit) => {
       const opt = document.createElement('option');
       opt.value = c.id;

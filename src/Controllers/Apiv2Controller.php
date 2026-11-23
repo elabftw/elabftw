@@ -371,7 +371,7 @@ final class Apiv2Controller extends AbstractApiController
             ApiEndpoint::InvenioRdm => (
                 function () {
                     $Config = Config::getConfig();
-                    $httpGetter = new HttpGetter(new Client(), '', !Env::asBool('DEV_MODE'));
+                    $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
                     $host = $Config->configArr['inveniordm_host'] ?? '';
                     return new InvenioRdm($this->requester, $httpGetter, $host);
                 }

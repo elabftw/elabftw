@@ -14,11 +14,13 @@ namespace Elabftw\Models;
 
 use Elabftw\Elabftw\Db;
 use Elabftw\Enums\Action;
+use Elabftw\Enums\BasePermissions;
 use Elabftw\Enums\ContainerDeletionReason;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ResourceNotFoundException;
 use Elabftw\Models\Links\Containers2ItemsLinks;
+use Elabftw\Models\Users\AnonymousUser;
 use Elabftw\Models\Users\Users;
 use Elabftw\Traits\TestsUtilsTrait;
 use PDO;
@@ -53,6 +55,25 @@ class ContainersLinksTest extends \PHPUnit\Framework\TestCase
         $Links->createWithQuantity(1.0, 'mL');
         $Links->createWithQuantity(2.0, 'mL');
         $this->assertSame(2, $Links->countContainersForEntity());
+    }
+
+    public function testAnonymousUserDoesNotSeeContainers(): void
+    {
+        $Item = $this->getFreshItem();
+        $Item->patch(Action::Update, array('canread_base' => BasePermissions::Full->value));
+        $box = $this->StorageUnits->create('Box hidden from anonymous users');
+        new Containers2ItemsLinks($Item, $box)->createWithQuantity(5.0, 'g');
+        $rowId = $this->latestContainerRowId('containers2items', $Item->id);
+        // the owner sees the container and its location
+        $this->assertCount(1, $Item->readOne()['containers']);
+
+        // an anonymous user can read the public entry, but not where it is stored
+        $AnonItem = new Items(new AnonymousUser(1), $Item->id);
+        $entry = $AnonItem->readOne();
+        $this->assertSame(array(), $entry['containers']);
+        $this->assertSame(array(), new Containers2ItemsLinks($AnonItem)->readAll());
+        $this->expectException(ForbiddenException::class);
+        new Containers2ItemsLinks($AnonItem, $rowId)->readOne();
     }
 
     public function testMoveContainerToAnotherStorage(): void

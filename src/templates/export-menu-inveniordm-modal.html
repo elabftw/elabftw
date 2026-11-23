@@ -1,0 +1,49 @@
+{# Modal for InvenioRDM export #}
+<div class='modal fade' id='inveniordmExportModal' tabindex='-1' role='dialog' aria-labelledby='inveniordmExportModalLabel'>
+  <div class='modal-dialog' role='document'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='inveniordmExportModalLabel'><i class='fas fa-fw fa-file-archive mr-1'></i>{{ 'Export to InvenioRDM'|trans }}</h5>
+        <button type='button' class='close' data-dismiss='modal' aria-label='{{ 'Close'|trans }}'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+      </div>
+      <form id='inveniordmExportForm'>
+        <div class='modal-body'>
+          <div class='form-group'>
+            <label for='inveniordmCommunity'>{{ 'Community'|trans }} <span class='text-muted'>({{ 'optional'|trans }})</span></label>
+            <select class='form-control' id='inveniordmCommunity' name='community'></select>
+          </div>
+          <div class='form-group'>
+            <label for='inveniordmResourceType'>{{ 'Resource type'|trans }}</label>
+            <select class='form-control' id='inveniordmResourceType' name='resource_type' required></select>
+          </div>
+          <div class='form-group'>
+            <label for='inveniordmTitle'>{{ 'Title'|trans }}</label>
+            <input type='text' class='form-control' id='inveniordmTitle' name='title' required readonly value='{{ Entity.entityData.title }}'>
+          </div>
+          <div class='form-group'>
+            <label for='inveniordmAuthor'>{{ 'Author'|trans }}</label>
+            <input type='text' class='form-control' id='inveniordmAuthor' name='author' required readonly value='{{ Entity.entityData.fullname }}'>
+          </div>
+          <div class='form-group'>
+            <label for='inveniordmDate'>{{ 'Date'|trans }}</label>
+            <input type='date' class='form-control' id='inveniordmDate' name='date' required readonly value='{{ Entity.entityData.date }}'>
+          </div>
+          <div class='form-group'>
+            <label for='inveniordmDescription'>{{ 'Description / Abstract'|trans }}</label>
+            <textarea class='form-control' id='inveniordmDescription' name='description' required rows='4'></textarea>
+          </div>
+          <div class='form-group'>
+            <label for='inveniordmLicense'>{{ 'License'|trans }}</label>
+            <select class='form-control' id='inveniordmLicense' name='license' required></select>
+          </div>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-ghost' data-dismiss='modal'>{{ 'Cancel'|trans }}</button>
+          <button type='submit' class='btn btn-primary' data-action='export-to-inveniordm' data-type='{{ Entity.entityType.value }}' data-id='{{ Entity.id }}'>{{ 'Export'|trans }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

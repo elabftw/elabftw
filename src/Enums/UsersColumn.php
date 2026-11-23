@@ -54,6 +54,7 @@ enum UsersColumn: string
     case NotifUserCreatedEmail = 'notif_user_created_email';
     case NotifUserNeedValidation = 'notif_user_need_validation';
     case NotifUserNeedValidationEmail = 'notif_user_need_validation_email';
+    case InvenioRdmToken = 'inveniordm_token';
     case Orcid = 'orcid';
     case Orderby = 'orderby';
     case Orgid = 'orgid';

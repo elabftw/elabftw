@@ -22,6 +22,7 @@ enum ApiEndpoint: string
     case Compounds = 'compounds';
     case Config = 'config';
     case Dspace = 'dspace';
+    case InvenioRdm = 'inveniordm';
     case Experiments = 'experiments';
     case ExperimentsTemplates = 'experiments_templates';
     case Export = 'exports';

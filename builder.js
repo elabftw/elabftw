@@ -40,6 +40,7 @@ module.exports = (env, argv) => {
         './src/ts/create-new.ts',
         './src/ts/i18n.ts',
         './src/ts/dspace.ts',
+        './src/ts/inveniordm.ts',
         './src/ts/tags.ts',
         './src/ts/admin.ts',
         './src/ts/metadata.ts',

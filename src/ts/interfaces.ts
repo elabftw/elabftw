@@ -130,6 +130,10 @@ enum Action {
   // Dspace Actions
   GetCollections = 'getcollections',
   GetTypes = 'gettypes',
+  // InvenioRDM Actions
+  GetCommunities = 'getcommunities',
+  GetResourceTypes = 'getresourcetypes',
+  GetLicenses = 'getlicenses',
 }
 
 enum Model {

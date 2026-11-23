@@ -402,6 +402,24 @@
       <input class='form-control col-md-3' type='text' placeholder='0000-0002-1234-1111' title='0000-1111-2222-3333' pattern='[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9X]' id='orcid' name='orcid' value='{{ App.Users.userData.orcid }}' />
     </div>
     <hr>
+    {% if App.Config.configArr.inveniordm_host|length > 0 %}
+    <div class='d-flex justify-content-between'>
+      <!-- [html-validate-disable no-missing-references: if there is an inveniordm_token, the input is not shown] -->
+      <label for='inveniordm_token' class='col-form-label'>InvenioRDM {{ 'API Token'|trans }}</label>
+      {% if App.Users.userData.inveniordm_token|length == 0 %}
+        <div class='input-group col-md-3 p-0'>
+          <input class='form-control' type='password' id='inveniordm_token' name='inveniordm_token' autocomplete='off' />
+          <div class='input-group-append'>
+            <button type='button' class='btn btn-ghost' data-action='toggle-password' data-target='inveniordm_token' title='{{ 'Show password'|trans }}' aria-label='{{ 'Show password'|trans }}'><i class='fas fa-eye' aria-hidden='true'></i></button>
+          </div>
+        </div>
+      {% else %}
+        <p>{{ 'A token is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-inveniordm-token'>{{ 'Clear'|trans }}</button></p>
+      {% endif %}
+    </div>
+    <p class='smallgray pl-0'>{{ 'Personal API token for your InvenioRDM account. Generate it in your InvenioRDM profile settings.'|trans }}</p>
+    <hr>
+    {% endif %}
   </div>
 
   <div class='mt-4 text-center'>

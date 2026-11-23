@@ -306,6 +306,16 @@
     <hr>
   </div>
 
+  <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'InvenioRDM repository configuration'|trans }}</h2>
+  <div class='pl-3' id='inveniordmSettings'>
+    <div class='d-flex justify-content-between'>
+      <label for='inveniordm_host' class='col-form-label'>InvenioRDM {{ 'Host'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='inveniordm_host' autocomplete='off' placeholder='https://repo.example.org/' value='{{ App.Config.configArr.inveniordm_host }}' id='inveniordm_host' />
+    </div>
+    <p class='smallgray'>{{ 'Base URL of your InvenioRDM instance, e.g., https://data.example.org'|trans }}</p>
+    <hr>
+  </div>
+
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'DSpace repository configuration'|trans }}</h2>
   <div class='pl-3' id='dspaceSettings'>
     <div class='d-flex justify-content-between'>

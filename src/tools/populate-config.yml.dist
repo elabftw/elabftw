@@ -1715,6 +1715,8 @@ teams:
         firstname: Jules
         lastname: Dufau
         usergroup: 2
+        user_preferences:
+          lang: fr_FR
         sig_key_passphrase: totototototo
       - email: margaux@lafabriqueducanele.com
         firstname: Margaux
@@ -1722,32 +1724,45 @@ teams:
         usergroup: 4
         # dark green interface color instead of the default one, with white text on top
         user_preferences:
+          lang: fr_FR
           primary_bg: '1b5e20'
           primary_fg: 'ffffff'
       - email: bastien@lafabriqueducanele.com
         firstname: Bastien
         lastname: Couture
         usergroup: 4
+        user_preferences:
+          lang: fr_FR
       - email: chloe@lafabriqueducanele.com
         firstname: Chloé
         lastname: Bernadet
         usergroup: 4
+        user_preferences:
+          lang: fr_FR
       - email: hugo@lafabriqueducanele.com
         firstname: Hugo
         lastname: Lafargue
         usergroup: 4
+        user_preferences:
+          lang: fr_FR
       - email: ines@lafabriqueducanele.com
         firstname: Inès
         lastname: Pasquo
         usergroup: 4
+        user_preferences:
+          lang: fr_FR
       - email: julia@lafabriqueducanele.com
         firstname: Julia
         lastname: Fraise
         usergroup: 4
+        user_preferences:
+          lang: fr_FR
       - email: elise@lafabriqueducanele.com
         firstname: Élise
         lastname: Pradel
         usergroup: 4
+        user_preferences:
+          lang: fr_FR
 
     user_groups:
       - name: Recherche & Développement
@@ -1797,22 +1812,22 @@ teams:
 
     resources_categories:
       - name: Matière première
-        color: '#FFE2B8' # 16.8:1
+        color: '#69CCEC' # 11.4:1
         color_fg: '#000000'
       - name: Moule
-        color: '#E2E8F0' # 17.0:1
+        color: '#8BA1BE' # 7.9:1
         color_fg: '#000000'
       - name: Four
-        color: '#FFCFC2' # 15.0:1
+        color: '#E7856A' # 8.0:1
         color_fg: '#000000'
       - name: Appareil de mesure
-        color: '#C6F0DC' # 16.9:1
+        color: '#25C178' # 9.0:1
         color_fg: '#000000'
       - name: Chambre froide
-        color: '#D3E3FF' # 16.2:1
+        color: '#769FE7' # 7.9:1
         color_fg: '#000000'
       - name: Clients
-        color: '#F1D7FA' # 15.8:1
+        color: '#C585DC' # 7.8:1
         color_fg: '#000000'
 
     items_status:
@@ -1832,6 +1847,7 @@ teams:
         owner: jules@lafabriqueducanele.com
         category: 'Contrôle qualité'
         status: 'En cours'
+        hide_main_text: 1
         tags:
           - Contrôle
         metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name":"Paramètres du lot"}, {"id": 2, "name":"Mesures"}, {"id": 3, "name":"Décision"}]}, "extra_fields": {"Numéro de lot": {"type": "experiments", "value": "", "group_id": 1, "required": true, "description":"L''expérience contrôlée"}, "Client": {"type": "items", "value": "", "group_id": 1, "required": true}, "Arômes": {"type": "select", "value": "", "options": ["", "Chocolat", "Café", "Citron", "Fleur d''oranger", "Amande", "Crème de marron", "Anis", "Caramel", "Miel", "Pistache", "Figues", "Chorizo", "Piment d''Espelette", "Parmesan", "Emmental", "Foie gras", "Fines herbes", "Saumon", "Curry", "Tomates", "Basilic"], "allow_multi_values": true, "group_id": 2}, "Moule utilisé": {"type": "items", "value": "", "group_id": 1}, "Poids": {"type": "number", "value_labels": ["échantillon 1", "échantillon 2", "échantillon 3"], "value": ["", "", ""], "unit":"g", "units":["g"], "group_id": 2, "description": "Moyenne sur 3 échantillons minimum", "required": true, "allow_multi_values": true}, "Couleur": {"type": "select", "value": "", "options": ["", "Blond", "Doré", "Acajou", "Brun foncé"], "group_id": 2}, "Alvéolage": {"type": "select", "value": "", "options": ["", "Régulier", "Irrégulier"], "group_id": 2}, "Résultat du contrôle": {"type": "select", "value": "", "options": ["", "Conforme", "Non conforme"], "required": true, "group_id": 3}}}'
@@ -1863,7 +1879,7 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]},"extra_fields": {"Marque": {"type": "text", "value": "", "group_id": 1}, "Allergènes": {"type": "text", "value": "", "group_id": 1}, "Fournisseur": {"type": "text", "value": "", "group_id": 1}, "Matière grasse": {"type": "number", "value": "", "unit": "%", "units": ["%"], "group_id": 1 }, "N° de lot": {"type": "text", "value": "", "group_id": 2}, "Date de réception" : {"type": "date", "value": "", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "", "group_id": 2,"description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type":"number", "value":"", "unit":"kg", "units":["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "", "options": ["Ambiante, au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Référence fournisseur": {"type": "text", "value": "", "group_id" : 1}, "Conditionnement": {"type": "text", "value": "", "group_id": 1}, "Certificat d''analyse": {"type": "checkbox", "value": "", "group_id": 1}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]},"extra_fields": {"Marque": {"type": "text", "value": "", "group_id": 1}, "Allergènes": {"type": "text", "value": "", "group_id": 1}, "Fournisseur": {"type": "text", "value": "", "group_id": 1}, "Matière grasse": {"type": "number", "value": "", "unit": "%", "units": ["%"], "group_id": 1 }, "N° de lot": {"type": "text", "value": "", "group_id": 2}, "Date de réception" : {"type": "date", "value": "", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "", "group_id": 2,"description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type":"number", "value":"", "unit":"kg", "units":["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Référence fournisseur": {"type": "text", "value": "", "group_id" : 1}, "Conditionnement": {"type": "text", "value": "", "group_id": 1}, "Certificat d''analyse": {"type": "checkbox", "value": "", "group_id": 1}}}'
       - name: 'Équipement'
         status: 'En service'
         owner: jules@lafabriqueducanele.com
@@ -1995,6 +2011,9 @@ teams:
         body: '<h1>Exigences particulières</h1><p>Hôtel-restaurant. Mignardises servies au café, présentation soignée.</p><h1>Historique des commandes</h1><p>HP-2025-18, HP-2026-21, HP-2026-24.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Hôtellerie-restauration","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Bertrand Lévêque","required":true,"group_id":1},"Email":{"type":"email","value":"b.leveque@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 20 11","group_id":1},"Adresse de livraison":{"type":"text","value":"2 route des Hérons Gris, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"HP","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["10 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
         experiments_links:
+          - 'Mignardise vanille-rhum 10 g - Domaine des Trois Hérons - Lot HP-2025-22'
+          - 'Mignardise pistache 10 g - Domaine des Trois Hérons - Lot HP-2026-19'
+          - 'Mignardise caramel beurre salé 15 g - Domaine des Trois Hérons - Lot HP-2026-12'
           - 'Mignardise chocolat - Domaine des Trois Hérons - Lot HP-2025-18'
       - title: 'Hôtel des Mouettes Rieuses'
         category: 'Clients'
@@ -2003,6 +2022,8 @@ teams:
         body: '<h1>Exigences particulières</h1><p>Hôtel en bord de lac, commandes surtout en saison estivale.</p><h1>Historique des commandes</h1><p>HP-2026-06, HP-2026-35.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Hôtellerie-restauration","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Nadia Corbières","required":true,"group_id":1},"Email":{"type":"email","value":"","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 20 22","group_id":1},"Adresse de livraison":{"type":"text","value":"","group_id":1},"Préfixe des lots":{"type":"select","value":"HP","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["10 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
         experiments_links:
+          - 'Mignardise café 10 g - Hôtel des Mouettes Rieuses - Lot HP-2026-11'
+          - 'Mignardise citron 10 g - Hôtel des Mouettes Rieuses - Lot HP-2026-27'
           - 'Mignardise vanille - Hôtel des Mouettes Rieuses - Lot HP-2026-06'
       - title: 'Boulangerie Fournil des Brumes'
         category: 'Clients'
@@ -2011,6 +2032,7 @@ teams:
         body: '<h1>Exigences particulières</h1><p>Revend les canelés en vitrine, format boulangerie 25 g.</p><h1>Historique des commandes</h1><p>BO-2026-03, BO-2026-28, BO-2026-39.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Boulangerie","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Gaëtan Brumaire","required":true,"group_id":1},"Email":{"type":"email","value":"fournil.brumes@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 30 33","group_id":1},"Adresse de livraison":{"type":"text","value":"18 rue du Four Imaginaire, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"BO","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["25 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
         experiments_links:
+          - 'Mignardise noisette 15 g - Boulangerie Fournil des Brumes - Lot BO-2026-17'
           - 'Canelé caramel beurre salé - Boulangerie Fournil des Brumes - Lot BO-2026-03'
       - title: 'Maison Brioche Céleste'
         category: 'Clients'
@@ -2019,6 +2041,7 @@ teams:
         body: '<h1>Exigences particulières</h1><p>Client boulangerie le plus régulier : une commande toutes les deux à trois semaines.</p><h1>Historique des commandes</h1><p>BO-2026-09, BO-2026-20, BO-2026-23, BO-2026-27, BO-2026-29, BO-2026-30, BO-2026-32, BO-2026-41.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Boulangerie","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Solène Ravenel","required":true,"group_id":1},"Email":{"type":"email","value":"brioche.celeste@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 30 44","group_id":1},"Adresse de livraison":{"type":"text","value":"5 place des Levains, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"BO","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["25 g","45 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
         experiments_links:
+          - 'Mini canelé miel 10 g - Maison Brioche Céleste - Lot BO-2026-14'
           - 'Canelé café - Maison Brioche Céleste - Lot BO-2026-09'
       - title: 'Halles du Port-Lune'
         category: 'Clients'
@@ -2027,6 +2050,7 @@ teams:
         body: '<h1>Exigences particulières</h1><p>Stand de produits régionaux dans une halle couverte.</p><h1>Historique des commandes</h1><p>GD-2026-22, GD-2026-26, GD-2026-37.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Grande distribution","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Rémi Talabot","required":true,"group_id":1},"Email":{"type":"email","value":"","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 40 55","group_id":1},"Adresse de livraison":{"type":"text","value":"","group_id":1},"Préfixe des lots":{"type":"select","value":"GD","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["45 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
         experiments_links:
+          - 'Mignardise vanille 15 g - Halles du Port-Lune - Lot GD-2026-20'
           - 'Contrôle qualité - Halles du Port-Lune - Lot GD-2026-22'
       - title: 'Hypermarché Cap Zéphyr'
         category: 'Clients'
@@ -2035,13 +2059,14 @@ teams:
         body: '<h1>Exigences particulières</h1><p>Gros volumes, étiquetage avec code-barres fourni par le client.</p><h1>Historique des commandes</h1><p>GD-2026-31, GD-2026-33, GD-2026-34, GD-2026-36, GD-2026-38, GD-2026-40, GD-2026-42.</p>'
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Coordonnées"},{"id":2,"name":"Commandes"}]},"extra_fields":{"Type de client":{"type":"select","value":"Grande distribution","options":["","Boulangerie","Hôtellerie-restauration","Grande distribution","Épicerie fine"],"group_id":1,"required":true},"Contact":{"type":"text","value":"Service achats frais","required":true,"group_id":1},"Email":{"type":"email","value":"achats.capzephyr@lafabriqueducanele.com","group_id":1},"Téléphone":{"type":"text","value":"05 36 49 40 66","group_id":1},"Adresse de livraison":{"type":"text","value":"Plateforme logistique, zone des Alizés, 33000 Bordeaux","group_id":1},"Préfixe des lots":{"type":"select","value":"GD","options":["","BO","HP","GD"],"group_id":2,"description":"BO : boulangerie, HP : hôtellerie, GD : grande distribution"},"Formats commandés":{"type":"select","value":["35 g","45 g"],"options":["10 g","15 g","25 g","35 g","45 g","55 g"],"allow_multi_values":true,"group_id":2},"Allergènes à exclure":{"type":"text","value":"","group_id":2}}}'
         experiments_links:
+          - 'Canelé apéritif chocolat 15 g - Hypermarché Cap Zéphyr - Lot GD-2026-18'
           - 'Contrôle qualité - Hypermarché Cap Zéphyr - Lot GD-2026-31'
       - title: 'Beurre doux AOP - lot B1185'
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
         body: '<p>Beurre doux AOP en plaques, utilisé pour l''appareil et le cirage des moules.</p><p>Certificat d''analyse reçu et conforme.</p>'
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]},"extra_fields": {"Marque": {"type": "text", "value": "Beurre des Charentes AOP", "group_id": 1}, "Allergènes": {"type": "text", "value": "Lait", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Laiterie du Médoc", "group_id": 1}, "Matière grasse": {"type": "number", "value": "82", "unit": "%", "units": ["%"], "group_id": 1 }, "N° de lot": {"type": "text", "value": "B1185", "group_id": 2}, "Date de réception" : {"type": "date", "value": "2026-11-09", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-01-15", "group_id": 2,"description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type":"number", "value":"25", "unit":"kg", "units":["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante, au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Référence fournisseur": {"type": "text", "value": "BD-AOP-82-2.5", "group_id" : 1}, "Conditionnement": {"type": "text", "value": "Plaques de 2,5 kg, carton de 10", "group_id": 1}, "Certificat d''analyse": {"type": "checkbox", "value": "on", "group_id": 1}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]},"extra_fields": {"Marque": {"type": "text", "value": "Beurre des Charentes AOP", "group_id": 1}, "Allergènes": {"type": "text", "value": "Lait", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Laiterie du Médoc", "group_id": 1}, "Matière grasse": {"type": "number", "value": "82", "unit": "%", "units": ["%"], "group_id": 1 }, "N° de lot": {"type": "text", "value": "B1185", "group_id": 2}, "Date de réception" : {"type": "date", "value": "2026-11-09", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-01-15", "group_id": 2,"description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type":"number", "value":"25", "unit":"kg", "units":["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Référence fournisseur": {"type": "text", "value": "BD-AOP-82-2.5", "group_id" : 1}, "Conditionnement": {"type": "text", "value": "Plaques de 2,5 kg, carton de 10", "group_id": 1}, "Certificat d''analyse": {"type": "checkbox", "value": "on", "group_id": 1}}}'
         storage:
           - location: 'Usine | Magasin matières premières | Chambre froide positive | Rayonnage B'
             quantity: 12.5
@@ -2050,7 +2075,7 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Moulin des Landes", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Minoterie des Landes", "group_id": 1}, "N° de lot": {"type": "text", "value": "M2231", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-10-21", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-03-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "500", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Gluten", "group_id": 1}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Moulin des Landes", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Minoterie des Landes", "group_id": 1}, "N° de lot": {"type": "text", "value": "M2231", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-10-21", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-03-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "500", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante, au sec", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Gluten", "group_id": 1}}}'
         storage:
           - location: 'Usine | Magasin matières premières | Zone sèche | Palette 3'
             quantity: 325
@@ -2059,7 +2084,7 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Lait des prés du Médoc", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Laiterie du Médoc", "group_id": 1}, "N° de lot": {"type": "text", "value": "L0907", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-11-16", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2026-11-28", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "200", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Lait", "group_id": 1}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Lait des prés du Médoc", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Laiterie du Médoc", "group_id": 1}, "N° de lot": {"type": "text", "value": "L0907", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-11-16", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2026-11-28", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "200", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Lait", "group_id": 1}}}'
         storage:
           - location: 'Usine | Magasin matières premières | Chambre froide positive | Rayonnage A'
             quantity: 140
@@ -2068,9 +2093,9 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Eau de fleur d''oranger alimentaire", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Distillerie Méditerranée", "group_id": 1}, "N° de lot": {"type": "text", "value": "F118", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-10-05", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-06-30", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "10", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Eau de fleur d''oranger alimentaire", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Distillerie Méditerranée", "group_id": 1}, "N° de lot": {"type": "text", "value": "F118", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-10-05", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-06-30", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "10", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante, à l''abri de la lumière", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
-          - location: 'Usine | Magasin matières premières | Zone sèche | Armoire arômes'
+          - location: 'Usine | Magasin matières premières | Zone liquides | Armoire arômes'
             quantity: 8.5
             unit: 'L'
         compounds_links:
@@ -2079,9 +2104,9 @@ teams:
         category: 'Matière première'
         status: 'À recommander'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Eau de fleur d''oranger alimentaire", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Distillerie Méditerranée", "group_id": 1}, "N° de lot": {"type": "text", "value": "F097", "group_id": 2}, "Date de réception": {"type": "date", "value": "2025-03-18", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-01-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "10", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Eau de fleur d''oranger alimentaire", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Distillerie Méditerranée", "group_id": 1}, "N° de lot": {"type": "text", "value": "F097", "group_id": 2}, "Date de réception": {"type": "date", "value": "2025-03-18", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2027-01-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "10", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante, à l''abri de la lumière", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
-          - location: 'Usine | Magasin matières premières | Zone sèche | Armoire arômes'
+          - location: 'Usine | Magasin matières premières | Zone liquides | Armoire arômes'
             quantity: 0.4
             unit: 'L'
         compounds_links:
@@ -2090,16 +2115,16 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Rhum ambré 54 % vol.", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Rhumerie des Antilles", "group_id": 1}, "N° de lot": {"type": "text", "value": "R551", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-06-02", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2030-12-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "30", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Rhum ambré 54 % vol.", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Rhumerie des Antilles", "group_id": 1}, "N° de lot": {"type": "text", "value": "R551", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-06-02", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2030-12-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "30", "unit": "L", "units": ["L"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante, à l''abri de la lumière", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
-          - location: 'Usine | Magasin matières premières | Zone sèche | Armoire arômes'
+          - location: 'Usine | Magasin matières premières | Zone liquides | Armoire arômes'
             quantity: 18
             unit: 'L'
       - title: 'Sucre semoule - lot S2210'
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Sucre semoule extra-fin", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Sucrerie de l''Ouest", "group_id": 1}, "N° de lot": {"type": "text", "value": "S2210", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-09-14", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-12-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "1000", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Sucre semoule extra-fin", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Sucrerie de l''Ouest", "group_id": 1}, "N° de lot": {"type": "text", "value": "S2210", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-09-14", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-12-31", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "1000", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante, au sec", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
           - location: 'Usine | Magasin matières premières | Zone sèche | Palette 1'
             quantity: 640
@@ -2108,7 +2133,7 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Œufs plein air calibre M", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Ferme de Saucats", "group_id": 1}, "N° de lot": {"type": "text", "value": "O4471", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-11-13", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2026-12-02", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "1800", "unit": "œufs", "units": ["œufs"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Œuf", "group_id": 1}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Œufs plein air calibre M", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Ferme de Saucats", "group_id": 1}, "N° de lot": {"type": "text", "value": "O4471", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-11-13", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2026-12-02", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "1800", "unit": "œufs", "units": ["œufs"], "group_id": 2}, "Conservation": {"type": "select", "value": "Froid positif (+2 à +4 °C)", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}, "Allergènes": {"type": "text", "value": "Œuf", "group_id": 1}}}'
         storage:
           - location: 'Usine | Magasin matières premières | Chambre froide positive | Rayonnage A'
             quantity: 1260
@@ -2117,7 +2142,7 @@ teams:
         category: 'Matière première'
         status: 'En stock'
         owner: jules@lafabriqueducanele.com
-        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Vanille Bourbon de Madagascar", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Comptoir de Madagascar", "group_id": 1}, "N° de lot": {"type": "text", "value": "V310", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-04-22", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-02-28", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "2", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante,  au sec", "options": ["Ambiante,  au sec", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
+        metadata: '{"elabftw": {"extra_fields_groups": [{"id": 1, "name": "Produit"}, {"id": 2, "name": "Lot"}, {"id": 3, "name": "Conservation"}]}, "extra_fields": {"Marque": {"type": "text", "value": "Vanille Bourbon de Madagascar", "group_id": 1}, "Fournisseur": {"type": "text", "value": "Comptoir de Madagascar", "group_id": 1}, "N° de lot": {"type": "text", "value": "V310", "group_id": 2}, "Date de réception": {"type": "date", "value": "2026-04-22", "group_id": 2}, "DLC / DDM": {"type": "date", "value": "2028-02-28", "group_id": 2, "description": "Date limite de consommation ou date de durabilité minimale"}, "Quantité reçue": {"type": "number", "value": "2", "unit": "kg", "units": ["kg"], "group_id": 2}, "Conservation": {"type": "select", "value": "Ambiante, au sec", "options": ["Ambiante, au sec", "Ambiante, à l''abri de la lumière", "Froid positif (+2 à +4 °C)", "Froid négatif (-18 °C)"], "group_id": 3}}}'
         storage:
           - location: 'Usine | Magasin matières premières | Zone sèche | Armoire arômes'
             quantity: 1.2
@@ -2573,7 +2598,7 @@ teams:
       - title: 'Canelé classique vanille-rhum - Maison Opale - réception de printemps - Lot HP-2026-25'
         category: 'Développement client'
         status: 'Réussi'
-        owner: chloe@lafabriqueducanele.com
+        owner: margaux@lafabriqueducanele.com
         date: '2026-03-09'
         rating: 5
         tags:
@@ -2634,6 +2659,123 @@ teams:
         metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Maison Brioche Céleste","group_id":1},"Quantité":{"type":"number","value":"120","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"25","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Café","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"210","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"34","unit":"min","units":["min"],"group_id":2}}}'
         body: |
           <h1>Contexte</h1><p>Commande de Maison Brioche Céleste.</p><h1>Cuisson</h1><p>34 min à 210 °C.</p><h1>Livraison</h1><p>Lot livré, client satisfait.</p>
+      - title: 'Mignardise vanille-rhum 10 g - Domaine des Trois Hérons - Lot HP-2025-22'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: chloe@lafabriqueducanele.com
+        date: '2025-12-12'
+        rating: 5
+        tags:
+          - 'Domaine des Trois Hérons'
+          - 'Vanille'
+          - 'Rhum'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Domaine des Trois Hérons","group_id":1},"Quantité":{"type":"number","value":"600","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"10","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Vanille-rhum","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"19","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Domaine des Trois Hérons : 600 pièces de 10 g.</p><h1>Préparation</h1><p>Moules cuivre 10 g, cirés la veille. Pâte reposée 48 h.</p><h1>Cuisson</h1><p>19 min à 220 °C.</p><h1>Résultat</h1><p>Croûte bien caramélisée, cœur fondant. Lot livré, client satisfait.</p>
+      - title: 'Mignardise café 10 g - Hôtel des Mouettes Rieuses - Lot HP-2026-11'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: bastien@lafabriqueducanele.com
+        date: '2026-04-08'
+        rating: 4
+        tags:
+          - 'Hôtel des Mouettes Rieuses'
+          - 'Café'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Hôtel des Mouettes Rieuses","group_id":1},"Quantité":{"type":"number","value":"240","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"10","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Café","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"20","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Hôtel des Mouettes Rieuses : 240 pièces de 10 g.</p><h1>Préparation</h1><p>Moules cuivre 10 g. Extrait de café ajouté après le repos de la pâte.</p><h1>Cuisson</h1><p>20 min à 220 °C.</p><h1>Résultat</h1><p>Couleur acajou régulière. Lot livré, client satisfait.</p>
+      - title: 'Mignardise pistache 10 g - Domaine des Trois Hérons - Lot HP-2026-19'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: julia@lafabriqueducanele.com
+        date: '2026-06-17'
+        rating: 5
+        tags:
+          - 'Domaine des Trois Hérons'
+          - 'Pistache'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Domaine des Trois Hérons","group_id":1},"Quantité":{"type":"number","value":"480","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"10","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Pistache","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"19","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Domaine des Trois Hérons : 480 pièces de 10 g.</p><h1>Préparation</h1><p>Moules cuivre 10 g. Pâte de pistache réduite de 10 % par rapport au format 15 g.</p><h1>Cuisson</h1><p>19 min à 220 °C.</p><h1>Résultat</h1><p>Bonne tenue au démoulage. Lot livré, client satisfait.</p>
+      - title: 'Mini canelé miel 10 g - Maison Brioche Céleste - Lot BO-2026-14'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: elise@lafabriqueducanele.com
+        date: '2026-05-06'
+        rating: 4
+        tags:
+          - 'Maison Brioche Céleste'
+          - 'Miel'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Maison Brioche Céleste","group_id":1},"Quantité":{"type":"number","value":"360","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"10","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Miel","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"18","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Maison Brioche Céleste : 360 pièces de 10 g.</p><h1>Préparation</h1><p>Moules cuivre 10 g. 18 min suffisent : le miel colore vite la croûte.</p><h1>Cuisson</h1><p>18 min à 220 °C.</p><h1>Résultat</h1><p>Vendus en sachet de 12 en vitrine. Lot livré, client satisfait.</p>
+      - title: 'Mignardise citron 10 g - Hôtel des Mouettes Rieuses - Lot HP-2026-27'
+        category: 'Développement client'
+        status: 'À refaire'
+        owner: chloe@lafabriqueducanele.com
+        date: '2026-08-21'
+        tags:
+          - 'Hôtel des Mouettes Rieuses'
+          - 'Citron'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Hôtel des Mouettes Rieuses","group_id":1},"Quantité":{"type":"number","value":"240","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"10","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Citron","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"18","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Hôtel des Mouettes Rieuses : 240 pièces de 10 g.</p><h1>Préparation</h1><p>Moules cuivre 10 g. Zestes frais ajoutés dans la pâte.</p><h1>Cuisson</h1><p>18 min à 220 °C.</p><h1>Résultat</h1><p>Cœur trop humide : prolonger la cuisson d'une minute au prochain essai.</p>
+      - title: 'Mignardise caramel beurre salé 15 g - Domaine des Trois Hérons - Lot HP-2026-12'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: bastien@lafabriqueducanele.com
+        date: '2026-04-15'
+        rating: 5
+        tags:
+          - 'Domaine des Trois Hérons'
+          - 'Caramel beurre salé'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Domaine des Trois Hérons","group_id":1},"Quantité":{"type":"number","value":"480","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"15","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Caramel beurre salé","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"24","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Domaine des Trois Hérons : 480 pièces de 15 g.</p><h1>Préparation</h1><p>Moules cuivre 15 g. Caramel coulé au fond du moule avant la pâte.</p><h1>Cuisson</h1><p>24 min à 220 °C.</p><h1>Résultat</h1><p>Démoulage net, caramel bien pris. Lot livré, client satisfait.</p>
+      - title: 'Canelé apéritif chocolat 15 g - Hypermarché Cap Zéphyr - Lot GD-2026-18'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: elise@lafabriqueducanele.com
+        date: '2026-05-27'
+        rating: 4
+        tags:
+          - 'Hypermarché Cap Zéphyr'
+          - 'Chocolat'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Hypermarché Cap Zéphyr","group_id":1},"Quantité":{"type":"number","value":"1200","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"15","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Chocolat","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"25","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Hypermarché Cap Zéphyr : 1200 pièces de 15 g.</p><h1>Préparation</h1><p>Moules silicone 15 g pour le volume, plaque perforée.</p><h1>Cuisson</h1><p>25 min à 220 °C.</p><h1>Résultat</h1><p>Croûte un peu moins épaisse qu'en cuivre, accepté par le client. Lot livré.</p>
+      - title: 'Mignardise vanille 15 g - Halles du Port-Lune - Lot GD-2026-20'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: julia@lafabriqueducanele.com
+        date: '2026-06-03'
+        rating: 4
+        tags:
+          - 'Halles du Port-Lune'
+          - 'Vanille'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Halles du Port-Lune","group_id":1},"Quantité":{"type":"number","value":"960","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"15","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Vanille","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"24","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Halles du Port-Lune : 960 pièces de 15 g.</p><h1>Préparation</h1><p>Moules cuivre 15 g. Gousses infusées 24 h dans le lait.</p><h1>Cuisson</h1><p>24 min à 220 °C.</p><h1>Résultat</h1><p>Alvéolage régulier. Lot livré, client satisfait.</p>
+      - title: 'Mignardise noisette 15 g - Boulangerie Fournil des Brumes - Lot BO-2026-17'
+        category: 'Développement client'
+        status: 'Réussi'
+        owner: chloe@lafabriqueducanele.com
+        date: '2026-06-24'
+        rating: 5
+        tags:
+          - 'Boulangerie Fournil des Brumes'
+          - 'Noisette'
+          - 'Mignardise'
+        metadata: '{"elabftw":{"extra_fields_groups":[{"id":1,"name":"Commande"},{"id":2,"name":"Recette"}]},"extra_fields":{"Client":{"type":"text","value":"Boulangerie Fournil des Brumes","group_id":1},"Quantité":{"type":"number","value":"240","unit":"pièces","units":["pièces"],"group_id":1},"Format":{"type":"number","value":"15","unit":"g","units":["g"],"group_id":1},"Arôme":{"type":"select","value":"Noisette","options":["Vanille-rhum","Vanille","Fleur d''oranger","Chocolat","Café","Caramel beurre salé","Citron","Pistache","Framboise","Noisette","Thé matcha","Miel","Nature"],"group_id":1},"Température":{"type":"number","value":"220","unit":"°C","units":["°C"],"group_id":2},"Durée de cuisson":{"type":"number","value":"25","unit":"min","units":["min"],"group_id":2}}}'
+        body: |
+          <h1>Contexte</h1><p>Commande de Boulangerie Fournil des Brumes : 240 pièces de 15 g.</p><h1>Préparation</h1><p>Moules cuivre 15 g. Noisettes torréfiées et mixées finement.</p><h1>Cuisson</h1><p>25 min à 220 °C.</p><h1>Résultat</h1><p>Très bon retour en vitrine. Lot livré, client satisfait.</p>
       - title: 'test'
         category: 'Divers Noël'
         status: 'En cours'

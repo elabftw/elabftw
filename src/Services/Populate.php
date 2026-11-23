@@ -85,6 +85,7 @@ use function array_values;
 use function ctype_digit;
 use function is_array;
 use function is_int;
+use function is_string;
 
 /**
  * This is used to generate data for dev purposes
@@ -240,6 +241,9 @@ final class Populate
                     metadata: $template['metadata'] ?? '{}',
                 );
                 $Templates->setId($id);
+                if (isset($template['hide_main_text'])) {
+                    $Templates->update(new EntityParams('hide_main_text', (string) $template['hide_main_text']));
+                }
                 if (isset($template['locked'])) {
                     $Templates->toggleLock();
                 }
@@ -277,7 +281,7 @@ final class Populate
                     category: $category,
                     date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                     metadata: $items_types['metadata'] ?? '{}',
-                    status: $this->getStatus(new ItemsStatus($Teams), $items_types['status'] ?? 2),
+                    status: $this->getStatus(new ItemsStatus($Teams), $items_types['status'] ?? null),
                 );
                 $ItemsTypes->setId($itemTypeId);
                 $this->queueLinks($ItemsTypes, $items_types);
@@ -355,7 +359,7 @@ final class Populate
                         body: $item['body'] ?? '',
                         date: new DateTimeImmutable($this->faker->dateTimeBetween('-5 years')->format('Ymd')),
                         category: $ResourcesCategories->getIdempotentIdFromTitle($item['category'] ?? 'Default', $this->getRandomAaaColor()),
-                        status: isset($item['status']) ? $this->getStatus(new ItemsStatus($Teams), $item['status']) : null,
+                        status: $this->getStatus(new ItemsStatus($Teams), $item['status'] ?? null),
                         rating: $item['rating'] ?? 0,
                     );
                     $Items->setId($id);
@@ -408,7 +412,7 @@ final class Populate
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(array('handler' => $handlerStack));
         $httpGetter = new HttpGetter($client);
-        $Compounds = new Compounds($httpGetter, $Users, new NullFingerprinter(), false);
+        $Compounds = new Compounds($httpGetter, $Users, new OpenBabelFingerprinter(), false);
         foreach ($this->yaml['compounds'] ?? array() as $compound) {
             $id = $Compounds->create(
                 inchi: $compound['inchi'],
@@ -712,21 +716,16 @@ final class Populate
     }
 
     /**
-     * A status is given by its name (stable across runs) or by its id
-     * 0 picks a random status of the team, an unknown name gives no status
+     * A status is given by its id (used as is) or by its name (always the same status of the team)
      */
-    private function getStatus(AbstractStatus $Status, int|string $status): ?int
+    private function getStatus(AbstractStatus $Status, int|string|null $status): ?int
     {
-        if (is_int($status) && $status > 0) {
+        if (!is_string($status)) {
             return $status;
         }
-        // only the statuses of this team: readAll() also lists the non private ones of other teams
-        $teamStatus = $Status->readAllIgnoreState();
-        if ($status === 0) {
-            return (int) $this->faker->randomElement($teamStatus)['id'];
-        }
-        foreach ($teamStatus as $row) {
-            if ($row['title'] === $status) {
+        // only the active statuses of this team: readAll() also lists the non private ones of other teams
+        foreach ($Status->readAll() as $row) {
+            if ((int) $row['is_current_team'] === 1 && $row['title'] === $status) {
                 return (int) $row['id'];
             }
         }

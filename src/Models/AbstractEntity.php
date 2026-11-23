@@ -120,7 +120,6 @@ use function array_filter;
 use function preg_replace;
 use function preg_match;
 use function strlen;
-use function hash_equals;
 use function preg_replace_callback;
 use function rawurlencode;
 use function is_scalar;
@@ -763,14 +762,10 @@ abstract class AbstractEntity extends AbstractRest
             $this->entityData['body_html'] = Tools::md2html($this->entityData['body'] ?? '');
         }
         $accessKey = $request->query->getString('access_key');
-        $entityAccessKey = (string) (
-            $this->entityData['access_key'] ?? ''
-        );
-
+        // the access_key column is hidden from readers without write access (see EntitySqlBuilder), so check the key against the database
         if (
             $accessKey !== ''
-            && $entityAccessKey !== ''
-            && hash_equals($entityAccessKey, $accessKey)
+            && new AccessKeyHelper($this->entityType, $this->id)->isValidFor($accessKey)
         ) {
             $this->entityData['body_html'] = $this->appendAccessKeyToDownloadUrls($this->entityData['body_html'] ?? '', $accessKey);
         }
@@ -1076,6 +1071,11 @@ abstract class AbstractEntity extends AbstractRest
                 throw new ImproperActionException(_('Custom ID is already used! Try another one.'));
             }
             throw $e;
+        }
+
+        // like deletion, a change of who can access the entry must not leave a working access key with those who saw it before
+        if ($this->isAccessChange($params->getColumn(), $content)) {
+            new AccessKeyHelper($this->entityType, $this->id)->rotateAccessKey();
         }
 
         if ($params->getTarget() === 'body' || $params->getTarget() === 'bodyappend') {
@@ -1754,6 +1754,23 @@ abstract class AbstractEntity extends AbstractRest
         $key = $type->value;
         $this->update(new EntityParams($key, (string) $params['can']));
         $this->update(new EntityParams($key . '_base', (int) $params['can_base']));
+    }
+
+    // is this update changing the read or write permissions, the owner or the team of the entry
+    private function isAccessChange(string $column, mixed $content): bool
+    {
+        if (!in_array($column, array('canread', 'canread_base', 'canwrite', 'canwrite_base', 'team', 'userid'), true)) {
+            return false;
+        }
+        $previous = $this->entityData[$column] ?? null;
+        if ($previous === null) {
+            return true;
+        }
+        if ($column === 'canread' || $column === 'canwrite') {
+            // the stored json can be formatted differently than the submitted one
+            return json_decode((string) $previous, true) != json_decode((string) $content, true);
+        }
+        return (string) $previous !== (string) $content;
     }
 
     private function updateOwnership(int $userid, int $destinationTeam): void

@@ -65,7 +65,7 @@ curl -H "Content-Type: application/json" \
 
 Everything is described in the [documentation](https://doc.elabftw.net/api/v2/) generated from the specification.
 
-You'll probably want to use python or a shell language to build a more meaningful script. Fortunately, a [python library](https://github.com/elabftw/elabapi-python) is available to make things easy for you (look at the `examples` folder!).
+You'll probably want to use python, go or a shell language to build a more meaningful script. Fortunately, a [python library](https://github.com/elabftw/elabapi-python) and a [go library](https://github.com/elabftw/elabapi-go) are available to make things easy for you (look at the `examples` folder of each!).
 
 ## Read the doc
 

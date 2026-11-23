@@ -118,6 +118,7 @@ jobs:
             get.trivy.dev
             ghcr.io
             index.docker.io
+            mirror.gcr.io
             pkg-containers.githubusercontent.com
             production.cloudflare.docker.com
             raw.githubusercontent.com

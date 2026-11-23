@@ -224,7 +224,8 @@ final class Config extends AbstractRest
             ('dspace_host', ''),
             ('dspace_user', ''),
             ('dspace_password', ''),
-            ('inveniordm_host', '')";
+            ('inveniordm_host', ''),
+            ('inveniordm_name', 'InvenioRDM')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', SchemaVersionChecker::REQUIRED_SCHEMA);

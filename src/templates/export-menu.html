@@ -99,5 +99,11 @@
     <button type='button' class='dropdown-item {{ isDisabled ? 'disabled' }}' data-action='open-dspace-modal' {{ isDisabled ? 'disabled aria-disabled="true"' : '' }}>
       <i class='fas fa-file-export fa-fw {{ isDisabled ? 'color-weak' }}'></i> {{ 'Export to DSpace'|trans }}
     </button>
+    {% if App.Config.configArr.inveniordm_host != '' %}
+    {% set isInvenioDisabled = Entity.isReadOnly %}
+    <button type='button' class='dropdown-item {{ isInvenioDisabled ? 'disabled' }}' data-action='open-inveniordm-modal' {{ isInvenioDisabled ? 'disabled aria-disabled="true"' : '' }}>
+      <i class='fas fa-file-export fa-fw {{ isInvenioDisabled ? 'color-weak' }}'></i> {{ 'Export to'|trans }} {{ App.Config.configArr.inveniordm_name }}
+    </button>
+    {% endif %}
   </div>
 </div>

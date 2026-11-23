@@ -314,6 +314,13 @@
     </div>
     <p class='smallgray'>{{ 'Base URL of your InvenioRDM instance, e.g., https://data.example.org'|trans }}</p>
     <hr>
+
+    <div class='d-flex justify-content-between'>
+      <label for='inveniordm_name' class='col-form-label'>InvenioRDM {{ 'Repository name'|trans }}</label>
+      <input class='form-control col-md-3' type='text' data-trigger='blur' data-model='config' data-target='inveniordm_name' autocomplete='off' placeholder='InvenioRDM' value='{{ App.Config.configArr.inveniordm_name }}' id='inveniordm_name' />
+    </div>
+    <p class='smallgray'>{{ 'Display name shown in the export menu, e.g., My Research Data Repository'|trans }}</p>
+    <hr>
   </div>
 
   <h2 class='mb-3 p-2 pl-3 section-title'>{{ 'DSpace repository configuration'|trans }}</h2>

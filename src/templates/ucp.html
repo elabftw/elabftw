@@ -417,7 +417,7 @@
         <p>{{ 'A token is already set.'|trans }} <button type='button' class='btn btn-danger btn-sm' data-action='clear-inveniordm-token'>{{ 'Clear'|trans }}</button></p>
       {% endif %}
     </div>
-    <p class='smallgray pl-0'>{{ 'Personal API token for your InvenioRDM account. Generate it in your InvenioRDM profile settings.'|trans }}</p>
+    <p class='smallgray pl-0'>{{ 'Personal API token for your InvenioRDM account. Generate it in your InvenioRDM profile settings at'|trans }} <a href='{{ App.Config.configArr.inveniordm_host }}account/settings/applications/tokens/new/' target='_blank' rel='noopener noreferrer'>{{ App.Config.configArr.inveniordm_host }}account/settings/applications/tokens/new/</a></p>
     <hr>
     {% endif %}
   </div>

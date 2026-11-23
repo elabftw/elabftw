@@ -46,6 +46,8 @@ use function _;
  */
 final class InvenioRdm extends AbstractRest
 {
+    private const int LIST_SIZE = 1000;
+
     private string $host;
 
     private ?string $bearerToken = null;
@@ -97,8 +99,11 @@ final class InvenioRdm extends AbstractRest
             ?? throw new ImproperActionException('Invalid value for entity.type');
         $entity = $entityType->toInstance($this->requester, (int) $params['entity']['id']);
 
-        $metadata = $this->buildMetadata($params);
+        $metadata = $this->buildMetadata($params, $entity);
         $recordId = $this->createDraft($metadata);
+        if (!empty($params['community'])) {
+            $this->requestCommunityReview($recordId, (string) $params['community']);
+        }
 
         $filename = sprintf('export-elabftw-%s.eln', date('Y-m-d_H-i-s'));
         $this->initiateFileUpload($recordId, $filename);
@@ -166,6 +171,8 @@ final class InvenioRdm extends AbstractRest
         $tmpFileName = Tools::getUuidv4();
         $storage = Storage::EXPORTS->getStorage();
         $absolutePath = $storage->getAbsoluteUri($tmpFileName);
+        // getFs() registers the s3:// stream wrapper, so it must run before writeToFile()
+        $fs = $storage->getFs();
         $maker = new MakeEln(
             App::getDefaultLogger(),
             new ZipStream(sendHttpHeaders: false),
@@ -176,18 +183,35 @@ final class InvenioRdm extends AbstractRest
             new Users2Rors($this->requester->getUserid(), false),
             CompoundsFactory::getCompounds($this->requester),
         );
-        $maker->writeToFile($absolutePath);
-
         $headers = $this->getAuthHeaders();
         $headers['Content-Type'] = 'application/octet-stream';
         try {
+            $maker->writeToFile($absolutePath);
             $this->httpGetter->put(
                 sprintf('%srecords/%s/draft/files/%s/content', $this->host, $recordId, $filename),
                 array('headers' => $headers, 'body' => fopen($absolutePath, 'rb'))
             );
         } finally {
-            $storage->getFs()->delete($absolutePath);
+            // the adapter is rooted at the storage folder, so it expects the relative key
+            $fs->delete($tmpFileName);
         }
+    }
+
+    /**
+     * parent.communities is dump-only, so a community is attached through a review request.
+     * This only creates the request: nothing is submitted or published.
+     */
+    private function requestCommunityReview(string $recordId, string $communityId): void
+    {
+        $headers = $this->getAuthHeaders();
+        $headers['Content-Type'] = 'application/json';
+        $this->httpGetter->put(
+            sprintf('%srecords/%s/draft/review', $this->host, $recordId),
+            array('headers' => $headers, 'json' => array(
+                'receiver' => array('community' => $communityId),
+                'type' => 'community-submission',
+            )),
+        );
     }
 
     private function commitFile(string $recordId, string $filename): void
@@ -201,25 +225,31 @@ final class InvenioRdm extends AbstractRest
 
     private function getCommunities(): array
     {
-        $res = $this->httpGetter->get($this->host . 'communities', $this->getAuthHeaders());
-        return json_decode($res->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        return $this->getList('communities');
     }
 
     private function getResourceTypes(): array
     {
-        $res = $this->httpGetter->get($this->host . 'vocabularies/resourcetypes', $this->getAuthHeaders());
-        return json_decode($res->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        return $this->getList('vocabularies/resourcetypes');
     }
 
     private function getLicenses(): array
     {
-        $res = $this->httpGetter->get($this->host . 'vocabularies/licenses', $this->getAuthHeaders());
+        return $this->getList('vocabularies/licenses');
+    }
+
+    // the API paginates (10 or 25 hits by default) and the select controls have no remote search, so fetch everything in one page
+    private function getList(string $endpoint): array
+    {
+        $res = $this->httpGetter->get(sprintf('%s%s?size=%d', $this->host, $endpoint, self::LIST_SIZE), $this->getAuthHeaders());
         return json_decode($res->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
     }
 
-    private function buildMetadata(array $params): array
+    private function buildMetadata(array $params, AbstractEntity $entity): array
     {
-        $metadata = array(
+        // personal creators require family_name, so use the owner's structured name rather than the display string
+        $owner = new Users((int) $entity->entityData['userid']);
+        return array(
             'metadata' => array(
                 'title' => (string) ($params['title'] ?? ''),
                 'publication_date' => (string) ($params['date'] ?? date('Y-m-d')),
@@ -228,7 +258,8 @@ final class InvenioRdm extends AbstractRest
                     array(
                         'person_or_org' => array(
                             'type' => 'personal',
-                            'name' => (string) ($params['author'] ?? ''),
+                            'given_name' => (string) $owner->userData['firstname'],
+                            'family_name' => (string) $owner->userData['lastname'],
                         ),
                     ),
                 ),
@@ -240,11 +271,5 @@ final class InvenioRdm extends AbstractRest
                 'files' => 'public',
             ),
         );
-
-        if (!empty($params['community'])) {
-            $metadata['parent'] = array('communities' => array('ids' => array((string) $params['community'])));
-        }
-
-        return $metadata;
     }
 }

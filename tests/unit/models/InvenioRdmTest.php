@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace Elabftw\Models;
 
+use ArrayAccess;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Elabftw\Elabftw\Env;
@@ -23,9 +24,11 @@ use Elabftw\Traits\TestsUtilsTrait;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Symfony\Component\HttpFoundation\InputBag;
 
+use function json_decode;
 use function json_encode;
 
 class InvenioRdmTest extends \PHPUnit\Framework\TestCase
@@ -33,6 +36,9 @@ class InvenioRdmTest extends \PHPUnit\Framework\TestCase
     use TestsUtilsTrait;
 
     private Users $requester;
+
+    /** @var array<int, array>|ArrayAccess<int, array> */
+    private array|ArrayAccess $history = array();
 
     protected function setUp(): void
     {
@@ -101,6 +107,38 @@ class InvenioRdmTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('https://invenio.example.org/uploads/abc-123', $res['draftUrl']);
     }
 
+    public function testPatchSendsValidCreatorAndCommunityReview(): void
+    {
+        $invenio = $this->getInvenio(array(
+            new Response(201, array(), json_encode(array('id' => 'abc-123')) ?: '{}'), // create draft
+            new Response(200), // community review request
+            new Response(201), // init file upload
+            new Response(200), // upload content
+            new Response(200), // commit
+        ));
+        $experiment = $this->getFreshExperiment();
+        $invenio->patch(Action::Create, array(
+            'title' => 'Test',
+            'community' => 'comm-1',
+            'entity' => array('type' => EntityType::Experiments->value, 'id' => $experiment->id),
+        ));
+        $draft = json_decode((string) $this->history[0]['request']->getBody(), true);
+        $creator = $draft['metadata']['creators'][0]['person_or_org'];
+        $this->assertNotEmpty($creator['family_name']);
+        $this->assertArrayNotHasKey('parent', $draft);
+        $review = $this->history[1]['request'];
+        $this->assertSame('PUT', $review->getMethod());
+        $this->assertStringEndsWith('records/abc-123/draft/review', (string) $review->getUri());
+        $this->assertSame(array('receiver' => array('community' => 'comm-1'), 'type' => 'community-submission'), json_decode((string) $review->getBody(), true));
+    }
+
+    public function testListRequestsAskForAllHits(): void
+    {
+        $invenio = $this->getInvenio(array(new Response(200, array(), '{}')));
+        $invenio->readAll($invenio->getQueryParams(new InputBag(array('action' => InvenioRdmAction::GetLicenses->value))));
+        $this->assertStringContainsString('size=1000', $this->history[0]['request']->getUri()->getQuery());
+    }
+
     public function testPatchWithoutRecordIdThrows(): void
     {
         $invenio = $this->getInvenio(array(new Response(201, array(), '{}')));
@@ -111,7 +149,9 @@ class InvenioRdmTest extends \PHPUnit\Framework\TestCase
 
     private function getInvenio(array $responses): InvenioRdm
     {
-        $client = new Client(array('handler' => HandlerStack::create(new MockHandler($responses))));
+        $stack = HandlerStack::create(new MockHandler($responses));
+        $stack->push(Middleware::history($this->history));
+        $client = new Client(array('handler' => $stack));
         return new InvenioRdm($this->requester, new HttpGetter($client), 'https://invenio.example.org/');
     }
 }

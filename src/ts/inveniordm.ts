@@ -60,9 +60,14 @@ on('export-to-inveniordm', async (el, event: Event) => {
   try {
     const res = await ApiC.patch('inveniordm', { notifOnSaved: 0, notifOnError: 0, ...params, entity });
     const data = await res.json();
-    await saveDraftUrlAsExtraField(data.draftUrl);
+    // the draft exists now: a failure below must not look like a failed export, or a retry creates a second draft
     notify.success('export-success');
     hideModal('#inveniordmExportModal');
+    try {
+      await saveDraftUrlAsExtraField(data.draftUrl);
+    } catch (e) {
+      notify.error(`${e} (${data.draftUrl})`);
+    }
   } catch (e) {
     notify.error(e);
   } finally {

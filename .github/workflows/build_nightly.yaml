@@ -34,11 +34,8 @@ jobs:
           allowed-hosts: >
             auth.docker.io
             codeload.github.com
-            get.trivy.dev
-            check.trivy.dev
             dl-cdn.alpinelinux.org
             docker.io
-            get.trivy.dev
             ghcr.io
             index.docker.io
             mirror.gcr.io
@@ -115,8 +112,10 @@ jobs:
           prevent: true
           allowed-hosts: >
             auth.docker.io
+            check.trivy.dev
             codeload.github.com
             docker.io
+            get.trivy.dev
             ghcr.io
             index.docker.io
             pkg-containers.githubusercontent.com

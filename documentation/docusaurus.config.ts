@@ -47,8 +47,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Use current while creating the versions, then make 6.0 the default.
-          lastVersion: versioningReady ? '6.0' : 'current',
+          // Use current while creating the versions, then make 6.1 the default.
+          lastVersion: versioningReady ? '6.1' : 'current',
 
           versions: {
             current: {
@@ -57,10 +57,14 @@ const config: Config = {
               banner: 'unreleased',
             },
             ...(versioningReady && {
-              '6.0': {
-                label: '6.0',
+              '6.1': {
+                label: '6.1',
                 path: '',
                 banner: 'none',
+              },
+              '6.0': {
+                label: '6.0',
+                banner: 'unmaintained',
               },
               '5.6': {
                 label: '5.6',

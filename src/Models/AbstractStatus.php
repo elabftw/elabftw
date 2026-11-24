@@ -20,7 +20,6 @@ use Elabftw\Enums\State;
 use Elabftw\Exceptions\ImproperActionException;
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Params\BaseQueryParams;
-use Elabftw\Params\OrderingParams;
 use Elabftw\Params\StatusParams;
 use Elabftw\Services\Check;
 use Elabftw\Services\Filter;
@@ -44,13 +43,6 @@ abstract class AbstractStatus extends AbstractCategory
     use RandomColorTrait;
 
     protected string $table;
-
-    #[Override]
-    public function updateOrdering(OrderingParams $params): void
-    {
-        $this->canWriteOrExplode();
-        parent::updateOrdering($params);
-    }
 
     #[Override]
     public function getApiPath(): string

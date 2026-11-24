@@ -14,9 +14,11 @@ namespace Elabftw\Models;
 use Elabftw\Enums\Action;
 use Elabftw\Enums\EntityType;
 use Elabftw\Enums\State;
+use Elabftw\Exceptions\AppException;
 use Elabftw\Models\Users\Users;
 use Elabftw\Params\DisplayParams;
 use Elabftw\Params\EntityParams;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Params\TeamParam;
 use Elabftw\Traits\TestsUtilsTrait;
 
@@ -81,6 +83,17 @@ class TemplatesTest extends \PHPUnit\Framework\TestCase
             json_decode($canread),
             json_decode($this->Templates->readOne()['canread'])
         );
+    }
+
+    public function testCannotReorderTemplateFromAnotherTeam(): void
+    {
+        $id = $this->Templates->create(title: 'victim');
+        $Attacker = new Templates($this->getRandomUserInTeam(2));
+        $this->expectException(AppException::class);
+        $Attacker->updateOrdering(new OrderingParams(array(
+            'table' => 'experiments_templates',
+            'ordering' => array('tpl_' . $id),
+        )));
     }
 
     public function testDestroy(): void

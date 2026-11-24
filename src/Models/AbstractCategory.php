@@ -14,7 +14,9 @@ namespace Elabftw\Models;
 
 use Elabftw\Exceptions\ForbiddenException;
 use Elabftw\Traits\EntityTrait;
+use Elabftw\Params\OrderingParams;
 use Elabftw\Traits\SortableTrait;
+use Override;
 use PDO;
 
 use function is_int;
@@ -62,10 +64,38 @@ abstract class AbstractCategory extends AbstractRest
 
     protected function canWriteOrExplode(): void
     {
-        $property = sprintf('users_canwrite_%s', $this->getUsersCanwriteName());
-        // the admin check must target the team of the category, not the one we are logged in
-        if ($this->Teams->teamArr[$property] === 0 and !$this->Teams->Users->isAdminOfTeam($this->Teams->id ?? 0)) {
+        // without a team we cannot know the team settings: fail closed
+        if ($this->Teams->id === null) {
             throw new ForbiddenException();
         }
+        $property = sprintf('users_canwrite_%s', $this->getUsersCanwriteName());
+        // the admin check must target the team of the category, not the one we are logged in
+        if (($this->Teams->teamArr[$property] ?? 0) === 0 and !$this->Teams->Users->isAdminOfTeam($this->Teams->id)) {
+            throw new ForbiddenException();
+        }
+    }
+
+    #[Override]
+    protected function canReorderOrExplode(OrderingParams $params): void
+    {
+        $this->canWriteOrExplode();
+    }
+
+    #[Override]
+    protected function getOrderingTable(): string
+    {
+        return $this->table;
+    }
+
+    #[Override]
+    protected function getOrderingOwnerColumn(): string
+    {
+        return 'team';
+    }
+
+    #[Override]
+    protected function getOrderingOwnerId(): int
+    {
+        return $this->Teams->id ?? throw new ForbiddenException();
     }
 }

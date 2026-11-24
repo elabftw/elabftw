@@ -121,6 +121,7 @@ jobs:
             mirror.gcr.io
             pkg-containers.githubusercontent.com
             production.cloudflare.docker.com
+            production.cloudfront.docker.com
             raw.githubusercontent.com
             registry-1.docker.io
             *.sigstore.dev

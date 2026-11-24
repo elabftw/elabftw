@@ -145,14 +145,53 @@ final class OwnershipTransferTest extends TestCase
     }
 
     #[DataProvider('entityTypes')]
-    public function testSourceTeamAdminCanTransferAcrossTeams(EntityType $type): void
+    public function testAdminOfBothTeamsCanTransferAcrossTeams(EntityType $type): void
     {
         $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
         $admin = $this->getFreshAdminInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        $this->setTeamMembership($admin->getUserid(), self::OTHER_TEAM, isAdmin: 1);
+        // reload: the memberships are read when the user is built
+        $admin = new AuthenticatedUser($admin->getUserid(), self::SOURCE_TEAM);
         $target = $this->getRegularUserInTeam(self::OTHER_TEAM, array($owner->getUserid(), $admin->getUserid()));
         $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
 
         $type->toInstance($admin, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::OTHER_TEAM));
+
+        $this->assertOwnedBy($type, $entity->id, $target, self::OTHER_TEAM);
+    }
+
+    /**
+     * Admin rights in the entry team must not allow pushing the entry into a team where the requester is not admin
+     */
+    #[DataProvider('entityTypes')]
+    public function testSourceTeamAdminCannotTransferToTeamWhereNotAdmin(EntityType $type): void
+    {
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $admin = $this->getFreshAdminInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        // a leftover admin membership in the destination team would make the transfer legitimate
+        $this->setTeamMembership($admin->getUserid(), self::OTHER_TEAM, isAdmin: 0);
+        $admin = new AuthenticatedUser($admin->getUserid(), self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::OTHER_TEAM, array($owner->getUserid(), $admin->getUserid()));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
+        self::assertTrue($admin->isAdmin);
+
+        $this->expectException(ForbiddenException::class);
+        $type->toInstance($admin, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::OTHER_TEAM));
+    }
+
+    #[DataProvider('entityTypes')]
+    public function testSysadminCanTransferAcrossTeams(EntityType $type): void
+    {
+        $owner = $this->getRegularUserInTeam(self::SOURCE_TEAM);
+        $sysadmin = $this->getFreshSysadminInTeam(self::SOURCE_TEAM, array($owner->getUserid()));
+        // only the sysadmin flag can authorize this transfer
+        $this->setTeamMembership($sysadmin->getUserid(), self::OTHER_TEAM, isAdmin: 0);
+        $sysadmin = new AuthenticatedUser($sysadmin->getUserid(), self::SOURCE_TEAM);
+        $target = $this->getRegularUserInTeam(self::OTHER_TEAM, array($owner->getUserid(), $sysadmin->getUserid()));
+        self::assertFalse($sysadmin->isAdminOfTeam(self::OTHER_TEAM));
+        $entity = $this->getFreshEntityWithGivenUser($type, $owner, BasePermissions::Team);
+
+        $type->toInstance($sysadmin, $entity->id)->patch(Action::UpdateOwner, array('userid' => $target->getUserid(), 'team' => self::OTHER_TEAM));
 
         $this->assertOwnedBy($type, $entity->id, $target, self::OTHER_TEAM);
     }

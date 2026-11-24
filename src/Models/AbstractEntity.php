@@ -877,7 +877,7 @@ abstract class AbstractEntity extends AbstractRest
             return false;
         }
         $entryTeam = (int) $this->entityData['team'];
-        // the owner must be logged in the entry team, so the destination check in updateOwnership() applies to that team
+        // the owner must be logged in the entry team to act on it
         $isOwnerInEntryTeam = (int) $this->entityData['userid'] === $this->Users->getUserid()
             && $entryTeam === $this->Users->getTeam();
         return $isOwnerInEntryTeam
@@ -1764,8 +1764,12 @@ abstract class AbstractEntity extends AbstractRest
             ));
         }
 
-        // non-admins cannot transfer outside their own team: together with canTransferOwnership(), this keeps owners within the entry team
-        if (!$this->Users->isAdmin && $destinationTeam !== $this->Users->getTeam()) {
+        // moving the entry out of its team requires admin rights in the destination team, or sysadmin
+        // isAdmin only reflects the team the requester is logged in, so it cannot authorize another team
+        if ($destinationTeam !== (int) $this->entityData['team']
+            && !$this->Users->isSysadmin()
+            && !$this->Users->isAdminOfTeam($destinationTeam)
+        ) {
             throw new ForbiddenException(_('You cannot change the team parameter for ownership. Only an administrator can perform cross-team transfers.'));
         }
         $teamsHelper = new TeamsHelper($destinationTeam);

@@ -82,6 +82,12 @@ class InvenioRdmTest extends \PHPUnit\Framework\TestCase
         $invenio->readAll($q);
     }
 
+    public function testPostActionThrows(): void
+    {
+        $this->expectException(ImproperActionException::class);
+        $this->getInvenio(array())->postAction(Action::Create, array());
+    }
+
     public function testPatchWithoutEntityThrows(): void
     {
         $this->expectException(ImproperActionException::class);

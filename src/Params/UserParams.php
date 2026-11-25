@@ -114,7 +114,7 @@ final class UserParams extends ContentParams
                 function () {
                     $val = $this->asString();
                     if (empty($val)) {
-                        return '';
+                        return;
                     }
                     return Crypto::encrypt($val, Key::loadFromAsciiSafeString(Env::asString('SECRET_KEY')));
                 }

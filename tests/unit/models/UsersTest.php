@@ -211,6 +211,18 @@ class UsersTest extends \PHPUnit\Framework\TestCase
         $target->update(new UserParams('inveniordm_token', 'sometoken'));
     }
 
+    public function testClearInvenioRdmTokenStoresNull(): void
+    {
+        $user = $this->getRandomUserInTeam(1);
+        $self = new Users($user->userData['userid'], 1);
+        $self->update(new UserParams('inveniordm_token', 'sometoken'));
+        // a new request reads fresh user data
+        $self = new Users($user->userData['userid'], 1);
+        $this->assertNotNull($self->userData['inveniordm_token']);
+        $self->update(new UserParams('inveniordm_token', ''));
+        $this->assertNull((new Users($user->userData['userid'], 1))->userData['inveniordm_token']);
+    }
+
     public function testReadAll(): void
     {
         // Sysadmins receive the extended response, including last login information.

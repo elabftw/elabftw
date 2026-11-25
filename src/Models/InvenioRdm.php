@@ -80,12 +80,6 @@ final class InvenioRdm extends AbstractRest
         };
     }
 
-    #[Override]
-    public function postAction(Action $action, array $reqBody): int
-    {
-        return 0;
-    }
-
     /**
      * Full export flow: create draft → announce file → upload → commit
      */

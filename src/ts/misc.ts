@@ -1086,6 +1086,10 @@ export async function saveStringAsFile(filename: string, content: string|Promise
 
 // Shared function to UPDATE ENTITY BODY via save shortcut and/or save button, or autosave
 export async function updateEntityBody(redirect = true): Promise<void> {
+  // the main text can be hidden (hide_main_text): there is no editor on the page, so there is no body to save
+  if (!document.getElementById('entityBodyEditorDiv')) {
+    return;
+  }
   const editor = getEditor();
   const entity = getEntity();
 

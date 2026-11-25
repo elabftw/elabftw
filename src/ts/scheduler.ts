@@ -204,12 +204,11 @@ function configureRecurrenceFields(fields: HTMLElement, start: Date, locale: str
   fields.dataset.secondWeekday = String(secondDate.weekday);
 
   const weekdayMode = fields.querySelector<HTMLSelectElement>('.scheduler-recurrence-weekday-mode')!;
-  const onDay = fields.dataset.onDay ?? 'on %s';
-  const onTwoDays = fields.dataset.onTwoDays ?? 'on %s & %s';
+  const weekdays = [startDate.toFormat('cccc'), secondDate.toFormat('cccc')];
   weekdayMode.querySelector<HTMLOptionElement>('option[value="start"]')!.textContent =
-    onDay.replace('%s', startDate.toFormat('cccc'));
+    i18next.t('booking-on-weekdays', { days: weekdays[0] });
   weekdayMode.querySelector<HTMLOptionElement>('option[value="start-and-two-days"]')!.textContent =
-    onTwoDays.replace('%s', startDate.toFormat('cccc')).replace('%s', secondDate.toFormat('cccc'));
+    i18next.t('booking-on-weekdays', { days: new Intl.ListFormat(locale, { type: 'conjunction' }).format(weekdays) });
   const weekdaysOption = weekdayMode.querySelector<HTMLOptionElement>('option[value="weekdays"]')!;
   weekdaysOption.disabled = startWeekday > 5;
   if (weekdaysOption.disabled && weekdayMode.value === 'weekdays') {
@@ -298,30 +297,34 @@ function getRecurrence(modal: Element): Recurrence | null | false {
   return recurrence;
 }
 
-function getRecurrenceDescription(container: HTMLElement, recurrence: Recurrence, locale: string): string {
-  const key = recurrence.interval === 1 ? recurrence.frequency : `${recurrence.frequency}Interval`;
-  const template = container.dataset[key] ?? '';
-  let description = template.replace('%d', String(recurrence.interval));
+function getRecurrenceCadence(frequency: Recurrence['frequency'], interval: number, locale: string): string {
+  const unit = { daily: 'day', weekly: 'week', monthly: 'month' }[frequency];
+  if (interval === 1) {
+    return i18next.t(`booking-every-${unit}`);
+  }
+  const duration = new Intl.NumberFormat(locale, { style: 'unit', unit, unitDisplay: 'long' }).format(interval);
+  return i18next.t('booking-repeats-every', { interval: duration });
+}
+
+function getRecurrenceDescription(recurrence: Recurrence, locale: string): string {
+  const description = [getRecurrenceCadence(recurrence.frequency, recurrence.interval, locale)];
 
   if (recurrence.frequency === 'weekly' && recurrence.weekdays?.length) {
     // Use a known Monday only as an ISO weekday anchor for localized weekday names
     const monday = DateTime.fromISO('2026-09-14').setLocale(locale);
     const weekdayNames = recurrence.weekdays.map(weekday => monday.plus({ days: weekday - 1 }).toFormat('cccc'));
     const weekdayList = new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(weekdayNames);
-    description += ` ${(container.dataset.onDays ?? 'on %s').replace('%s', weekdayList)}`;
+    description.push(i18next.t('booking-on-weekdays', { days: weekdayList }));
   }
 
   if (recurrence.count !== undefined) {
-    const countTemplate = recurrence.count === 1
-      ? container.dataset.endOnce ?? 'and ends after one occurrence'
-      : container.dataset.endCount ?? 'and ends after %d occurrences';
-    description += ` ${countTemplate.replace('%d', String(recurrence.count))}`;
+    description.push(i18next.t('booking-occurrences', { num: recurrence.count }));
   } else if (recurrence.until) {
     const endDate = DateTime.fromISO(recurrence.until).setLocale(locale).toLocaleString(DateTime.DATE_MED);
-    description += ` ${(container.dataset.endDate ?? 'and ends on %s').replace('%s', endDate)}`;
+    description.push(i18next.t('booking-last-occurrence', { date: endDate }));
   }
 
-  return `${description}.`;
+  return description.join(' · ');
 }
 
 // TomSelect settings shared on page & modal selects
@@ -730,7 +733,7 @@ if (calendarEl) {
       if (isRecurring) {
         const recurrence = info.event.extendedProps.recurrence_rule as Recurrence;
         if (recurrence) {
-          viewRecurrenceText.textContent = getRecurrenceDescription(viewRecurrence, recurrence, calendarEl.dataset.lang || 'en');
+          viewRecurrenceText.textContent = getRecurrenceDescription(recurrence, calendarEl.dataset.lang || 'en');
         }
       }
       document.getElementById('editRecurrenceScope')?.classList.toggle('d-none', !isRecurring);
@@ -1040,12 +1043,9 @@ function renderBookingSchedule(booking: BookingRequestRow): HTMLElement {
     element('span', 'smallgray', `(${formatBookingDuration(start, end)})`));
   container.append(slot, element('div', 'smallgray', toRelative(booking.start, bookingLocale)));
   if (booking.recurrence_id) {
-    const cadenceUnits = { daily: 'day', weekly: 'week', monthly: 'month' } as const;
-    const unit = booking.recurrence_frequency ? cadenceUnits[booking.recurrence_frequency] : null;
-    const interval = unit ? new Intl.NumberFormat(bookingLocale, { style: 'unit', unit, unitDisplay: 'long' }).format(booking.recurrence_interval || 1) : null;
-    const cadence = unit && booking.recurrence_interval === 1
-      ? i18next.t(`booking-every-${unit}`)
-      : interval ? i18next.t('booking-repeats-every', { interval }) : null;
+    const cadence = booking.recurrence_frequency
+      ? getRecurrenceCadence(booking.recurrence_frequency, booking.recurrence_interval || 1, bookingLocale)
+      : null;
     container.appendChild(element('div', 'smallgray', [
       i18next.t('booking-recurring'),
       i18next.t('booking-occurrences', { num: booking.occurrences }),

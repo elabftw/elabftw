@@ -23,10 +23,10 @@
 {% macro groupUploadButton(groupId, suffix, mode) %}
   {% if mode == 'edit' %}
     <div class='mt-2'>
-      <button type='button' class='btn btn-transparent' data-action='upload-file-to-group' data-inputid='upload_group_file_{{ suffix }}' title='{{ 'Upload file'|trans }}' aria-label='{{ 'Upload file'|trans }}'>
-        <i class='fas fa-upload fa-fw mr-1'></i>{{ 'Upload file'|trans }}
+      <button type='button' class='btn btn-transparent' data-action='upload-file-to-group' data-inputid='upload_group_file_{{ suffix }}' title='{{ 'Upload new file'|trans }}' aria-label='{{ 'Upload new file'|trans }}'>
+        <i class='fas fa-upload fa-fw mr-1'></i>{{ 'Upload new file'|trans }}
       </button>
-      <input hidden multiple type='file' class='upload-group-file-input' id='upload_group_file_{{ suffix }}' data-groupid='{{ groupId is not null ? groupId : '' }}' aria-label='{{ 'Upload file'|trans }}'>
+      <input hidden multiple type='file' class='upload-group-file-input' id='upload_group_file_{{ suffix }}' data-groupid='{{ groupId is not null ? groupId : '' }}' aria-label='{{ 'Upload new file'|trans }}'>
     </div>
   {% endif %}
 {% endmacro %}
@@ -210,7 +210,7 @@
         <div class='input-group'>
           <input aria-label='{{ 'Group name'|trans }}' type='text' name='title' class='form-control' required placeholder='{{ 'Group name'|trans }}' />
           <div class='input-group-append'>
-            <button class='btn btn-secondary' data-action='create-upload-group' type='submit'>{{ 'Add group'|trans }}</button>
+            <button class='btn btn-secondary' data-action='create-upload-group' type='submit'>{{ 'Add a group'|trans }}</button>
           </div>
         </div>
       </form>

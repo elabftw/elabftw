@@ -34,7 +34,7 @@
   {% endmacro %}
   {# hazards sheet of a location, for firefighters: on the inventory page only, see MakeStorageHazardsPdf #}
   {% macro render_hazards_button(unit, class) %}
-    <a class='{{ class }}' href='/api/v2/storage_units/{{ unit.id }}?format=pdf' target='_blank' rel='noopener' title='{{ 'List security hazards'|trans }}' aria-label='{{ 'List security hazards of %s'|trans|format(unit.name) }}' data-cy='storage-hazards-{{ unit.id }}'><i class='fas fa-fire' aria-hidden='true'></i></a>
+    <a class='{{ class }}' href='/api/v2/storage_units/{{ unit.id }}?format=pdf' target='_blank' rel='noopener' title='{{ 'List security hazards of %s'|trans|format(unit.name) }}' aria-label='{{ 'List security hazards of %s'|trans|format(unit.name) }}' data-cy='storage-hazards-{{ unit.id }}'><i class='fas fa-fire' aria-hidden='true'></i></a>
   {% endmacro %}
   {% macro render_items(items, groupedItems, storage_editable, is_entity=true, is_move=false, is_move_storage=false) %}
     <ul class='list-group'>

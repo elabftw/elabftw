@@ -102,12 +102,12 @@ final class ReactionSearch
     ) {
         $this->text = trim($query->getString('reaction_q'));
         if (mb_strlen($this->text) > self::MAX_TEXT_LENGTH) {
-            throw new ImproperActionException(sprintf(_('The reaction search text is limited to %d characters.'), self::MAX_TEXT_LENGTH));
+            throw new ImproperActionException(sprintf(_('Input is too long. Maximum length is %d characters.'), self::MAX_TEXT_LENGTH));
         }
         $this->structure = trim($query->getString('reaction_structure'));
         // the structure goes to Open Babel on every listing request: keep it to the size of a drawn molecule
         if (strlen($this->structure) > self::MAX_STRUCTURE_LENGTH) {
-            throw new ImproperActionException(sprintf(_('The reaction search structure is limited to %d characters.'), self::MAX_STRUCTURE_LENGTH));
+            throw new ImproperActionException(sprintf(_('Input is too long. Maximum length is %d characters.'), self::MAX_STRUCTURE_LENGTH));
         }
         $structureType = $query->getString('reaction_structure_type');
         if ($structureType !== '') {

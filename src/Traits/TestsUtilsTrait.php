@@ -215,7 +215,7 @@ trait TestsUtilsTrait
         return $Entity;
     }
 
-    protected function getFreshBookableItem(int $team): Items
+    protected function getFreshBookableItem(int $team, array $bookingParams = array()): Items
     {
         $Item = $this->getFreshItem($team);
         $ResourcesCategories = new ResourcesCategories(new Teams($Item->Users, $team));
@@ -224,6 +224,7 @@ trait TestsUtilsTrait
             'is_bookable' => '1',
             'booking_hourly_rate_notax' => 10.00,
             'category' => $category,
+            ...$bookingParams,
         ));
         return $Item;
     }

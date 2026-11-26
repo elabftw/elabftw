@@ -659,6 +659,7 @@ CREATE TABLE `items` (
   `book_is_cancellable` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `book_cancel_minutes` INT UNSIGNED NOT NULL DEFAULT 0,
   `booking_window_days` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `booking_hours` JSON NULL DEFAULT NULL,
   `booking_hourly_rate_notax` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
   `booking_hourly_rate_tax` DECIMAL(10, 2) UNSIGNED NOT NULL DEFAULT 0.00,
   `booking_hourly_rate_currency` TINYINT UNSIGNED NOT NULL DEFAULT 0,

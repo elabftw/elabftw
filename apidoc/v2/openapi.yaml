@@ -590,6 +590,10 @@ components:
           type: string
         last_used_at:
           type: string
+        valid_until:
+          type: string
+          format: date
+          nullable: true
         can_write:
           type: integer
         team:
@@ -3994,6 +3998,11 @@ paths:
                   type: integer
                   description: Set to 1 to allow the key to do write actions.
                   default: 0
+                valid_until:
+                  type: string
+                  format: date
+                  nullable: true
+                  description: Optional expiration date in YYYY-MM-DD format.
       responses:
         '201':
           description: The key has been created.

@@ -404,6 +404,7 @@ final class Uploads extends AbstractRest
         $this->canWriteOrExplode();
         $this->Entity->touch();
         if ($action === Action::Archive) {
+            $this->checkUploadIsNotReferenced();
             return $this->archive();
         }
         unset($params['action']);
@@ -718,7 +719,6 @@ final class Uploads extends AbstractRest
     private function archive(): array
     {
         $this->canWriteOrExplode();
-        $this->checkUploadIsNotReferenced();
         $targetState = State::Archived->value;
         // if already archived, unarchive
         if ($this->uploadData['state'] === State::Archived->value) {

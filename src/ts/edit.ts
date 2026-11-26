@@ -248,10 +248,7 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
     // prevent the browser from redirecting us
     formData.set('extraParam', 'noRedirect');
     formData.append('action', Action.Replace);
-    fetch(`api/v2/${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}`, {
-      method: 'POST',
-      body: formData,
-    }).then(resp => {
+    ApiC.post(`${entity.type}/${entity.id}/${Model.Upload}/${el.dataset.uploadid}`, formData).then(resp => {
       void reloadUploads();
       // return early if longName is not found in body
       if ((editorCurrentContent.indexOf(searchPrefixSrc + formElement.dataset.longName) === -1)
@@ -279,6 +276,6 @@ document.getElementById('filesDiv')?.addEventListener('submit', event => {
       // status of previous file is archived now
       // save because using the old file will not return an id from the db
       updateEntityBody();
-    });
+    }).catch(() => {});
   }
 });

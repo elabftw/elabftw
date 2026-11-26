@@ -200,6 +200,37 @@ class Apiv2ControllerTest extends \PHPUnit\Framework\TestCase
         }
     }
 
+    #[DataProvider('entityTypes')]
+    public function testAnonymousUserCannotReadRestrictedSubmodels(EntityType $entityType): void
+    {
+        $Entity = $entityType->toInstance($this->getRandomUserInTeam(1));
+        $Entity->setId($Entity->create(canreadBase: BasePermissions::Full));
+        $entityUri = sprintf('/%s%d', $Entity->getApiPath(), $Entity->id);
+
+        $restricted = array('comments', 'containers', 'request_actions', 'revisions');
+        // only items have bookings: on experiments this submodel is rejected as invalid before any restriction applies
+        if ($entityType === EntityType::Items) {
+            $restricted[] = 'events';
+        }
+        foreach ($restricted as $submodel) {
+            $uri = sprintf('%s/%s', $entityUri, $submodel);
+            $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($uri));
+            self::assertSame(Response::HTTP_FORBIDDEN, $Controller->getResponse()->getStatusCode(), $uri);
+        }
+        // submodels rendered on the public view page stay readable
+        foreach (array('steps', 'tags', 'uploads', 'experiments_links', 'items_links') as $submodel) {
+            $uri = sprintf('%s/%s', $entityUri, $submodel);
+            $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create($uri));
+            self::assertSame(Response::HTTP_OK, $Controller->getResponse()->getStatusCode(), $uri);
+        }
+    }
+
+    public function testAnonymousUserCannotReadUserSubmodels(): void
+    {
+        $Controller = new Apiv2Controller(new AnonymousUser(1), Request::create('/api/v2/users/me/notifications'));
+        self::assertSame(Response::HTTP_FORBIDDEN, $Controller->getResponse()->getStatusCode());
+    }
+
     public function testCannotReadAnotherTeamsSubmodel(): void
     {
         $Controller = new Apiv2Controller(

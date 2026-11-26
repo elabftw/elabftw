@@ -573,6 +573,7 @@ class Users extends AbstractRest
         unset($userData['salt']);
         unset($userData['mfa_secret']);
         unset($userData['token_hash']);
+        unset($userData['inveniordm_token']);
         // modified_at changes on every login, so it is as sensitive as last_login
         if (!$this->requester->isSysadmin()) {
             unset($userData['last_login'], $userData['modified_at']);
@@ -867,6 +868,11 @@ class Users extends AbstractRest
             $Config = Config::getConfig();
             $EmailValidator = new EmailValidator($params->getStringContent(), (bool) $Config->configArr['admins_import_users'], $Config->configArr['email_domain']);
             $EmailValidator->validate();
+        }
+
+        // the InvenioRDM token is personal
+        if ($params->getTarget() === UsersColumn::InvenioRdmToken->value) {
+            $this->isSelfOrExplode();
         }
 
         // columns that can only be modified by Sysadmin requester

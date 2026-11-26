@@ -90,4 +90,21 @@ class HttpGetter
         }
         return $res;
     }
+
+    public function put(string $url, array $options = array()): ResponseInterface
+    {
+        try {
+            $res = $this->client->request('PUT', $url, array_merge(
+                array(
+                    'proxy' => $this->proxy,
+                    'timeout' => self::REQUEST_TIMEOUT,
+                    'verify' => $this->verifyTls,
+                ),
+                $options,
+            ));
+        } catch (ConnectException $e) {
+            throw new ImproperActionException(sprintf('Error connecting to remote server: %s', $url), $e->getCode(), $e);
+        }
+        return $res;
+    }
 }

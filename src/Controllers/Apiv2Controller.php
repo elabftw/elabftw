@@ -45,6 +45,7 @@ use Elabftw\Models\Compounds;
 use Elabftw\Models\CompoundsGhsStatements;
 use Elabftw\Models\Config;
 use Elabftw\Models\Dspace;
+use Elabftw\Models\InvenioRdm;
 use Elabftw\Models\ExperimentsCategories;
 use Elabftw\Models\ExperimentsStatus;
 use Elabftw\Models\ExtraFieldsKeys;
@@ -365,6 +366,14 @@ final class Apiv2Controller extends AbstractApiController
                     $user = $Config->configArr['dspace_user'] ?? '';
                     $password = $Config->configArr['dspace_password'] ?? '';
                     return new Dspace($this->requester, $httpGetter, $host, $user, $password);
+                }
+            )(),
+            ApiEndpoint::InvenioRdm => (
+                function () {
+                    $Config = Config::getConfig();
+                    $httpGetter = new HttpGetter(new Client(), $Config->configArr['proxy'], !Env::asBool('DEV_MODE'));
+                    $host = $Config->configArr['inveniordm_host'] ?? '';
+                    return new InvenioRdm($this->requester, $httpGetter, $host);
                 }
             )(),
             ApiEndpoint::Idps => new Idps($this->requester, $this->id),

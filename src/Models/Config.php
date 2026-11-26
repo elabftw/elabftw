@@ -223,7 +223,9 @@ final class Config extends AbstractRest
             ('users_validity_is_externally_managed', '0'),
             ('dspace_host', ''),
             ('dspace_user', ''),
-            ('dspace_password', '')";
+            ('dspace_password', ''),
+            ('inveniordm_host', ''),
+            ('inveniordm_name', 'InvenioRDM')";
 
         $req = $this->Db->prepare($sql);
         $req->bindValue(':schema', SchemaVersionChecker::REQUIRED_SCHEMA);

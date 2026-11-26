@@ -1438,6 +1438,7 @@ CREATE TABLE `users` (
   `theme_variant` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `primary_bg` CHAR(6) DEFAULT NULL,
   `primary_fg` CHAR(6) DEFAULT NULL,
+  `inveniordm_token` VARCHAR(510) NULL DEFAULT NULL,
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 

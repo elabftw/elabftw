@@ -308,6 +308,8 @@ final class Dspace extends AbstractRest
             new Teams2Rors($this->requester->getTeam(), false),
             new Users2Rors($this->requester->getUserid(), false),
             CompoundsFactory::getCompounds($this->requester),
+            // a DSpace repository is often public: do not disclose who has access to the entry
+            includePermissions: false,
         );
         $maker->writeToFile($absolutePath);
         $headers = $this->getAuthHeaders();

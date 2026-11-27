@@ -39,12 +39,14 @@ use Elabftw\Traits\TwigTrait;
 use League\Flysystem\UnableToReadFile;
 use ZipStream\ZipStream;
 use Override;
+use PDO;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 use function array_push;
 use function ksort;
 use function array_column;
+use function array_filter;
 use function array_is_list;
 use function array_key_exists;
 use function array_key_first;
@@ -77,9 +79,24 @@ class MakeEln extends AbstractMakeEln
 {
     use TwigTrait;
 
+    public const string PERMISSIONS_PROPERTY = 'https://www.elabftw.net/ns#permissions';
+
+    // permission columns holding a JSON list of teams, teamgroups and users, with the column holding their base
+    private const array PERMISSIONS_COLUMNS = array(
+        'canread' => 'canread_base',
+        'canwrite' => 'canwrite_base',
+        'canread_target' => 'canread_target_base',
+        'canwrite_target' => 'canwrite_target_base',
+        'canbook' => 'canbook_base',
+    );
+
     private ?array $entityArrSlugs = null;
 
     private ?array $requesterTeams = null;
+
+    private array $teamNamesById = array();
+
+    private array $teamgroupNamesById = array();
 
     public function __construct(
         protected LoggerInterface $logger,
@@ -92,6 +109,7 @@ class MakeEln extends AbstractMakeEln
         protected Compounds $Compounds,
         protected bool $includeLinkedEntities = true,
         protected bool $includeChangelog = true,
+        protected bool $includePermissions = true,
     ) {
         parent::__construct($Zip, $instance2Rors);
     }
@@ -388,6 +406,11 @@ class MakeEln extends AbstractMakeEln
             array_push($this->dataEntities, ...$processedSteps['nodes']);
         }
 
+        // PERMISSIONS
+        if ($this->includePermissions) {
+            $datasetNode[self::PERMISSIONS_PROPERTY] = array('@type' => '@json', '@value' => $this->permissionsToJsonLd($e));
+        }
+
         $this->dataEntities[] = $datasetNode;
         return $currentDatasetFolder;
     }
@@ -675,6 +698,84 @@ class MakeEln extends AbstractMakeEln
             $this->logger->warning(sprintf('Skipping metadata reference %s: %d during ELN export: %s', $type->value, $sourceId, $e->getMessage()));
             return null;
         }
+    }
+
+    /**
+     * Database ids only make sense on this instance: teams and teamgroups are exported by name, users as Person nodes.
+     * Only templates have target permissions, and only resources and resources templates have booking permissions.
+     *
+     * @param array $entityData a row of the entity table, as in AbstractEntity::$entityData
+     */
+    private function permissionsToJsonLd(array $entityData): array
+    {
+        $permissions = array();
+        foreach (self::PERMISSIONS_COLUMNS as $column => $baseColumn) {
+            if (!array_key_exists($column, $entityData) || !array_key_exists($baseColumn, $entityData)) {
+                continue;
+            }
+            $can = is_string($entityData[$column])
+                ? json_decode($entityData[$column], true, 3, JSON_THROW_ON_ERROR)
+                : $entityData[$column];
+            $permission = array(
+                'base' => (int) $entityData[$baseColumn],
+                'teams' => array_map(
+                    fn($teamId): array => array(
+                        'name' => $this->getTeamName((int) $teamId),
+                        'is_entity_team' => (int) $teamId === (int) $entityData['team'],
+                    ),
+                    $can['teams'] ?? array(),
+                ),
+                'teamgroups' => array_map(
+                    fn($teamgroupId): array => array('name' => $this->getTeamgroupName((int) $teamgroupId)),
+                    $can['teamgroups'] ?? array(),
+                ),
+                // a user that cannot be exported is dropped, not kept with an id meaningless elsewhere
+                'users' => array_values(array_filter(array_map(
+                    fn($userId): ?array => $this->processPermissionUser((int) $userId),
+                    $can['users'] ?? array(),
+                ))),
+            );
+            $immutableColumn = $column . '_is_immutable';
+            if (array_key_exists($immutableColumn, $entityData)) {
+                $permission['is_immutable'] = (int) $entityData[$immutableColumn] === 1;
+            }
+            $permissions[$column] = $permission;
+        }
+        return $permissions;
+    }
+
+    private function processPermissionUser(int $userId): ?array
+    {
+        if (!$this->canExportUser($userId)) {
+            $this->logger->warning(sprintf(
+                'Skipping permissions user: %d during ELN export: insufficient permissions',
+                $userId
+            ));
+            return null;
+        }
+        return array('@id' => $this->getAuthorId(new Users($userId)));
+    }
+
+    private function getTeamName(int $teamId): string
+    {
+        if (!array_key_exists($teamId, $this->teamNamesById)) {
+            $req = $this->Db->prepare('SELECT name FROM teams WHERE id = :id');
+            $req->bindValue(':id', $teamId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $this->teamNamesById[$teamId] = (string) $req->fetchColumn();
+        }
+        return $this->teamNamesById[$teamId];
+    }
+
+    private function getTeamgroupName(int $teamgroupId): string
+    {
+        if (!array_key_exists($teamgroupId, $this->teamgroupNamesById)) {
+            $req = $this->Db->prepare('SELECT name FROM team_groups WHERE id = :id');
+            $req->bindValue(':id', $teamgroupId, PDO::PARAM_INT);
+            $this->Db->execute($req);
+            $this->teamgroupNamesById[$teamgroupId] = (string) $req->fetchColumn();
+        }
+        return $this->teamgroupNamesById[$teamgroupId];
     }
 
     private function processMetadataUser(int $userId): ?array

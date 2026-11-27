@@ -1218,6 +1218,28 @@ tr.upload-group-drop-target td {
   }
 }
 
+.entity-type-label {
+  &[data-entity-type='experiments'] {
+    background-color: var(--lightblue);
+    color: var(--darkblue);
+  }
+
+  &[data-entity-type='experiments_templates'] {
+    background-color: var(--primary);
+    color: var(--primary-fg);
+  }
+
+  &[data-entity-type='items'] {
+    background-color: var(--superlight);
+    color: var(--mediumstrong);
+  }
+
+  &[data-entity-type='items_types'] {
+    background-color: var(--lightgold);
+    color: var(--darkgold);
+  }
+}
+
 .catstat-privacy {
   .private-icon {
     display: none;

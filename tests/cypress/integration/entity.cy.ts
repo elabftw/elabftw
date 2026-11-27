@@ -140,6 +140,7 @@ describe('Experiments', () => {
 
   it('Create and edit an experiment', () => {
     cy.createEntity('experiment', 'Cypress created experiment').then(() => {
+      cy.get('[data-cy="entity-type-label"]').should('be.visible').and('have.text', 'Experiment');
       entityCatStat('Not set', 'Demo', 'Success');
       entityEdit();
       entityComment();
@@ -152,6 +153,7 @@ describe('Experiments', () => {
 
   it('Create and edit an item', () => {
     cy.createEntity('item', 'Cypress created resource').then(() => {
+      cy.get('[data-cy="entity-type-label"]').should('be.visible').and('have.text', 'Resource');
       entityCatStat('Not set', 'Justice', 'In stock');
       entityEdit();
       entityComment();
